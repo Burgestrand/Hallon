@@ -17,7 +17,7 @@ Gem::Specification.new do |gem|
   
   # installation
   gem.extensions    = %w(ext/extconf.rb)
-  gem.files         = %w(ext/extconf.rb ext/hallon.c) + Dir['lib/hallon/**']
+  gem.files         = %w(ext/extconf.rb ext/hallon.c) + Dir['lib/**']
   
   # documentation
   gem.extra_rdoc_files = %w(ext/hallon.c)
