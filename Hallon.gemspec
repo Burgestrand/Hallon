@@ -13,11 +13,11 @@ Gem::Specification.new do |gem|
   gem.licenses = ['GNU AGPL']
   
   # development
-  gem.add_development_dependency 'rspec'
+  gem.add_development_dependency 'rspec', '> 2.0.0'
   
   # installation
   gem.extensions    = %w(ext/extconf.rb)
-  gem.files         = %w(ext/extconf.rb ext/hallon.c) + Dir['lib/**']
+  gem.files         = Dir['lib/*.rb']
   
   # documentation
   gem.extra_rdoc_files = %w(ext/hallon.c)
