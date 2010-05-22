@@ -1,0 +1,5 @@
+*.gem
+ext/Hallon.bundle
+ext/*.o
+ext/Makefile
+ext/mkmf.log
