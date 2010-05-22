@@ -11,7 +11,8 @@ begin
   
   task :default => :test
 rescue LoadError
-  $stderr.puts 'rspec missing: tests are unavailable'
+  $stderr.puts 'WARNING: rspec2 missing, cannot run test suite'
+  task :default => :build
 end
 
 namespace "ext" do
