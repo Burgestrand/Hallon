@@ -5,12 +5,6 @@ describe Hallon do
     Hallon::API_VERSION.should == 4
   end
 
-  describe Hallon::Error do
-    it "should translate error codes" do
-      Hallon::Error.message(1).should == 'Invalid library version'
-    end
-  end
-  
   describe Hallon::Session do
     before :all do
       @appkey = IO.read 'spotify_appkey.key'

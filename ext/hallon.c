@@ -16,12 +16,11 @@ static VALUE mHallon;
   static VALUE cSession;
 
 
-// Error exception
-// ---------------------------------------------------------------------
-
 /**
  * call-seq:
- *   Error.message(fixnum) -> string
+ *   Error.message(Fixnum) -> String
+ * 
+ * Convert an integer into a {spotify error message}[https://developer.spotify.com/en/libspotify/docs/group__error.html#g983dee341d3c2008830513b7cffe7bf3]
  */
 static VALUE eError_message(VALUE klass, VALUE code)
 {
@@ -29,14 +28,13 @@ static VALUE eError_message(VALUE klass, VALUE code)
   return rb_str_new2(sp_error_message(FIX2INT(code)));
 }
 
-// Session class
-// ---------------------------------------------------------------------
-
 /**
  * call-seq:
- *   Session.new(appkey, user_agent = 'Hallon', cache_path = 'tmp', settings_path = 'tmp')
+ *   Session.instance(application_key, user_agent = 'Hallon', cache_path = 'tmp', settings_path = 'tmp')
  * 
- * Creates a new session object.
+ * Initializes the Session. The first argument should a string containing your application key. 
+ * <br><br>
+ * See sp_session_init[https://developer.spotify.com/en/libspotify/docs/group__session.html#ga3d50584480c8a5b554ba5d1b8d09b8b] for more details.
  */
 static VALUE cSession_initialize(int argc, VALUE *argv, VALUE self)
 {
@@ -77,22 +75,22 @@ static VALUE cSession_initialize(int argc, VALUE *argv, VALUE self)
     return Qnil;
   }
   
-  return Data_Wrap_Struct(cSession, NULL, NULL /* sp_session_release */, session);
+  return Data_Wrap_Struct(cSession, NULL, NULL, session);
 }
 
-// Extension initialization
 void Init_hallon()
 {
-  // Top-level module
+  /* libspotify[https://developer.spotify.com/en/libspotify/overview/] bindings for Ruby! */
   mHallon = rb_define_module("Hallon");
-  rb_define_const(mHallon, "API_VERSION", INT2FIX(SPOTIFY_API_VERSION));
+    /* The libspotify version Hallon was compiled with. */
+    rb_define_const(mHallon, "API_VERSION", INT2FIX(SPOTIFY_API_VERSION));
   
-  // Error exception
+  // Error Exception
   eError = rb_define_class_under(mHallon, "Error", rb_eStandardError);
-  rb_define_singleton_method(eError, "message", eError_message, 1);
+    //rb_define_singleton_method(eError, "message", eError_message, 1);
   
   // Session class
   cSession = rb_define_class_under(mHallon, "Session", rb_cObject);
   //rb_define_alloc_func(cSession, cSession_allocate);
-  rb_define_method(cSession, "initialize", cSession_initialize, -1);
+  rb_define_method(cSession, "initialize", cSession_initialize, -1); // :nodoc
 }

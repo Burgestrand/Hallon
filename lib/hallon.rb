@@ -4,11 +4,16 @@ $:.unshift File.expand_path('./../ext/', File.dirname(__FILE__))
 require 'hallon'
 
 module Hallon
+  # Thrown by Hallon::Session on Spotify errors.
+  class Error
+    
+  end
+  
   class Session
     require 'singleton'
     include Singleton # Spotify APIv4
     
-    def self.instance(*args)
+    def self.instance(*args) # :nodoc:
       if @__instance__ and args.length > 0
         raise ArgumentError, "session has already been initialized"
       end
