@@ -41,10 +41,10 @@ namespace "ext" do
   end
 end
 
-desc "Builds Hallon from scratch"
-task :build => ['ext:clean', 'ext:mkmf', 'ext:make']
+desc "Builds Hallon from scratch and tests it"
+task :build => ['ext:clean', 'ext:mkmf', 'ext:make', 'test']
 
-desc "Creates a Gem"
+desc "Creates the Gem"
 task :gem do
   system('gem build Hallon.gemspec')
 end
