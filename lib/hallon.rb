@@ -9,6 +9,8 @@ module Hallon
     
   end
   
+  # Main workhorse of Hallon. You must first initialize an instance to fly
+  # to never-never land!
   class Session
     require 'singleton'
     include Singleton # Spotify APIv4
