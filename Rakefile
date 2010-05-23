@@ -48,3 +48,9 @@ desc "Creates the Gem"
 task :gem do
   system('gem build Hallon.gemspec')
 end
+
+desc "Generates rdoc documentation in doc/"
+task :doc do
+  FileUtils.rmtree 'doc/'
+  system('rdoc -c utf-8 -H -x Rakefile -x Makefile')
+end
