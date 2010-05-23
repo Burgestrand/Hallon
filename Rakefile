@@ -4,9 +4,8 @@ begin
   require 'rspec/core/rake_task'
   
   desc "Runs all tests"
-  Rspec::Core::RakeTask.new :test do |task|
-    task.fail_on_error = false
-    task.pattern = 'spec/**'
+  task :test do
+    system 'rspec -fd spec/**'
   end
   
   task :default => :test
