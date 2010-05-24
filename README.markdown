@@ -22,6 +22,9 @@ Installing `libspotify` means you need to put the binary library and the headers
 ### … on Mac OS?
 Copy the `libspotify.framework` folder to `/Library/Frameworks/libspotify.framework`, Hallon handles the rest. :)
 
+## This is awesome! I want to help!
+Sweet! Just fork Hallon, write your features and make sure you write tests for everything you do. Once that’s done, just send a pull request.
+
 ## What’s the catch?
 There are several!
 
