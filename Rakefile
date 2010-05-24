@@ -39,10 +39,12 @@ namespace "ext" do
       end
     end
   end
+  
+  task :rebuild => ['ext:clean', 'ext:mkmf', 'ext:make']
 end
 
 desc "Builds Hallon from scratch and tests it"
-task :build => ['ext:clean', 'ext:mkmf', 'ext:make', 'test']
+task :build => ['ext:rebuild', 'test']
 
 desc "Creates the Gem"
 task :gem do
