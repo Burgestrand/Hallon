@@ -5,7 +5,7 @@ describe Hallon do
     Hallon::API_VERSION.should == 4
   end
 
-  describe Hallon::Session do
+  describe Hallon::Session, "before creation" do
     it "should be a singleton" do
       Hallon::Session.should_not respond_to(:new)
     end
@@ -14,20 +14,29 @@ describe Hallon do
       lambda { Hallon::Session.instance }.should raise_error(ArgumentError)
     end
 
-    it "should only accept a valid application key" do
+    it "should fail on an invalid application key" do
       lambda { Hallon::Session.instance 'invalid' }.should raise_error(Hallon::Error)
-      lambda { Hallon::Session.instance APPKEY }.should_not raise_error
     end
     
-    it "should not accept arguments after instantiation" do
+    it "should succeed with a valid application key" do
+      lambda { Hallon::Session.instance APPKEY }.should_not raise_error
+    end
+  end
+  
+  describe Hallon::Session, "once created" do
+    it "should no longer accept arguments" do
       lambda { Hallon::Session.instance APPKEY }.should raise_error(ArgumentError)
       lambda { Hallon::Session.instance }.should_not raise_error
     end
-        
-    it "should be capable of logging a user in" do
+    
+    it "should not be logged in" do
       Hallon::Session.instance.logged_in?.should equal(false)
-      lambda { Hallon::Session.instance.login USERNAME, PASSWORD }.should_not raise_error
+    end
+    
+    it "should be able to log in" do
+      Hallon::Session.instance.login USERNAME, PASSWORD
       Hallon::Session.instance.logged_in?.should equal(true)
+      lambda { Hallon::Session.instance.login USERNAME, PASSWORD }.should raise_error(Hallon::Error)
     end
   end
 end

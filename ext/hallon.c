@@ -14,83 +14,166 @@ static VALUE mHallon;
   
   // Classes
   static VALUE cSession;
+  
+/**
+ * Helper methods
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* --------------------- BEGIN SESSION CALLBACKS ---------------------*/
+// Creates a thread, helper method for run_in_thread
+static VALUE thread_new(VALUE arg)
+{
+  return rb_funcall3(rb_const_get(rb_cObject, rb_intern("Thread")), rb_intern("new"), 1, (VALUE *)&arg);
+}
+
+// runs a function in a thread, passes arg as second argument
+static VALUE run_in_thread(VALUE (*block)(VALUE), VALUE obj)
+{
+  return rb_iterate(thread_new, obj, block, Qnil);
+}
+
+// sleeps the current thread
+static VALUE rb_sleep(double seconds)
+{
+  if (seconds == 0)
+  {
+    return rb_funcall(rb_cObject, rb_intern("sleep"), 0);
+  }
+
+  VALUE time = rb_float_new(seconds);
+  return rb_funcall(rb_cObject, rb_intern("sleep"), 1, time);
+}
+
+// retrieve all sessions
+static VALUE mHallon_SESSIONS()
+{
+  return rb_const_get(mHallon, rb_intern("SESSIONS"));
+}
+
+// convert ruby type to string
+static const char *rb2str(VALUE type)
+{
+  switch (TYPE(type))
+  {
+    case T_NIL: return "NIL";
+    case T_OBJECT: return "OBJECT";
+    case T_CLASS: return "CLASS";
+    case T_MODULE: return "MODULE";
+    case T_FLOAT: return "FLOAT";
+    case T_STRING: return "STRING";
+    case T_REGEXP: return "REGEXP";
+    case T_ARRAY: return "ARRAY";
+    case T_FIXNUM: return "FIXNUM";
+    case T_HASH: return "HASH";
+    case T_STRUCT: return "STRUCT";
+    case T_BIGNUM: return "BIGNUM";
+    case T_FILE: return "FILE";
+    case T_TRUE: return "TRUE";
+    case T_FALSE: return "FALSE";
+    case T_DATA: return "DATA";
+    case T_SYMBOL: return "SYMBOL";
+  }
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * End helper methods
+ **/
+
+/**
+ * call-seq:
+ *   session.thread -> Thread
+ * 
+ * Retrieves the event-processing thread.
+ */
+static VALUE ciSession_thread(VALUE self)
+{
+  return rb_iv_get(self, "@thread");
+}
+
+/**
+ * Internal method: wake up the processing thread.
+ */
+static VALUE ciSession_process(VALUE self)
+{
+  VALUE thread = ciSession_thread(self);
+  return rb_funcall3(thread, rb_intern("wakeup"), 0, NULL);
+}
+
+/**
+ * Frees the memory associated with a session.
+ */
+static VALUE ciSession_free(sp_session **psession)
+{
+  // TODO: retrieve session thread and kill it?
+  xfree(psession);
+}
+
+/**
+ * Internal method: allocate a pointer to an sp_session.
+ */
+static VALUE ciSession_allocate(VALUE self)
+{
+  sp_session **psession;
+  return Data_Make_Struct(self, sp_session*, 0, ciSession_free, psession);
+}
+
+/**
+ * Internal method: process spotify events. Run this in a thread.
+ */
+static VALUE ciSession_processloop(VALUE self)
+{
+  // sleep forever
+  rb_sleep(0);
+  
+  // when woken up, we do work!
+  sp_session **psession;
+  int timeout = -1;
+  Data_Get_Struct(self, sp_session*, psession);
+
+  do
+  {
+    sp_session_process_events(*psession, &timeout);
+    rb_sleep(0.1); // +1 to avoid *forever sleep*
+  } while(1);
+  
+  return Qtrue;
+}
+
+/**
+ * Begin session callbacks
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+static void callback_notify(sp_session *session)
+{}
 
 static void callback_logged_in(sp_session *session, sp_error error)
-{
-  //fprintf(stderr, "logged in: %s", sp_error_message(error));
-}
+{}
+ 
+static void callback_log(sp_session *session, const char *data)
+{}
 
 static void callback_logged_out(sp_session *session)
 {
-  fprintf(stderr, "logged out");
+  fprintf(stderr, "\nlogged out");
 }
 
 static void callback_metadata_updated(sp_session *session)
 {
-  fprintf(stderr, "metadata updated");
+  fprintf(stderr, "\nmetadata updated");
 }
 
 static void callback_connection_error(sp_session *session, sp_error error)
 {
-  fprintf(stderr, "connection error: %s", sp_error_message(error));
+  fprintf(stderr, "\nconnection error: %s", sp_error_message(error));
 }
 
 static void callback_message_to_user(sp_session *session, const char *message)
 {
-  fprintf(stderr, "message to user: %s", message);
+  fprintf(stderr, "\nmessage to user: %s", message);
 }
 
-static void callback_notify_main_thread(sp_session *session)
-{
-  int timeout = -1;
-  sp_session_process_events(session, &timeout);
-}
-
-static void callback_log_message(sp_session *session, const char *data)
-{
-  //rb_eval_string(sprintf("($log ||= []).push(\"%s\")", data));
-}
-
-static sp_session_callbacks g_callbacks =
-{
-  .logged_in = callback_logged_in, 
-  .logged_out = callback_logged_out,
-  .metadata_updated = callback_metadata_updated,
-  .message_to_user = callback_message_to_user,
-  .notify_main_thread = callback_notify_main_thread,
-  .music_delivery = NULL,
-  .play_token_lost = NULL,
-  .log_message = callback_log_message,
-  .end_of_track = NULL
-};
-
-/* ---------------------- END SESSION CALLBACKS ----------------------*/
-
-/**
- * call-seq:
- *   Error.message(Fixnum) -> String
- * 
- * Convert an integer into a {spotify error message}[https://developer.spotify.com/en/libspotify/docs/group__error.html#g983dee341d3c2008830513b7cffe7bf3]
- */
-static VALUE eError_message(VALUE klass, VALUE code)
-{
-  Check_Type(code, T_FIXNUM);
-  return rb_str_new2(sp_error_message(FIX2INT(code)));
-}
-
-/**
- * call-seq:
- *   Session.allocate
- * 
- * Internal method. Do not use.
- */
-static VALUE cSession_allocate(VALUE self)
-{
-  sp_session **psession;
-  return Data_Make_Struct(self, sp_session*, 0, xfree, psession);
-}
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * End session callbacks
+ **/
 
 /**
  * call-seq:
@@ -102,6 +185,7 @@ static VALUE cSession_allocate(VALUE self)
  */
 static VALUE cSession_initialize(int argc, VALUE *argv, VALUE self)
 {
+  sp_session **psession;
   VALUE v_appkey, v_user_agent, v_cache_path, v_settings_path;
   
   // default arguments scanning
@@ -118,6 +202,28 @@ static VALUE cSession_initialize(int argc, VALUE *argv, VALUE self)
   Check_Type(v_cache_path, T_STRING);
   Check_Type(v_settings_path, T_STRING);
   
+  // create an event processing thread
+  VALUE processloop = run_in_thread(ciSession_processloop, self);
+  rb_iv_set(self, "@thread", processloop);
+  
+  // retrieve session pointer storage
+  Data_Get_Struct(self, sp_session*, psession);
+  
+  // set callbacks
+  sp_session_callbacks callbacks =
+  {
+    .logged_in = callback_logged_in, 
+    .logged_out = callback_logged_out,
+    .metadata_updated = callback_metadata_updated,
+    .message_to_user = callback_message_to_user,
+    .notify_main_thread = callback_notify,
+    .music_delivery = NULL,
+    .play_token_lost = NULL,
+    .log_message = callback_log,
+    .end_of_track = NULL
+  };
+  
+  // set configuration
   sp_session_config config = 
   {
     SPOTIFY_API_VERSION,
@@ -126,18 +232,22 @@ static VALUE cSession_initialize(int argc, VALUE *argv, VALUE self)
     RSTRING(v_appkey)->ptr,
     RSTRING(v_appkey)->len,
     StringValuePtr(v_user_agent),
-    &g_callbacks, // callbacks
+    &callbacks, // callbacks
     NULL, // user supplied data
   };
-  
-  sp_session **psession;
-  Data_Get_Struct(self, sp_session*, psession);
+
   sp_error error = sp_session_init(&config, &(*psession));
   
   if (error != SP_ERROR_OK)
   {
+    // kill and remove thread
+    rb_funcall3(processloop, rb_intern("kill"), 0, NULL);
+    rb_iv_set(self, "@thread", Qnil);
     rb_raise(eError, sp_error_message(error));
   }
+  
+  // add self to available instances
+  rb_ary_unshift(mHallon_SESSIONS(), self);
   
   return Qnil;
 }
@@ -165,19 +275,27 @@ static VALUE cSession_login(VALUE self, VALUE username, VALUE password)
 {
   sp_session **psession;
   Data_Get_Struct(self, sp_session*, psession);
-  
   sp_connectionstate state = sp_session_connectionstate(*psession);
-  sp_error error = sp_session_login(*psession, StringValuePtr(username), StringValuePtr(password));
   
+  // we cannot login if already logged in
+  if (state == SP_CONNECTION_STATE_LOGGED_IN)
+  {
+    rb_raise(eError, "already logged in");
+  }
+  
+  sp_error error = sp_session_login(*psession, StringValuePtr(username), StringValuePtr(password));
   if (SP_ERROR_OK != error)
   {
     rb_raise(eError, sp_error_message(error));
   }
   
+  // this is an ugly hack, but yet pretty hack
   do
   {
-    usleep(10);
-  } while(sp_session_connectionstate(*psession) == state);
+    int timeout = -1;
+    sp_session_process_events(*psession, &timeout);
+    rb_sleep(0.05);
+  } while (sp_session_connectionstate(*psession) == state);
   
   return self;
 }
@@ -187,14 +305,15 @@ void Init_hallon()
   mHallon = rb_define_module("Hallon");
     /* The libspotify version Hallon was compiled with. */
     rb_define_const(mHallon, "API_VERSION", INT2FIX(SPOTIFY_API_VERSION));
+    /* List of active sessions */
+    rb_define_const(mHallon, "SESSIONS", rb_ary_new());
   
   // Error Exception
   eError = rb_define_class_under(mHallon, "Error", rb_eStandardError);
-    //rb_define_singleton_method(eError, "message", eError_message, 1);
   
   // Session class
   cSession = rb_define_class_under(mHallon, "Session", rb_cObject);
-  rb_define_alloc_func(cSession, cSession_allocate);
+  rb_define_alloc_func(cSession, ciSession_allocate);
   rb_define_method(cSession, "initialize", cSession_initialize, -1);
   rb_define_method(cSession, "logged_in?", cSession_logged_in, 0);
   rb_define_method(cSession, "login", cSession_login, 2);
