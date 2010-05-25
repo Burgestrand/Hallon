@@ -2,15 +2,17 @@
 
 Gem::Specification.new do |gem|
   gem.version  = "0.1.0"
+  gem.required_rubygems_version = ">= 1.3.6"
+  gem.required_ruby_version = ">= 1.8"
   
   # metadata
-  gem.name     = 'Hallon'
+  gem.name     = 'hallon'
   gem.summary  = 'Delicious Ruby bindings for libspotify'
   gem.homepage = 'http://github.com/Burgestrand/Hallon'
   gem.author   = 'Kim Burgestrand'
   gem.email    = 'kim@burgestrand.se'
   gem.description = IO.read('./README.markdown')
-  gem.licenses = ['GNU AGPL']
+  gem.license  = 'GNU AGPL'
   
   # development
   gem.add_development_dependency 'rspec', '> 2.0.0'
