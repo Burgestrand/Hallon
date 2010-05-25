@@ -1,4 +1,5 @@
-require 'hallon'
+require 'lib/hallon'
+require File.expand_path('../config', __FILE__)
 
 describe Hallon do
   it "should have an up-to-date spotify library" do
@@ -15,7 +16,7 @@ describe Hallon do
     end
 
     it "should fail on an invalid application key" do
-      lambda { Hallon::Session.instance 'invalid' }.should raise_error(Hallon::Error)
+      lambda { Hallon::Session.instance('invalid') }.should raise_error(Hallon::Error)
     end
     
     it "should succeed with a valid application key" do

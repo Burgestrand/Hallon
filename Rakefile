@@ -1,17 +1,11 @@
 require 'rake'
 
-begin
-  require 'rspec/core/rake_task'
-  
-  desc "Runs all tests"
-  task :test do
-    system 'rspec -fd spec/**'
-  end
-  
-  task :default => :test
-rescue LoadError
-  $stderr.puts 'WARNING: rspec2 missing, cannot run test suite'
-  task :default => :build
+require 'spec/rake/spectask'
+
+desc "Runs all tests"
+Spec::Rake::SpecTask.new :test do |task|
+  task.spec_files = FileList['spec/*_spec.rb']
+  task.spec_opts = ['--color', '-fp']
 end
 
 namespace "ext" do
@@ -33,10 +27,7 @@ namespace "ext" do
 
   task :clean do
     Dir.chdir('ext') do |path|
-      puts "Cleaning ext/ folder..."
-      ['Makefile', 'Hallon.bundle', 'mkmf.log', 'hallon.o'].each do |file|
-        File.unlink file rescue next
-      end
+      system('make distclean')
     end
   end
   
@@ -56,3 +47,5 @@ task :doc do
   FileUtils.rmtree 'doc/'
   system('rdoc -c utf-8 -H -x Rakefile -x Makefile')
 end
+
+task :default => :test
