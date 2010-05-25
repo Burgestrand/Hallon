@@ -34,10 +34,16 @@ describe Hallon do
       Hallon::Session.instance.logged_in?.should equal(false)
     end
     
+    it "s login should require a block" do
+      lambda { Hallon::Session.instance.login(USERNAME, PASSWORD) }.should raise_error(LocalJumpError)
+    end
+    
     it "should be able to log in" do
-      Hallon::Session.instance.login USERNAME, PASSWORD
-      Hallon::Session.instance.logged_in?.should equal(true)
-      lambda { Hallon::Session.instance.login USERNAME, PASSWORD }.should raise_error(Hallon::Error)
+      Hallon::Session.instance.login(USERNAME, PASSWORD) do |session|
+        session.logged_in?.should equal(true)
+        puts "Logged in!"
+      end
+      lambda { Hallon::Session.instance.login(USERNAME, PASSWORD) { true } }.should raise_error(Hallon::Error)
     end
   end
 end
