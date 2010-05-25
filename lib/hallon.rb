@@ -1,7 +1,6 @@
-# Add extension to load path
-$:.unshift File.expand_path('./../ext/', File.dirname(__FILE__))
-
-require 'hallon'
+# require extension file
+require File.expand_path('./../../ext/hallon', __FILE__)
+require 'singleton'
 
 # libspotify[https://developer.spotify.com/en/libspotify/overview/] bindings for Ruby!
 module Hallon
@@ -12,7 +11,6 @@ module Hallon
   # Main workhorse of Hallon. You must first initialize an instance to fly
   # to never-never land!
   class Session
-    require 'singleton'
     include Singleton # Spotify APIv4
     
     def self.instance(*args) # :nodoc:
