@@ -6,7 +6,7 @@ describe Hallon do
     Hallon::API_VERSION.should == 4
   end
 
-  describe Hallon::Session, "before creation" do
+  describe Hallon::Session, " before creation" do
     it "should be a singleton" do
       Hallon::Session.should_not respond_to(:new)
     end
@@ -24,26 +24,25 @@ describe Hallon do
     end
   end
   
-  describe Hallon::Session, "once created" do
-    it "should no longer accept arguments" do
-      lambda { Hallon::Session.instance APPKEY }.should raise_error(ArgumentError)
-      lambda { Hallon::Session.instance }.should_not raise_error
+  describe Hallon::Session, " once created" do
+    before :all do
+      @session = Hallon::Session.instance
     end
     
     it "should not be logged in" do
-      Hallon::Session.instance.logged_in?.should equal(false)
-    end
-    
-    it "s login should require a block" do
-      lambda { Hallon::Session.instance.login(USERNAME, PASSWORD) }.should raise_error(LocalJumpError)
+      @session.logged_in?.should equal(false)
     end
     
     it "should be able to log in" do
-      Hallon::Session.instance.login(USERNAME, PASSWORD) do |session|
-        session.logged_in?.should equal(true)
-        puts "Logged in!"
-      end
-      lambda { Hallon::Session.instance.login(USERNAME, PASSWORD) { true } }.should raise_error(Hallon::Error)
+      @session.logged_in?.should equal(false)
+      @session.login(USERNAME, PASSWORD)
+      @session.logged_in?.should equal(true)
+    end
+    
+    it "should be able to log out" do
+      @session.logged_in?.should equal(true)
+      @session.logout
+      @session.logged_in?.should equal(false)
     end
   end
 end
