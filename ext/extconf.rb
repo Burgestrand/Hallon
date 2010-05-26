@@ -13,4 +13,9 @@ unless have_header 'libspotify/api.h' or have_header 'spotify/api.h'
   abort 'error: (lib)spotify/api.h missing'
 end
 
+# make sure we have thread support
+unless have_library 'pthread', 'pthread_mutex_lock'
+  abort 'error: missing posix thread-support'
+end
+
 create_makefile 'Hallon' 
