@@ -5,7 +5,7 @@ require 'spec/rake/spectask'
 desc "Runs all tests"
 Spec::Rake::SpecTask.new :test do |task|
   task.spec_files = FileList['spec/*_spec.rb']
-  task.spec_opts = ['--color', '-fp']
+  task.spec_opts = ['--color', '-fs'] # silent: l, progress: p, profile: o, specdoc: s, nested: n, html: h
 end
 
 namespace "ext" do
