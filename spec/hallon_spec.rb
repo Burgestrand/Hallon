@@ -1,6 +1,8 @@
 require 'lib/hallon'
 require File.expand_path('../config', __FILE__)
 
+Dir.chdir(File.dirname(__FILE__))
+
 describe Hallon do
   it "should have an up-to-date spotify library" do
     Hallon::API_VERSION.should == 4

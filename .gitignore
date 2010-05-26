@@ -5,5 +5,5 @@ ext/*.o
 ext/Makefile
 ext/mkmf.log
 *.key
-tmp/
+spec/tmp
 spec/config.rb
