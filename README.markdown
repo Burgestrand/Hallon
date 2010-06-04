@@ -29,7 +29,7 @@ Sweet! Just fork Hallon, write your features and make sure you write tests for e
 There are several!
 
 ### Hallon is unstable
-I’ve never developed anything in C before, and I’ve been using Ruby for about a month. With that said, Hallon most likely leaks memory and should be considered experimental.
+I’ve never developed anything in C before, and I’ve been using Ruby for about a month. With that said, Hallon should be considered experimental.
 
 ### Hallon only supports one session per process
 You can only keep one session with Spotify alive at a time in the same process, due to a limitation of `libspotify`.
