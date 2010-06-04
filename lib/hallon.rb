@@ -20,4 +20,18 @@ module Hallon
       @__instance__ ||= new *args
     end
   end
+  
+  # Contains the users playlists.
+  class PlaylistContainer
+    alias :_add :add
+    def add(name)
+      raise ArgumentError, "playlist name must be less than 256 characters" unless name.length < 256
+      raise ArgumentError, "playlist must have at least one non-space character" unless name.match "[^ ]"
+      _add(name)
+    end
+  end
+  
+  # Information about a given playlist.
+  class Playlist
+  end
 end
