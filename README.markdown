@@ -52,5 +52,6 @@ Hallon is licensed under the [GNU AGPL](http://www.gnu.org/licenses/agpl-3.0.htm
     # logout
     session.logout
 
-## Future note to self
-You’ve had some issues with the Spotify callback functions, as they are executed in another thread than the current one and are only passed the pointer to the `sp_session`. Your attempt to put the `sp_session` and `Session` object in a linked list and then use lookups to notify the actual object have some very unexpected behavior and thread inconsistencies. It works, but badly. Do not try it again! D:
+## Notes for the future
+- I would like to split hallon.c into several files, to make it more manageable. Problem right now is that the library is quite tightly coupled.
+- You’ve had some issues with the Spotify callback functions, as they are executed in another thread than the current one and are only passed the pointer to the `sp_session`. Your attempt to put the `sp_session` and `Session` object in a linked list and then use lookups to notify the actual object have some very unexpected behavior and thread inconsistencies. It works, but badly. Do not try it again! D:
