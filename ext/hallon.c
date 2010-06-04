@@ -31,6 +31,8 @@ static VALUE mHallon;
   
   // Classes
   static VALUE cSession;
+  static VALUE cPlaylistContainer;
+  static VALUE cPlaylist;
   
 // Lock variables to make spotify API synchronous
 static pthread_mutex_t session_mutex = PTHREAD_MUTEX_INITIALIZER;
@@ -248,6 +250,18 @@ static VALUE cSession_logged_in(VALUE self)
 
 /**
  * call-seq:
+ *   playlists -> Hallon::PlaylistContainer
+ * 
+ * Returns the playlist container for the currently logged in user.
+ */
+static VALUE cSession_playlists(VALUE self)
+{
+  return rb_funcall3(cPlaylistContainer, rb_intern("new"), 1, &self);
+}
+
+
+/**
+ * call-seq:
  *   initialize(application_key, user_agent = 'Hallon', cache_path = 'tmp', settings_path = 'tmp')
  * 
  * See sp_session_init[https://developer.spotify.com/en/libspotify/docs/group__session.html#ga3d50584480c8a5b554ba5d1b8d09b8b] for more details.
@@ -310,6 +324,103 @@ static VALUE cSession_initialize(int argc, VALUE *argv, VALUE self)
   return self;
 }
 
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * End session methods
+ **/
+
+/**
+ * Internal method: allocate a pointer to an sp_playlistcontainer.
+ */
+static VALUE ciPlaylistContainer_alloc(VALUE self)
+{
+  sp_playlistcontainer **pcontainer;
+  return Data_Make_Struct(self, sp_playlistcontainer*, 0, -1, pcontainer);
+}
+
+/**
+ * call-seq:
+ *   length -> Fixnum
+ * 
+ * Returns the number of playlists in the container.
+ */
+static VALUE cPlaylistContainer_length(VALUE self)
+{
+  sp_playlistcontainer *container;
+  Data_Get_Ptr(self, sp_playlistcontainer, container);
+  return INT2FIX(sp_playlistcontainer_num_playlists(container));
+}
+
+/**
+ * call-seq:
+ *   add(String) -> Playlist
+ */
+static VALUE cPlaylistContainer_add(VALUE self, VALUE name)
+{
+  // Validate playlist name
+  Check_Type(name, T_STRING);
+  
+  // Add playlist to container
+  sp_playlistcontainer *container;
+  Data_Get_Ptr(self, sp_playlistcontainer, container);
+  sp_playlist *playlist = sp_playlistcontainer_add_new_playlist(container, RSTRING_PTR(name));
+  
+  if ( ! playlist)
+  {
+    rb_raise(eError, "Playlist creation failed");
+  }
+  
+  // Create a new Hallon::Playlist instance
+  VALUE obj = rb_funcall3(cPlaylist, rb_intern("new"), 0, NULL);
+
+  sp_playlist **ptr;
+  Data_Get_Struct(obj, sp_playlist*, ptr);
+  *ptr = playlist;
+  
+  return obj;
+}
+
+/**
+ * call-seq:
+ *   initialize(Session)
+ * 
+ * Creates a new PlaylistContainer.
+ */
+static VALUE cPlaylistContainer_initialize(VALUE self, VALUE osession)
+{
+  sp_session *session;
+  Data_Get_Ptr(osession, sp_session, session);
+  
+  sp_playlistcontainer **pcontainer;
+  Data_Get_Struct(self, sp_playlistcontainer*, pcontainer);
+  *pcontainer = sp_session_playlistcontainer(session);
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * End playlist container methods
+ **/
+
+/**
+ * Allocates memory for a new playlist.
+ */
+static VALUE ciPlaylist_alloc(VALUE self)
+{
+  sp_playlist **playlist;
+  return Data_Make_Struct(self, sp_playlist*, 0, -1, playlist);
+}
+
+/**
+ * call-seq:
+ *   name -> String
+ * 
+ * Return the playlists’ name.
+ */
+static VALUE cPlaylist_name(VALUE self)
+{
+  sp_playlist *playlist;
+  Data_Get_Ptr(self, sp_playlist, playlist);
+  return rb_str_new2(sp_playlist_name(playlist));
+}
+
 void Init_hallon()
 {  
   mHallon = rb_define_module("Hallon");
@@ -327,4 +438,17 @@ void Init_hallon()
   rb_define_method(cSession, "login", cSession_login, 2);
   rb_define_method(cSession, "logout", cSession_logout, 0);
   rb_define_method(cSession, "logged_in?", cSession_logged_in, 0);
+  rb_define_method(cSession, "playlists", cSession_playlists, 0);
+  
+  // PlaylistContainer class
+  cPlaylistContainer = rb_define_class_under(mHallon, "PlaylistContainer", rb_cObject);
+  rb_define_alloc_func(cPlaylistContainer, ciPlaylistContainer_alloc);
+  rb_define_method(cPlaylistContainer, "initialize", cPlaylistContainer_initialize, 1);
+  rb_define_method(cPlaylistContainer, "length", cPlaylistContainer_length, 0);
+  rb_define_method(cPlaylistContainer, "add", cPlaylistContainer_add, 1);
+  
+  // Playlist class
+  cPlaylist = rb_define_class_under(mHallon, "Playlist", rb_cObject);
+  rb_define_alloc_func(cPlaylist, ciPlaylist_alloc);
+  rb_define_method(cPlaylist, "name", cPlaylist_name, 0);
 }
