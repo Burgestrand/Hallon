@@ -7,6 +7,22 @@
 #  include <spotify/api.h>
 #endif
 
+#define Data_Get_Ptr(obj, type, var) do {\
+  Check_Type(obj, T_DATA);\
+  if ( ! ((type **) DATA_PTR(obj)))\
+  {\
+    rb_raise(eError, "Missing %s*", #type);\
+  }\
+  else\
+  {\
+    var = *((type **) DATA_PTR(obj));\
+    if ( ! var)\
+    {\
+      rb_raise(eError, "Invalid %s* target", #type);\
+    }\
+  }\
+} while (0)
+
 // API Hierarchy
 static VALUE mHallon;
 
@@ -26,20 +42,6 @@ static sp_error callback_error = SP_ERROR_OK;
 /**
  * Helper methods
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-// retrieves the session associated with an object
-static sp_session *get_session(VALUE self)
-{
-  sp_session **psession;
-  Data_Get_Struct(self, sp_session*, psession);
-  
-  if (*psession == NULL)
-  {
-    rb_raise(eError, "session missing!");
-  }
-  
-  return *psession;
-}
 
 // convert ruby type to string
 static const char *rb2str(VALUE type)
@@ -150,7 +152,8 @@ static VALUE ciSession_alloc(VALUE self)
  */
 static VALUE cSession_login(VALUE self, VALUE username, VALUE password)
 {
-  sp_session *session = get_session(self);
+  sp_session *session;
+  Data_Get_Ptr(self, sp_session, session);
   
   if (sp_session_connectionstate(session) == SP_CONNECTION_STATE_LOGGED_IN)
   {
@@ -189,7 +192,8 @@ static VALUE cSession_login(VALUE self, VALUE username, VALUE password)
  */
 static VALUE cSession_logout(VALUE self)
 {
-  sp_session *session = get_session(self);
+  sp_session *session;
+  Data_Get_Ptr(self, sp_session, session);
   
   if (sp_session_connectionstate(session) != SP_CONNECTION_STATE_LOGGED_IN)
   {
@@ -222,7 +226,8 @@ static VALUE cSession_logout(VALUE self)
  */
 static VALUE cSession_process(VALUE self)
 {
-  sp_session *session = get_session(self);
+  sp_session *session;
+  Data_Get_Ptr(self, sp_session, session);
   int timeout = -1;
   sp_session_process_events(session, &timeout);
   return rb_float_new(timeout / 1000.0);
@@ -236,7 +241,8 @@ static VALUE cSession_process(VALUE self)
  */
 static VALUE cSession_logged_in(VALUE self)
 {
-  sp_session *session = get_session(self);
+  sp_session *session;
+  Data_Get_Ptr(self, sp_session, session);
   return sp_session_connectionstate(session) == SP_CONNECTION_STATE_LOGGED_IN ? Qtrue : Qfalse;
 }
 
