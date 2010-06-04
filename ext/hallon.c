@@ -33,6 +33,7 @@ static VALUE mHallon;
   static VALUE cSession;
   static VALUE cPlaylistContainer;
   static VALUE cPlaylist;
+  static VALUE cLink;
   
 // Lock variables to make spotify API synchronous
 static pthread_mutex_t session_mutex = PTHREAD_MUTEX_INITIALIZER;
@@ -370,6 +371,7 @@ static VALUE cPlaylistContainer_add(VALUE self, VALUE name)
   }
   
   // Create a new Hallon::Playlist instance
+  /* TODO: Clean up into a general function */
   VALUE obj = rb_funcall3(cPlaylist, rb_intern("new"), 0, NULL);
 
   sp_playlist **ptr;
@@ -421,6 +423,91 @@ static VALUE cPlaylist_name(VALUE self)
   return rb_str_new2(sp_playlist_name(playlist));
 }
 
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * End playlist methods
+ **/
+
+/**
+ * Frees memory for a Link.
+ */
+static VALUE ciLink_free(sp_link *link)
+{
+  sp_link_release(link);
+  xfree(link);
+}
+
+/**
+ * Allocates memory for a new Link.
+ */
+static VALUE ciLink_alloc(VALUE self)
+{
+  sp_link **plink;
+  return Data_Make_Struct(self, sp_link*, 0, ciLink_free, plink);
+}
+
+/**
+ * call-seq:
+ *   initialize(String)
+ * 
+ * Reads the Spotify URI as a link.
+ */
+static VALUE cLink_initialize(VALUE self, VALUE uri)
+{
+  Check_Type(uri, T_STRING);
+  
+  sp_link **plink;
+  Data_Get_Struct(self, sp_link*, plink);
+  *plink = sp_link_create_from_string(RSTRING_PTR(uri));
+  
+  if ( ! *plink)
+  {
+    rb_raise(rb_eArgError, "Spotify URI could not be parsed");
+  }
+}
+
+/**
+ * call-seq:
+ *   type -> Symbol
+ * 
+ * One of invalid, track, album, artist, search and playlist.
+ */
+static VALUE cLink_type(VALUE self)
+{
+  sp_link *link;
+  Data_Get_Ptr(self, sp_link, link);
+  
+  static const char *LINK_TYPES[] = {
+    "invalid", "track", "album", "artist", "search", "playlist"
+  };
+  
+  VALUE str = rb_str_new2(LINK_TYPES[sp_link_type(link)]);
+  
+  return rb_funcall3(str, rb_intern("to_sym"), 0, NULL);
+}
+
+/**
+ * call-seq:
+ *   to_str -> String (Spotify URI)
+ */
+static VALUE cLink_to_str(VALUE self)
+{
+  char spotify_uri[256];
+  sp_link *link;
+  Data_Get_Ptr(self, sp_link, link);
+  
+  if (0 > sp_link_as_string(link, spotify_uri, sizeof(spotify_uri)))
+  {
+    rb_raise(eError, "Failed to render Spotify URI from link");
+  }
+  
+  return rb_str_new2(spotify_uri);
+}
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * End link methods
+ **/
+
 void Init_hallon()
 {  
   mHallon = rb_define_module("Hallon");
@@ -451,4 +538,11 @@ void Init_hallon()
   cPlaylist = rb_define_class_under(mHallon, "Playlist", rb_cObject);
   rb_define_alloc_func(cPlaylist, ciPlaylist_alloc);
   rb_define_method(cPlaylist, "name", cPlaylist_name, 0);
+  
+  // Link class
+  cLink = rb_define_class_under(mHallon, "Link", rb_cObject);
+  rb_define_alloc_func(cLink, ciLink_alloc);
+  rb_define_method(cLink, "initialize", cLink_initialize, 1);
+  rb_define_method(cLink, "type", cLink_type, 0);
+  rb_define_method(cLink, "to_str", cLink_to_str, 0);
 }
