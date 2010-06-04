@@ -71,4 +71,18 @@ describe Hallon do
       @playlist.name.should == "rspec"
     end
   end
+  
+  describe Hallon::Link do
+    before :all do
+      @uri = "spotify:track:4yJmwG2C1SDgcBbV50xI91"
+    end
+    
+    it "should be able to parse URIs" do
+      Hallon::Link.new(@uri).type.should equal(:track)
+    end
+    
+    it "should be able to unparse URIs" do
+      Hallon::Link.new(@uri).to_str.should == @uri
+    end
+  end
 end
