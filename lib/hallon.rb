@@ -34,4 +34,8 @@ module Hallon
   # Information about a given playlist.
   class Playlist
   end
+  
+  # Links
+  class Link
+  end
 end
