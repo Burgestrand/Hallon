@@ -7,6 +7,11 @@
 #  include <spotify/api.h>
 #endif
 
+#define Data_Set_Ptr(obj, type, var) do {\
+  Check_Type(obj, T_DATA);\
+  *((type **) DATA_PTR(obj)) = var;\
+} while (0)
+
 #define Data_Get_Ptr(obj, type, var) do {\
   Check_Type(obj, T_DATA);\
   if ( ! ((type **) DATA_PTR(obj)))\
@@ -371,12 +376,8 @@ static VALUE cPlaylistContainer_add(VALUE self, VALUE name)
   }
   
   // Create a new Hallon::Playlist instance
-  /* TODO: Clean up into a general function */
   VALUE obj = rb_funcall3(cPlaylist, rb_intern("new"), 0, NULL);
-
-  sp_playlist **ptr;
-  Data_Get_Struct(obj, sp_playlist*, ptr);
-  *ptr = playlist;
+  Data_Set_Ptr(obj, sp_playlist, playlist);
   
   return obj;
 }
