@@ -256,9 +256,9 @@ static VALUE cSession_logged_in(VALUE self)
 
 /**
  * call-seq:
- *   playlists -> Hallon::PlaylistContainer
+ *   playlists -> PlaylistContainer
  * 
- * Returns the playlist container for the currently logged in user.
+ * Returns the PlaylistContainer for the currently logged in user.
  */
 static VALUE cSession_playlists(VALUE self)
 {
@@ -359,6 +359,8 @@ static VALUE cPlaylistContainer_length(VALUE self)
 /**
  * call-seq:
  *   add(String) -> Playlist
+ * 
+ * Create a new Playlist with the given name and put it into the container.
  */
 static VALUE cPlaylistContainer_add(VALUE self, VALUE name)
 {
@@ -398,7 +400,7 @@ static VALUE cPlaylistContainer_add(VALUE self, VALUE name)
  * call-seq:
  *   initialize(Session)
  * 
- * Creates a new PlaylistContainer.
+ * Creates a new PlaylistContainer for the given Session.
  */
 static VALUE cPlaylistContainer_initialize(VALUE self, VALUE osession)
 {
@@ -427,7 +429,7 @@ static VALUE ciPlaylist_alloc(VALUE self)
  * call-seq:
  *   name -> String
  * 
- * Return the playlists’ name.
+ * Name of the playlist.
  */
 static VALUE cPlaylist_name(VALUE self)
 {
@@ -439,6 +441,8 @@ static VALUE cPlaylist_name(VALUE self)
 /**
  * call-seq:
  *   length -> Fixnum
+ * 
+ * Number of tracks in the playlist.
  */
 static VALUE cPlaylist_length(VALUE self)
 {
@@ -493,7 +497,7 @@ static VALUE cLink_initialize(VALUE self, VALUE uri)
  * call-seq:
  *   type -> Symbol
  * 
- * One of invalid, track, album, artist, search and playlist.
+ * One of: invalid, track, album, artist, search and playlist.
  */
 static VALUE cLink_type(VALUE self)
 {

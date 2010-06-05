@@ -23,15 +23,17 @@ module Hallon
   
   # Contains the users playlists.
   class PlaylistContainer
+    # Alias for #length
     def size
       return length
     end
   end
   
-  # Information about a given playlist.
+  # Playlists are created from the PlaylistContainer.
   class Playlist
     private_class_method :new
     
+    # Alias for #length
     def size
       return length
     end
