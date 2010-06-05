@@ -87,6 +87,10 @@ describe Hallon::Playlist, " when first created" do
   it "should have a length of 0" do
     @playlist.length.should be 0
   end
+  
+  it "should be loaded" do
+    @playlist.loaded?.should equal(true)
+  end
 end
 
 describe Hallon::Link do

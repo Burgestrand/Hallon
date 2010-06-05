@@ -480,6 +480,19 @@ static VALUE cPlaylist_length(VALUE self)
   return INT2FIX(sp_playlist_num_tracks(playlist));
 }
 
+/**
+ * call-seq:
+ *   loaded? -> true or false
+ * 
+ * Returns true if the playlist is loaded.
+ */
+static VALUE cPlaylist_loaded(VALUE self)
+{
+  sp_playlist *playlist;
+  Data_Get_Ptr(self, sp_playlist, playlist);
+  return sp_playlist_is_loaded(playlist) ? Qtrue : Qfalse;
+}
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * End playlist methods
  **/
@@ -600,6 +613,7 @@ void Init_hallon()
   rb_define_alloc_func(cPlaylist, ciPlaylist_alloc);
   rb_define_method(cPlaylist, "name", cPlaylist_name, 0);
   rb_define_method(cPlaylist, "length", cPlaylist_length, 0);
+  rb_define_method(cPlaylist, "loaded?", cPlaylist_loaded, 0);
   
   // Link class
   cLink = rb_define_class_under(mHallon, "Link", rb_cObject);
