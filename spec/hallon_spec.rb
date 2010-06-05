@@ -75,7 +75,7 @@ describe Hallon::PlaylistContainer do
   end
   
   it "should be an enumerable collection" do
-    @container.select { |a| a.name == "rspec" }.should_not == []
+    @container.detect { |a| a.name == "rspec" }.should_not equal(nil)
   end
 end
 
