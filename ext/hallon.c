@@ -442,10 +442,10 @@ static VALUE cPlaylist_length(VALUE self)
 /**
  * Frees memory for a Link.
  */
-static VALUE ciLink_free(sp_link *link)
+static VALUE ciLink_free(sp_link **plink)
 {
-  sp_link_release(link);
-  xfree(link);
+  sp_link_release(*plink);
+  xfree(plink);
 }
 
 /**
