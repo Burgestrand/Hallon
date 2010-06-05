@@ -37,5 +37,8 @@ module Hallon
   
   # Links
   class Link
+    def ==(other)
+      to_str == other.to_str
+    end
   end
 end

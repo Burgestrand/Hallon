@@ -84,5 +84,11 @@ describe Hallon do
     it "should be able to unparse URIs" do
       Hallon::Link.new(@uri).to_str.should == @uri
     end
+    
+    it "should be comparable with other URIs" do
+      @link = Hallon::Link.new(@uri)
+      @uri.should == @link
+      @link.should == Hallon::Link.new(@uri)
+    end
   end
 end
