@@ -37,6 +37,9 @@ module Hallon
   
   # Information about a given playlist.
   class Playlist
+    def size
+      return length
+    end
   end
   
   # Links
