@@ -362,8 +362,20 @@ static VALUE cPlaylistContainer_length(VALUE self)
  */
 static VALUE cPlaylistContainer_add(VALUE self, VALUE name)
 {
+  VALUE regx = rb_str_new2("[^ ]");
+  
   // Validate playlist name
   Check_Type(name, T_STRING);
+  
+  // Validate name length
+  if (FIX2INT(rb_funcall3(name, rb_intern("length"), 0, NULL)) > 255)
+  {
+    rb_raise(rb_eArgError, "Playlist name length must be less than 256 characters");
+  }
+  else if ( ! RTEST(rb_funcall3(name, rb_intern("match"), 1, &regx)))
+  {
+    rb_raise(rb_eArgError, "Playlist name must have at least one non-space character");
+  }
   
   // Add playlist to container
   sp_playlistcontainer *container;
