@@ -80,6 +80,10 @@ describe Hallon::Playlist, " when first created" do
     @playlist = Hallon::Session.instance.playlists.add "omgwtfbbq"
   end
   
+  it "should not respond to #new" do
+    lambda { Hallon::Playlist.new }.should raise_error
+  end
+  
   it "has a length of 0" do
     @playlist.length.should be 0
   end

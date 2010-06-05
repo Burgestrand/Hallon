@@ -388,7 +388,7 @@ static VALUE cPlaylistContainer_add(VALUE self, VALUE name)
   }
   
   // Create a new Hallon::Playlist instance
-  VALUE obj = rb_funcall3(cPlaylist, rb_intern("new"), 0, NULL);
+  VALUE obj = rb_funcall2(cPlaylist, rb_intern("new"), 0, NULL);
   Data_Set_Ptr(obj, sp_playlist, playlist);
   
   return obj;

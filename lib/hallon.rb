@@ -30,6 +30,8 @@ module Hallon
   
   # Information about a given playlist.
   class Playlist
+    private_class_method :new
+    
     def size
       return length
     end
