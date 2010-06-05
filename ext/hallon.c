@@ -424,6 +424,17 @@ static VALUE cPlaylist_name(VALUE self)
   return rb_str_new2(sp_playlist_name(playlist));
 }
 
+/**
+ * call-seq:
+ *   length -> Fixnum
+ */
+static VALUE cPlaylist_length(VALUE self)
+{
+  sp_playlist *playlist;
+  Data_Get_Ptr(self, sp_playlist, playlist);
+  return INT2FIX(sp_playlist_num_tracks(playlist));
+}
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * End playlist methods
  **/
@@ -504,7 +515,6 @@ static VALUE cLink_to_str(VALUE self)
   return rb_str_new2(spotify_uri);
 }
 
-
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * End link methods
  **/
@@ -539,6 +549,7 @@ void Init_hallon()
   cPlaylist = rb_define_class_under(mHallon, "Playlist", rb_cObject);
   rb_define_alloc_func(cPlaylist, ciPlaylist_alloc);
   rb_define_method(cPlaylist, "name", cPlaylist_name, 0);
+  rb_define_method(cPlaylist, "length", cPlaylist_length, 0);
   
   // Link class
   cLink = rb_define_class_under(mHallon, "Link", rb_cObject);
