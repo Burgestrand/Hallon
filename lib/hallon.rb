@@ -12,7 +12,7 @@ module Hallon
   class Session
     include Singleton # Spotify APIv4
     
-    # Singleton accessor to #initialize
+    # Acessor for ::new
     def self.instance(*args)
       if @__instance__ and args.length > 0
         raise ArgumentError, "session has already been initialized"
