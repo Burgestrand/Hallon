@@ -461,7 +461,7 @@ static VALUE ciLink_alloc(VALUE self)
  * call-seq:
  *   initialize(String)
  * 
- * Reads the Spotify URI as a link.
+ * Parses a Spotify URI into a Link. Throws an ArgumentError if unparseable.
  */
 static VALUE cLink_initialize(VALUE self, VALUE uri)
 {
@@ -499,7 +499,9 @@ static VALUE cLink_type(VALUE self)
 
 /**
  * call-seq:
- *   to_str -> String (Spotify URI)
+ *   to_str -> String
+ * 
+ * Returns the Link as a Spotify URI.
  */
 static VALUE cLink_to_str(VALUE self)
 {
@@ -519,6 +521,9 @@ static VALUE cLink_to_str(VALUE self)
  * End link methods
  **/
 
+/**
+ * 
+ */
 void Init_hallon()
 {  
   mHallon = rb_define_module("Hallon");
