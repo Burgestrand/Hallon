@@ -44,7 +44,7 @@ end
 
 desc "Generates rdoc documentation in doc/"
 task :doc do
-  system("rdoc --charset=utf-8 --show-hash --force-update --exclude='Rakefile|Makefile|settings'")
+  system("rdoc --charset=utf-8 --show-hash --force-update --exclude='Rakefile|Makefile|settings|spec'")
 end
 
 task :default => :test
