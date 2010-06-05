@@ -24,6 +24,8 @@ module Hallon
   
   # Contains the users playlists.
   class PlaylistContainer
+    include Enumerable
+    
     # Alias for #length
     def size
       return length

@@ -418,6 +418,36 @@ static VALUE cPlaylistContainer_add(VALUE self, VALUE name)
 
 /**
  * call-seq:
+ *   each({ |playlist| block }) -> array
+ * 
+ * Calls “block” once for each Playlist, passing that Playlist as parameter.
+ */
+static VALUE cPlaylistContainer_each(VALUE self)
+{
+  // Make sure we’ve been given a block
+  rb_block_given_p();
+  
+  sp_playlist *playlist;
+  sp_playlistcontainer *container;
+  Data_Get_Ptr(self, sp_playlistcontainer, container);
+  int i = 0, n = sp_playlistcontainer_num_playlists(container);
+  VALUE accumulator = rb_ary_new2(n);
+  VALUE yielder = Qnil;
+  
+  // Iterate!
+  for (i = 0; i < n; ++i)
+  {
+    playlist = sp_playlistcontainer_playlist(container, i);
+    yielder = rb_funcall2(cPlaylist, rb_intern("new"), 0, NULL);
+    Data_Set_Ptr(yielder, sp_playlist, playlist);
+    rb_ary_push(accumulator, rb_yield(yielder));
+  }
+  
+  return accumulator;
+}
+
+/**
+ * call-seq:
  *   initialize(Session)
  * 
  * Creates a new PlaylistContainer for the given Session.
@@ -607,6 +637,7 @@ void Init_hallon()
   rb_define_method(cPlaylistContainer, "initialize", cPlaylistContainer_initialize, 1);
   rb_define_method(cPlaylistContainer, "length", cPlaylistContainer_length, 0);
   rb_define_method(cPlaylistContainer, "add", cPlaylistContainer_add, 1);
+  rb_define_method(cPlaylistContainer, "each", cPlaylistContainer_each, 0);
   
   // Playlist class
   cPlaylist = rb_define_class_under(mHallon, "Playlist", rb_cObject);

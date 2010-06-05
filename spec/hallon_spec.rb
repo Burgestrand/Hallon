@@ -73,6 +73,10 @@ describe Hallon::PlaylistContainer do
     @container.length.should equal(length + 1)
     playlist.name.should == "rspec"
   end
+  
+  it "should be an enumerable collection" do
+    @container.select { |a| a.name == "rspec" }.should_not == []
+  end
 end
 
 describe Hallon::Playlist, " when first created" do
