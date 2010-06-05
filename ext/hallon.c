@@ -489,7 +489,7 @@ static VALUE cPlaylist_length(VALUE self)
  */
 static VALUE ciLink_free(sp_link **plink)
 {
-  sp_link_release(*plink);
+  if (*plink) sp_link_release(*plink);
   xfree(plink);
 }
 
