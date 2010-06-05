@@ -95,6 +95,12 @@ describe Hallon::Playlist, " when first created" do
   it "should be loaded" do
     @playlist.loaded?.should equal(true)
   end
+  
+  it "should have a link" do
+    link = @playlist.link
+    link.to_str.should match "^spotify:(.*?):playlist:"
+    link.type.should equal(:playlist)
+  end
 end
 
 describe Hallon::Link do
