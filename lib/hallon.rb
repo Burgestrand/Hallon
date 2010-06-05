@@ -29,6 +29,10 @@ module Hallon
       raise ArgumentError, "playlist must have at least one non-space character" unless name.match "[^ ]"
       _add(name)
     end
+
+    def size
+      return length
+    end
   end
   
   # Information about a given playlist.
