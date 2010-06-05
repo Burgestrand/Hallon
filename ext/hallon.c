@@ -41,8 +41,8 @@ static VALUE mHallon;
   static VALUE cLink;
   
 // Lock variables to make spotify API synchronous
-static pthread_mutex_t session_mutex = PTHREAD_MUTEX_INITIALIZER;
-static pthread_cond_t session_cond   = PTHREAD_COND_INITIALIZER;
+static pthread_mutex_t hallon_mutex = PTHREAD_MUTEX_INITIALIZER;
+static pthread_cond_t hallon_cond   = PTHREAD_COND_INITIALIZER;
 
 // global error variable (used in spotify callbacks to signal state)
 static sp_error callback_error = SP_ERROR_OK;
@@ -86,10 +86,6 @@ static const char *rb2str(VALUE type)
  * End helper methods
  **/
 
-/**
- * Begin session callbacks
- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 // first time this callback is executed is *before* the sp_session_init 
 // function returns (and before the pointer is assigned)
 static void callback_notify(sp_session *session)
@@ -100,10 +96,10 @@ static void callback_notify(sp_session *session)
 
 static void callback_logged_in(sp_session *session, sp_error error)
 {
-  pthread_mutex_lock(&session_mutex);
+  pthread_mutex_lock(&hallon_mutex);
   callback_error = error;
-  pthread_cond_signal(&session_cond);
-  pthread_mutex_unlock(&session_mutex); //really?
+  pthread_cond_signal(&hallon_cond);
+  pthread_mutex_unlock(&hallon_mutex); //really?
 }
  
 static void callback_logged_out(sp_session *session)
@@ -114,9 +110,9 @@ static void callback_logged_out(sp_session *session)
    * manually, or if it is an error. If manually: release locks and signal,
    * if not we should raise an exception in the thread that is using this session.
    */
-  pthread_mutex_lock(&session_mutex);
-  pthread_cond_signal(&session_cond);
-  pthread_mutex_unlock(&session_mutex);
+  pthread_mutex_lock(&hallon_mutex);
+  pthread_cond_signal(&hallon_cond);
+  pthread_mutex_unlock(&hallon_mutex);
 }
 
 static void callback_metadata_updated(sp_session *session)
@@ -141,6 +137,30 @@ static void callback_connection_error(sp_session *session, sp_error error)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * End session callbacks
+ **/
+
+static void callback_playlist_added(sp_playlistcontainer *pc, sp_playlist *playlist, int pos, void *container)
+{
+  //fprintf(stderr, "playlist added");
+}
+
+static void callback_playlist_removed(sp_playlistcontainer *pc, sp_playlist *playlist, int pos, void *container)
+{
+  //fprintf(stderr, "playlist removed");
+}
+
+static void callback_playlist_moved(sp_playlistcontainer *pc, sp_playlist *playlist, int pos, int new_pos, void *container)
+{
+  //fprintf(stderr, "playlist moved");
+}
+
+static void callback_container_loaded(sp_playlistcontainer *pc, void *container)
+{
+  //fprintf(stderr, "container loaded");
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * End container callbacks
  **/
 
 /**
@@ -168,26 +188,26 @@ static VALUE cSession_login(VALUE self, VALUE username, VALUE password)
     rb_raise(eError, "already logged in");
   }
   
-  pthread_mutex_lock(&session_mutex);
+  pthread_mutex_lock(&hallon_mutex);
   sp_error error = sp_session_login(session, StringValuePtr(username), StringValuePtr(password));
   
   if (error != SP_ERROR_OK)
   {
-    pthread_mutex_unlock(&session_mutex);
+    pthread_mutex_unlock(&hallon_mutex);
     rb_raise(eError, "%s", sp_error_message(error));
   }
   
   // wait for login to finish
-  pthread_cond_wait(&session_cond, &session_mutex);
+  pthread_cond_wait(&hallon_cond, &hallon_mutex);
   
   // check callback error
   if (callback_error != SP_ERROR_OK)
   {
-    pthread_mutex_unlock(&session_mutex);
+    pthread_mutex_unlock(&hallon_mutex);
     rb_raise(eError, "%s", sp_error_message(error));
   }
   
-  pthread_mutex_unlock(&session_mutex); // unlock! really? is it locked?
+  pthread_mutex_unlock(&hallon_mutex); // unlock! really? is it locked?
   
   return self;
 }
@@ -208,18 +228,18 @@ static VALUE cSession_logout(VALUE self)
     rb_raise(eError, "tried to logout when not logged in");
   }
   
-  pthread_mutex_lock(&session_mutex);
+  pthread_mutex_lock(&hallon_mutex);
   sp_error error = sp_session_logout(session);
   
   if (error != SP_ERROR_OK)
   {
-    pthread_mutex_unlock(&session_mutex);
+    pthread_mutex_unlock(&hallon_mutex);
     rb_raise(eError, "%s", sp_error_message(error));
   }
   
   // wait until logged out
-  pthread_cond_wait(&session_cond, &session_mutex);
-  pthread_mutex_unlock(&session_mutex);
+  pthread_cond_wait(&hallon_cond, &hallon_mutex);
+  pthread_mutex_unlock(&hallon_mutex);
   
   return self;
 }
@@ -410,6 +430,15 @@ static VALUE cPlaylistContainer_initialize(VALUE self, VALUE osession)
   sp_playlistcontainer **pcontainer;
   Data_Get_Struct(self, sp_playlistcontainer*, pcontainer);
   *pcontainer = sp_session_playlistcontainer(session);
+  
+  sp_playlistcontainer_callbacks callbacks = {
+    .playlist_added = callback_playlist_added,
+    .playlist_removed = callback_playlist_removed,
+    .playlist_moved = callback_playlist_moved,
+    .container_loaded = callback_container_loaded,
+  };
+  
+  sp_playlistcontainer_add_callbacks(*pcontainer, &callbacks, &self);
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
