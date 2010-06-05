@@ -42,7 +42,6 @@ module Hallon
     end
   end
   
-  # Links
   class Link
     # Compares one Spotify URI with another — Link or String.
     def ==(other)
