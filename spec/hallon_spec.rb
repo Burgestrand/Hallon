@@ -56,13 +56,15 @@ describe Hallon::PlaylistContainer do
     @container = @session.playlists
   end
   
-  it "validates playlist name before creation" do
-    # Not only spaces
-    lambda { @container.add " " }.should raise_error(ArgumentError)
-    
+  it "validates playlist name length before creation" do
     # 0 < x < 256
     lambda { @container.add "" }.should raise_error(ArgumentError)
     lambda { @container.add("a" * 256) }.should raise_error(ArgumentError)
+  end
+  
+  it "validates playlist name contents before creation" do
+    # Not only spaces
+    lambda { @container.add " " }.should raise_error(ArgumentError)
   end
   
   it "can create new playlists" do
