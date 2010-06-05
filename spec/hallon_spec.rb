@@ -10,19 +10,19 @@ describe Hallon do
 end
 
 describe Hallon::Session, " before creation" do
-  it "is a singleton" do
+  it "should be a singleton" do
     Hallon::Session.should_not respond_to(:new)
   end
 
-  it "requires an application key" do
+  it "should require an application key" do
     lambda { Hallon::Session.instance }.should raise_error(ArgumentError)
   end
 
-  it "fails on an invalid application key" do
+  it "should fail on an invalid application key" do
     lambda { Hallon::Session.instance('invalid') }.should raise_error(Hallon::Error)
   end
   
-  it "works with a valid application key" do
+  it "should succeed with a valid application key" do
     lambda { Hallon::Session.instance APPKEY }.should_not raise_error
   end
 end
@@ -32,7 +32,7 @@ describe Hallon::Session, " once created" do
     @session = Hallon::Session.instance
   end
   
-  it "is not logged in" do
+  it "should not be logged in" do
     @session.logged_in?.should equal(false)
   end
   
@@ -56,13 +56,13 @@ describe Hallon::PlaylistContainer do
     @container = @session.playlists
   end
   
-  it "validates playlist name length before creation" do
+  it "should validate playlist name length before creation" do
     # 0 < x < 256
     lambda { @container.add "" }.should raise_error(ArgumentError)
     lambda { @container.add("a" * 256) }.should raise_error(ArgumentError)
   end
   
-  it "validates playlist name contents before creation" do
+  it "should validate playlist name contents before creation" do
     # Not only spaces
     lambda { @container.add " " }.should raise_error(ArgumentError)
   end
@@ -84,7 +84,7 @@ describe Hallon::Playlist, " when first created" do
     lambda { Hallon::Playlist.new }.should raise_error
   end
   
-  it "has a length of 0" do
+  it "should have a length of 0" do
     @playlist.length.should be 0
   end
 end
