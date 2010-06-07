@@ -14,19 +14,20 @@
 
 #define Data_Get_Ptr(obj, type, var) do {\
   Check_Type(obj, T_DATA);\
-  if ( ! ((type **) DATA_PTR(obj)))\
+  var = *((type **) DATA_PTR(obj));\
+  if ( ! var)\
   {\
-    rb_raise(eError, "Missing %s*", #type);\
-  }\
-  else\
-  {\
-    var = *((type **) DATA_PTR(obj));\
-    if ( ! var)\
-    {\
-      rb_raise(eError, "Invalid %s* target", #type);\
-    }\
+    rb_raise(eError, "Invalid %s* target", #type);\
   }\
 } while (0)
+
+// Statement Expressions: a gcc extension
+#define Data_Make_Obj(klass, type, ptr) ({\
+  VALUE _obj = rb_funcall3(klass, rb_intern("allocate"), 0, NULL);\
+  Data_Set_Ptr(_obj, type, ptr);\
+  rb_funcall2(_obj, rb_intern("initialize"), 0, NULL);\
+  _obj;\
+})
 
 // API Hierarchy
 static VALUE mHallon;
@@ -116,24 +117,16 @@ static void callback_logged_out(sp_session *session)
 }
 
 static void callback_metadata_updated(sp_session *session)
-{
-
-}
+{}
 
 static void callback_log(sp_session *session, const char *data)
-{
-
-}
+{}
 
 static void callback_message_to_user(sp_session *session, const char *message)
-{
-
-}
+{}
 
 static void callback_connection_error(sp_session *session, sp_error error)
-{
-
-}
+{}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * End session callbacks
@@ -145,22 +138,68 @@ static void callback_playlist_added(sp_playlistcontainer *pc, sp_playlist *playl
 }
 
 static void callback_playlist_removed(sp_playlistcontainer *pc, sp_playlist *playlist, int pos, void *container)
+{}
+
+static void callback_playlist_moved(sp_playlistcontainer *pc, sp_playlist *playlist, int pos, int new_pos, void *container)
+{}
+
+static void callback_container_loaded(sp_playlistcontainer *pc, void *container)
 {
   //fprintf(stderr, "playlist removed");
 }
 
-static void callback_playlist_moved(sp_playlistcontainer *pc, sp_playlist *playlist, int pos, int new_pos, void *container)
+static sp_playlistcontainer_callbacks g_playlistcontainer_callbacks = {
+  .playlist_added = callback_playlist_added,
+  .playlist_removed = callback_playlist_removed,
+  .playlist_moved = callback_playlist_moved,
+  .container_loaded = callback_container_loaded,
+};
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * End container callbacks
+ **/
+
+static void callback_tracks_added(sp_playlist *pl, sp_track *const *tracks, int num_tracks, int position, void *userdata)
+{}
+
+static void callback_tracks_removed(sp_playlist *pl, const int *tracks, int num_tracks, void *userdata)
+{}
+
+static void callback_tracks_moved(sp_playlist *pl, const int *tracks, int num_tracks, int new_position, void *userdata)
+{}
+
+static void callback_playlist_renamed(sp_playlist *pl, void *userdata)
+{}
+
+static void callback_playlist_state_changed(sp_playlist *pl, void *userdata)
 {
-  //fprintf(stderr, "playlist moved");
+  VALUE playlist = (VALUE) userdata;
+  //fprintf(stderr, "\nplaylist state change");
 }
 
-static void callback_container_loaded(sp_playlistcontainer *pc, void *container)
+static void callback_playlist_update_in_progress(sp_playlist *pl, bool done, void *userdata)
 {
   //fprintf(stderr, "container loaded");
 }
 
+// Called by Spotify when any of the tracks in the playlist have new metadata
+static void callback_playlist_metadata_updated(sp_playlist *pl, void *userdata)
+{
+  //fprintf(stderr, "\nplaylist metadata updated");
+}
+
+static sp_playlist_callbacks g_playlist_callbacks = {
+  .tracks_added = callback_tracks_added,
+  .tracks_removed = callback_tracks_removed,
+  .tracks_moved = callback_tracks_moved,
+  .playlist_renamed = callback_playlist_renamed,
+  .playlist_state_changed = callback_playlist_state_changed,
+  .playlist_update_in_progress = callback_playlist_update_in_progress,
+  .playlist_metadata_updated = callback_playlist_metadata_updated
+};
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- * End container callbacks
+ * End playlist callbacks
  **/
 
 /**
@@ -409,11 +448,7 @@ static VALUE cPlaylistContainer_add(VALUE self, VALUE name)
     rb_raise(eError, "Playlist creation failed");
   }
   
-  // Create a new Hallon::Playlist instance
-  VALUE obj = rb_funcall2(cPlaylist, rb_intern("new"), 0, NULL);
-  Data_Set_Ptr(obj, sp_playlist, playlist);
-  
-  return obj;
+  return Data_Make_Obj(cPlaylist, sp_playlist, playlist);
 }
 
 /**
@@ -432,15 +467,14 @@ static VALUE cPlaylistContainer_each(VALUE self)
   Data_Get_Ptr(self, sp_playlistcontainer, container);
   int i = 0, n = sp_playlistcontainer_num_playlists(container);
   VALUE accumulator = rb_ary_new2(n);
-  VALUE yielder = Qnil;
+  VALUE obj = Qnil;
   
   // Iterate!
   for (i = 0; i < n; ++i)
   {
     playlist = sp_playlistcontainer_playlist(container, i);
-    yielder = rb_funcall2(cPlaylist, rb_intern("new"), 0, NULL);
-    Data_Set_Ptr(yielder, sp_playlist, playlist);
-    rb_ary_push(accumulator, rb_yield(yielder));
+    obj = Data_Make_Obj(cPlaylist, sp_playlist, playlist);
+    rb_ary_push(accumulator, rb_yield(obj));
   }
   
   return accumulator;
@@ -461,14 +495,7 @@ static VALUE cPlaylistContainer_initialize(VALUE self, VALUE osession)
   Data_Get_Struct(self, sp_playlistcontainer*, pcontainer);
   *pcontainer = sp_session_playlistcontainer(session);
   
-  sp_playlistcontainer_callbacks callbacks = {
-    .playlist_added = callback_playlist_added,
-    .playlist_removed = callback_playlist_removed,
-    .playlist_moved = callback_playlist_moved,
-    .container_loaded = callback_container_loaded,
-  };
-  
-  sp_playlistcontainer_add_callbacks(*pcontainer, &callbacks, &self);
+  sp_playlistcontainer_add_callbacks(*pcontainer, &g_playlistcontainer_callbacks, &self);
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -476,12 +503,31 @@ static VALUE cPlaylistContainer_initialize(VALUE self, VALUE osession)
  **/
 
 /**
+ * Frees memory for an allocated playlist.
+ */
+static VALUE ciPlaylist_free(sp_playlist **playlist)
+{
+  // sp_playlist_remove_callbacks
+  xfree(playlist);
+}
+
+/**
  * Allocates memory for a new playlist.
  */
 static VALUE ciPlaylist_alloc(VALUE self)
 {
   sp_playlist **playlist;
-  return Data_Make_Struct(self, sp_playlist*, 0, -1, playlist);
+  return Data_Make_Struct(self, sp_playlist*, 0, ciPlaylist_free, playlist);
+}
+
+/**
+ * :nodoc:
+ */
+static VALUE cPlaylist_initialize(VALUE self)
+{
+  sp_playlist *playlist;
+  Data_Get_Ptr(self, sp_playlist, playlist);
+  sp_playlist_add_callbacks(playlist, &g_playlist_callbacks, (void *)self);
 }
 
 /**
@@ -660,6 +706,7 @@ void Init_hallon()
   // Playlist class
   cPlaylist = rb_define_class_under(mHallon, "Playlist", rb_cObject);
   rb_define_alloc_func(cPlaylist, ciPlaylist_alloc);
+  rb_define_method(cPlaylist, "initialize", cPlaylist_initialize, 0);
   rb_define_method(cPlaylist, "name", cPlaylist_name, 0);
   rb_define_method(cPlaylist, "length", cPlaylist_length, 0);
   rb_define_method(cPlaylist, "loaded?", cPlaylist_loaded, 0);
