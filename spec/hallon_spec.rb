@@ -101,6 +101,12 @@ describe Hallon::Playlist, " when first created" do
     link.to_str.should match "^spotify:(.*?):playlist:"
     link.type.should equal(:playlist)
   end
+  
+  it "can set collaboration flag" do
+    @playlist.collaborative?.should equal(false)
+    @playlist.collaborative = true
+    @playlist.collaborative?.should equal(true)
+  end
 end
 
 describe Hallon::Link do

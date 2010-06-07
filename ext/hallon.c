@@ -134,7 +134,7 @@ static void callback_connection_error(sp_session *session, sp_error error)
 
 static void callback_playlist_added(sp_playlistcontainer *pc, sp_playlist *playlist, int pos, void *container)
 {
-  //fprintf(stderr, "playlist added");
+  fprintf(stderr, "\ncontainer (playlist added)");
 }
 
 static void callback_playlist_removed(sp_playlistcontainer *pc, sp_playlist *playlist, int pos, void *container)
@@ -145,7 +145,7 @@ static void callback_playlist_moved(sp_playlistcontainer *pc, sp_playlist *playl
 
 static void callback_container_loaded(sp_playlistcontainer *pc, void *container)
 {
-  //fprintf(stderr, "playlist removed");
+  fprintf(stderr, "\ncontainer loaded");
 }
 
 static sp_playlistcontainer_callbacks g_playlistcontainer_callbacks = {
@@ -174,18 +174,18 @@ static void callback_playlist_renamed(sp_playlist *pl, void *userdata)
 static void callback_playlist_state_changed(sp_playlist *pl, void *userdata)
 {
   VALUE playlist = (VALUE) userdata;
-  //fprintf(stderr, "\nplaylist state change");
+  fprintf(stderr, "\nplaylist state change");
 }
 
 static void callback_playlist_update_in_progress(sp_playlist *pl, bool done, void *userdata)
 {
-  //fprintf(stderr, "container loaded");
+  fprintf(stderr, "\nplaylist update (done: %d)", (int) done);
 }
 
 // Called by Spotify when any of the tracks in the playlist have new metadata
 static void callback_playlist_metadata_updated(sp_playlist *pl, void *userdata)
 {
-  //fprintf(stderr, "\nplaylist metadata updated");
+  fprintf(stderr, "\nplaylist metadata updated");
 }
 
 static sp_playlist_callbacks g_playlist_callbacks = {
@@ -587,6 +587,48 @@ static VALUE cPlaylist_link(VALUE self)
   return linkobj;
 }
 
+/**
+ * call-seq:
+ *   fresh? -> true or false
+ * 
+ * False if the playlist has pending changes which have not yet been acknowledged by Spotify.
+ */
+static VALUE cPlaylist_pending(VALUE self)
+{
+  sp_playlist *playlist;
+  Data_Get_Ptr(self, sp_playlist, playlist);
+  return sp_playlist_has_pending_changes(playlist) ? Qtrue : Qfalse;
+}
+
+/**
+ * call-seq:
+ *   collaborative? -> true or false
+ * 
+ * True if the playlist is collaborative.
+ */
+static VALUE cPlaylist_collaborative(VALUE self)
+{
+  sp_playlist *playlist;
+  Data_Get_Ptr(self, sp_playlist, playlist);
+  return sp_playlist_is_collaborative(playlist) ? Qtrue : Qfalse;
+}
+
+/**
+ * call-seq:
+ *   collaborative = true or false
+ * 
+ * Set collaborative flag for playlist.
+ */
+static VALUE cPlaylist_set_collaborative(VALUE self, VALUE new)
+{
+  bool collaborative = ! (new == Qnil || new == Qfalse);
+  sp_playlist *playlist;
+  Data_Get_Ptr(self, sp_playlist, playlist);
+  sp_playlist_set_collaborative(playlist, collaborative);
+  return collaborative ? Qtrue : Qfalse;
+}
+
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * End playlist methods
  **/
@@ -711,6 +753,9 @@ void Init_hallon()
   rb_define_method(cPlaylist, "length", cPlaylist_length, 0);
   rb_define_method(cPlaylist, "loaded?", cPlaylist_loaded, 0);
   rb_define_method(cPlaylist, "link", cPlaylist_link, 0);
+  rb_define_method(cPlaylist, "pending?", cPlaylist_pending, 0);
+  rb_define_method(cPlaylist, "collaborative?", cPlaylist_collaborative, 0);
+  rb_define_method(cPlaylist, "collaborative=", cPlaylist_set_collaborative, 1);
   
   // Link class
   cLink = rb_define_class_under(mHallon, "Link", rb_cObject);
