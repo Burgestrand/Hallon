@@ -52,6 +52,8 @@ Hallon is licensed under the [GNU AGPL](http://www.gnu.org/licenses/agpl-3.0.htm
     # logout
     session.logout
 
-## Notes for the future
+## Notes of interest
+- Playlists take some time to be acknowledged by the server (up to a minute), but they can still be operated on. The real issue is that we don’t want to let the application close until the playlist has been fully been synched.
+  Further discussion in the Spotify IRC shows that logging out before the application is allowed to exit remedies this issue. Now, what to do about disconnects?
 - I would like to split hallon.c into several files, to make it more manageable. Problem right now is that the library is quite tightly coupled.
 - You’ve had some issues with the Spotify callback functions, as they are executed in another thread than the current one and are only passed the pointer to the `sp_session`. Your attempt to put the `sp_session` and `Session` object in a linked list and then use lookups to notify the actual object have some very unexpected behavior and thread inconsistencies. It works, but badly. Do not try it again! D:
