@@ -39,6 +39,7 @@ static VALUE mHallon;
   static VALUE cSession;
   static VALUE cPlaylistContainer;
   static VALUE cPlaylist;
+  static VALUE cTrack;
   static VALUE cLink;
   
 // Lock variables to make spotify API synchronous
@@ -134,7 +135,7 @@ static void callback_connection_error(sp_session *session, sp_error error)
 
 static void callback_playlist_added(sp_playlistcontainer *pc, sp_playlist *playlist, int pos, void *container)
 {
-  fprintf(stderr, "\ncontainer (playlist added)");
+  //fprintf(stderr, "\ncontainer (playlist added)");
 }
 
 static void callback_playlist_removed(sp_playlistcontainer *pc, sp_playlist *playlist, int pos, void *container)
@@ -145,7 +146,7 @@ static void callback_playlist_moved(sp_playlistcontainer *pc, sp_playlist *playl
 
 static void callback_container_loaded(sp_playlistcontainer *pc, void *container)
 {
-  fprintf(stderr, "\ncontainer loaded");
+  //fprintf(stderr, "\ncontainer loaded");
 }
 
 static sp_playlistcontainer_callbacks g_playlistcontainer_callbacks = {
@@ -174,18 +175,18 @@ static void callback_playlist_renamed(sp_playlist *pl, void *userdata)
 static void callback_playlist_state_changed(sp_playlist *pl, void *userdata)
 {
   VALUE playlist = (VALUE) userdata;
-  fprintf(stderr, "\nplaylist state change");
+  //fprintf(stderr, "\nplaylist state change");
 }
 
 static void callback_playlist_update_in_progress(sp_playlist *pl, bool done, void *userdata)
 {
-  fprintf(stderr, "\nplaylist update (done: %d)", (int) done);
+  //fprintf(stderr, "\nplaylist update (done: %d)", (int) done);
 }
 
 // Called by Spotify when any of the tracks in the playlist have new metadata
 static void callback_playlist_metadata_updated(sp_playlist *pl, void *userdata)
 {
-  fprintf(stderr, "\nplaylist metadata updated");
+  //fprintf(stderr, "\nplaylist metadata updated");
 }
 
 static sp_playlist_callbacks g_playlist_callbacks = {
@@ -739,8 +740,67 @@ static VALUE cLink_to_str(VALUE self)
   return rb_str_new2(spotify_uri);
 }
 
+/**
+ * call-seq:
+ *   to_obj -> Track|Album|Artist|Search|Playlist
+ * 
+ * Return an object representing the link.
+ */
+static VALUE cLink_to_obj(VALUE self)
+{
+  sp_link *link;
+  Data_Get_Ptr(self, sp_link, link);
+  sp_linktype type = sp_link_type(link);
+  
+  if (type == SP_LINKTYPE_TRACK)
+  {
+    sp_track *track = sp_link_as_track(link);
+    return Data_Make_Obj(cTrack, sp_track, track);
+  }
+  else
+  {
+    VALUE type = rb_funcall3(self, rb_intern("type"), 0, NULL);
+    rb_raise(eError, "Cannot convert Link of type “%s” to object", RSTRING_PTR(type));
+  }
+}
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * End link methods
+ **/
+
+/**
+ * Frees memory for a Track.
+ */
+static VALUE ciTrack_free(sp_track **ptrack)
+{
+  sp_track_release(*ptrack);
+  xfree(ptrack);
+}
+
+/**
+ * Allocates memory for a new Track.
+ */
+static VALUE ciTrack_alloc(VALUE self)
+{
+  sp_track **ptrack;
+  return Data_Make_Struct(self, sp_track*, 0, ciTrack_free, ptrack);
+}
+
+/**
+ * call-seq:
+ *   initialize
+ * 
+ * :nodoc:
+ */
+static VALUE cTrack_initialize(VALUE self)
+{
+  sp_track *track;
+  Data_Get_Ptr(self, sp_track, track);
+  sp_track_add_ref(track);
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * End track methods
  **/
 
 /**
@@ -792,4 +852,10 @@ void Init_hallon()
   rb_define_method(cLink, "initialize", cLink_initialize, 1);
   rb_define_method(cLink, "type", cLink_type, 0);
   rb_define_method(cLink, "to_str", cLink_to_str, 0);
+  rb_define_method(cLink, "to_obj", cLink_to_obj, 0);
+  
+  // Track class
+  cTrack = rb_define_class_under(mHallon, "Track", rb_cObject);
+  rb_define_alloc_func(cTrack, ciTrack_alloc);
+  rb_define_method(cTrack, "initialize", cTrack_initialize, 0);
 }

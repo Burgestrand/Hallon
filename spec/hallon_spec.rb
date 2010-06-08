@@ -3,6 +3,10 @@ require File.expand_path('../config', __FILE__)
 
 Dir.chdir(File.dirname(__FILE__))
 
+# Globals
+TRACK_URI = "spotify:track:4yJmwG2C1SDgcBbV50xI91"
+PLAYLIST  = "rspec-" + Time.now.gmtime.strftime("%Y-%m-%d %H:%M:%S.#{Time.now.gmtime.usec}")
+
 describe Hallon do
   it "has an up-to-date spotify library" do
     Hallon::API_VERSION.should == 4
@@ -54,7 +58,6 @@ describe Hallon::PlaylistContainer do
     @session = Hallon::Session.instance.login(USERNAME, PASSWORD)
     @session.logged_in?.should equal(true)
     @container = @session.playlists
-    @name = "rspec-" + Time.now.gmtime.strftime("%Y-%m-%d %H:%M:%S")
   end
   
   after :all do
@@ -74,13 +77,13 @@ describe Hallon::PlaylistContainer do
   
   it "can create new playlists" do
     length = @container.length
-    playlist = @container.add @name
+    playlist = @container.add PLAYLIST
     @container.length.should equal(length + 1)
-    playlist.name.should == @name
+    playlist.name.should == PLAYLIST
   end
   
   it "should be an enumerable collection" do
-    @container.detect { |a| a.name == @name }.should_not equal(nil)
+    @container.detect { |a| a.name == PLAYLIST }.should_not equal(nil)
   end
 end
 
@@ -88,7 +91,7 @@ describe Hallon::Playlist, " when first created" do
   before :all do
     @session = Hallon::Session.instance.login(USERNAME, PASSWORD)
     @session.logged_in?.should equal(true)
-    @playlist = @session.playlists.add("rspec-" + Time.now.gmtime.strftime("%Y-%m-%d %H:%M:%S"))
+    @playlist = @session.playlists.detect { |a| a.name == PLAYLIST }
   end
   
   after :all do
@@ -121,21 +124,27 @@ describe Hallon::Playlist, " when first created" do
 end
 
 describe Hallon::Link do
-  before :all do
-    @uri = "spotify:track:4yJmwG2C1SDgcBbV50xI91"
-  end
-  
   it "can parse Spotify URIs" do
-    Hallon::Link.new(@uri).type.should equal(:track)
+    Hallon::Link.new(TRACK_URI).type.should equal(:track)
   end
   
   it "can render into Spotify URIs" do
-    Hallon::Link.new(@uri).to_str.should == @uri
+    Hallon::Link.new(TRACK_URI).to_str.should == TRACK_URI
   end
   
   it "can be compared with other Spotify URIs" do
-    @link = Hallon::Link.new(@uri)
-    @uri.should == @link
-    @link.should == Hallon::Link.new(@uri)
+    @link = Hallon::Link.new(TRACK_URI)
+    TRACK_URI.should == @link
+    @link.should == Hallon::Link.new(TRACK_URI)
+  end
+end
+
+describe Hallon::Track do
+  before :all do
+    @track = Hallon::Link.new(TRACK_URI).to_obj
+  end
+  
+  it "can be spawned from a link" do
+    @track.class.should equal Hallon::Track
   end
 end
