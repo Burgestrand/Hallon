@@ -658,6 +658,44 @@ static VALUE cPlaylist_clear(VALUE self)
   return self;
 }
 
+/**
+ * call-seq:
+ *   push(Track) -> Playlist
+ * 
+ * Append the track to the end of the playlist.
+ */
+static VALUE cPlaylist_push(VALUE self, VALUE track)
+{
+  // Check argument
+  VALUE pred = rb_funcall3(track, rb_intern("is_a?"), 1, &cTrack);
+  
+  if (pred != Qtrue)
+  {
+    rb_raise(eError, "You can only add tracks to a playlist");
+  }
+  
+  // Retrieve session, this is an ugly hack
+  VALUE session = rb_funcall3(cSession, rb_intern("instance"), 0, NULL);
+  sp_session *psession;
+  Data_Get_Ptr(session, sp_session, psession);
+  
+  // Retrieve playlist
+  sp_playlist *playlist;
+  Data_Get_Ptr(self, sp_playlist, playlist);
+  
+  // Retrieve track
+  sp_track *ptrack;
+  Data_Get_Ptr(track, sp_track, ptrack);
+  
+  // Build array
+  sp_track **ptracks = &ptrack;
+  
+  // .... and add! :D!
+  sp_playlist_add_tracks(playlist, (const sp_track**) ptracks, 1, sp_playlist_num_tracks(playlist), psession);
+  
+  return self;
+}
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * End playlist methods
  **/
@@ -858,6 +896,7 @@ void Init_hallon()
   rb_define_method(cPlaylist, "collaborative?", cPlaylist_collaborative, 0);
   rb_define_method(cPlaylist, "collaborative=", cPlaylist_set_collaborative, 1);
   rb_define_method(cPlaylist, "clear!", cPlaylist_clear, 0);
+  rb_define_method(cPlaylist, "push", cPlaylist_push, 1);
   
   // Link class
   cLink = rb_define_class_under(mHallon, "Link", rb_cObject);

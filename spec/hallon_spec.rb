@@ -121,6 +121,12 @@ describe Hallon::Playlist, " when first created" do
     @playlist.collaborative = true
     @playlist.collaborative?.should equal(true)
   end
+  
+  it "can add new tracks" do
+    length = @playlist.length
+    @playlist.push Hallon::Link.new(TRACK_URI).to_obj
+    @playlist.length.should equal(length + 1)
+  end
 end
 
 describe Hallon::Link do
