@@ -147,4 +147,8 @@ describe Hallon::Track do
   it "can be spawned from a link" do
     @track.class.should equal Hallon::Track
   end
+  
+  it "should have a name" do
+    @track.name.should == "The Boys Are Back In Town"
+  end
 end

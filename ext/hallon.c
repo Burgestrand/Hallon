@@ -799,6 +799,19 @@ static VALUE cTrack_initialize(VALUE self)
   sp_track_add_ref(track);
 }
 
+/**
+ * call-seq:
+ *   name -> String
+ * 
+ * Name of the Track.
+ */
+static VALUE cTrack_name(VALUE self)
+{
+  sp_track *track;
+  Data_Get_Ptr(self, sp_track, track);
+  return rb_str_new2(sp_track_name(track));
+}
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * End track methods
  **/
@@ -858,4 +871,5 @@ void Init_hallon()
   cTrack = rb_define_class_under(mHallon, "Track", rb_cObject);
   rb_define_alloc_func(cTrack, ciTrack_alloc);
   rb_define_method(cTrack, "initialize", cTrack_initialize, 0);
+  rb_define_method(cTrack, "name", cTrack_name, 0);
 }
