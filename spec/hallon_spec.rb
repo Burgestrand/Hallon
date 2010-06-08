@@ -56,6 +56,10 @@ describe Hallon::PlaylistContainer do
     @container = @session.playlists
   end
   
+  after :all do
+    @session.logout
+  end
+  
   it "should validate playlist name length before creation" do
     # 0 < x < 256
     lambda { @container.add "" }.should raise_error(ArgumentError)
@@ -81,7 +85,13 @@ end
 
 describe Hallon::Playlist, " when first created" do
   before :all do
-    @playlist = Hallon::Session.instance.playlists.add "omgwtfbbq"
+    @session = Hallon::Session.instance.login(USERNAME, PASSWORD)
+    @session.logged_in?.should equal(true)
+    @playlist = @session.playlists.add "omgwtfbbq"
+  end
+  
+  after :all do
+    @session.logout
   end
   
   it "should not respond to #new" do
