@@ -48,6 +48,10 @@ Hallon is licensed under the [GNU AGPL](http://www.gnu.org/licenses/agpl-3.0.htm
     
     # add a new playlist to the container
     summer = playlists.add "Summer 2010"
+    
+    # Add awesome song by Thin Lizzy
+    track = Link.new("spotify:track:4yJmwG2C1SDgcBbV50xI91").to_obj
+    summer.push track
 
     # logout
     session.logout
