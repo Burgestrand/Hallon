@@ -49,6 +49,11 @@ module Hallon
   
   # Object for acting Spotify URIs.
   class Link
+    # Return the ID for this link
+    def id
+      return to_str.split(':').last
+    end
+    
     # Compares one Spotify URI with another — Link or String.
     def ==(other)
       return to_str == other.to_str

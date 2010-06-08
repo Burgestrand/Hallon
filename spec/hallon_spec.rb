@@ -143,6 +143,10 @@ describe Hallon::Link do
     TRACK_URI.should == @link
     @link.should == Hallon::Link.new(TRACK_URI)
   end
+  
+  it "should have the the same ID as the Spotify URL" do
+    Hallon::Link.new(TRACK_URI).id.should == '4yJmwG2C1SDgcBbV50xI91'
+  end
 end
 
 describe Hallon::Track do
