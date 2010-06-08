@@ -705,7 +705,7 @@ static VALUE cPlaylist_push(VALUE self, VALUE track)
  */
 static VALUE ciLink_free(sp_link **plink)
 {
-  if (*plink) sp_link_release(*plink);
+  sp_link_release(*plink);
   xfree(plink);
 }
 
