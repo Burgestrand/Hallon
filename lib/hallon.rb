@@ -36,6 +36,11 @@ module Hallon
   class Playlist
     private_class_method :new
     
+    # Alias for #push
+    def <<(track)
+      return push(track)
+    end
+    
     # Alias for #length
     def size
       return length
@@ -48,5 +53,10 @@ module Hallon
     def ==(other)
       return to_str == other.to_str
     end
+  end
+  
+  # A class for acting on Tracks. You create a Track by using Link#to_obj.
+  class Track
+    private_class_method :new
   end
 end

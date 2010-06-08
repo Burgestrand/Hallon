@@ -662,7 +662,7 @@ static VALUE cPlaylist_clear(VALUE self)
  * call-seq:
  *   push(Track) -> Playlist
  * 
- * Append the track to the end of the playlist.
+ * Append the Track to the end of the Playlist.
  */
 static VALUE cPlaylist_push(VALUE self, VALUE track)
 {
@@ -780,9 +780,9 @@ static VALUE cLink_to_str(VALUE self)
 
 /**
  * call-seq:
- *   to_obj -> Track|Album|Artist|Search|Playlist
+ *   to_obj -> Track, Album, Artist, Search or Playlist
  * 
- * Return an object representing the link.
+ * Return an object (Track, Album, Artist, Search, Playlist) representing the Link.
  */
 static VALUE cLink_to_obj(VALUE self)
 {
@@ -825,10 +825,7 @@ static VALUE ciTrack_alloc(VALUE self)
 }
 
 /**
- * call-seq:
- *   initialize
- * 
- * :nodoc:
+ * Initializes the track by adding a reference to the internal track pointer.
  */
 static VALUE cTrack_initialize(VALUE self)
 {
