@@ -39,7 +39,7 @@ I’ve never developed anything in C before, and I’ve been using Ruby for abou
 You can only keep one session with Spotify alive at a time in the same process, due to a limitation of `libspotify`.
 
 ### Hallon is licensed under GNU AGPL
-Hallon is licensed under the [GNU AGPL](http://www.gnu.org/licenses/agpl-3.0.html), which is a very viral license. In summary, anything that is using Hallon in any way must also be open sourced (and source must be available for its’ users) under the GNU AGPL. I might change the license to a less viral one in the future.
+Hallon is licensed under the [GNU AGPL](http://www.gnu.org/licenses/agpl-3.0.html), which is a very viral license. In summary, anything that is using Hallon in any way must also be open sourced (and source must be available for its’ users) under the GNU AGPL. I will most likely change the license to the X11 license or something similar in the future.
 
 ## Usage
 
