@@ -23,7 +23,11 @@ Installing `libspotify` means you need to put the binary library and the headers
 Copy the `libspotify.framework` folder to `/Library/Frameworks/libspotify.framework`, Hallon handles the rest. :)
 
 ## This is awesome! I want to help!
-Sweet! Just fork Hallon, write your features and make sure you write tests for everything you do. Once that’s done, just send a pull request.
+Sweet! You can do this in several ways!
+
+- You can give me money! I know, I know. Money is not sexy. However! Even such a small amount as $1 will most likely make me very happy (and sexy!), which increases the chances of me putting more hours on Hallon. There is a tiny we button up in the corner on this projects’ GitHub page which sends me money via paypal.
+- Write code! Just fork Hallon, write tests for everything you do (so I don’t break anything you did during my own development) and send a pull request.
+- Send me feedback! Really, I ❤ feedback! Suggestions on how to improve the API, tell me what is delicious about Hallon, tell me what is yucky about Hallon… anything! All feedback is useful in one way or another.
 
 ## What’s the catch?
 There are several!
@@ -56,7 +60,7 @@ Hallon is licensed under the [GNU AGPL](http://www.gnu.org/licenses/agpl-3.0.htm
     # logout
     session.logout
 
-## Notes of interest
+## Notes of interest for developers
 - Playlists take some time to be acknowledged by the server (up to a minute), but they can still be operated on. The real issue is that we don’t want to let the application close until the playlist has been fully been synched.
   Further discussion in the Spotify IRC shows that logging out before the application is allowed to exit remedies this issue. Now, what to do about disconnects?
 - I would like to split hallon.c into several files, to make it more manageable. Problem right now is that the library is quite tightly coupled.
