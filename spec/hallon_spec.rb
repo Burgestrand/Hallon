@@ -54,6 +54,7 @@ describe Hallon::PlaylistContainer do
     @session = Hallon::Session.instance.login(USERNAME, PASSWORD)
     @session.logged_in?.should equal(true)
     @container = @session.playlists
+    @name = "rspec-" + Time.now.gmtime.strftime("%Y-%m-%d %H:%M:%S")
   end
   
   after :all do
@@ -73,13 +74,13 @@ describe Hallon::PlaylistContainer do
   
   it "can create new playlists" do
     length = @container.length
-    playlist = @container.add "rspec"
+    playlist = @container.add @name
     @container.length.should equal(length + 1)
-    playlist.name.should == "rspec"
+    playlist.name.should == @name
   end
   
   it "should be an enumerable collection" do
-    @container.detect { |a| a.name == "rspec" }.should_not equal(nil)
+    @container.detect { |a| a.name == @name }.should_not equal(nil)
   end
 end
 
@@ -87,7 +88,7 @@ describe Hallon::Playlist, " when first created" do
   before :all do
     @session = Hallon::Session.instance.login(USERNAME, PASSWORD)
     @session.logged_in?.should equal(true)
-    @playlist = @session.playlists.add "omgwtfbbq"
+    @playlist = @session.playlists.add("rspec-" + Time.now.gmtime.strftime("%Y-%m-%d %H:%M:%S"))
   end
   
   after :all do

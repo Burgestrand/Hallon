@@ -628,6 +628,34 @@ static VALUE cPlaylist_set_collaborative(VALUE self, VALUE new)
   return collaborative ? Qtrue : Qfalse;
 }
 
+/**
+ * call-seq:
+ *   clear! -> Playlist
+ * 
+ * Clear the playlist by removing all tracks from the playlist.
+ */
+static VALUE cPlaylist_clear(VALUE self)
+{
+  sp_playlist *playlist = NULL;
+  Data_Get_Ptr(self, sp_playlist, playlist);
+  int i = 0;
+  int numtracks = sp_playlist_num_tracks(playlist);
+  int tracks[numtracks];
+  
+  for (i = 0; i < numtracks; ++i)
+  {
+    tracks[i] = i;
+  }
+  
+  sp_error error = sp_playlist_remove_tracks(playlist, tracks, numtracks);
+  
+  if (error != SP_ERROR_OK)
+  {
+    rb_raise(eError, "%s", sp_error_message(error));
+  }
+  
+  return self;
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * End playlist methods
@@ -756,6 +784,7 @@ void Init_hallon()
   rb_define_method(cPlaylist, "pending?", cPlaylist_pending, 0);
   rb_define_method(cPlaylist, "collaborative?", cPlaylist_collaborative, 0);
   rb_define_method(cPlaylist, "collaborative=", cPlaylist_set_collaborative, 1);
+  rb_define_method(cPlaylist, "clear!", cPlaylist_clear, 0);
   
   // Link class
   cLink = rb_define_class_under(mHallon, "Link", rb_cObject);
