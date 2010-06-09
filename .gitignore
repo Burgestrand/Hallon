@@ -1,9 +1,8 @@
 *.gem
 doc/**
-ext/Hallon.bundle
-ext/*.o
-ext/Makefile
-ext/mkmf.log
+ext/**
+!ext/hallon.c
+!ext/extconf.rb
 *.key
 spec/tmp
 spec/config.rb
