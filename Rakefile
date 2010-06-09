@@ -1,5 +1,4 @@
 require 'rake'
-
 require 'spec/rake/spectask'
 
 desc "Runs all tests"

@@ -11,8 +11,9 @@ I need a library to interface with Spotify for another project that I’ve named
 
 - download and install `libspotify`
 - download Hallon: `git clone git://github.com/Burgestrand/Hallon.git; cd Hallon`
+- install the dependencies using Bundler `bundle install`
 - build the extension and test it: `rake build`
-- build the gem `rake gem; gem install Hallon-*.gem`
+- build the gem and install it `rake gem; gem install Hallon-*.gem`
 
 For a list of available commands use `rake -T`.
 
