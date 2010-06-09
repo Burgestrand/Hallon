@@ -1,7 +1,7 @@
 require 'mkmf'
 
 # For Mac OS if installed in /Library/Frameworks/libspotify.framework/
-with_ldflags('-framework libspotify') { true }
+with_ldflags('-framework libspotify') { RUBY_PLATFORM.match 'darwin' }
 
 # check for libspotify
 unless have_func 'sp_session_init' or have_library 'spotify', 'sp_session_init'
