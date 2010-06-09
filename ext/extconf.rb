@@ -18,4 +18,4 @@ unless have_library 'pthread', 'pthread_mutex_lock'
   abort 'error: missing posix thread-support'
 end
 
-create_makefile 'Hallon' 
+create_makefile 'hallon' 
