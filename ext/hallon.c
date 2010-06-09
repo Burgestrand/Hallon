@@ -234,7 +234,7 @@ static VALUE cSession_login(VALUE self, VALUE username, VALUE password)
   if (error != SP_ERROR_OK)
   {
     pthread_mutex_unlock(&hallon_mutex);
-    rb_raise(eError, "%s", sp_error_message(error));
+    rb_raise(eError, "login request failure (%s)", sp_error_message(error));
   }
   
   // wait for login to finish
@@ -244,7 +244,7 @@ static VALUE cSession_login(VALUE self, VALUE username, VALUE password)
   if (callback_error != SP_ERROR_OK)
   {
     pthread_mutex_unlock(&hallon_mutex);
-    rb_raise(eError, "%s", sp_error_message(error));
+    rb_raise(eError, "login response failure (%s)", sp_error_message(error));
   }
   
   pthread_mutex_unlock(&hallon_mutex); // unlock! really? is it locked?
