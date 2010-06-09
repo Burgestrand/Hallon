@@ -12,13 +12,20 @@ I need a library to interface with Spotify for another project that I’ve named
 - download and install `libspotify`
 - download Hallon: `git clone git://github.com/Burgestrand/Hallon.git; cd Hallon`
 - install the dependencies using [Bundler](http://gembundler.com/): `bundle install`
+- put your binary `spotify_appkey.key` file in the `Hallon` top-level directory
+- create the file `config.rb` in the `spec/` directory:
+          
+        USERNAME = 'spotify username here'
+        PASSWORD = 'spotify password here'
+        APPKEY   = IO.read 'spotify_appkey.key'
+          
 - build the extension and test it: `rake build`
 - build the gem and install it `rake gem; gem install Hallon-*.gem`
 
 For a list of available commands use `rake -T`.
 
 ## How do I install `libspotify`?
-Installing `libspotify` means you need to put the binary library and the headers on a location where GCC can find them. First of all, [download the library](https://developer.spotify.com/en/libspotify/overview/)
+Installing `libspotify` means you need to put the binary library and the headers on a location where GCC can find them. First of all, [download the library](https://developer.spotify.com/en/libspotify/overview/).
 
 ### … on Mac OS?
 Copy the `libspotify.framework` folder to `/Library/Frameworks/libspotify.framework`, Hallon handles the rest. :)
