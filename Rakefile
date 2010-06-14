@@ -10,7 +10,7 @@ end
 namespace "ext" do
   task :mkmf do
     Dir.chdir('ext') do
-      system('ruby extconf.rb')
+      abort unless system('ruby extconf.rb')
     end
   end
 
