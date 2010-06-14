@@ -3,6 +3,11 @@ require 'mkmf'
 # For Mac OS if installed in /Library/Frameworks/libspotify.framework/
 with_ldflags('-framework libspotify') { RUBY_PLATFORM.match 'darwin' }
 
+# check for ruby!
+unless have_library 'ruby', 'ruby_init'
+  abort 'error: Missing ruby header'
+end
+
 # check for libspotify
 unless have_func 'sp_session_init' or have_library 'spotify', 'sp_session_init'
   abort 'error: libspotify not installed'
