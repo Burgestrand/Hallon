@@ -4,7 +4,7 @@ require 'mkmf'
 with_ldflags('-framework libspotify') { RUBY_PLATFORM.match 'darwin' }
 
 # check for ruby!
-unless have_library 'ruby', 'ruby_init'
+unless have_header 'ruby.h'
   abort 'error: Missing ruby header'
 end
 
