@@ -83,6 +83,13 @@ describe Hallon::PlaylistContainer do
     playlist.name.should == PLAYLIST
   end
   
+  it "can remove playlists" do
+    length = @container.length
+    playlist = @container.add "test: can remove playlists (I should not exist)"
+    @container.remove playlist
+    @container.length.should equal length
+  end
+  
   it "should be an enumerable collection" do
     @container.detect { |a| a.name == PLAYLIST }.should_not equal nil
   end

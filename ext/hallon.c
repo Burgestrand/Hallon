@@ -483,6 +483,69 @@ static VALUE cPlaylistContainer_each(VALUE self)
 
 /**
  * call-seq:
+ *   remove(Fixnum or Playlist) -> PlaylistContainer
+ * 
+ * Remove the playlist from the container, either specified by index or by an actual Playlist.
+ */
+static VALUE cPlaylistContainer_remove(VALUE self, VALUE obj)
+{
+  if ( ! (FIXNUM_P(obj) || rb_class_of(obj) == cPlaylist))
+  {
+    rb_raise(rb_eArgError, "argument must be an integer or a playlist");
+  }
+  
+  sp_playlistcontainer *pc;
+  Data_Get_Ptr(self, sp_playlistcontainer, pc);
+  
+  int length = sp_playlistcontainer_num_playlists(pc);
+  int rindex = -1;
+  const char *name = RSTRING_PTR(rb_funcall3(obj, rb_intern("to_s"), 0, NULL));
+  
+  if (FIXNUM_P(obj))
+  {
+    rindex = FIX2INT(obj);
+    
+    if (rindex < 0)
+    {
+      rindex = length + rindex;
+    }
+  }
+  else
+  {
+    sp_playlist *playlist, *tmpplaylist;
+    Data_Get_Ptr(obj, sp_playlist, playlist);
+    
+    // Find the playlist
+    int i = 0;
+    for (i = 0; i < length; ++i)
+    {
+      // ASSUME: the same playlist will have the same pointer
+      // TODO: release playlist?
+      if (sp_playlistcontainer_playlist(pc, i) == playlist)
+      {
+        rindex = i;
+        break;
+      }
+    }
+  }
+  
+  if (rindex < 0 || rindex >= length)
+  {
+    rb_raise(eError, "playlist %s not found in container", name);
+  }
+  
+  sp_error error = sp_playlistcontainer_remove_playlist(pc, rindex);
+  
+  if (error != SP_ERROR_OK)
+  {
+    rb_raise(eError, "removing playlist %s failed: %s", name, sp_error_message(error));
+  }
+  
+  return self;
+}
+
+/**
+ * call-seq:
  *   initialize(Session)
  * 
  * Creates a new PlaylistContainer for the given Session.
@@ -890,6 +953,7 @@ void Init_hallon()
   rb_define_method(cPlaylistContainer, "length", cPlaylistContainer_length, 0);
   rb_define_method(cPlaylistContainer, "add", cPlaylistContainer_add, 1);
   rb_define_method(cPlaylistContainer, "each", cPlaylistContainer_each, 0);
+  rb_define_method(cPlaylistContainer, "remove", cPlaylistContainer_remove, 1);
   
   // Playlist class
   cPlaylist = rb_define_class_under(mHallon, "Playlist", rb_cObject);
