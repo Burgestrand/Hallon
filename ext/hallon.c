@@ -508,7 +508,7 @@ static VALUE cPlaylistContainer_initialize(VALUE self, VALUE osession)
  */
 static VALUE ciPlaylist_free(sp_playlist **playlist)
 {
-  // sp_playlist_remove_callbacks
+  sp_playlist_release(*playlist);
   xfree(playlist);
 }
 
@@ -528,6 +528,7 @@ static VALUE cPlaylist_initialize(VALUE self)
 {
   sp_playlist *playlist;
   Data_Get_Ptr(self, sp_playlist, playlist);
+  sp_playlist_add_ref(playlist);
   sp_playlist_add_callbacks(playlist, &g_playlist_callbacks, (void *)self);
 }
 
@@ -794,6 +795,15 @@ static VALUE cLink_to_obj(VALUE self)
   {
     sp_track *track = sp_link_as_track(link);
     return Data_Make_Obj(cTrack, sp_track, track);
+  }
+  else if (type == SP_LINKTYPE_PLAYLIST)
+  {
+    VALUE session = rb_funcall3(cSession, rb_intern("instance"), 0, NULL);
+    sp_session *psession;
+    Data_Get_Ptr(session, sp_session, psession);
+    
+    sp_playlist *playlist = sp_playlist_create(psession, link);
+    return Data_Make_Obj(cPlaylist, sp_playlist, playlist);
   }
   else
   {

@@ -5,6 +5,7 @@ Dir.chdir(File.dirname(__FILE__))
 
 # Globals
 TRACK_URI = "spotify:track:4yJmwG2C1SDgcBbV50xI91"
+PLAYLIST_URI = "spotify:user:burgestrand:playlist:4MsjQL7fkrtfWAOyV5Rnwa"
 PLAYLIST  = "rspec-" + Time.now.gmtime.strftime("%Y-%m-%d %H:%M:%S.#{Time.now.gmtime.usec}")
 
 describe Hallon do
@@ -37,26 +38,26 @@ describe Hallon::Session, " once created" do
   end
   
   it "should not be logged in" do
-    @session.logged_in?.should equal(false)
+    @session.logged_in?.should equal false
   end
   
   it "can log in" do
-    @session.logged_in?.should equal(false)
+    @session.logged_in?.should equal false
     @session.login(USERNAME, PASSWORD)
-    @session.logged_in?.should equal(true)
+    @session.logged_in?.should equal true
   end
   
   it "can log out" do
-    @session.logged_in?.should equal(true)
+    @session.logged_in?.should equal true
     @session.logout
-    @session.logged_in?.should equal(false)
+    @session.logged_in?.should equal false
   end
 end
 
 describe Hallon::PlaylistContainer do
   before :all do
     @session = Hallon::Session.instance.login(USERNAME, PASSWORD)
-    @session.logged_in?.should equal(true)
+    @session.logged_in?.should equal true
     @container = @session.playlists
   end
   
@@ -78,24 +79,28 @@ describe Hallon::PlaylistContainer do
   it "can create new playlists" do
     length = @container.length
     playlist = @container.add PLAYLIST
-    @container.length.should equal(length + 1)
+    @container.length.should equal length + 1
     playlist.name.should == PLAYLIST
   end
   
   it "should be an enumerable collection" do
-    @container.detect { |a| a.name == PLAYLIST }.should_not equal(nil)
+    @container.detect { |a| a.name == PLAYLIST }.should_not equal nil
   end
 end
 
-describe Hallon::Playlist, " when first created" do
+describe Hallon::Playlist do
   before :all do
     @session = Hallon::Session.instance.login(USERNAME, PASSWORD)
-    @session.logged_in?.should equal(true)
+    @session.logged_in?.should equal true
     @playlist = @session.playlists.detect { |a| a.name == PLAYLIST }
   end
   
   after :all do
     @session.logout
+  end
+  
+  it "can be spawned from a link" do
+    Hallon::Link.new(PLAYLIST_URI).to_obj.class.should equal Hallon::Playlist
   end
   
   it "should not respond to #new" do
@@ -107,31 +112,31 @@ describe Hallon::Playlist, " when first created" do
   end
   
   it "should be loaded" do
-    @playlist.loaded?.should equal(true)
+    @playlist.loaded?.should equal true
   end
   
   it "should have a link" do
     link = @playlist.link
     link.to_str.should match "^spotify:(.*?):playlist:"
-    link.type.should equal(:playlist)
+    link.type.should equal :playlist
   end
   
   it "can set collaboration flag" do
-    @playlist.collaborative?.should equal(false)
+    @playlist.collaborative?.should equal false
     @playlist.collaborative = true
-    @playlist.collaborative?.should equal(true)
+    @playlist.collaborative?.should equal true
   end
   
   it "can add new tracks" do
     length = @playlist.length
     @playlist.push Hallon::Link.new(TRACK_URI).to_obj
-    @playlist.length.should equal(length + 1)
+    @playlist.length.should equal length + 1
   end
 end
 
 describe Hallon::Link do
   it "can parse Spotify URIs" do
-    Hallon::Link.new(TRACK_URI).type.should equal(:track)
+    Hallon::Link.new(TRACK_URI).type.should equal :track
   end
   
   it "can render into Spotify URIs" do
