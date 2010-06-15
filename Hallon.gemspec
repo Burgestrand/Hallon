@@ -11,8 +11,10 @@ Gem::Specification.new do |gem|
   gem.homepage = 'http://github.com/Burgestrand/Hallon'
   gem.author   = 'Kim Burgestrand'
   gem.email    = 'kim@burgestrand.se'
-  gem.description = IO.read('./README.markdown')
   gem.license  = 'GNU AGPL'
+  
+  gem.description = IO.read('./README.markdown')
+  gem.description = gem.description.force_encoding 'UTF-8' if gem.description.respond_to?(:force_encoding)
   
   # development
   gem.add_dependency 'rspec'
