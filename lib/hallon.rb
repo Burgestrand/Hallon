@@ -34,11 +34,31 @@ module Hallon
   
   # Playlists are created from the PlaylistContainer.
   class Playlist
+    include Enumerable
+    
     private_class_method :new
     
+    # Yield each Track in the playlist to the passed block.
+    def each(&block)
+      acc = Array.new
+      
+      length.times do |i|
+        obj = self.at(i)
+        obj = yield obj if block_given?
+        acc.push obj
+      end
+      
+      return acc
+    end
+    
+    # Alias for #insert! length, Track...
+    def push(*tracks)
+      insert length, *tracks
+    end
+    
     # Alias for #push
-    def <<(track)
-      return push(track)
+    def <<(*tracks)
+      push *tracks
     end
     
     # Alias for #length

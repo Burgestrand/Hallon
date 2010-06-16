@@ -724,9 +724,9 @@ static VALUE cPlaylist_clear(VALUE self)
 
 /**
  * call-seq:
- *   at(index) -> obj or nil
+ *   at(index) -> Track or nil
  * 
- * Returns the element at index. Negative index starts from end of playlist. Returns nil if the index is out of range.
+ * Returns the Track at index. Negative index starts from the end of the playlist. Returns nil if the index is out of range.
  */
 static VALUE cPlaylist_at(VALUE self, VALUE index)
 {
@@ -746,7 +746,7 @@ static VALUE cPlaylist_at(VALUE self, VALUE index)
 
 /**
  * call-seq:
- *   insert(index, Track…) -> Playlist
+ *   insert!(index, Track…) -> Playlist
  * 
  * Insert the given tracks before the element with the given index. Accepts negative indexes.
  */
