@@ -454,31 +454,24 @@ static VALUE cPlaylistContainer_add(VALUE self, VALUE name)
 
 /**
  * call-seq:
- *   each({ |playlist| block }) -> array
+ *   at(index) -> Playlist or nil
  * 
- * Calls “block” once for each Playlist, passing that Playlist as parameter.
+ * Returns the Playlist at index. Negative indexes starts from the end. Returns nil if the index is out of range.
  */
-static VALUE cPlaylistContainer_each(VALUE self)
+static VALUE cPlaylistContainer_at(VALUE self, VALUE index)
 {
-  // Make sure we’ve been given a block
-  rb_block_given_p();
+  Check_Type(index, T_FIXNUM);
+  int pos = FIX2INT(index);
   
-  sp_playlist *playlist;
   sp_playlistcontainer *container;
   Data_Get_Ptr(self, sp_playlistcontainer, container);
-  int i = 0, n = sp_playlistcontainer_num_playlists(container);
-  VALUE accumulator = rb_ary_new2(n);
-  VALUE obj = Qnil;
   
-  // Iterate!
-  for (i = 0; i < n; ++i)
-  {
-    playlist = sp_playlistcontainer_playlist(container, i);
-    obj = Data_Make_Obj(cPlaylist, sp_playlist, playlist);
-    rb_ary_push(accumulator, rb_yield(obj));
-  }
+  if (pos < 0) pos = sp_playlistcontainer_num_playlists(container) + pos;
+  if (pos < 0 || pos >= sp_playlistcontainer_num_playlists(container)) return Qnil;
   
-  return accumulator;
+  sp_playlist *playlist = sp_playlistcontainer_playlist(container, pos);
+  
+  return Data_Make_Obj(cPlaylist, sp_playlist, playlist);
 }
 
 /**
@@ -986,7 +979,7 @@ void Init_hallon()
   rb_define_method(cPlaylistContainer, "initialize", cPlaylistContainer_initialize, 1);
   rb_define_method(cPlaylistContainer, "length", cPlaylistContainer_length, 0);
   rb_define_method(cPlaylistContainer, "add", cPlaylistContainer_add, 1);
-  rb_define_method(cPlaylistContainer, "each", cPlaylistContainer_each, 0);
+  rb_define_method(cPlaylistContainer, "at", cPlaylistContainer_at, 1);
   rb_define_method(cPlaylistContainer, "remove", cPlaylistContainer_remove, 1);
   
   // Playlist class

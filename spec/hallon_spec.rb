@@ -92,8 +92,8 @@ describe Hallon::PlaylistContainer do
     @container.length.should equal length - 1
   end
   
-  it "should be an enumerable collection" do
-    @container.select { |a| a.class == Hallon::Playlist }.length.should equal @container.length
+  it "can lookup playlists by position" do
+    @container.at([0, @container.length - 1].max).name.should == @container.at(-1).name
   end
 end
 
@@ -152,7 +152,7 @@ describe Hallon::Playlist do
     lambda { @playlist.insert! 0, @session }.should raise_error(TypeError)
   end
   
-  it "can read tracks" do
+  it "can lookup tracks by position" do
     @playlist.at(0).name.should == Hallon::Link.new(TRACK_URI).to_obj.name
     @playlist.at(-1).name.should == @playlist.at(0).name
     @playlist.at(@playlist.length).should equal nil

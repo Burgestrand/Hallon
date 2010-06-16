@@ -4,6 +4,24 @@ require 'singleton'
 
 # libspotify[https://developer.spotify.com/en/libspotify/overview/] bindings for Ruby!
 module Hallon
+  # Internally used by Hallon. It provides an #each method for classes providing #at and #length.
+  module Eachable
+    include Enumerable
+
+    # Iterates through each element in the class including this module.
+    def each(&block)
+      acc = Array.new
+
+      length.times do |i|
+        obj = self.at(i)
+        obj = yield obj if block_given?
+        acc.push obj
+      end
+
+      return acc
+    end
+  end
+  
   # Thrown by Hallon::Session on Spotify errors.
   class Error < StandardError
   end
@@ -24,7 +42,7 @@ module Hallon
   
   # Contains the users playlists.
   class PlaylistContainer
-    include Enumerable
+    include Hallon::Eachable
     
     # Alias for #length
     def size
@@ -34,22 +52,9 @@ module Hallon
   
   # Playlists are created from the PlaylistContainer.
   class Playlist
-    include Enumerable
+    include Hallon::Eachable
     
     private_class_method :new
-    
-    # Yield each Track in the playlist to the passed block.
-    def each(&block)
-      acc = Array.new
-      
-      length.times do |i|
-        obj = self.at(i)
-        obj = yield obj if block_given?
-        acc.push obj
-      end
-      
-      return acc
-    end
     
     # Alias for #insert! length, Track...
     def push(*tracks)
