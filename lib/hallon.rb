@@ -68,12 +68,12 @@ module Hallon
     
     # Insert Track(s) at the end of the playlist.
     def push!(*tracks)
-      insert length, *tracks
+      insert! length, *tracks
     end
     
     # Insert Track(s) at the beginning of the playlist.
     def unshift!(*tracks)
-      insert 0, *tracks
+      insert! 0, *tracks
     end
     
     # Alias for #push.
