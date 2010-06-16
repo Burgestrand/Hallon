@@ -71,6 +71,11 @@ module Hallon
       insert length, *tracks
     end
     
+    # Insert Track(s) at the beginning of the playlist.
+    def unshift!(*tracks)
+      insert 0, *tracks
+    end
+    
     # Alias for #push.
     def <<(*tracks)
       push *tracks
