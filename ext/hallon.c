@@ -688,35 +688,6 @@ static VALUE cPlaylist_set_collaborative(VALUE self, VALUE new)
 
 /**
  * call-seq:
- *   clear! -> Playlist
- * 
- * Clear the playlist by removing all tracks from the playlist.
- */
-static VALUE cPlaylist_clear(VALUE self)
-{
-  sp_playlist *playlist = NULL;
-  Data_Get_Ptr(self, sp_playlist, playlist);
-  int i = 0;
-  int numtracks = sp_playlist_num_tracks(playlist);
-  int tracks[numtracks];
-  
-  for (i = 0; i < numtracks; ++i)
-  {
-    tracks[i] = i;
-  }
-  
-  sp_error error = sp_playlist_remove_tracks(playlist, tracks, numtracks);
-  
-  if (error != SP_ERROR_OK)
-  {
-    rb_raise(eError, "%s", sp_error_message(error));
-  }
-  
-  return self;
-}
-
-/**
- * call-seq:
  *   at(index) -> Track or nil
  * 
  * Returns the Track at index. Negative index starts from the end of the playlist. Returns nil if the index is out of range.
@@ -783,6 +754,47 @@ static VALUE cPlaylist_insert(int argc, VALUE *argv, VALUE self)
   
   // .... and add! :D!
   sp_playlist_add_tracks(playlist, (const sp_track **) ptracks, RARRAY_LEN(tracks), cindex, psession);
+  
+  return self;
+}
+
+/**
+ * call-seq:
+ *   remove!([indexes]) -> Playlist
+ * 
+ * Walks through the set of indexes, removing the Track at each respective index.
+ */
+static VALUE cPlaylist_remove(VALUE self, VALUE indexes)
+{
+  VALUE pos;
+  long i;
+  
+  Check_Type(indexes, T_ARRAY);
+  indexes = rb_funcall3(indexes, rb_intern("uniq"), 0, NULL);
+  
+  int tracks[RARRAY_LEN(indexes)];
+  
+  for (i = 0; i < RARRAY_LEN(indexes); ++i)
+  {
+    pos = RARRAY_PTR(indexes)[i];
+    
+    if ( ! FIXNUM_P(pos))
+    {
+      rb_raise(rb_eTypeError, "wrong argument type %s (expected Fixnum) at index %d", rb_obj_classname(pos), i);
+    }
+
+    tracks[i] = FIX2INT(pos);
+  }
+  
+  sp_playlist *playlist;
+  Data_Get_Ptr(self, sp_playlist, playlist);
+  
+  sp_error error = sp_playlist_remove_tracks(playlist, tracks, RARRAY_LEN(indexes));
+  
+  if (error != SP_ERROR_OK)
+  {
+    rb_raise(eError, "error removing tracks: %s", sp_error_message(error));
+  }
   
   return self;
 }
@@ -993,9 +1005,9 @@ void Init_hallon()
   rb_define_method(cPlaylist, "pending?", cPlaylist_pending, 0);
   rb_define_method(cPlaylist, "collaborative?", cPlaylist_collaborative, 0);
   rb_define_method(cPlaylist, "collaborative=", cPlaylist_set_collaborative, 1);
-  rb_define_method(cPlaylist, "clear!", cPlaylist_clear, 0);
   rb_define_method(cPlaylist, "insert!", cPlaylist_insert, -1);
   rb_define_method(cPlaylist, "at", cPlaylist_at, 1);
+  rb_define_method(cPlaylist, "remove!", cPlaylist_remove, 1);
   
   // Link class
   cLink = rb_define_class_under(mHallon, "Link", rb_cObject);

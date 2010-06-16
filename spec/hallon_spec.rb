@@ -157,6 +157,10 @@ describe Hallon::Playlist do
     @playlist.at(-1).name.should == @playlist.at(0).name
     @playlist.at(@playlist.length).should equal nil
   end
+  
+  it "can remove tracks" do
+    @playlist.clear!.length.should equal 0
+  end
 end
 
 describe Hallon::Link do

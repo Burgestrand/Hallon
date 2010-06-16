@@ -30,7 +30,7 @@ module Hallon
   class Session
     include Singleton # Spotify APIv4
     
-    # Acessor for ::new
+    # Acessor for ::new.
     def self.instance(*args)
       if @__instance__ and args.length > 0
         raise ArgumentError, "session has already been initialized"
@@ -44,7 +44,7 @@ module Hallon
   class PlaylistContainer
     include Hallon::Eachable
     
-    # Alias for #length
+    # Alias for #length.
     def size
       return length
     end
@@ -56,17 +56,27 @@ module Hallon
     
     private_class_method :new
     
-    # Alias for #insert! length, Track...
-    def push(*tracks)
+    # Remove all Tracks from the playlist.
+    def clear!
+      remove! (0...length).to_a
+    end
+    
+    # Remove Track at <code>index</code> in the playlist.
+    def delete_at!(index)
+      remove! [index]
+    end
+    
+    # Insert Track(s) at the end of the playlist.
+    def push!(*tracks)
       insert length, *tracks
     end
     
-    # Alias for #push
+    # Alias for #push.
     def <<(*tracks)
       push *tracks
     end
     
-    # Alias for #length
+    # Alias for #length.
     def size
       return length
     end
@@ -74,7 +84,8 @@ module Hallon
   
   # Object for acting Spotify URIs.
   class Link
-    # Return the ID for this link
+    
+    # Return the ID for this link.
     def id
       return to_str.split(':').last
     end
