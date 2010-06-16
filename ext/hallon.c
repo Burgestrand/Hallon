@@ -489,7 +489,7 @@ static VALUE cPlaylistContainer_each(VALUE self)
  */
 static VALUE cPlaylistContainer_remove(VALUE self, VALUE obj)
 {
-  if ( ! (FIXNUM_P(obj) || rb_class_of(obj) == cPlaylist))
+  if ( ! (FIXNUM_P(obj) || CLASS_OF(obj) == cPlaylist))
   {
     rb_raise(rb_eArgError, "argument must be an integer or a playlist");
   }
@@ -724,18 +724,38 @@ static VALUE cPlaylist_clear(VALUE self)
 
 /**
  * call-seq:
- *   push(Track) -> Playlist
+ *   at(index) -> obj or nil
  * 
- * Append the Track to the end of the Playlist.
+ * Returns the element at index. Negative index starts from end of playlist. Returns nil if the index is out of range.
+ */
+static VALUE cPlaylist_at(VALUE self, VALUE index)
+{
+  Check_Type(index, T_FIXNUM);
+  int pos = FIX2INT(index);
+  
+  sp_playlist *playlist;
+  Data_Get_Ptr(self, sp_playlist, playlist);
+  
+  if (pos < 0) pos = sp_playlist_num_tracks(playlist) + pos;
+  if (pos < 0 || pos >= sp_playlist_num_tracks(playlist)) return Qnil;
+  
+  sp_track *track = sp_playlist_track(playlist, pos);
+  
+  return Data_Make_Obj(cTrack, sp_track, track);
+}
+
+/**
+ * call-seq:
+ *   push(Track…) -> Playlist
+ * 
+ * Insert the given tracks before the element with the given index.
  */
 static VALUE cPlaylist_push(VALUE self, VALUE track)
 {
-  // Check argument
-  VALUE pred = rb_funcall3(track, rb_intern("is_a?"), 1, &cTrack);
-  
-  if (pred != Qtrue)
+  // First argument checking
+  if (CLASS_OF(track) != cTrack)
   {
-    rb_raise(eError, "You can only add tracks to a playlist");
+    rb_raise(rb_eTypeError, "wrong argument type %s (expected Track)", rb_obj_classname(track));
   }
   
   // Retrieve session, this is an ugly hack
@@ -968,6 +988,7 @@ void Init_hallon()
   rb_define_method(cPlaylist, "collaborative=", cPlaylist_set_collaborative, 1);
   rb_define_method(cPlaylist, "clear!", cPlaylist_clear, 0);
   rb_define_method(cPlaylist, "push", cPlaylist_push, 1);
+  rb_define_method(cPlaylist, "at", cPlaylist_at, 1);
   
   // Link class
   cLink = rb_define_class_under(mHallon, "Link", rb_cObject);

@@ -5,6 +5,7 @@ Dir.chdir(File.dirname(__FILE__))
 
 # Globals
 TRACK_URI = "spotify:track:4yJmwG2C1SDgcBbV50xI91"
+TRACK_URI2 = "spotify:track:5st5644IlBmKiiRE73UsoZ"
 PLAYLIST_URI = "spotify:user:burgestrand:playlist:4MsjQL7fkrtfWAOyV5Rnwa"
 PLAYLIST  = "rspec-" + Time.now.gmtime.strftime("%Y-%m-%d %H:%M:%S.#{Time.now.gmtime.usec}")
 
@@ -85,13 +86,14 @@ describe Hallon::PlaylistContainer do
   
   it "can remove playlists" do
     length = @container.length
-    playlist = @container.add "test: can remove playlists (I should not exist)"
+    playlist = @container.detect { |a| a.name == PLAYLIST }
+    playlist.should_not equal nil
     @container.remove playlist
-    @container.length.should equal length
+    @container.length.should equal length - 1
   end
   
   it "should be an enumerable collection" do
-    @container.detect { |a| a.name == PLAYLIST }.should_not equal nil
+    @container.select { |a| a.class == Hallon::Playlist }.length.should equal @container.length
   end
 end
 
@@ -99,10 +101,11 @@ describe Hallon::Playlist do
   before :all do
     @session = Hallon::Session.instance.login(USERNAME, PASSWORD)
     @session.logged_in?.should equal true
-    @playlist = @session.playlists.detect { |a| a.name == PLAYLIST }
+    @playlist = @session.playlists.add PLAYLIST
   end
   
   after :all do
+    @session.playlists.remove @playlist
     @session.logout
   end
   
@@ -138,6 +141,12 @@ describe Hallon::Playlist do
     length = @playlist.length
     @playlist.push Hallon::Link.new(TRACK_URI).to_obj
     @playlist.length.should equal length + 1
+  end
+  
+  it "can read tracks" do
+    @playlist.at(0).name.should == Hallon::Link.new(TRACK_URI).to_obj.name
+    @playlist.at(-1).name.should == @playlist.at(0).name
+    @playlist.at(1).should equal nil
   end
 end
 
