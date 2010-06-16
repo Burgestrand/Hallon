@@ -767,7 +767,11 @@ static VALUE cPlaylist_insert(int argc, VALUE *argv, VALUE self)
 static VALUE cPlaylist_remove(VALUE self, VALUE indexes)
 {
   VALUE pos;
-  long i;
+  long i, idx, numtracks;
+  
+  sp_playlist *playlist;
+  Data_Get_Ptr(self, sp_playlist, playlist);
+  numtracks = sp_playlist_num_tracks(playlist);
   
   Check_Type(indexes, T_ARRAY);
   indexes = rb_funcall3(indexes, rb_intern("uniq"), 0, NULL);
@@ -782,12 +786,15 @@ static VALUE cPlaylist_remove(VALUE self, VALUE indexes)
     {
       rb_raise(rb_eTypeError, "wrong argument type %s (expected Fixnum) at index %d", rb_obj_classname(pos), i);
     }
+    
+    idx = FIX2INT(pos);
+    if (idx < 0 || idx >= numtracks)
+    {
+      rb_raise(rb_eArgError, "index at position %d out of range", i);
+    }
 
     tracks[i] = FIX2INT(pos);
   }
-  
-  sp_playlist *playlist;
-  Data_Get_Ptr(self, sp_playlist, playlist);
   
   sp_error error = sp_playlist_remove_tracks(playlist, tracks, RARRAY_LEN(indexes));
   
