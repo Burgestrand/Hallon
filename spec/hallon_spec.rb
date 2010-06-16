@@ -68,18 +68,18 @@ describe Hallon::PlaylistContainer do
   
   it "should validate playlist name length before creation" do
     # 0 < x < 256
-    lambda { @container.add "" }.should raise_error(ArgumentError)
-    lambda { @container.add("a" * 256) }.should raise_error(ArgumentError)
+    lambda { @container.add! "" }.should raise_error(ArgumentError)
+    lambda { @container.add!("a" * 256) }.should raise_error(ArgumentError)
   end
   
   it "should validate playlist name contents before creation" do
     # Not only spaces
-    lambda { @container.add " " }.should raise_error(ArgumentError)
+    lambda { @container.add! " " }.should raise_error(ArgumentError)
   end
   
   it "can create new playlists" do
     length = @container.length
-    playlist = @container.add PLAYLIST
+    playlist = @container.add! PLAYLIST
     @container.length.should equal length + 1
     playlist.name.should == PLAYLIST
   end
@@ -88,7 +88,7 @@ describe Hallon::PlaylistContainer do
     length = @container.length
     playlist = @container.detect { |a| a.name == PLAYLIST }
     playlist.should_not equal nil
-    @container.remove playlist
+    @container.remove! playlist
     @container.length.should equal length - 1
   end
   
@@ -101,11 +101,11 @@ describe Hallon::Playlist do
   before :all do
     @session = Hallon::Session.instance.login(USERNAME, PASSWORD)
     @session.logged_in?.should equal true
-    @playlist = @session.playlists.add PLAYLIST
+    @playlist = @session.playlists.add! PLAYLIST
   end
   
   after :all do
-    @session.playlists.remove @playlist
+    @session.playlists.remove! @playlist
     @session.logout
   end
   

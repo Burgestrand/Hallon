@@ -978,9 +978,9 @@ void Init_hallon()
   rb_define_alloc_func(cPlaylistContainer, ciPlaylistContainer_alloc);
   rb_define_method(cPlaylistContainer, "initialize", cPlaylistContainer_initialize, 1);
   rb_define_method(cPlaylistContainer, "length", cPlaylistContainer_length, 0);
-  rb_define_method(cPlaylistContainer, "add", cPlaylistContainer_add, 1);
+  rb_define_method(cPlaylistContainer, "add!", cPlaylistContainer_add, 1);
   rb_define_method(cPlaylistContainer, "at", cPlaylistContainer_at, 1);
-  rb_define_method(cPlaylistContainer, "remove", cPlaylistContainer_remove, 1);
+  rb_define_method(cPlaylistContainer, "remove!", cPlaylistContainer_remove, 1);
   
   // Playlist class
   cPlaylist = rb_define_class_under(mHallon, "Playlist", rb_cObject);
