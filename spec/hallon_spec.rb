@@ -138,15 +138,24 @@ describe Hallon::Playlist do
   end
   
   it "can add new tracks" do
+    track1 = Hallon::Link.new(TRACK_URI).to_obj
     length = @playlist.length
-    @playlist.push Hallon::Link.new(TRACK_URI).to_obj
-    @playlist.length.should equal length + 1
+    @playlist.insert! 0, track1, track1
+    @playlist.length.should equal length + 2
+  end
+
+  it "should enforce a valid position when adding tracks" do
+    lambda { @playlist.insert! @playlist.length + 1, Hallon::Link.new(TRACK_URI).to_obj }.should raise_error(ArgumentError)
+  end
+  
+  it "can not add non-tracks" do
+    lambda { @playlist.insert! 0, @session }.should raise_error(TypeError)
   end
   
   it "can read tracks" do
     @playlist.at(0).name.should == Hallon::Link.new(TRACK_URI).to_obj.name
     @playlist.at(-1).name.should == @playlist.at(0).name
-    @playlist.at(1).should equal nil
+    @playlist.at(@playlist.length).should equal nil
   end
 end
 

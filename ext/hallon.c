@@ -746,16 +746,32 @@ static VALUE cPlaylist_at(VALUE self, VALUE index)
 
 /**
  * call-seq:
- *   push(Track…) -> Playlist
+ *   insert(index, Track…) -> Playlist
  * 
- * Insert the given tracks before the element with the given index.
+ * Insert the given tracks before the element with the given index. Accepts negative indexes.
  */
-static VALUE cPlaylist_push(VALUE self, VALUE track)
+static VALUE cPlaylist_insert(int argc, VALUE *argv, VALUE self)
 {
-  // First argument checking
-  if (CLASS_OF(track) != cTrack)
+  VALUE index, track, tracks;
+  long i;
+
+  // argument building
+  rb_scan_args(argc, argv, "2*", &index, &track, &tracks);
+  Check_Type(index, T_FIXNUM);
+  tracks = rb_ary_unshift(tracks, track);
+  
+  // iterate through tracks to collect pointers
+  sp_track *ptracks[RARRAY_LEN(tracks)];
+  for (i = 0; i < RARRAY_LEN(tracks); i++)
   {
-    rb_raise(rb_eTypeError, "wrong argument type %s (expected Track)", rb_obj_classname(track));
+    track = RARRAY_PTR(tracks)[i];
+    if (CLASS_OF(track) != cTrack)
+    {
+      rb_raise(rb_eTypeError, "wrong argument type %s (expected %s) on position %d", 
+        rb_obj_classname(track), rb_obj_classname(cTrack), i);
+    }
+    
+    Data_Get_Ptr(track, sp_track, ptracks[i]);
   }
   
   // Retrieve session, this is an ugly hack
@@ -767,15 +783,13 @@ static VALUE cPlaylist_push(VALUE self, VALUE track)
   sp_playlist *playlist;
   Data_Get_Ptr(self, sp_playlist, playlist);
   
-  // Retrieve track
-  sp_track *ptrack;
-  Data_Get_Ptr(track, sp_track, ptrack);
-  
-  // Build array
-  sp_track **ptracks = &ptrack;
+  // double-check the index
+  int cindex = FIX2INT(index);
+  if (cindex < 0) cindex = sp_playlist_num_tracks(playlist) + cindex;
+  if (cindex < 0 || cindex > sp_playlist_num_tracks(playlist)) rb_raise(rb_eArgError, "index %d out of range", cindex);
   
   // .... and add! :D!
-  sp_playlist_add_tracks(playlist, (const sp_track**) ptracks, 1, sp_playlist_num_tracks(playlist), psession);
+  sp_playlist_add_tracks(playlist, (const sp_track **) ptracks, RARRAY_LEN(tracks), cindex, psession);
   
   return self;
 }
@@ -987,7 +1001,7 @@ void Init_hallon()
   rb_define_method(cPlaylist, "collaborative?", cPlaylist_collaborative, 0);
   rb_define_method(cPlaylist, "collaborative=", cPlaylist_set_collaborative, 1);
   rb_define_method(cPlaylist, "clear!", cPlaylist_clear, 0);
-  rb_define_method(cPlaylist, "push", cPlaylist_push, 1);
+  rb_define_method(cPlaylist, "insert!", cPlaylist_insert, -1);
   rb_define_method(cPlaylist, "at", cPlaylist_at, 1);
   
   // Link class
