@@ -159,7 +159,7 @@ describe Hallon::Playlist do
   end
   
   it "can remove tracks" do
-    @playlist.clear!.length.should equal 0
+    @playlist.delete_at!(0, @playlist.length).length.should equal 0
   end
 end
 
