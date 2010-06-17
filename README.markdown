@@ -30,7 +30,7 @@ Sweet! You contribute in more than one way!
 I know, I know. Money is not sexy. However! Even such a small amount as $1 will most likely make me very happy, which increases the chances of me putting more hours on Hallon. [I’ve created a pledgie campaign for Hallon](http://pledgie.com/campaigns/11130).
 
 ### Write code!
-[Fork Hallon](http://github.com/Burgestrand/Hallon/fork), [write tests for everything](http://rspec.info/) you do (so I don’t break anything you did during my own development) and [send a pull request](http://github.com/Burgestrand/Hallon/pull_request).
+[Fork Hallon](http://github.com/Burgestrand/Hallon/fork), [write tests for everything](http://rspec.info/) you do (so I don’t break anything you did during my own development) and send a pull request.
 
 ### [Send me feedback and requests](http://github.com/Burgestrand/Hallon/issues)
 Really, I ❤ feedback! Suggestions on how to improve the API, tell me what is delicious about Hallon, tell me what is yucky about Hallon… anything! All feedback is useful in one way or another.
