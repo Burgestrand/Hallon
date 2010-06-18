@@ -753,7 +753,12 @@ static VALUE cPlaylist_insert(int argc, VALUE *argv, VALUE self)
   if (cindex < 0 || cindex > sp_playlist_num_tracks(playlist)) rb_raise(rb_eArgError, "index %d out of range", cindex);
   
   // .... and add! :D!
-  sp_playlist_add_tracks(playlist, (const sp_track **) ptracks, RARRAY_LEN(tracks), cindex, psession);
+  sp_error error = sp_playlist_add_tracks(playlist, (const sp_track **) ptracks, RARRAY_LEN(tracks), cindex, psession);
+  
+  if (error != SP_ERROR_OK)
+  {
+    rb_raise(eError, "error adding tracks: %s", sp_error_message(error));
+  }
   
   return self;
 }
