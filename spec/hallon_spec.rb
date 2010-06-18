@@ -192,16 +192,14 @@ describe Hallon::Track do
   it "can be spawned from a link" do
     @track.class.should equal Hallon::Track
   end
-    
-  it "should have a name" do
-    if @track.loaded?
-      @track.name.should == "Have You Ever"
-    else
-      @track.name.should == ""
-    end
-  end
   
   it "can be converted into a link" do
-    @track.to_link.to_str == Hallon::Link.new(TRACK_URI).to_str
+    link = Hallon::Link.new(TRACK_URI)
+    track = link.to_obj
+    track.to_link.to_str.should == link.to_str
+  end
+    
+  it "should have a name" do
+    Hallon::Link.new(TRACK_URI).to_obj.name.should == "Have You Ever"
   end
 end
