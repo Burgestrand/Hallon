@@ -126,7 +126,7 @@ describe Hallon::Playlist do
   end
   
   it "should have a link" do
-    link = @playlist.link
+    link = @playlist.to_link
     link.to_str.should match "^spotify:(.*?):playlist:"
     link.type.should equal :playlist
   end

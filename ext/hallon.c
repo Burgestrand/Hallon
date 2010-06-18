@@ -53,6 +53,13 @@ static sp_error callback_error = SP_ERROR_OK;
  * Helper methods
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+static VALUE mkLink(sp_link *link)
+{
+  VALUE obj = rb_funcall3(cLink, rb_intern("allocate"), 0, NULL);
+  Data_Set_Ptr(obj, sp_link, link);
+  return obj;
+}
+
 // convert ruby type to string
 static const char *rb2str(VALUE type)
 {
@@ -633,16 +640,11 @@ static VALUE cPlaylist_loaded(VALUE self)
  * 
  * Return a Link for this playlist.
  */
-static VALUE cPlaylist_link(VALUE self)
+static VALUE cPlaylist_to_link(VALUE self)
 {
   sp_playlist *playlist;
-  Data_Get_Ptr(self, sp_playlist, playlist);
-  
-  VALUE linkobj = rb_funcall3(cLink, rb_intern("allocate"), 0, NULL);
-  sp_link *link = sp_link_create_from_playlist(playlist);
-  Data_Set_Ptr(linkobj, sp_link, link);
-  
-  return linkobj;
+  Data_Get_Ptr(self, sp_playlist, playlist);  
+  return mkLink(sp_link_create_from_playlist(playlist));
 }
 
 /**
@@ -1013,7 +1015,7 @@ void Init_hallon()
   rb_define_method(cPlaylist, "name", cPlaylist_name, 0);
   rb_define_method(cPlaylist, "length", cPlaylist_length, 0);
   rb_define_method(cPlaylist, "loaded?", cPlaylist_loaded, 0);
-  rb_define_method(cPlaylist, "link", cPlaylist_link, 0);
+  rb_define_method(cPlaylist, "to_link", cPlaylist_to_link, 0);
   rb_define_method(cPlaylist, "pending?", cPlaylist_pending, 0);
   rb_define_method(cPlaylist, "collaborative?", cPlaylist_collaborative, 0);
   rb_define_method(cPlaylist, "collaborative=", cPlaylist_set_collaborative, 1);
