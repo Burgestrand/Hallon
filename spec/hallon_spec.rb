@@ -146,6 +146,7 @@ describe Hallon::Playlist do
   end
 
   it "should enforce a valid position when adding tracks" do
+    lambda { @playlist.insert! @playlist.length, Hallon::Link.new(TRACK_URI).to_obj }.should_not raise_error
     lambda { @playlist.insert! @playlist.length + 1, Hallon::Link.new(TRACK_URI).to_obj }.should raise_error(ArgumentError)
   end
   
