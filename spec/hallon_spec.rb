@@ -1,10 +1,11 @@
+require 'timeout'
 require 'lib/hallon'
 require File.expand_path('../config', __FILE__)
 
 Dir.chdir(File.dirname(__FILE__))
 
 # Globals
-TRACK_URI = "spotify:track:4yJmwG2C1SDgcBbV50xI91"
+TRACK_URI = "spotify:track:5CwHu4IDP6MYCrSg6xyVPa"
 TRACK_URI2 = "spotify:track:5st5644IlBmKiiRE73UsoZ"
 PLAYLIST_URI = "spotify:user:burgestrand:playlist:4MsjQL7fkrtfWAOyV5Rnwa"
 PLAYLIST  = "rspec-" + Time.now.gmtime.strftime("%Y-%m-%d %H:%M:%S.#{Time.now.gmtime.usec}")
@@ -179,7 +180,7 @@ describe Hallon::Link do
   end
   
   it "should have the the same ID as the Spotify URL" do
-    Hallon::Link.new(TRACK_URI).id.should == '4yJmwG2C1SDgcBbV50xI91'
+    Hallon::Link.new(TRACK_URI).id.should == TRACK_URI.match('spotify:track:([\w\d]+)')[1]
   end
 end
 
@@ -191,8 +192,16 @@ describe Hallon::Track do
   it "can be spawned from a link" do
     @track.class.should equal Hallon::Track
   end
-  
+    
   it "should have a name" do
-    @track.name.should == "The Boys Are Back In Town"
+    if @track.loaded?
+      @track.name.should == "Have You Ever"
+    else
+      @track.name.should == ""
+    end
+  end
+  
+  it "can be converted into a link" do
+    @track.to_link.to_str == Hallon::Link.new(TRACK_URI).to_str
   end
 end

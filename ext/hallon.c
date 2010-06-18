@@ -973,6 +973,32 @@ static VALUE cTrack_name(VALUE self)
   return rb_str_new2(sp_track_name(track));
 }
 
+/**
+ * call-seq:
+ *   loaded?
+ * 
+ * True if the track has loaded.
+ */
+static VALUE cTrack_loaded(VALUE self)
+{
+  sp_track *track;
+  Data_Get_Ptr(self, sp_track, track);
+  return sp_track_is_loaded(track) ? Qtrue : Qfalse;
+}
+
+/**
+ * call-seq:
+ *   to_link -> Link
+ * 
+ * Return a Link for the track.
+ */
+static VALUE cTrack_to_link(VALUE self)
+{
+  sp_track *track;
+  Data_Get_Ptr(self, sp_track, track);
+  return mkLink(sp_link_create_from_track(track, 0));
+}
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * End track methods
  **/
@@ -1036,4 +1062,6 @@ void Init_hallon()
   rb_define_alloc_func(cTrack, ciTrack_alloc);
   rb_define_method(cTrack, "initialize", cTrack_initialize, 0);
   rb_define_method(cTrack, "name", cTrack_name, 0);
+  rb_define_method(cTrack, "loaded?", cTrack_loaded, 0);
+  rb_define_method(cTrack, "to_link", cTrack_to_link, 0);
 }
