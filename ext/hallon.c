@@ -975,7 +975,7 @@ static VALUE cTrack_name(VALUE self)
 
 /**
  * call-seq:
- *   loaded?
+ *   loaded? -> true or false
  * 
  * True if the track has loaded.
  */
@@ -984,6 +984,19 @@ static VALUE cTrack_loaded(VALUE self)
   sp_track *track;
   Data_Get_Ptr(self, sp_track, track);
   return sp_track_is_loaded(track) ? Qtrue : Qfalse;
+}
+
+/**
+ * call-seq:
+ *   available? -> true or false
+ * 
+ * True if the track is available for playback.
+ */
+static VALUE cTrack_available(VALUE self)
+{
+  sp_track *track;
+  Data_Get_Ptr(self, sp_track, track);
+  return sp_track_is_available(track) ? Qtrue : Qfalse;
 }
 
 /**
@@ -1063,5 +1076,6 @@ void Init_hallon()
   rb_define_method(cTrack, "initialize", cTrack_initialize, 0);
   rb_define_method(cTrack, "name", cTrack_name, 0);
   rb_define_method(cTrack, "loaded?", cTrack_loaded, 0);
+  rb_define_method(cTrack, "available?", cTrack_available, 0);
   rb_define_method(cTrack, "to_link", cTrack_to_link, 0);
 }
