@@ -29,6 +29,16 @@
   _obj;\
 })
 
+#define RDATA_PTR(obj, type) ({\
+  Check_Type(obj, T_DATA);\
+  type *_type_ptr = *((type **) DATA_PTR(obj));\
+  if ( ! _type_ptr)\
+  {\
+    rb_raise(eError, "Invalid %s* target", #type);\
+  }\
+  _type_ptr;\
+})
+
 // API Hierarchy
 static VALUE mHallon;
 
@@ -227,8 +237,7 @@ static VALUE ciSession_alloc(VALUE self)
  */
 static VALUE cSession_login(VALUE self, VALUE username, VALUE password)
 {
-  sp_session *session;
-  Data_Get_Ptr(self, sp_session, session);
+  sp_session *session = RDATA_PTR(self, sp_session);
   
   if (sp_session_connectionstate(session) == SP_CONNECTION_STATE_LOGGED_IN)
   {
@@ -267,8 +276,7 @@ static VALUE cSession_login(VALUE self, VALUE username, VALUE password)
  */
 static VALUE cSession_logout(VALUE self)
 {
-  sp_session *session;
-  Data_Get_Ptr(self, sp_session, session);
+  sp_session *session = RDATA_PTR(self, sp_session);
   
   if (sp_session_connectionstate(session) != SP_CONNECTION_STATE_LOGGED_IN)
   {
@@ -301,10 +309,8 @@ static VALUE cSession_logout(VALUE self)
  */
 static VALUE cSession_process(VALUE self)
 {
-  sp_session *session;
-  Data_Get_Ptr(self, sp_session, session);
   int timeout = -1;
-  sp_session_process_events(session, &timeout);
+  sp_session_process_events(RDATA_PTR(self, sp_session), &timeout);
   return rb_float_new(timeout / 1000.0);
 }
 
@@ -316,9 +322,8 @@ static VALUE cSession_process(VALUE self)
  */
 static VALUE cSession_logged_in(VALUE self)
 {
-  sp_session *session;
-  Data_Get_Ptr(self, sp_session, session);
-  return sp_session_connectionstate(session) == SP_CONNECTION_STATE_LOGGED_IN ? Qtrue : Qfalse;
+  return sp_session_connectionstate(RDATA_PTR(self, sp_session)) 
+         == SP_CONNECTION_STATE_LOGGED_IN ? Qtrue : Qfalse;
 }
 
 /**
@@ -418,9 +423,7 @@ static VALUE ciPlaylistContainer_alloc(VALUE self)
  */
 static VALUE cPlaylistContainer_length(VALUE self)
 {
-  sp_playlistcontainer *container;
-  Data_Get_Ptr(self, sp_playlistcontainer, container);
-  return INT2FIX(sp_playlistcontainer_num_playlists(container));
+  return INT2FIX(sp_playlistcontainer_num_playlists(RDATA_PTR(self, sp_playlistcontainer)));
 }
 
 /**
@@ -447,9 +450,9 @@ static VALUE cPlaylistContainer_add(VALUE self, VALUE name)
   }
   
   // Add playlist to container
-  sp_playlistcontainer *container;
-  Data_Get_Ptr(self, sp_playlistcontainer, container);
-  sp_playlist *playlist = sp_playlistcontainer_add_new_playlist(container, RSTRING_PTR(name));
+  sp_playlist *playlist = sp_playlistcontainer_add_new_playlist(
+    RDATA_PTR(self, sp_playlistcontainer), RSTRING_PTR(name)
+  );
   
   if ( ! playlist)
   {
@@ -468,13 +471,14 @@ static VALUE cPlaylistContainer_add(VALUE self, VALUE name)
 static VALUE cPlaylistContainer_at(VALUE self, VALUE index)
 {
   Check_Type(index, T_FIXNUM);
-  int pos = FIX2INT(index);
   
-  sp_playlistcontainer *container;
-  Data_Get_Ptr(self, sp_playlistcontainer, container);
+  sp_playlistcontainer *container = RDATA_PTR(self, sp_playlistcontainer);
   
-  if (pos < 0) pos = sp_playlistcontainer_num_playlists(container) + pos;
-  if (pos < 0 || pos >= sp_playlistcontainer_num_playlists(container)) return Qnil;
+  int pos = FIX2INT(index),
+      total = sp_playlistcontainer_num_playlists(container);
+  
+  if (pos < 0) pos = total + pos;
+  if (pos < 0 || pos >= total) return Qnil;
   
   sp_playlist *playlist = sp_playlistcontainer_playlist(container, pos);
   
@@ -494,8 +498,7 @@ static VALUE cPlaylistContainer_remove(VALUE self, VALUE obj)
     rb_raise(rb_eArgError, "argument must be an integer or a playlist");
   }
   
-  sp_playlistcontainer *pc;
-  Data_Get_Ptr(self, sp_playlistcontainer, pc);
+  sp_playlistcontainer *pc = RDATA_PTR(self, sp_playlistcontainer);
   
   int length = sp_playlistcontainer_num_playlists(pc);
   int rindex = -1;
@@ -512,8 +515,7 @@ static VALUE cPlaylistContainer_remove(VALUE self, VALUE obj)
   }
   else
   {
-    sp_playlist *playlist, *tmpplaylist;
-    Data_Get_Ptr(obj, sp_playlist, playlist);
+    sp_playlist *playlist = RDATA_PTR(self, sp_playlist);
     
     // Find the playlist
     int i = 0;
@@ -552,12 +554,9 @@ static VALUE cPlaylistContainer_remove(VALUE self, VALUE obj)
  */
 static VALUE cPlaylistContainer_initialize(VALUE self, VALUE osession)
 {
-  sp_session *session;
-  Data_Get_Ptr(osession, sp_session, session);
-  
   sp_playlistcontainer **pcontainer;
   Data_Get_Struct(self, sp_playlistcontainer*, pcontainer);
-  *pcontainer = sp_session_playlistcontainer(session);
+  *pcontainer = sp_session_playlistcontainer(RDATA_PTR(osession, sp_session));
   
   sp_playlistcontainer_add_callbacks(*pcontainer, &g_playlistcontainer_callbacks, &self);
 }
@@ -589,8 +588,7 @@ static VALUE ciPlaylist_alloc(VALUE self)
  */
 static VALUE cPlaylist_initialize(VALUE self)
 {
-  sp_playlist *playlist;
-  Data_Get_Ptr(self, sp_playlist, playlist);
+  sp_playlist *playlist = RDATA_PTR(self, sp_playlist);
   sp_playlist_add_ref(playlist);
   sp_playlist_add_callbacks(playlist, &g_playlist_callbacks, (void *)self);
 }
@@ -603,9 +601,7 @@ static VALUE cPlaylist_initialize(VALUE self)
  */
 static VALUE cPlaylist_name(VALUE self)
 {
-  sp_playlist *playlist;
-  Data_Get_Ptr(self, sp_playlist, playlist);
-  return rb_str_new2(sp_playlist_name(playlist));
+  return rb_str_new2(sp_playlist_name(RDATA_PTR(self, sp_playlist)));
 }
 
 /**
@@ -616,9 +612,7 @@ static VALUE cPlaylist_name(VALUE self)
  */
 static VALUE cPlaylist_length(VALUE self)
 {
-  sp_playlist *playlist;
-  Data_Get_Ptr(self, sp_playlist, playlist);
-  return INT2FIX(sp_playlist_num_tracks(playlist));
+  return INT2FIX(sp_playlist_num_tracks(RDATA_PTR(self, sp_playlist)));
 }
 
 /**
@@ -629,9 +623,7 @@ static VALUE cPlaylist_length(VALUE self)
  */
 static VALUE cPlaylist_loaded(VALUE self)
 {
-  sp_playlist *playlist;
-  Data_Get_Ptr(self, sp_playlist, playlist);
-  return sp_playlist_is_loaded(playlist) ? Qtrue : Qfalse;
+  return sp_playlist_is_loaded(RDATA_PTR(self, sp_playlist)) ? Qtrue : Qfalse;
 }
 
 /**
@@ -642,9 +634,7 @@ static VALUE cPlaylist_loaded(VALUE self)
  */
 static VALUE cPlaylist_to_link(VALUE self)
 {
-  sp_playlist *playlist;
-  Data_Get_Ptr(self, sp_playlist, playlist);  
-  return mkLink(sp_link_create_from_playlist(playlist));
+  return mkLink(sp_link_create_from_playlist(RDATA_PTR(self, sp_playlist)));
 }
 
 /**
@@ -655,9 +645,7 @@ static VALUE cPlaylist_to_link(VALUE self)
  */
 static VALUE cPlaylist_pending(VALUE self)
 {
-  sp_playlist *playlist;
-  Data_Get_Ptr(self, sp_playlist, playlist);
-  return sp_playlist_has_pending_changes(playlist) ? Qtrue : Qfalse;
+  return sp_playlist_has_pending_changes(RDATA_PTR(self, sp_playlist)) ? Qtrue : Qfalse;
 }
 
 /**
@@ -668,9 +656,7 @@ static VALUE cPlaylist_pending(VALUE self)
  */
 static VALUE cPlaylist_collaborative(VALUE self)
 {
-  sp_playlist *playlist;
-  Data_Get_Ptr(self, sp_playlist, playlist);
-  return sp_playlist_is_collaborative(playlist) ? Qtrue : Qfalse;
+  return sp_playlist_is_collaborative(RDATA_PTR(self, sp_playlist)) ? Qtrue : Qfalse;
 }
 
 /**
@@ -682,9 +668,7 @@ static VALUE cPlaylist_collaborative(VALUE self)
 static VALUE cPlaylist_set_collaborative(VALUE self, VALUE new)
 {
   bool collaborative = ! (new == Qnil || new == Qfalse);
-  sp_playlist *playlist;
-  Data_Get_Ptr(self, sp_playlist, playlist);
-  sp_playlist_set_collaborative(playlist, collaborative);
+  sp_playlist_set_collaborative(RDATA_PTR(self, sp_playlist), collaborative);
   return collaborative ? Qtrue : Qfalse;
 }
 
@@ -699,8 +683,7 @@ static VALUE cPlaylist_at(VALUE self, VALUE index)
   Check_Type(index, T_FIXNUM);
   int pos = FIX2INT(index);
   
-  sp_playlist *playlist;
-  Data_Get_Ptr(self, sp_playlist, playlist);
+  sp_playlist *playlist = RDATA_PTR(self, sp_playlist);
   
   if (pos < 0) pos = sp_playlist_num_tracks(playlist) + pos;
   if (pos < 0 || pos >= sp_playlist_num_tracks(playlist)) return Qnil;
@@ -737,17 +720,15 @@ static VALUE cPlaylist_insert(int argc, VALUE *argv, VALUE self)
         rb_obj_classname(track), rb_obj_classname(cTrack), i);
     }
     
-    Data_Get_Ptr(track, sp_track, ptracks[i]);
+    ptracks[i] = RDATA_PTR(track, sp_track);
   }
   
   // Retrieve session, this is an ugly hack
   VALUE session = rb_funcall3(cSession, rb_intern("instance"), 0, NULL);
-  sp_session *psession;
-  Data_Get_Ptr(session, sp_session, psession);
+  sp_session *psession = RDATA_PTR(session, sp_session);
   
   // Retrieve playlist
-  sp_playlist *playlist;
-  Data_Get_Ptr(self, sp_playlist, playlist);
+  sp_playlist *playlist = RDATA_PTR(self, sp_playlist);
   
   // double-check the index
   int cindex = FIX2INT(index);
@@ -776,8 +757,7 @@ static VALUE cPlaylist_remove(VALUE self, VALUE indexes)
   VALUE pos;
   long i, idx, numtracks;
   
-  sp_playlist *playlist;
-  Data_Get_Ptr(self, sp_playlist, playlist);
+  sp_playlist *playlist = RDATA_PTR(self, sp_playlist);
   numtracks = sp_playlist_num_tracks(playlist);
   
   Check_Type(indexes, T_ARRAY);
@@ -863,15 +843,11 @@ static VALUE cLink_initialize(VALUE self, VALUE uri)
  */
 static VALUE cLink_type(VALUE self)
 {
-  sp_link *link;
-  Data_Get_Ptr(self, sp_link, link);
-  
   static const char *LINK_TYPES[] = {
     "invalid", "track", "album", "artist", "search", "playlist"
   };
   
-  VALUE str = rb_str_new2(LINK_TYPES[sp_link_type(link)]);
-  
+  VALUE str = rb_str_new2(LINK_TYPES[sp_link_type(RDATA_PTR(self, sp_link))]);
   return rb_funcall3(str, rb_intern("to_sym"), 0, NULL);
 }
 
@@ -884,10 +860,8 @@ static VALUE cLink_type(VALUE self)
 static VALUE cLink_to_str(VALUE self)
 {
   char spotify_uri[256];
-  sp_link *link;
-  Data_Get_Ptr(self, sp_link, link);
-  
-  if (0 > sp_link_as_string(link, spotify_uri, sizeof(spotify_uri)))
+
+  if (0 > sp_link_as_string(RDATA_PTR(self, sp_link), spotify_uri, sizeof(spotify_uri)))
   {
     rb_raise(eError, "Failed to render Spotify URI from link");
   }
@@ -903,8 +877,7 @@ static VALUE cLink_to_str(VALUE self)
  */
 static VALUE cLink_to_obj(VALUE self)
 {
-  sp_link *link;
-  Data_Get_Ptr(self, sp_link, link);
+  sp_link *link = RDATA_PTR(self, sp_link);
   sp_linktype type = sp_link_type(link);
   
   if (type == SP_LINKTYPE_TRACK)
@@ -915,10 +888,7 @@ static VALUE cLink_to_obj(VALUE self)
   else if (type == SP_LINKTYPE_PLAYLIST)
   {
     VALUE session = rb_funcall3(cSession, rb_intern("instance"), 0, NULL);
-    sp_session *psession;
-    Data_Get_Ptr(session, sp_session, psession);
-    
-    sp_playlist *playlist = sp_playlist_create(psession, link);
+    sp_playlist *playlist = sp_playlist_create(RDATA_PTR(session, sp_session), link);
     return Data_Make_Obj(cPlaylist, sp_playlist, playlist);
   }
   else
@@ -955,9 +925,7 @@ static VALUE ciTrack_alloc(VALUE self)
  */
 static VALUE cTrack_initialize(VALUE self)
 {
-  sp_track *track;
-  Data_Get_Ptr(self, sp_track, track);
-  sp_track_add_ref(track);
+  sp_track_add_ref(RDATA_PTR(self, sp_track));
 }
 
 /**
@@ -968,9 +936,7 @@ static VALUE cTrack_initialize(VALUE self)
  */
 static VALUE cTrack_name(VALUE self)
 {
-  sp_track *track;
-  Data_Get_Ptr(self, sp_track, track);
-  return rb_str_new2(sp_track_name(track));
+  return rb_str_new2(sp_track_name(RDATA_PTR(self, sp_track)));
 }
 
 /**
@@ -981,9 +947,7 @@ static VALUE cTrack_name(VALUE self)
  */
 static VALUE cTrack_loaded(VALUE self)
 {
-  sp_track *track;
-  Data_Get_Ptr(self, sp_track, track);
-  return sp_track_is_loaded(track) ? Qtrue : Qfalse;
+  return sp_track_is_loaded(RDATA_PTR(self, sp_track)) ? Qtrue : Qfalse;
 }
 
 /**
@@ -994,9 +958,7 @@ static VALUE cTrack_loaded(VALUE self)
  */
 static VALUE cTrack_available(VALUE self)
 {
-  sp_track *track;
-  Data_Get_Ptr(self, sp_track, track);
-  return sp_track_is_available(track) ? Qtrue : Qfalse;
+  return sp_track_is_available(RDATA_PTR(self, sp_track)) ? Qtrue : Qfalse;
 }
 
 /**
@@ -1007,9 +969,7 @@ static VALUE cTrack_available(VALUE self)
  */
 static VALUE cTrack_to_link(VALUE self)
 {
-  sp_track *track;
-  Data_Get_Ptr(self, sp_track, track);
-  return mkLink(sp_link_create_from_track(track, 0));
+  return mkLink(sp_link_create_from_track(RDATA_PTR(self, sp_track), 0));
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
