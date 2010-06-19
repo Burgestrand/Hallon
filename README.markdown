@@ -16,9 +16,9 @@ There are [installation instructions in the GitHub wiki for Hallon](http://wiki.
     # add a new playlist to the container
     summer = playlists.add "Summer 2010"
     
-    # Add awesome song by Thin Lizzy
-    track = Link.new("spotify:track:4yJmwG2C1SDgcBbV50xI91").to_obj
-    summer.push track
+    # Add awesome song by Thin Lizzy to beginning of playlist
+    track = Hallon:Link.new("spotify:track:4yJmwG2C1SDgcBbV50xI91").to_obj
+    summer.insert 0, track
 
     # logout
     session.logout
