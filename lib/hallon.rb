@@ -81,13 +81,19 @@ module Hallon
       push *tracks
     end
     
+    # Compares two playlists. They are equal if they share the same link.
+    def ==(obj)
+      return false unless obj.respond_to? :to_link
+      return to_link == obj.to_link
+    end
+    
     # Alias for #length.
     def size
       return length
     end
   end
   
-  # Object for acting Spotify URIs.
+  # Object for acting on Spotify URIs.
   class Link
     
     # Return the ID for this link.

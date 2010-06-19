@@ -163,6 +163,11 @@ describe Hallon::Playlist do
   it "can remove tracks" do
     @playlist.delete_at!(0, @playlist.length).length.should equal 0
   end
+  
+  it "can checked for equality" do
+    @playlist.should == @playlist
+    @playlist.should_not == @session.playlists.at(1)
+  end
 end
 
 describe Hallon::Link do
