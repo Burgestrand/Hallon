@@ -487,63 +487,31 @@ static VALUE cPlaylistContainer_at(VALUE self, VALUE index)
 
 /**
  * call-seq:
- *   remove(Fixnum or Playlist) -> PlaylistContainer
+ *   delete_at(index) -> Playlist or nil
  * 
- * Remove the playlist from the container, either specified by index or by an actual Playlist.
+ * Remove the playlist at <code>index</code>. <code>index</code> may be negative.
  */
-static VALUE cPlaylistContainer_remove(VALUE self, VALUE obj)
+static VALUE cPlaylistContainer_delete_at(VALUE self, VALUE index) 
 {
-  if ( ! (FIXNUM_P(obj) || CLASS_OF(obj) == cPlaylist))
-  {
-    rb_raise(rb_eArgError, "argument must be an integer or a playlist");
-  }
+  Check_Type(index, T_FIXNUM);
   
   sp_playlistcontainer *pc = RDATA_PTR(self, sp_playlistcontainer);
   
-  int length = sp_playlistcontainer_num_playlists(pc);
-  int rindex = -1;
-  const char *name = RSTRING_PTR(rb_funcall3(obj, rb_intern("to_s"), 0, NULL));
+  int pindex = FIX2INT(index),
+      length = sp_playlistcontainer_num_playlists(pc);
+      
+  if (pindex < 0) pindex = length + pindex;
+  if (pindex < 0 || pindex >= length) return Qnil;
   
-  if (FIXNUM_P(obj))
-  {
-    rindex = FIX2INT(obj);
-    
-    if (rindex < 0)
-    {
-      rindex = length + rindex;
-    }
-  }
-  else
-  {
-    sp_playlist *playlist = RDATA_PTR(self, sp_playlist);
-    
-    // Find the playlist
-    int i = 0;
-    for (i = 0; i < length; ++i)
-    {
-      // ASSUME: the same playlist will have the same pointer
-      // TODO: release playlist?
-      if (sp_playlistcontainer_playlist(pc, i) == playlist)
-      {
-        rindex = i;
-        break;
-      }
-    }
-  }
-  
-  if (rindex < 0 || rindex >= length)
-  {
-    rb_raise(eError, "playlist %s not found in container", name);
-  }
-  
-  sp_error error = sp_playlistcontainer_remove_playlist(pc, rindex);
-  
+  sp_playlist *playlist = sp_playlistcontainer_playlist(pc, pindex);
+  sp_error error = sp_playlistcontainer_remove_playlist(pc, pindex);
+
   if (error != SP_ERROR_OK)
   {
-    rb_raise(eError, "removing playlist %s failed: %s", name, sp_error_message(error));
+    rb_raise(eError, "removing playlist %i failed: %s", pindex, sp_error_message(error));
   }
   
-  return self;
+  return Data_Make_Obj(cPlaylist, sp_playlist, playlist);
 }
 
 /**
@@ -1005,7 +973,7 @@ void Init_hallon()
   rb_define_method(cPlaylistContainer, "length", cPlaylistContainer_length, 0);
   rb_define_method(cPlaylistContainer, "add!", cPlaylistContainer_add, 1);
   rb_define_method(cPlaylistContainer, "at", cPlaylistContainer_at, 1);
-  rb_define_method(cPlaylistContainer, "remove!", cPlaylistContainer_remove, 1);
+  rb_define_method(cPlaylistContainer, "delete_at", cPlaylistContainer_delete_at, 1);
   
   // Playlist class
   cPlaylist = rb_define_class_under(mHallon, "Playlist", rb_cObject);

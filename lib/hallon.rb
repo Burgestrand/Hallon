@@ -44,6 +44,24 @@ module Hallon
   class PlaylistContainer
     include Hallon::Eachable
     
+    # Removes playlists that are equal to playlist. Returns nil of 
+    # playlist is not found.
+    def delete(playlist)
+      
+      found = nil
+      index = 0
+      while index < length
+        unless playlist == at(index)
+          index = index + 1
+          next
+        end
+        
+        found = delete_at(index)
+      end
+      
+      return found
+    end
+    
     # Alias for #length.
     def size
       return length

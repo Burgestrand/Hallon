@@ -89,7 +89,7 @@ describe Hallon::PlaylistContainer do
     length = @container.length
     playlist = @container.detect { |a| a.name == PLAYLIST }
     playlist.should_not equal nil
-    @container.remove! playlist
+    @container.delete playlist
     @container.length.should equal length - 1
   end
   
@@ -106,7 +106,7 @@ describe Hallon::Playlist do
   end
   
   after :all do
-    @session.playlists.remove! @playlist
+    @session.playlists.delete @playlist
     @session.logout
   end
   
