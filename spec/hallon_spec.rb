@@ -69,18 +69,18 @@ describe Hallon::PlaylistContainer do
   
   it "should validate playlist name length before creation" do
     # 0 < x < 256
-    lambda { @container.add! "" }.should raise_error(ArgumentError)
-    lambda { @container.add!("a" * 256) }.should raise_error(ArgumentError)
+    lambda { @container.add "" }.should raise_error(ArgumentError)
+    lambda { @container.add("a" * 256) }.should raise_error(ArgumentError)
   end
   
   it "should validate playlist name contents before creation" do
     # Not only spaces
-    lambda { @container.add! " " }.should raise_error(ArgumentError)
+    lambda { @container.add " " }.should raise_error(ArgumentError)
   end
   
   it "can create new playlists" do
     length = @container.length
-    playlist = @container.add! PLAYLIST
+    playlist = @container.add PLAYLIST
     @container.length.should equal length + 1
     playlist.name.should == PLAYLIST
   end
@@ -102,7 +102,7 @@ describe Hallon::Playlist do
   before :all do
     @session = Hallon::Session.instance.login(USERNAME, PASSWORD)
     @session.logged_in?.should equal true
-    @playlist = @session.playlists.add! PLAYLIST
+    @playlist = @session.playlists.add PLAYLIST
   end
   
   after :all do
@@ -141,17 +141,17 @@ describe Hallon::Playlist do
   it "can add new tracks" do
     track1 = Hallon::Link.new(TRACK_URI).to_obj
     length = @playlist.length
-    @playlist.insert! 0, track1, track1
+    @playlist.insert 0, track1, track1
     @playlist.length.should equal length + 2
   end
 
   it "should enforce a valid position when adding tracks" do
-    lambda { @playlist.insert! @playlist.length, Hallon::Link.new(TRACK_URI).to_obj }.should_not raise_error
-    lambda { @playlist.insert! @playlist.length + 1, Hallon::Link.new(TRACK_URI).to_obj }.should raise_error(ArgumentError)
+    lambda { @playlist.insert @playlist.length, Hallon::Link.new(TRACK_URI).to_obj }.should_not raise_error
+    lambda { @playlist.insert @playlist.length + 1, Hallon::Link.new(TRACK_URI).to_obj }.should raise_error(ArgumentError)
   end
   
   it "can not add non-tracks" do
-    lambda { @playlist.insert! 0, @session }.should raise_error(TypeError)
+    lambda { @playlist.insert 0, @session }.should raise_error(TypeError)
   end
   
   it "can lookup tracks by position" do
@@ -161,7 +161,7 @@ describe Hallon::Playlist do
   end
   
   it "can remove tracks" do
-    @playlist.delete_at!(0, @playlist.length).length.should equal 0
+    @playlist.delete_at(0, @playlist.length).length.should equal 0
   end
   
   it "can checked for equality" do

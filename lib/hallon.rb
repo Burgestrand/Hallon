@@ -75,23 +75,23 @@ module Hallon
     private_class_method :new
     
     # Remove all Tracks.
-    def clear!
-      remove! (0...length).to_a
+    def clear
+      remove (0...length).to_a
     end
     
     # Remove <code>count</code> tracks from <code>index</code>.
-    def delete_at!(index, count = 1)
-      remove! (index...index + count).to_a
+    def delete_at(index, count = 1)
+      remove (index...index + count).to_a
     end
     
     # Insert Track(s) at the end of the playlist.
-    def push!(*tracks)
-      insert! length, *tracks
+    def push(*tracks)
+      insert length, *tracks
     end
     
     # Insert Track(s) at the beginning of the playlist.
-    def unshift!(*tracks)
-      insert! 0, *tracks
+    def unshift(*tracks)
+      insert 0, *tracks
     end
     
     # Alias for #push.

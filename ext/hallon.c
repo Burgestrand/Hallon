@@ -663,7 +663,7 @@ static VALUE cPlaylist_at(VALUE self, VALUE index)
 
 /**
  * call-seq:
- *   insert!(index, Track…) -> Playlist
+ *   insert(index, Track…) -> Playlist
  * 
  * Insert the given tracks before the element with the given index. Accepts negative indexes.
  */
@@ -716,7 +716,7 @@ static VALUE cPlaylist_insert(int argc, VALUE *argv, VALUE self)
 
 /**
  * call-seq:
- *   remove!([indexes]) -> Playlist
+ *   remove([indexes]) -> Playlist
  * 
  * Walks through the set of indexes, removing the Track at each respective index.
  */
@@ -971,7 +971,7 @@ void Init_hallon()
   rb_define_alloc_func(cPlaylistContainer, ciPlaylistContainer_alloc);
   rb_define_method(cPlaylistContainer, "initialize", cPlaylistContainer_initialize, 1);
   rb_define_method(cPlaylistContainer, "length", cPlaylistContainer_length, 0);
-  rb_define_method(cPlaylistContainer, "add!", cPlaylistContainer_add, 1);
+  rb_define_method(cPlaylistContainer, "add", cPlaylistContainer_add, 1);
   rb_define_method(cPlaylistContainer, "at", cPlaylistContainer_at, 1);
   rb_define_method(cPlaylistContainer, "delete_at", cPlaylistContainer_delete_at, 1);
   
@@ -986,9 +986,9 @@ void Init_hallon()
   rb_define_method(cPlaylist, "pending?", cPlaylist_pending, 0);
   rb_define_method(cPlaylist, "collaborative?", cPlaylist_collaborative, 0);
   rb_define_method(cPlaylist, "collaborative=", cPlaylist_set_collaborative, 1);
-  rb_define_method(cPlaylist, "insert!", cPlaylist_insert, -1);
+  rb_define_method(cPlaylist, "insert", cPlaylist_insert, -1);
   rb_define_method(cPlaylist, "at", cPlaylist_at, 1);
-  rb_define_method(cPlaylist, "remove!", cPlaylist_remove, 1);
+  rb_define_method(cPlaylist, "remove", cPlaylist_remove, 1);
   
   // Link class
   cLink = rb_define_class_under(mHallon, "Link", rb_cObject);
