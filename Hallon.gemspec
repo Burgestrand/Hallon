@@ -1,7 +1,7 @@
 # encoding: utf-8
 
 Gem::Specification.new do |gem|
-  gem.version  = "0.1.0"
+  gem.version  = "0.0.0"
   gem.required_rubygems_version = ">= 1.3.6"
   gem.required_ruby_version = ">= 1.8"
   
