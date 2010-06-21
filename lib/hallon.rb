@@ -37,6 +37,12 @@ module Hallon
       end
 
       @__instance__ ||= new *args
+      
+      at_exit do
+        @__instance__.logout if @__instance__.logged_in?
+      end
+      
+      return @__instance__
     end
   end
   
