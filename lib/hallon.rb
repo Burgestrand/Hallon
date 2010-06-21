@@ -75,7 +75,7 @@ module Hallon
     private_class_method :new
     
     # Remove all Tracks.
-    def clear
+    def clear!
       remove (0...length).to_a
     end
     
