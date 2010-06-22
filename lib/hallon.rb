@@ -135,4 +135,12 @@ module Hallon
   class Track
     private_class_method :new
   end
+  
+  # A regex to match Spotify URIs
+  URI = /(spotify:(?:
+    (?:artist|album|track|user:[^:]+:playlist):[a-zA-Z0-9]+
+    |user:[^:]+
+    |search:(?:[-\w$\.+!*'(),]+|%[a-fA-F0-9]{2})+
+    ))
+  /x
 end
