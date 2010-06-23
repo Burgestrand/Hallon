@@ -100,6 +100,7 @@ static const char *rb2str(VALUE type)
 // function returns (and before the pointer is assigned)
 static void callback_notify(sp_session *session)
 {
+  //fprintf(stderr, "\nprocess: %s", rb_obj_classname((VALUE) sp_session_userdata(session)));
   int timeout = -1;
   sp_session_process_events(session, &timeout);
 }
@@ -377,8 +378,8 @@ static VALUE cSession_initialize(int argc, VALUE *argv, VALUE self)
     .application_key = RSTRING_PTR(v_appkey),
     .application_key_size = RSTRING_LEN(v_appkey),
     .user_agent = StringValuePtr(v_user_agent),
-    .callbacks = &callbacks, // callbacks
-    .userdata = NULL, // user supplied data
+    .callbacks = &callbacks,
+    .userdata = (void*)self,
   };
 
   sp_session **psession;
