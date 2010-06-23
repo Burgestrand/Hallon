@@ -371,14 +371,14 @@ static VALUE cSession_initialize(int argc, VALUE *argv, VALUE self)
   // set configuration
   sp_session_config config = 
   {
-    SPOTIFY_API_VERSION,
-    StringValuePtr(v_cache_path),
-    StringValuePtr(v_settings_path),
-    RSTRING_PTR(v_appkey),
-    RSTRING_LEN(v_appkey),
-    StringValuePtr(v_user_agent),
-    &callbacks, // callbacks
-    NULL, // user supplied data
+    .api_version = SPOTIFY_API_VERSION,
+    .cache_location = StringValuePtr(v_cache_path),
+    .settings_location = StringValuePtr(v_settings_path),
+    .application_key = RSTRING_PTR(v_appkey),
+    .application_key_size = RSTRING_LEN(v_appkey),
+    .user_agent = StringValuePtr(v_user_agent),
+    .callbacks = &callbacks, // callbacks
+    .userdata = NULL, // user supplied data
   };
 
   sp_session **psession;
