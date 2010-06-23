@@ -12,15 +12,6 @@
   *((type **) DATA_PTR(obj)) = var;\
 } while (0)
 
-#define Data_Get_Ptr(obj, type, var) do {\
-  Check_Type(obj, T_DATA);\
-  var = *((type **) DATA_PTR(obj));\
-  if ( ! var)\
-  {\
-    rb_raise(eError, "Invalid %s* target", #type);\
-  }\
-} while (0)
-
 // Statement Expressions: a gcc extension
 #define Data_Make_Obj(klass, type, ptr) ({\
   VALUE _obj = rb_funcall3(klass, rb_intern("allocate"), 0, NULL);\
