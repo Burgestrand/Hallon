@@ -221,6 +221,10 @@ describe Hallon::Track do
   it "should have a name" do
     Hallon::Link.new(TRACK_URI).to_obj.name.should == "Have You Ever"
   end
+  
+  it "should not be starred" do
+    @track.starred?.should equal false
+  end
 end
 
 describe Hallon::User do

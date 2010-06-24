@@ -943,6 +943,17 @@ static VALUE cTrack_to_link(VALUE self)
   return mkLink(sp_link_create_from_track(DATA_PPTR(self, sp_track), 0));
 }
 
+/**
+ * call-seq:
+ *   starred? -> true or false
+ * 
+ * True if the track is starred.
+ */
+static VALUE cTrack_starred(VALUE self)
+{
+  return sp_track_is_starred(DATA_PPTR(self, sp_track)) ? Qtrue : Qfalse;
+}
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * End track methods
  **/
@@ -1054,6 +1065,7 @@ void Init_hallon()
   rb_define_method(cTrack, "loaded?", cTrack_loaded, 0);
   rb_define_method(cTrack, "available?", cTrack_available, 0);
   rb_define_method(cTrack, "to_link", cTrack_to_link, 0);
+  rb_define_method(cTrack, "starred?", cTrack_starred, 0);
   
   // User class
   cUser = rb_define_class_under(mHallon, "User", rb_cObject);
