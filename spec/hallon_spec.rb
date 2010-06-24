@@ -62,11 +62,6 @@ describe Hallon::Session, " once created" do
     @session.logged_in?.should equal true
   end
   
-  it "should have a valid user assigned to it" do
-    @session.user.name.length.should be > 0
-    @session.user.name(false).should == @session.user.name
-  end
-  
   it "can log out" do
     @session.logged_in?.should equal true
     @session.logout
@@ -225,5 +220,24 @@ describe Hallon::Track do
     
   it "should have a name" do
     Hallon::Link.new(TRACK_URI).to_obj.name.should == "Have You Ever"
+  end
+end
+
+describe Hallon::User do
+  before :all do
+    @session = Hallon::Session.instance.login(USERNAME, PASSWORD)
+    @session.logged_in?.should equal true
+  end
+  
+  after :all do
+    @session.logout
+  end
+  
+  it "should have a name" do
+    user = @session.user
+    name = user.name
+    
+    name.length.should be > 0
+    user.send(user.loaded? ? :should_not : :should) == user.name(true)
   end
 end

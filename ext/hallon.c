@@ -976,6 +976,17 @@ static VALUE cUser_name(int argc, VALUE *argv, VALUE self)
   );
 }
 
+/**
+ * call-seq:
+ *   loaded? -> true or false
+ *
+ * True if user is loaded and display name is available.
+ */
+static VALUE cUser_loaded(VALUE self)
+{
+  return sp_user_is_loaded(DATA_PPTR(self, sp_user)) ? Qtrue : Qfalse;
+}
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * End user methods
  **/
@@ -1048,4 +1059,5 @@ void Init_hallon()
   cUser = rb_define_class_under(mHallon, "User", rb_cObject);
   rb_define_alloc_func(cUser, ciUser_alloc);
   rb_define_method(cUser, "name", cUser_name, -1);
+  rb_define_method(cUser, "loaded?", cUser_loaded, 0);
 }
