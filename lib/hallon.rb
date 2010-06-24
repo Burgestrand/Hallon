@@ -136,7 +136,11 @@ module Hallon
     private_class_method :new
   end
   
-  # A regex to match Spotify URIs
+  # Represents the currently logged in Spotify user.
+  class User
+  end
+  
+  # A regex to match Spotify URIs.
   URI = /(spotify:(?:
     (?:artist|album|track|user:[^:]+:playlist):[a-zA-Z0-9]+
     |user:[^:]+
