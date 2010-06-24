@@ -42,7 +42,7 @@ I have used 42 functions out of 146 functions in Hallon.
 * ✔ sp\_track\_is\_loaded (Track#loaded?)
 * sp\_track\_error
 * ✔ sp\_track\_is\_available (Track#available?)
-* sp\_track\_is\_starred
+* ✔ sp\_track\_is\_starred
 * sp\_track\_set\_starred
 * sp\_track\_num\_artists
 * sp\_track\_artist
