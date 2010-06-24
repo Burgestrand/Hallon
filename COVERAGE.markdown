@@ -1,7 +1,7 @@
 # libspotify API coverage
 This is a list of functions from `libspotify` that I’ve used, which does not necessarily reflect how much of `libspotify` I am using.
 
-I have used 40 functions out of 146 functions in Hallon.
+I have used 41 functions out of 146 functions in Hallon.
 
 ## Error Handling (1/1)
 * ✔ sp\_error\_message
@@ -22,7 +22,7 @@ I have used 40 functions out of 146 functions in Hallon.
 * sp\_session\_starred\_create
 * sp\_session\_preferred\_bitrate
 
-## Links (Spotify URIs) (6/14)
+## Links (Spotify URIs) (7/14)
 * ✔ sp\_link\_create\_from\_string (Link#new)
 * ✔ sp\_link\_create\_from\_track (Track#to\_link)
 * sp\_link\_create\_from\_album
@@ -36,7 +36,7 @@ I have used 40 functions out of 146 functions in Hallon.
 * sp\_link\_as\_album
 * sp\_link\_as\_artist
 * sp\_link\_add\_ref 
-* sp\_link\_release (internally: ciLink\_free)
+* ✔ sp\_link\_release (internally: ciLink\_free)
 
 ## Track subsystem (5/15)
 * ✔ sp\_track\_is\_loaded (Track#loaded?)
