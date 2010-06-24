@@ -42,6 +42,7 @@ static VALUE mHallon;
   static VALUE cPlaylist;
   static VALUE cTrack;
   static VALUE cLink;
+  static VALUE cUser;
   
 // Lock variables to make spotify API synchronous
 static pthread_mutex_t hallon_mutex = PTHREAD_MUTEX_INITIALIZER;
@@ -329,6 +330,16 @@ static VALUE cSession_playlists(VALUE self)
   return rb_funcall3(cPlaylistContainer, rb_intern("new"), 1, &self);
 }
 
+/**
+ * call-seq:
+ *   user -> User
+ * 
+ * Retrieve the User for the logged-in session.
+ */
+static VALUE cSession_user(VALUE self)
+{
+  return Data_Make_Obj(cUser, sp_user, sp_session_user(DATA_PPTR(self, sp_session)));
+}
 
 /**
  * call-seq:
@@ -937,6 +948,39 @@ static VALUE cTrack_to_link(VALUE self)
  **/
 
 /**
+ * Allocates memory for a new User.
+ */
+static VALUE ciUser_alloc(VALUE self)
+{
+  sp_user **puser;
+  return Data_Make_Struct(self, sp_user*, 0, -1, puser);
+}
+
+/**
+ * call-seq:
+ *   name(canonical = false) -> String
+ * 
+ * Retrieve the users’ display name (falls back to canonical name if 
+ * display name is unavailable).
+ */
+static VALUE cUser_name(int argc, VALUE *argv, VALUE self)
+{
+  VALUE canonical = Qfalse;
+  sp_user *user = DATA_PPTR(self, sp_user);
+  
+  rb_scan_args(argc, argv, "01", &canonical);
+
+  return rb_str_new2(RTEST(canonical)
+    ? sp_user_canonical_name(user)
+    : sp_user_display_name(user)
+  );
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * End user methods
+ **/
+
+/**
  * 
  */
 void Init_hallon()
@@ -957,6 +1001,7 @@ void Init_hallon()
   rb_define_method(cSession, "logout", cSession_logout, 0);
   rb_define_method(cSession, "logged_in?", cSession_logged_in, 0);
   rb_define_method(cSession, "playlists", cSession_playlists, 0);
+  rb_define_method(cSession, "user", cSession_user, 0);
   
   // PlaylistContainer class
   cPlaylistContainer = rb_define_class_under(mHallon, "PlaylistContainer", rb_cObject);
@@ -998,4 +1043,9 @@ void Init_hallon()
   rb_define_method(cTrack, "loaded?", cTrack_loaded, 0);
   rb_define_method(cTrack, "available?", cTrack_available, 0);
   rb_define_method(cTrack, "to_link", cTrack_to_link, 0);
+  
+  // User class
+  cUser = rb_define_class_under(mHallon, "User", rb_cObject);
+  rb_define_alloc_func(cUser, ciUser_alloc);
+  rb_define_method(cUser, "name", cUser_name, -1);
 }

@@ -62,6 +62,11 @@ describe Hallon::Session, " once created" do
     @session.logged_in?.should equal true
   end
   
+  it "should have a valid user assigned to it" do
+    @session.user.name.length.should be > 0
+    @session.user.name(false).should == @session.user.name
+  end
+  
   it "can log out" do
     @session.logged_in?.should equal true
     @session.logout
