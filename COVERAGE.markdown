@@ -1,7 +1,7 @@
 # libspotify API coverage
 This is a list of functions from `libspotify` that I’ve used, which does not necessarily reflect how much of `libspotify` I am using.
 
-I have used 41 functions out of 146 functions in Hallon.
+I have used 42 functions out of 146 functions in Hallon.
 
 ## Error Handling (1/1)
 * ✔ sp\_error\_message
@@ -159,10 +159,10 @@ I have used 41 functions out of 146 functions in Hallon.
 * ✔ sp\_playlistcontainer\_remove\_playlist (PlaylistContainer#delete_at)
 * sp\_playlistcontainer\_move\_playlist
 
-## User handling (2/3)
+## User handling (3/3)
 * ✔ sp\_user\_canonical\_name
 * ✔ sp\_user\_display\_name
-* sp\_user\_is\_loaded
+* ✔ sp\_user\_is\_loaded
 
 ## Toplist handling (0/11)
 * sp\_toplistbrowse\_create
