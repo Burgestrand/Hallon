@@ -38,7 +38,7 @@ I have used 46 functions out of 146 functions in Hallon.
 * sp\_link\_add\_ref 
 * ✔ sp\_link\_release (internally: ciLink\_free)
 
-## Track subsystem (5/15)
+## Track subsystem (9/15)
 * ✔ sp\_track\_is\_loaded (Track#loaded?)
 * ✔ sp\_track\_error (Track#error)
 * ✔ sp\_track\_is\_available (Track#available?)
