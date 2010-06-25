@@ -9,7 +9,7 @@ I have used 46 functions out of 146 functions in Hallon.
 ## Session handling (8/12)
 * ✔ sp\_session\_init (Session::instance)
 * ✔ sp\_session\_login (Session#login)
-* ✔ sp\_session\_user
+* ✔ sp\_session\_user (Session#user)
 * ✔ sp\_session\_logout (Session#logout)
 * ✔ sp\_session\_connectionstate (Session#logged\_in?)
 * ✔ sp\_session\_userdata (internally: callback\_notify)
@@ -18,7 +18,7 @@ I have used 46 functions out of 146 functions in Hallon.
 * sp\_session\_player\_seek
 * sp\_session\_player\_play
 * sp\_session\_player\_unload
-* ✔ sp\_session\_playlistcontainer
+* ✔ sp\_session\_playlistcontainer (Session#playlists)
 * sp\_session\_starred\_create
 * sp\_session\_preferred\_bitrate
 
@@ -40,16 +40,16 @@ I have used 46 functions out of 146 functions in Hallon.
 
 ## Track subsystem (5/15)
 * ✔ sp\_track\_is\_loaded (Track#loaded?)
-* ✔ sp\_track\_error
+* ✔ sp\_track\_error (Track#error)
 * ✔ sp\_track\_is\_available (Track#available?)
-* ✔ sp\_track\_is\_starred
+* ✔ sp\_track\_is\_starred (Track#starred?)
 * sp\_track\_set\_starred
 * sp\_track\_num\_artists
 * sp\_track\_artist
 * sp\_track\_album
 * ✔ sp\_track\_name (Track#name)
-* ✔ sp\_track\_duration
-* ✔ sp\_track\_popularity
+* ✔ sp\_track\_duration (Track#duration)
+* ✔ sp\_track\_popularity (Track#popularity)
 * sp\_track\_disc
 * sp\_track\_index
 * ✔ sp\_track\_add\_ref (Track#initialize)
@@ -160,9 +160,9 @@ I have used 46 functions out of 146 functions in Hallon.
 * sp\_playlistcontainer\_move\_playlist
 
 ## User handling (3/3)
-* ✔ sp\_user\_canonical\_name
-* ✔ sp\_user\_display\_name
-* ✔ sp\_user\_is\_loaded
+* ✔ sp\_user\_canonical\_name (User#name(true))
+* ✔ sp\_user\_display\_name (User#name)
+* ✔ sp\_user\_is\_loaded (User#loaded?)
 
 ## Toplist handling (0/11)
 * sp\_toplistbrowse\_create
