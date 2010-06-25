@@ -233,6 +233,10 @@ describe Hallon::Track do
       @track.duration.should == 0
     end
   end
+  
+  it "should have an error status" do
+    @track.error.length.should be > 0
+  end
 end
 
 describe Hallon::User do

@@ -965,6 +965,17 @@ static VALUE cTrack_duration(VALUE self)
   return INT2FIX(sp_track_duration(DATA_PPTR(self, sp_track)));
 }
 
+/**
+ * call-seq:
+ *   error -> String
+ * 
+ * Returns the error status for the Track.
+ */
+static VALUE cTrack_error(VALUE self)
+{
+  return rb_str_new2(sp_error_message(sp_track_error(DATA_PPTR(self, sp_track))));
+}
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * End track methods
  **/
@@ -1078,6 +1089,7 @@ void Init_hallon()
   rb_define_method(cTrack, "to_link", cTrack_to_link, 0);
   rb_define_method(cTrack, "starred?", cTrack_starred, 0);
   rb_define_method(cTrack, "duration", cTrack_duration, 0);
+  rb_define_method(cTrack, "error", cTrack_error, 0);
   
   // User class
   cUser = rb_define_class_under(mHallon, "User", rb_cObject);
