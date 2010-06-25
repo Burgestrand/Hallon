@@ -555,7 +555,7 @@ static VALUE ciPlaylist_alloc(VALUE self)
 }
 
 /**
- * :nodoc:
+ * Initializes the playlist.
  */
 static VALUE cPlaylist_initialize(VALUE self)
 {
@@ -566,7 +566,7 @@ static VALUE cPlaylist_initialize(VALUE self)
 
 /**
  * call-seq:
- *   name -> String
+ *   playlist.name -> String
  * 
  * Name of the playlist.
  */
@@ -577,7 +577,7 @@ static VALUE cPlaylist_name(VALUE self)
 
 /**
  * call-seq:
- *   length -> Fixnum
+ *   playlist.length -> Fixnum
  * 
  * Number of tracks in the playlist.
  */
@@ -588,7 +588,7 @@ static VALUE cPlaylist_length(VALUE self)
 
 /**
  * call-seq:
- *   loaded? -> true or false
+ *   playlist.loaded? -> true or false
  * 
  * Returns true if the playlist is loaded.
  */
@@ -599,7 +599,7 @@ static VALUE cPlaylist_loaded(VALUE self)
 
 /**
  * call-seq:
- *   link -> Link
+ *   playlist.to_link -> Link
  * 
  * Return a Link for this playlist.
  */
@@ -610,7 +610,7 @@ static VALUE cPlaylist_to_link(VALUE self)
 
 /**
  * call-seq:
- *   fresh? -> true or false
+ *   playlist.pending? -> true or false
  * 
  * False if the playlist has pending changes which have not yet been acknowledged by Spotify.
  */
@@ -621,7 +621,7 @@ static VALUE cPlaylist_pending(VALUE self)
 
 /**
  * call-seq:
- *   collaborative? -> true or false
+ *   playlist.collaborative? -> true or false
  * 
  * True if the playlist is collaborative.
  */
@@ -632,20 +632,20 @@ static VALUE cPlaylist_collaborative(VALUE self)
 
 /**
  * call-seq:
- *   collaborative = true or false
+ *   playlist.collaborative = true or false
  * 
  * Set collaborative flag for playlist.
  */
-static VALUE cPlaylist_set_collaborative(VALUE self, VALUE new)
+static VALUE cPlaylist_set_collaborative(VALUE self, VALUE truth)
 {
-  bool collaborative = ! (new == Qnil || new == Qfalse);
+  bool collaborative = RTEST(truth);
   sp_playlist_set_collaborative(DATA_PPTR(self, sp_playlist), collaborative);
   return collaborative ? Qtrue : Qfalse;
 }
 
 /**
  * call-seq:
- *   at(index) -> Track or nil
+ *   playlist.at(index) -> Track or nil
  * 
  * Returns the Track at index. Negative index starts from the end of the playlist. Returns nil if the index is out of range.
  */
@@ -666,7 +666,7 @@ static VALUE cPlaylist_at(VALUE self, VALUE index)
 
 /**
  * call-seq:
- *   insert(index, Track…) -> Playlist
+ *   playlist.insert(index, Track…) -> Playlist
  * 
  * Insert the given tracks before the element with the given index. Accepts negative indexes.
  */
@@ -719,7 +719,7 @@ static VALUE cPlaylist_insert(int argc, VALUE *argv, VALUE self)
 
 /**
  * call-seq:
- *   remove([indexes]) -> Playlist
+ *   playlist.remove([index, …]) -> Playlist
  * 
  * Walks through the set of indexes, removing the Track at each respective index.
  */
