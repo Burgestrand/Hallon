@@ -225,6 +225,14 @@ describe Hallon::Track do
   it "should not be starred" do
     @track.starred?.should equal false
   end
+  
+  it "should have a duration" do
+    if @track.loaded?
+      @track.duration.should be > 0
+    else
+      @track.duration.should == 0
+    end
+  end
 end
 
 describe Hallon::User do

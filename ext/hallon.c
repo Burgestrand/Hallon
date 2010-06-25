@@ -954,6 +954,17 @@ static VALUE cTrack_starred(VALUE self)
   return sp_track_is_starred(DATA_PPTR(self, sp_track)) ? Qtrue : Qfalse;
 }
 
+/**
+ * call-seq:
+ *   duration -> Fixnum
+ * 
+ * Track duration in milliseconds.
+ */
+static VALUE cTrack_duration(VALUE self)
+{
+  return INT2FIX(sp_track_duration(DATA_PPTR(self, sp_track)));
+}
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * End track methods
  **/
@@ -1066,6 +1077,7 @@ void Init_hallon()
   rb_define_method(cTrack, "available?", cTrack_available, 0);
   rb_define_method(cTrack, "to_link", cTrack_to_link, 0);
   rb_define_method(cTrack, "starred?", cTrack_starred, 0);
+  rb_define_method(cTrack, "duration", cTrack_duration, 0);
   
   // User class
   cUser = rb_define_class_under(mHallon, "User", rb_cObject);
