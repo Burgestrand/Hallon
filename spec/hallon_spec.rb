@@ -237,6 +237,12 @@ describe Hallon::Track do
   it "should have an error status" do
     @track.error.length.should be > 0
   end
+  
+  it "should have a popularity" do
+    popularity = @track.popularity
+    popularity.should be >= 0
+    popularity.should be <= 100
+  end
 end
 
 describe Hallon::User do

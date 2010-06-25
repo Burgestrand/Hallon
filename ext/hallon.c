@@ -976,6 +976,17 @@ static VALUE cTrack_error(VALUE self)
   return rb_str_new2(sp_error_message(sp_track_error(DATA_PPTR(self, sp_track))));
 }
 
+/**
+ * call-seq:
+ *   popularity -> Fixnum
+ * 
+ * Track popularity in the range 0 - 100.
+ */
+static VALUE cTrack_popularity(VALUE self)
+{
+  return INT2FIX(sp_track_popularity(DATA_PPTR(self, sp_track)));
+}
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * End track methods
  **/
@@ -1090,6 +1101,7 @@ void Init_hallon()
   rb_define_method(cTrack, "starred?", cTrack_starred, 0);
   rb_define_method(cTrack, "duration", cTrack_duration, 0);
   rb_define_method(cTrack, "error", cTrack_error, 0);
+  rb_define_method(cTrack, "popularity", cTrack_popularity, 0);
   
   // User class
   cUser = rb_define_class_under(mHallon, "User", rb_cObject);

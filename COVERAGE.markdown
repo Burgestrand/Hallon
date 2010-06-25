@@ -1,7 +1,7 @@
 # libspotify API coverage
 This is a list of functions from `libspotify` that I’ve used, which does not necessarily reflect how much of `libspotify` I am using.
 
-I have used 45 functions out of 146 functions in Hallon.
+I have used 46 functions out of 146 functions in Hallon.
 
 ## Error Handling (1/1)
 * ✔ sp\_error\_message
@@ -49,7 +49,7 @@ I have used 45 functions out of 146 functions in Hallon.
 * sp\_track\_album
 * ✔ sp\_track\_name (Track#name)
 * ✔ sp\_track\_duration
-* sp\_track\_popularity
+* ✔ sp\_track\_popularity
 * sp\_track\_disc
 * sp\_track\_index
 * ✔ sp\_track\_add\_ref (Track#initialize)
