@@ -110,6 +110,13 @@ module Hallon
     def size
       return length
     end
+    
+    # Purely cosmetic method.
+    # :call-seq: tracks -> Playlist
+    #
+    def tracks
+      return self
+    end
   end
   
   # Object for acting on Spotify URIs.
