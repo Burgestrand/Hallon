@@ -100,11 +100,6 @@ module Hallon
       insert 0, *tracks
     end
     
-    # Alias for #push.
-    def <<(*tracks)
-      push *tracks
-    end
-    
     # Compares two playlists. They are equal if they share the same link.
     def ==(obj)
       return false unless obj.respond_to? :to_link
