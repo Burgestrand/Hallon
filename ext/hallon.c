@@ -363,10 +363,8 @@ static VALUE cSession_user(VALUE self)
 }
 
 /**
- * call-seq:
- *   initialize(application_key, user_agent = 'Hallon', cache_path = 'tmp', settings_path = 'tmp')
- * 
- * See sp_session_init[https://developer.spotify.com/en/libspotify/docs/group__session.html#ga3d50584480c8a5b554ba5d1b8d09b8b] for more details.
+ * :nodoc:
+ *
  */
 static VALUE cSession_initialize(int argc, VALUE *argv, VALUE self)
 {

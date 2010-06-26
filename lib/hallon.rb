@@ -30,7 +30,9 @@ module Hallon
   class Session
     include Singleton # Spotify APIv4
     
-    # Acessor for ::new.
+    # Creates a new Session instance. See sp_session_init[https://developer.spotify.com/en/libspotify/docs/group__session.html#ga3d50584480c8a5b554ba5d1b8d09b8b] for more details.
+    # call-seq: Session.instance(application_key, user_agent = 'Hallon', cache_path = 'tmp', settings_path = 'tmp')
+    #
     def self.instance(*args)
       if @__instance__ and args.length > 0
         raise ArgumentError, "session has already been initialized"
