@@ -181,6 +181,13 @@ describe Hallon::Playlist do
     @playlist.should == @playlist
     @playlist.should_not == @session.playlists.at(1)
   end
+  
+  it "can be renamed" do
+    name = "hanky panky wanky"
+    @playlist.name.should_not == name
+    @playlist.name = name
+    @playlist.name.should == name
+  end
 end
 
 describe Hallon::Link do

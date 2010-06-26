@@ -62,6 +62,27 @@ static VALUE mkLink(sp_link *link)
   return obj;
 }
 
+static VALUE assert_playlist_name(VALUE name)
+{
+  // Validate type
+  Check_Type(name, T_STRING);
+  
+  // Validate format-regex
+  VALUE regx = rb_str_new2("[^ ]");
+  
+  // Validate name length
+  if (FIX2INT(rb_funcall3(name, rb_intern("length"), 0, NULL)) > 255)
+  {
+    rb_raise(rb_eArgError, "Playlist name length must be less than 256 characters");
+  }
+  else if ( ! RTEST(rb_funcall3(name, rb_intern("match"), 1, &regx)))
+  {
+    rb_raise(rb_eArgError, "Playlist name must have at least one non-space character");
+  }
+  
+  return Qtrue;
+}
+
 // convert ruby type to string
 static const char *rb2str(VALUE type)
 {
@@ -437,20 +458,7 @@ static VALUE cPlaylistContainer_length(VALUE self)
  */
 static VALUE cPlaylistContainer_add(VALUE self, VALUE name)
 {
-  VALUE regx = rb_str_new2("[^ ]");
-  
-  // Validate playlist name
-  Check_Type(name, T_STRING);
-  
-  // Validate name length
-  if (FIX2INT(rb_funcall3(name, rb_intern("length"), 0, NULL)) > 255)
-  {
-    rb_raise(rb_eArgError, "Playlist name length must be less than 256 characters");
-  }
-  else if ( ! RTEST(rb_funcall3(name, rb_intern("match"), 1, &regx)))
-  {
-    rb_raise(rb_eArgError, "Playlist name must have at least one non-space character");
-  }
+  assert_playlist_name(name);
   
   // Add playlist to container
   sp_playlist *playlist = sp_playlistcontainer_add_new_playlist(
@@ -762,6 +770,26 @@ static VALUE cPlaylist_remove(VALUE self, VALUE indexes)
   }
   
   return self;
+}
+
+/**
+ * call-seq:
+ *   name = String
+ * 
+ * Renames the Playlist.
+ */
+static VALUE cPlaylist_set_name(VALUE self, VALUE name)
+{
+  assert_playlist_name(name);
+  
+  sp_error error = sp_playlist_rename(DATA_PPTR(self, sp_playlist), StringValuePtr(name));
+  
+  if (error != SP_ERROR_OK)
+  {
+    rb_raise(eError, "playlist rename failed: %s", sp_error_message(error));
+  }
+  
+  return name;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -1081,6 +1109,7 @@ void Init_hallon()
   rb_define_method(cPlaylist, "insert", cPlaylist_insert, -1);
   rb_define_method(cPlaylist, "at", cPlaylist_at, 1);
   rb_define_method(cPlaylist, "remove", cPlaylist_remove, 1);
+  rb_define_method(cPlaylist, "name=", cPlaylist_set_name, 1);
   
   // Link class
   cLink = rb_define_class_under(mHallon, "Link", rb_cObject);
