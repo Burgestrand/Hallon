@@ -152,6 +152,13 @@ module Hallon
   
   # Represents the currently logged in Spotify user.
   class User
+    # Return true if the two user objects are the same user.
+    # call-seq: user == other_user -> true or false
+    #
+    def ==(other)
+      return false unless other.is_a? Hallon::User
+      return name(true) == other.name(true)
+    end
   end
   
   # A regex to match Spotify URIs.
