@@ -81,35 +81,35 @@ module Hallon
     private_class_method :new
     
     # Remove all Tracks.
-    # call-seq: playlist.clear!
+    # call-seq: playlist.clear! -> Playlist
     #
     def clear!
       remove (0...length).to_a
     end
     
     # Remove <code>count</code> tracks from <code>index</code>.
-    # call-seq: playlist.delete_at(index, count = 1)
+    # call-seq: playlist.delete_at(index, count = 1) -> Playlist
     #
     def delete_at(index, count = 1)
       remove (index...index + count).to_a
     end
     
     # Insert Track(s) at the end of the playlist.
-    # call-seq: playlist.push(Track, …)
+    # call-seq: playlist.push(Track, …) -> Playlist
     #
     def push(*tracks)
       insert length, *tracks
     end
     
     # Insert Track(s) at the beginning of the playlist.
-    # call-seq: playlist.unshift(Track, …)
+    # call-seq: playlist.unshift(Track, …) -> Playlist
     #
     def unshift(*tracks)
       insert 0, *tracks
     end
     
     # Compares two playlists. They are equal if they share the same link.
-    # call-seq: playlist == other_playlist
+    # call-seq: playlist == other_playlist -> true or false
     #
     def ==(obj)
       return false unless obj.respond_to? :to_link

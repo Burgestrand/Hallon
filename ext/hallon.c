@@ -774,7 +774,7 @@ static VALUE cPlaylist_remove(VALUE self, VALUE indexes)
 
 /**
  * call-seq:
- *   name = String
+ *   playlist.name = String
  * 
  * Renames the Playlist.
  */
