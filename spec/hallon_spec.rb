@@ -188,6 +188,10 @@ describe Hallon::Playlist do
     @playlist.name = name
     @playlist.name.should == name
   end
+  
+  it "should have an owner" do
+    @playlist.owner.should == @session.user
+  end
 end
 
 describe Hallon::Link do

@@ -792,6 +792,17 @@ static VALUE cPlaylist_set_name(VALUE self, VALUE name)
   return name;
 }
 
+/**
+ * call-seq:
+ *   playlist.owner -> User
+ * 
+ * Owner (User) of the Playlist.
+ */
+static VALUE cPlaylist_owner(VALUE self)
+{
+  return Data_Make_Obj(cUser, sp_user, sp_playlist_owner(DATA_PPTR(self, sp_playlist)));
+}
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * End playlist methods
  **/
@@ -1110,6 +1121,7 @@ void Init_hallon()
   rb_define_method(cPlaylist, "at", cPlaylist_at, 1);
   rb_define_method(cPlaylist, "remove", cPlaylist_remove, 1);
   rb_define_method(cPlaylist, "name=", cPlaylist_set_name, 1);
+  rb_define_method(cPlaylist, "owner", cPlaylist_owner, 0);
   
   // Link class
   cLink = rb_define_class_under(mHallon, "Link", rb_cObject);
