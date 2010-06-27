@@ -54,6 +54,8 @@ module Hallon
     
     # Removes playlists that are equal to playlist. Returns nil of 
     # playlist is not found.
+    # call-seq: container.delete(playlist) -> Playlist or nil
+    #
     def delete(playlist)
       
       found = nil
@@ -71,6 +73,8 @@ module Hallon
     end
     
     # Alias for #length.
+    # call-seq: container.size -> Fixnum
+    #
     def size
       return length
     end

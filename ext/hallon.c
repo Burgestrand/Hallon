@@ -439,7 +439,7 @@ static VALUE ciPlaylistContainer_alloc(VALUE self)
 
 /**
  * call-seq:
- *   length -> Fixnum
+ *   container.length -> Fixnum
  * 
  * Returns the number of playlists in the container.
  */
@@ -450,7 +450,7 @@ static VALUE cPlaylistContainer_length(VALUE self)
 
 /**
  * call-seq:
- *   add(String) -> Playlist
+ *   container.add(String) -> Playlist
  * 
  * Create a new Playlist with the given name and put it into the container.
  */
@@ -473,7 +473,7 @@ static VALUE cPlaylistContainer_add(VALUE self, VALUE name)
 
 /**
  * call-seq:
- *   at(index) -> Playlist or nil
+ *   container.at(index) -> Playlist or nil
  * 
  * Returns the Playlist at index. Negative indexes starts from the end. Returns nil if the index is out of range.
  */
@@ -496,7 +496,7 @@ static VALUE cPlaylistContainer_at(VALUE self, VALUE index)
 
 /**
  * call-seq:
- *   delete_at(index) -> Playlist or nil
+ *   container.delete_at(index) -> Playlist or nil
  * 
  * Remove the playlist at <code>index</code>. <code>index</code> may be negative.
  */
@@ -525,7 +525,7 @@ static VALUE cPlaylistContainer_delete_at(VALUE self, VALUE index)
 
 /**
  * call-seq:
- *   initialize(Session)
+ *   PlaylistContainer.new(Session)
  * 
  * Creates a new PlaylistContainer for the given Session.
  */
