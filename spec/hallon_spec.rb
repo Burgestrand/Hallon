@@ -106,6 +106,15 @@ describe Hallon::PlaylistContainer do
     @container.length.should equal length - 1
   end
   
+  it "can add existing playlists" do
+    length = @container.length
+    playlist = Hallon::Link.new(PLAYLIST_URI).to_obj
+    pl = @container.push playlist
+    @container.length.should == length + 1
+    pl.should == playlist
+    @container.delete pl
+  end
+  
   it "can lookup playlists by position" do
     @container.at([0, @container.length - 1].max).name.should == @container.at(-1).name
   end

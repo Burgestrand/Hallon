@@ -450,24 +450,40 @@ static VALUE cPlaylistContainer_length(VALUE self)
 
 /**
  * call-seq:
- *   container.push(String) -> Playlist
+ *   container.push(name or Playlist) -> Playlist
  * 
- * Create a new Playlist with the given name and put it into the container.
+ * Accepts either a string or a Playlist. If a string is given, a new playlist
+ * is created with the given name.
  */
-static VALUE cPlaylistContainer_add(VALUE self, VALUE name)
+static VALUE cPlaylistContainer_add(VALUE self, VALUE obj)
 {
-  assert_playlist_name(name);
+  sp_playlistcontainer *pc = DATA_PPTR(self, sp_playlistcontainer);
+  sp_playlist *playlist = NULL;
   
-  // Add playlist to container
-  sp_playlist *playlist = sp_playlistcontainer_add_new_playlist(
-    DATA_PPTR(self, sp_playlistcontainer), RSTRING_PTR(name)
-  );
+  if (CLASS_OF(obj) == cPlaylist)
+  {
+    playlist = sp_playlistcontainer_add_playlist(
+      pc, 
+      sp_link_create_from_playlist(DATA_PPTR(obj, sp_playlist))
+    );
+  }
+  else if (TYPE(obj) == T_STRING)
+  {
+    assert_playlist_name(obj);
+    playlist = sp_playlistcontainer_add_new_playlist(pc, RSTRING_PTR(obj));
+  }
+  else
+  {
+    rb_raise(rb_eTypeError, "wrong argument type %s (expected String or Playlist)",
+      rb_obj_classname(obj)
+    );
+  }
   
   if ( ! playlist)
   {
-    rb_raise(eError, "Playlist creation failed");
+    rb_raise(eError, "playlist creation failed");
   }
-  
+
   return Data_Make_Obj(cPlaylist, sp_playlist, playlist);
 }
 
