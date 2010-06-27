@@ -450,7 +450,7 @@ static VALUE cPlaylistContainer_length(VALUE self)
 
 /**
  * call-seq:
- *   container.add(String) -> Playlist
+ *   container.push(String) -> Playlist
  * 
  * Create a new Playlist with the given name and put it into the container.
  */
@@ -1100,7 +1100,7 @@ void Init_hallon()
   rb_define_alloc_func(cPlaylistContainer, ciPlaylistContainer_alloc);
   rb_define_method(cPlaylistContainer, "initialize", cPlaylistContainer_initialize, 1);
   rb_define_method(cPlaylistContainer, "length", cPlaylistContainer_length, 0);
-  rb_define_method(cPlaylistContainer, "add", cPlaylistContainer_add, 1);
+  rb_define_method(cPlaylistContainer, "push", cPlaylistContainer_add, 1);
   rb_define_method(cPlaylistContainer, "at", cPlaylistContainer_at, 1);
   rb_define_method(cPlaylistContainer, "delete_at", cPlaylistContainer_delete_at, 1);
   
