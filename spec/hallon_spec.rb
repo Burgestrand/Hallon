@@ -117,6 +117,7 @@ describe Hallon::PlaylistContainer do
   
   it "can lookup playlists by position" do
     @container.at([0, @container.length - 1].max).name.should == @container.at(-1).name
+    @container.at(0).should == @container[0]
   end
 end
 

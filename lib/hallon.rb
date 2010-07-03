@@ -52,6 +52,13 @@ module Hallon
   class PlaylistContainer
     include Hallon::Eachable
     
+    # Alias for #at
+    # call-seq: container[index] -> Playlist or nil
+    #
+    def [](index)
+      at(index)
+    end
+    
     # Removes playlists that are equal to playlist. Returns nil of 
     # playlist is not found.
     # call-seq: container.delete(playlist) -> Playlist or nil
