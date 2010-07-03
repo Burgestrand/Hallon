@@ -155,7 +155,7 @@ I have used 49 functions out of 146 functions in Hallon.
 * ✔ sp\_playlistcontainer\_num\_playlists (Playlist#length)
 * ✔ sp\_playlistcontainer\_playlist (PlaylistContainer#at)
 * ✔ sp\_playlistcontainer\_add\_new\_playlist (PlaylistContainer#add)
-* ✔ sp\_playlistcontainer\_add\_playlist
+* ✔ sp\_playlistcontainer\_add\_playlist (PlaylistContainer#push)
 * ✔ sp\_playlistcontainer\_remove\_playlist (PlaylistContainer#delete_at)
 * sp\_playlistcontainer\_move\_playlist
 
