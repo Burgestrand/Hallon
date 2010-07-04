@@ -1,11 +1,6 @@
 # coding: utf-8
 require 'rake'
-
-begin
-  require 'spec/rake/spectask'
-rescue LoadError
-  abort "Failed loading RSpec gem — maybe you don’t have it installed?"
-end
+require 'spec/rake/spectask'
 
 desc "Runs all tests"
 Spec::Rake::SpecTask.new :test do |task|
