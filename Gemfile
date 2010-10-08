@@ -1,4 +1,2 @@
 source :gemcutter
-
-# For testing
-gem 'rspec'
+gem 'rspec', '~> 1.3.0'
