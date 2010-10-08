@@ -27,9 +27,9 @@ There are [installation instructions in the GitHub wiki for Hallon](http://wiki.
 Sweet! You contribute in more than one way!
 
 ### Write code!
-[Fork Hallon](http://github.com/Burgestrand/Hallon/fork), [write tests for everything](http://rspec.info/) you do (so I don’t break anything you did during my own development) and send a pull request.
+[Fork Hallon](http://github.com/Burgestrand/Hallon/fork), [write tests for everything](http://rspec.info/) you do (so I don’t break anything you did during my own development) and send a pull request. You can see a list of functions that I have — and have not — used in Hallon in the [coverage document](http://github.com/Burgestrand/Hallon/blob/master/COVERAGE.markdown).
 
-You can see a list of functions that I have, and have not, used in Hallon in the [coverage document](http://github.com/Burgestrand/Hallon/blob/master/COVERAGE.markdown).
+If you modify existing files, please adhere to the coding standard surrounding your piece of code!
 
 ### [Send me feedback and requests](http://github.com/Burgestrand/Hallon/issues)
 Really, I ❤ feedback! Suggestions on how to improve the API, tell me what is delicious about Hallon, tell me what is yucky about Hallon… anything! All feedback is useful in one way or another.
