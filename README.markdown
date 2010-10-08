@@ -26,9 +26,6 @@ There are [installation instructions in the GitHub wiki for Hallon](http://wiki.
 ## This is awesome! I want to help!
 Sweet! You contribute in more than one way!
 
-### [You can give me money](http://pledgie.com/campaigns/11130)
-I know, I know. Money is not sexy. However! Even such a small amount as $1 will most likely make me very happy, which increases the chances of me putting more hours on Hallon. [I’ve created a pledgie campaign for Hallon](http://pledgie.com/campaigns/11130).
-
 ### Write code!
 [Fork Hallon](http://github.com/Burgestrand/Hallon/fork), [write tests for everything](http://rspec.info/) you do (so I don’t break anything you did during my own development) and send a pull request.
 
