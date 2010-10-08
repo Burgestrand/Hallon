@@ -6,3 +6,4 @@ ext/**
 *.key
 spec/tmp
 spec/config.rb
+.bundle
