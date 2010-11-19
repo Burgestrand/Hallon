@@ -7,3 +7,4 @@ ext/**
 spec/tmp
 spec/config.rb
 .bundle
+lib/libspotify-*
