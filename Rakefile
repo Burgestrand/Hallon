@@ -14,9 +14,6 @@ begin
 
     gem.description = IO.read('./README.markdown')
     gem.description = gem.description.force_encoding 'UTF-8' if gem.description.respond_to?(:force_encoding)
-    
-    # dependencies
-    gem.add_development_dependency "rspec", "~> 1.3.0"
   
     # installation
     gem.extensions    = %w(ext/extconf.rb)
@@ -34,10 +31,9 @@ rescue LoadError => e
   puts "Jeweler (or a dependency) unavailable: gem install jeweler"
 end
 
-require 'spec/rake/spectask'
-Spec::Rake::SpecTask.new(:spec) do |spec|
-  spec.libs << 'lib' << 'spec'
-  spec.spec_files = FileList['spec/**/*_spec.rb']
+require 'rspec/core/rake_task'
+RSpec::Core::RakeTask.new do |spec|
+  # spec.ruby_opts = '-Ilib'
 end
 
 require 'rake/rdoctask'

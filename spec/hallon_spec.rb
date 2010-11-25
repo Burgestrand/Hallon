@@ -1,5 +1,5 @@
 require 'timeout'
-require 'lib/hallon'
+require 'hallon'
 require File.expand_path('../config', __FILE__)
 
 Dir.chdir(File.dirname(__FILE__))

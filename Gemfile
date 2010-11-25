@@ -1,2 +1,2 @@
 source :gemcutter
-gem 'rspec', '~> 1.3.0'
+gem 'rspec', '~> 2', :group => :development

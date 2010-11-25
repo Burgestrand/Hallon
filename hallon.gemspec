@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Kim Burgestrand"]
-  s.date = %q{2010-10-08}
+  s.date = %q{2010-11-25}
   s.description = %q{# What’s this?
 This is [Ruby](http://www.ruby-lang.org/en/) bindings for the official Spotify API. What this means is that you can use Ruby to interact with Spotify.
 
@@ -75,7 +75,7 @@ Hallon is licensed under the [GNU AGPL](http://www.gnu.org/licenses/agpl-3.0.htm
   s.summary = %q{Delicious Ruby bindings for libspotify}
   s.test_files = [
     "spec/config.rb",
-     "spec/hallon_spec.rb"
+    "spec/hallon_spec.rb"
   ]
 
   if s.respond_to? :specification_version then
@@ -83,12 +83,12 @@ Hallon is licensed under the [GNU AGPL](http://www.gnu.org/licenses/agpl-3.0.htm
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      s.add_development_dependency(%q<rspec>, ["~> 1.3.0"])
+      s.add_runtime_dependency(%q<rspec>, ["~> 2"])
     else
-      s.add_dependency(%q<rspec>, ["~> 1.3.0"])
+      s.add_dependency(%q<rspec>, ["~> 2"])
     end
   else
-    s.add_dependency(%q<rspec>, ["~> 1.3.0"])
+    s.add_dependency(%q<rspec>, ["~> 2"])
   end
 end
 
