@@ -36,11 +36,14 @@ describe Hallon::PlaylistContainer do
   end
   
   it "can add existing playlists" do
-    length = @container.length
     playlist = Hallon::Link.new(PLAYLIST_URI).to_obj
+    @container.delete playlist
+    length = @container.length
+    
     pl = @container.push playlist
     @container.length.should == length + 1
     pl.should == playlist
+    
     @container.delete pl
   end
   
