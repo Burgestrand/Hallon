@@ -4,8 +4,9 @@ doc/**
 
 # Extension files
 ext/**
-!ext/hallon.c
-!ext/extconf.rb
+!ext/*.c
+!ext/*.h
+!ext/*.rb
 
 # Private files
 *.key
