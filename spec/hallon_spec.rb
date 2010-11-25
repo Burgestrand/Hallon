@@ -1,6 +1,6 @@
 describe Hallon do
   describe "API version" do
-    specify { Hallon::API_VERSION.should equal 4 }
+    specify { Hallon::API_VERSION.should equal 6 }
   end
   
   describe "URI" do

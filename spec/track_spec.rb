@@ -1,4 +1,3 @@
-
 describe Hallon::Track do
   before :all do
     @track = Hallon::Link.new(TRACK_URI).to_obj
@@ -19,7 +18,11 @@ describe Hallon::Track do
   end
   
   it "should not be starred" do
-    @track.starred?.should equal false
+    @track.starred?(Hallon::Session.instance).should equal false
+  end
+  
+  it "should be available" do
+    @track.available?(Hallon::Session.instance).should equal true
   end
   
   it "should have a duration" do

@@ -9,7 +9,7 @@ unless have_header 'ruby.h'
 end
 
 # check for libspotify
-unless have_func 'sp_session_init' or have_library 'spotify', 'sp_session_init'
+unless have_func 'sp_session_release' or have_library 'spotify', 'sp_session_release'
   abort 'error: libspotify not installed'
 end
 

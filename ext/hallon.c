@@ -209,8 +209,19 @@ static sp_playlist_callbacks g_playlist_callbacks = {
  */
 static VALUE ciSession_alloc(VALUE self)
 {
-  sp_session **psession;
+  sp_session **psession = xmalloc(sizeof (void*));
   return Data_Make_Struct(self, sp_session*, 0, -1, psession);
+}
+
+/**
+ * Internal method: release an allocated spotify session.
+ */
+static void ciSession_free(VALUE self)
+{
+  sp_session **psession;
+  Data_Get_Struct(self, sp_session*, psession);
+  sp_session_release(DATA_PPTR(self, sp_session));
+  xfree(psession);
 }
 
 /**
@@ -384,7 +395,7 @@ static VALUE cSession_initialize(int argc, VALUE *argv, VALUE self)
 
   sp_session **psession;
   Data_Get_Struct(self, sp_session*, psession);
-  sp_error error = sp_session_init(&config, &(*psession));
+  sp_error error = sp_session_create(&config, &(*psession));
   
   if (error != SP_ERROR_OK)
   {
@@ -950,9 +961,12 @@ static VALUE cTrack_loaded(VALUE self)
  * 
  * True if the track is available for playback.
  */
-static VALUE cTrack_available(VALUE self)
+static VALUE cTrack_available(VALUE self, VALUE session)
 {
-  return sp_track_is_available(DATA_PPTR(self, sp_track)) ? Qtrue : Qfalse;
+  return sp_track_is_available(
+    DATA_PPTR(session, sp_session), 
+    DATA_PPTR(self, sp_track)
+  ) ? Qtrue : Qfalse;
 }
 
 /**
@@ -972,9 +986,12 @@ static VALUE cTrack_to_link(VALUE self)
  * 
  * True if the track is starred.
  */
-static VALUE cTrack_starred(VALUE self)
+static VALUE cTrack_starred(VALUE self, VALUE session)
 {
-  return sp_track_is_starred(DATA_PPTR(self, sp_track)) ? Qtrue : Qfalse;
+  return sp_track_is_starred(
+    DATA_PPTR(session, sp_session),
+    DATA_PPTR(self, sp_track)
+  ) ? Qtrue : Qfalse;
 }
 
 /**
@@ -1121,9 +1138,9 @@ void Init_hallon()
   rb_define_method(cTrack, "initialize", cTrack_initialize, 0);
   rb_define_method(cTrack, "name", cTrack_name, 0);
   rb_define_method(cTrack, "loaded?", cTrack_loaded, 0);
-  rb_define_method(cTrack, "available?", cTrack_available, 0);
+  rb_define_method(cTrack, "available?", cTrack_available, 1);
   rb_define_method(cTrack, "to_link", cTrack_to_link, 0);
-  rb_define_method(cTrack, "starred?", cTrack_starred, 0);
+  rb_define_method(cTrack, "starred?", cTrack_starred, 1);
   rb_define_method(cTrack, "duration", cTrack_duration, 0);
   rb_define_method(cTrack, "error", cTrack_error, 0);
   rb_define_method(cTrack, "popularity", cTrack_popularity, 0);
