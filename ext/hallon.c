@@ -443,15 +443,18 @@ static VALUE cPlaylistContainer_add(VALUE self, VALUE obj)
   
   if (CLASS_OF(obj) == cPlaylist)
   {
-    playlist = sp_playlistcontainer_add_playlist(
-      pc, 
-      sp_link_create_from_playlist(DATA_PPTR(obj, sp_playlist))
-    );
+    sp_playlistcontainer_add_playlist(pc, 
+      sp_link_create_from_playlist(DATA_PPTR(obj, sp_playlist)));
+    
+    return obj;
   }
   else if (TYPE(obj) == T_STRING)
   {
     assert_playlist_name(obj);
     playlist = sp_playlistcontainer_add_new_playlist(pc, RSTRING_PTR(obj));
+    
+    if ( ! playlist) rb_raise(eError, "playlist creation failed");
+    return Data_Make_Obj(cPlaylist, sp_playlist, playlist);
   }
   else
   {
@@ -459,13 +462,6 @@ static VALUE cPlaylistContainer_add(VALUE self, VALUE obj)
       rb_obj_classname(obj)
     );
   }
-  
-  if ( ! playlist)
-  {
-    rb_raise(eError, "playlist creation failed");
-  }
-
-  return Data_Make_Obj(cPlaylist, sp_playlist, playlist);
 }
 
 /**
