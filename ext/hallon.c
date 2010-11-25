@@ -679,7 +679,7 @@ static VALUE cPlaylist_insert(int argc, VALUE *argv, VALUE self)
     track = RARRAY_PTR(tracks)[i];
     if (CLASS_OF(track) != cTrack)
     {
-      rb_raise(rb_eTypeError, "wrong argument type %s (expected %s) on position %d", 
+      rb_raise(rb_eTypeError, "wrong argument type %s (expected %s) on position %ld", 
         rb_obj_classname(track), rb_obj_classname(cTrack), i);
     }
     
@@ -699,7 +699,7 @@ static VALUE cPlaylist_insert(int argc, VALUE *argv, VALUE self)
   if (cindex < 0 || cindex > sp_playlist_num_tracks(playlist)) rb_raise(rb_eArgError, "index %d out of range", cindex);
   
   // .... and add! :D!
-  sp_error error = sp_playlist_add_tracks(playlist, (const sp_track **) ptracks, RARRAY_LEN(tracks), cindex, psession);
+  sp_error error = sp_playlist_add_tracks(playlist, (const sp_track **) ptracks, (int) RARRAY_LEN(tracks), cindex, psession);
   
   if (error != SP_ERROR_OK)
   {
@@ -734,19 +734,19 @@ static VALUE cPlaylist_remove(VALUE self, VALUE indexes)
     
     if ( ! FIXNUM_P(pos))
     {
-      rb_raise(rb_eTypeError, "wrong argument type %s (expected Fixnum) at index %d", rb_obj_classname(pos), i);
+      rb_raise(rb_eTypeError, "wrong argument type %s (expected Fixnum) at index %ld", rb_obj_classname(pos), i);
     }
     
     idx = FIX2INT(pos);
     if (idx < 0 || idx >= numtracks)
     {
-      rb_raise(rb_eArgError, "index at position %d out of range", i);
+      rb_raise(rb_eArgError, "index at position %ld out of range", i);
     }
 
     tracks[i] = FIX2INT(pos);
   }
   
-  sp_error error = sp_playlist_remove_tracks(playlist, tracks, RARRAY_LEN(indexes));
+  sp_error error = sp_playlist_remove_tracks(playlist, tracks, (int) RARRAY_LEN(indexes));
   
   if (error != SP_ERROR_OK)
   {
