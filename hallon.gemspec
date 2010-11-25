@@ -74,8 +74,13 @@ Hallon is licensed under the [GNU AGPL](http://www.gnu.org/licenses/agpl-3.0.htm
   s.rubygems_version = %q{1.3.7}
   s.summary = %q{Delicious Ruby bindings for libspotify}
   s.test_files = [
-    "spec/config.rb",
-    "spec/hallon_spec.rb"
+    "spec/hallon_spec.rb",
+    "spec/link_spec.rb",
+    "spec/playlist_container_spec.rb",
+    "spec/playlist_spec.rb",
+    "spec/session_spec.rb",
+    "spec/track_spec.rb",
+    "spec/user_spec.rb"
   ]
 
   if s.respond_to? :specification_version then
@@ -83,7 +88,7 @@ Hallon is licensed under the [GNU AGPL](http://www.gnu.org/licenses/agpl-3.0.htm
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<rspec>, ["~> 2"])
+      s.add_development_dependency(%q<rspec>, ["~> 2"])
     else
       s.add_dependency(%q<rspec>, ["~> 2"])
     end
