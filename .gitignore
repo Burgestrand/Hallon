@@ -4,7 +4,7 @@ ext/**
 !ext/hallon.c
 !ext/extconf.rb
 *.key
-spec/tmp
+tmp/
 spec/config.rb
 .bundle
 lib/libspotify-*
