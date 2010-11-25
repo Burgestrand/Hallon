@@ -1,10 +1,14 @@
+.bundle
 *.gem
 doc/**
+
+# Extension files
 ext/**
 !ext/hallon.c
 !ext/extconf.rb
+
+# Private files
 *.key
 tmp/
-spec/config.rb
-.bundle
-lib/libspotify-*
+config.rb
+libspotify-*

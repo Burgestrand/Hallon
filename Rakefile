@@ -32,7 +32,9 @@ rescue LoadError => e
 end
 
 require 'rspec/core/rake_task'
-RSpec::Core::RakeTask.new
+RSpec::Core::RakeTask.new do |spec|
+  spec.rspec_opts = '-Ilib -Ispec -rsupport/spec_helper'
+end
 
 require 'rake/rdoctask'
 Rake::RDocTask.new do |rdoc|

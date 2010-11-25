@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 # Globals
 TRACK_URI = "spotify:track:5CwHu4IDP6MYCrSg6xyVPa"
 TRACK_URI2 = "spotify:track:5st5644IlBmKiiRE73UsoZ"
