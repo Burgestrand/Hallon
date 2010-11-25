@@ -76,7 +76,7 @@ namespace "ext" do
 end
 
 desc "Builds Hallon from scratch and tests it"
-task :build => ['ext:rebuild', 'spec']
+task :compile => ['ext:rebuild', 'spec']
 
 task :spec => :check_dependencies
 task :default => :spec
