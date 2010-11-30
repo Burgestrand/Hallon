@@ -1,5 +1,5 @@
-root = File.dirname(__FILE__)
-require File.expand_path('./version', root)
+require 'hallon/version'
+require 'hallon/session'
 
 module Hallon
   # A regex that matches all Spotify URIs

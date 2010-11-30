@@ -8,7 +8,6 @@ static VALUE cSession_alloc(VALUE klass)
 
 static void cSession_free(sp_session **session_ptr)
 {
-  ASSERT_NOT_EMPTY(session_ptr);
   sp_session_release(*session_ptr);
   xfree(session_ptr);
 }
@@ -40,10 +39,11 @@ static VALUE cSession_initialize(int argc, VALUE *argv, VALUE self)
   settings_path = rb_str_to_str(settings_path);
   cache_path    = rb_str_to_str(cache_path);
   
-  Check_Type(appkey, T_STRING);
-  Check_Type(user_agent, T_STRING);
-  Check_Type(settings_path, T_STRING);
-  Check_Type(cache_path, T_STRING);
+  /* readonly variables */
+  rb_iv_set(self, "@appkey", appkey);
+  rb_iv_set(self, "@user_agent", user_agent);
+  rb_iv_set(self, "@settings_path", settings_path);
+  rb_iv_set(self, "@cache_path", cache_path);
   
   sp_session_callbacks callbacks =
   {
@@ -78,8 +78,7 @@ static VALUE cSession_initialize(int argc, VALUE *argv, VALUE self)
   };
   
   sp_session **session_ptr = Data_Get_Ptr(self, sp_session);
-  sp_error error = sp_session_create(&config, &(*session_ptr));
-  
+  sp_error error = sp_session_create(&config, session_ptr);
   ASSERT_OK(error);
   
   return self;
