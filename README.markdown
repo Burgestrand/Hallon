@@ -1,22 +1,39 @@
+Note about 1.0.0 branch
+=======================
+I’ve decided to restructure Hallon, but I’ll do it as a way of rebuilding it. This is the first major rewrite since release, and a much needed one. It’ll be easier for both me and external contributors to improve on Hallon, and that will hopefully pave the way for a 1.0.0 release.
+
+This branch will be the main development branch from now and on.
+
+Want to help? Look here!
+------------------------
+I am having troubles deciding how the API should work. This is a network library, and I need to handle connection errors, music delivery and metadata updates — all of which happen in their own thread.
+
+This is what I want it to look like, kind of:
+
+  session = Hallon::Session.new(IO.read('spotify_appkey.key'))
+  session.login username, password do |session|
+    playlist_container.each do |playlist|
+      puts playlist.name
+    end
+    
+    session.logout
+    # this should never be reached
+  end
+
+However, current problems include:
+
+- reading object properties require the object to be fully loaded for them to have any meaningful value. should this block until it is loaded?
+- some object properties (those that return other objects) don’t need the parent object to be loaded. should we block anyway?
+- a temporary connection error might occur at any time… what to do about it?
+- a permanent connection error might occur at any time… what to do about it?
+
+---
+
 What is Hallon?
 ===============
 Hallon provides [Ruby][] bindings for [libspotify][], the official Spotify C API. This allows you to use an awesome language to interact with an awesome service.
 
 Hallon is inspired by [Greenstripes][], a similar library by [Jesper Särnesjö][].
-
-How do I use it?
------------------
-There are [installation instructions in the GitHub wiki for Hallon](http://wiki.github.com/Burgestrand/Hallon/installation-instructions). Once the installation is complete you can write code like this:
-
-    session = Hallon::Session.new IO.read('spotify_appkey.key')
-    session.login username, password do |session|
-      # playlists = private method of session instance
-      summer2010 = playlists.add("Summer 2010").wait
-      
-      # @param #to_track
-      # @return Playlist
-      summer2010.push "spotify:track:4yJmwG2C1SDgcBbV50xI91"
-    end # calls logout
 
 This is awesome! I want to help!
 --------------------------------
@@ -28,7 +45,7 @@ Sweet! You contribute in more than one way!
 ### [Send me feedback and requests](http://github.com/Burgestrand/Hallon/issues)
 Really, I ❤ feedback! Suggestions on how to improve the API, tell me what is delicious about Hallon, tell me what is yucky about Hallon… anything! All feedback is useful in one way or another.
 
-You can reach me either through [Hallons issue tracker](http://github.com/Burgestrand/Hallon/issues), [GitHub messaging system](http://github.com/inbox/new/Burgestrand) or you can find [my e-mail listed on my GitHub profile](http://github.com/Burgestrand).
+You can reach me either through [Hallons issue tracker](http://github.com/Burgestrand/Hallon/issues), [GitHub messaging system](http://github.com/inbox/new/Burgestrand) or you can find [more contact details on my GitHub profile](http://github.com/Burgestrand).
 
 ## What’s the catch?
 There are several!
