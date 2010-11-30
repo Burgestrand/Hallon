@@ -46,4 +46,9 @@ RSpec::Core::RakeTask.new('spec:rcov') do |spec|
   end
 end
 
+desc "Generates YARD documentation and open it."
+task :doc => :yard do
+  system 'open doc/index.html'
+end
+
 task :default => [:compile, :spec]
