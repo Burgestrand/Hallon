@@ -1,7 +1,0 @@
-ext/**/*.c
-lib/**/*.rb
-bin/*
-- 
-features/**/*.feature
-LICENSE.txt
-agpl.txt

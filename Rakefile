@@ -52,9 +52,6 @@ RSpec::Core::RakeTask.new('spec:rcov') do |spec|
 end
 
 ## YARD
-YARD::Rake::YardocTask.new do |yard|
-  yard.files   = ['lib/**/*.rb', 'ext/**/*.c']
-  yard.options = ['-m markdown', '--charset UTF-8']
-end
+YARD::Rake::YardocTask.new
 
 task :default => :spec
