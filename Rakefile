@@ -36,6 +36,11 @@ Rake::ExtensionTask.new('hallon', Jeweler::Tasks.new do |gem|
   gem.version    = Hallon::Version::STRING
 end.gemspec)
 
+desc "touch spec/spec_helper.rb (for autotest)"
+task :compile do
+  FileUtils.touch 'lib/hallon/hallon.rb'
+end
+
 desc "Generates YARD documentation and open it."
 task :doc => :yard do
   system 'open doc/index.html'
