@@ -16,10 +16,10 @@ static void cSession_free(sp_session **session_ptr)
 /*
   Document-method: initialize(appkey, user_agent = "Hallon", settings_path = Dir.mktmpdir "se.burgestrand.hallon", cache_path = settings_path)
   
-  @param [String] appkey Your libspotify application key (binary).
-  @param [String] user_agent (default: Hallon)
-  @param [String] settings_path (default uses mkdtmp: /tmp/se.burgestrand.hallon.XXXXXX)
-  @param [String] cache_path (default uses settings_path)
+  @param [#to_s] appkey Your libspotify application key (binary).
+  @param [#to_s] user_agent (default: Hallon)
+  @param [#to_s] settings_path (default uses mkdtmp: /tmp/se.burgestrand.hallon.XXXXXX)
+  @param [#to_s] cache_path (default uses settings_path)
 */
 static VALUE cSession_initialize(int argc, VALUE *argv, VALUE self)
 {
@@ -33,6 +33,12 @@ static VALUE cSession_initialize(int argc, VALUE *argv, VALUE self)
     case 2: settings_path = tmpdir;
     case 3: cache_path    = settings_path;
   }
+    
+  /* #to_s */
+  appkey        = rb_str_to_str(appkey);
+  user_agent    = rb_str_to_str(user_agent);
+  settings_path = rb_str_to_str(settings_path);
+  cache_path    = rb_str_to_str(cache_path);
   
   Check_Type(appkey, T_STRING);
   Check_Type(user_agent, T_STRING);
