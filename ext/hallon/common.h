@@ -10,6 +10,7 @@
   #  include <spotify/api.h>
   #endif
   
+  #define STR2SYM(string) ID2SYM(rb_intern(string))
   #define true 1
   #define false 0
   
@@ -37,7 +38,9 @@
     on a null pointer.
   */
   #define Data_Get_PVal(obj, type) ({\
-    Data_Get_Ptr(obj, type)\
+    type **type_ptr = Data_Get_Ptr(obj, type);\
+    ASSERT_NOT_EMPTY(type_ptr);\
+    *type_ptr;\
   })
   
   /*
