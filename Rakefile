@@ -12,6 +12,7 @@ require 'jeweler'
 require 'rspec/core/rake_task'
 require 'yard'
 require 'rake/extensiontask'
+require './lib/hallon/version'
 
 YARD::Rake::YardocTask.new
 Jeweler::RubygemsDotOrgTasks.new
@@ -31,6 +32,7 @@ Rake::ExtensionTask.new('hallon', Jeweler::Tasks.new do |gem|
   # installation
   gem.extensions = FileList['ext/**/extconf.rb']
   gem.platform   = Gem::Platform::RUBY
+  gem.version    = Hallon::Version::STRING
 end.gemspec)
 
 ## RSpec
