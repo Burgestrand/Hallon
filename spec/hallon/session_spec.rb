@@ -11,6 +11,18 @@ describe Hallon::Session do
     it "should succeed with a valid application key" do
       expect { Hallon::Session.new(Hallon::APPKEY) }.to_not raise_error
     end
+    
+    it "should accept a user agent" do
+      expect { Hallon::Session.new(Hallon::APPKEY, "Hallon") }.to_not raise_error
+    end
+    
+    it "should accept a settings path" do
+      expect { Hallon::Session.new(Hallon::APPKEY, "Hallon", "tmp") }
+    end
+    
+    it "should accept a cache path" do
+      expect { Hallon::Session.new(Hallon::APPKEY, "Hallon", "tmp", "tmp/cache") }
+    end
   end
   
   context "offline" do
