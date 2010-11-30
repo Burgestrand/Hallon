@@ -78,6 +78,19 @@ static VALUE cSession_initialize(int argc, VALUE *argv, VALUE self)
   return self;
 }
 
+VALUE cSession_state(VALUE self)
+{
+  sp_session *session_ptr = Data_Get_PVal(self, sp_session);
+  
+  switch(sp_session_connectionstate(session_ptr))
+  {
+    case SP_CONNECTION_STATE_LOGGED_OUT: return STR2SYM("logged_out");
+    case SP_CONNECTION_STATE_LOGGED_IN: return STR2SYM("logged_in");
+    case SP_CONNECTION_STATE_DISCONNECTED: return STR2SYM("disconnected");
+    default: return STR2SYM("undefined");
+  }
+}
+
 void Init_Session(VALUE mHallon)
 {
   rb_require("tmpdir");
@@ -85,4 +98,5 @@ void Init_Session(VALUE mHallon)
   VALUE cSession = rb_define_class_under(mHallon, "Session", rb_cObject);
   rb_define_alloc_func(cSession, cSession_alloc);
   rb_define_method(cSession, "initialize", cSession_initialize, -1);
+  rb_define_method(cSession, "state", cSession_state, 0);
 }
