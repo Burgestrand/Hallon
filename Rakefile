@@ -13,8 +13,11 @@ require 'rspec/core/rake_task'
 require 'yard'
 require 'rake/extensiontask'
 
-## Jeweler
-jeweler_task = Jeweler::Tasks.new do |gem|
+YARD::Rake::YardocTask.new
+Jeweler::RubygemsDotOrgTasks.new
+
+# rake-compiler + jeweler
+Rake::ExtensionTask.new('hallon', Jeweler::Tasks.new do |gem|
   gem.name     = "hallon"
   gem.summary  = %Q{Delicious Ruby bindings to the official Spotify API}
   gem.homepage = "http://github.com/Burgestrand/Hallon"
@@ -28,19 +31,11 @@ jeweler_task = Jeweler::Tasks.new do |gem|
   # installation
   gem.extensions = FileList['ext/**/extconf.rb']
   gem.platform   = Gem::Platform::RUBY
-end
-Jeweler::RubygemsDotOrgTasks.new
-
-## rake-compiler
-gemspec = jeweler_task.gemspec
-# gemspec.version = jeweler_task.jeweler.version
-Rake::ExtensionTask.new('hallon', gemspec)
+end.gemspec)
 
 ## RSpec
 rspec_opts = '-Ilib -Ispec -rspec_helper'
-RSpec::Core::RakeTask.new do |spec|
-  spec.rspec_opts = rspec_opts
-end
+RSpec::Core::RakeTask.new { |spec| spec.rspec_opts = rspec_opts }
 
 ## -> with coverage
 RSpec::Core::RakeTask.new('spec:rcov') do |spec|
@@ -50,8 +45,5 @@ RSpec::Core::RakeTask.new('spec:rcov') do |spec|
     spec.rcov = true
   end
 end
-
-## YARD
-YARD::Rake::YardocTask.new
 
 task :default => :spec
