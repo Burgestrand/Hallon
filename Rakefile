@@ -36,15 +36,6 @@ Rake::ExtensionTask.new('hallon', Jeweler::Tasks.new do |gem|
   gem.version    = Hallon::Version::STRING
 end.gemspec)
 
-## -> with coverage
-RSpec::Core::RakeTask.new('spec:rcov') do |spec|
-  if RUBY_VERSION =~ /\A1\.9/
-    spec.rspec_opts = '--require cover_me'
-  else
-    spec.rcov = true
-  end
-end
-
 desc "Generates YARD documentation and open it."
 task :doc => :yard do
   system 'open doc/index.html'
