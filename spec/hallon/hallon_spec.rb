@@ -14,8 +14,8 @@ describe Hallon do
        spotify:track:3oN2Kq1h07LSSBSLYQp0Ns
        spotify:album:6I58XCEkOnfUVsfpDehzlQ
        spotify:artist:6MF9fzBmfXghAz953czmBC
-       spotify:user:radiofy.se:playlist:50aHxwoLzq2fvo5g97c2T2
-       spotify:user:radiofy.se).each do |uri|
+       spotify:user:burgestrand:playlist:4nQnbGi4kALbME9csEqdW2
+       spotify:user:burgestrand).each do |uri|
       specify { should match uri }
     end
   end
