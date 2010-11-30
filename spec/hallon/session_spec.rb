@@ -11,7 +11,10 @@ describe Hallon::Session do
     it "should succeed with a valid application key" do
       expect { Hallon::Session.new(Hallon::APPKEY) }.to_not raise_error
     end
-    
-    # appkey, user agent, settings location, cache location
+  end
+  
+  context "offline" do
+    subject { Hallon::Session.new(Hallon::APPKEY) }
+    its(:state) { should equal :logged_out }
   end
 end
