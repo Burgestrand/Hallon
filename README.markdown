@@ -27,6 +27,10 @@ However, current problems include:
 - a temporary connection error might occur at any time… what to do about it?
 - a permanent connection error might occur at any time… what to do about it?
 
+An [EventMachine][]y approach might be preferrable, but how should that be done? Can we leverage EventMachine in any way outsource some code?
+
+[EventMachine]: https://github.com/eventmachine/eventmachine
+
 ---
 
 What is Hallon?
