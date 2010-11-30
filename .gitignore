@@ -1,5 +1,6 @@
 # Private files
 *.key
+spec/support/config.rb
 tmp/
 libspotify-*
 
