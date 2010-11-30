@@ -20,3 +20,7 @@ describe Hallon do
     end
   end
 end
+
+describe Hallon::Error do
+  it { should be_a StandardError }
+end
