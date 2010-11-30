@@ -9,11 +9,14 @@ extern size_t g_appkey_size;
 
 void create_and_release(void)
 {
+  char tmpdir[] = "/tmp/double-release.libspotify.XXXXXX";
+  mkdtemp(tmpdir);
+  
   sp_session_callbacks callbacks = {};
   sp_session_config config = {
     .api_version          = SPOTIFY_API_VERSION,
-    .cache_location       = "tmp",
-    .settings_location    = "tmp",
+    .cache_location       = tmpdir,
+    .settings_location    = tmpdir,
     .application_key      = &g_appkey,
     .application_key_size = g_appkey_size,
     .user_agent           = "Hallon",
