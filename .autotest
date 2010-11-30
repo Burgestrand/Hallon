@@ -1,0 +1,2 @@
+require "test_notifier/runner/autotest"
+require 'autotest/fsevent'
