@@ -1,6 +1,7 @@
 GEM
   remote: http://rubygems.org/
   specs:
+    bluecloth (2.0.9)
     diff-lcs (1.1.2)
     git (1.2.5)
     jeweler (1.5.1)
@@ -18,14 +19,15 @@ GEM
     rspec-expectations (2.1.0)
       diff-lcs (~> 1.1.2)
     rspec-mocks (2.1.0)
-    yard (0.6.1)
+    yard (0.6.3)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
+  bluecloth
   bundler (~> 1)
   jeweler (~> 1.5)
   rake-compiler
   rspec (~> 2)
-  yard (~> 0.6.0)
+  yard (~> 0.6.3)
