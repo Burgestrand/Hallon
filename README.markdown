@@ -10,15 +10,15 @@ I am having troubles deciding how the API should work. This is a network library
 
 This is what I want it to look like, kind of:
 
-  session = Hallon::Session.new(IO.read('spotify_appkey.key'))
-  session.login username, password do |session|
-    playlist_container.each do |playlist|
-      puts playlist.name
-    end
+    session = Hallon::Session.new(IO.read('spotify_appkey.key'))
+    session.login username, password do |session|
+      playlist_container.each do |playlist|
+        puts playlist.name
+      end
     
-    session.logout
-    # this should never be reached
-  end
+      session.logout
+      # this should never be reached
+    end
 
 However, current problems include:
 
