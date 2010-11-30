@@ -54,8 +54,15 @@
     Make sure the given pointer is not a null pointer.
   */
   #define ASSERT_NOT_EMPTY(ptr) do {\
+    ASSERT_NOT_NULL(ptr);\
+    ASSERT_NOT_NULL(*ptr);\
+  } while (0)
+  
+  /*
+    Make sure the given pointer is not a null pointer and that its’ value is not NULL.
+  */
+  #define ASSERT_NOT_NULL(ptr) do {\
     if (ptr == NULL) rb_raise(Hallon_Error, "%s is null", #ptr);\
-    if (*ptr == NULL) rb_raise(Hallon_Error, "*%s is null", #ptr);\
   } while (0)
   
   /*
