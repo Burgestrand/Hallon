@@ -35,14 +35,10 @@ Rake::ExtensionTask.new('hallon', Jeweler::Tasks.new do |gem|
   gem.version    = Hallon::Version::STRING
 end.gemspec)
 
-## RSpec
-rspec_opts = '-Ilib -Ispec -rspec_helper'
-RSpec::Core::RakeTask.new { |spec| spec.rspec_opts = rspec_opts }
-
 ## -> with coverage
 RSpec::Core::RakeTask.new('spec:rcov') do |spec|
   if RUBY_VERSION =~ /\A1\.9/
-    spec.rspec_opts = [rspec_opts, '--require cover_me'].join(' ')
+    spec.rspec_opts = '--require cover_me'
   else
     spec.rcov = true
   end
