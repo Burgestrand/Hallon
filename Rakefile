@@ -38,7 +38,7 @@ end.gemspec)
 
 desc "touch spec/spec_helper.rb (for autotest)"
 task :compile do
-  FileUtils.touch 'lib/hallon/hallon.rb'
+  FileUtils.touch 'spec/spec_helper.rb'
 end
 
 desc "Generates YARD documentation and open it."
