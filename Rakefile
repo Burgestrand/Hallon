@@ -46,4 +46,4 @@ RSpec::Core::RakeTask.new('spec:rcov') do |spec|
   end
 end
 
-task :default => :spec
+task :default => [:compile, :spec]
