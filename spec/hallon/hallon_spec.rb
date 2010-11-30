@@ -1,5 +1,9 @@
 describe Hallon do
-  describe "libspotify version" do
-    specify { Hallon::API_VERSION.should equal 6 }
+  describe "VERSION" do
+    specify { Hallon::VERSION.should == "0.0.0" }
+  end
+  
+  describe "API_VERSION" do
+    specify { Hallon::API_VERSION.should == 6 }
   end
 end
