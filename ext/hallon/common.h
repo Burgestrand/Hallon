@@ -39,7 +39,7 @@
   */
   #define Data_Get_PVal(obj, type) ({\
     type **type_ptr = Data_Get_Ptr(obj, type);\
-    ASSERT_NOT_EMPTY(type_ptr);\
+    ASSERT_NOT_NULL(type_ptr);\
     *type_ptr;\
   })
   
