@@ -9,6 +9,9 @@
   #else
   #  include <spotify/api.h>
   #endif
-  
-  #include "hallon.h"
+
+  /*
+    Initializers for the other classes.
+  */
+  void Init_Session(VALUE);
 #endif
