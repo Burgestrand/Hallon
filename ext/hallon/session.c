@@ -10,6 +10,7 @@ static void cSession_free(sp_session **session_ptr)
 {
   ASSERT_NOT_EMPTY(session_ptr);
   sp_session_release(*session_ptr);
+  xfree(session_ptr);
 }
 
 /*
