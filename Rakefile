@@ -16,6 +16,7 @@ require './lib/hallon/version'
 
 YARD::Rake::YardocTask.new
 Jeweler::RubygemsDotOrgTasks.new
+RSpec::Core::RakeTask.new
 
 # rake-compiler + jeweler
 Rake::ExtensionTask.new('hallon', Jeweler::Tasks.new do |gem|
