@@ -1,33 +1,26 @@
 describe Hallon::Session do
-  describe "#new" do
+  it { Hallon::Session.should_not respond_to :new }
+  
+  describe "#instance" do
     it "should require an application key" do
-      expect { Hallon::Session.new }.to raise_error(ArgumentError)
+      expect { Hallon::Session.instance }.to raise_error(ArgumentError)
     end
     
     it "should fail on an invalid application key" do
-      expect { Hallon::Session.new('invalid') }.to raise_error(Hallon::Error)
+      expect { Hallon::Session.instance('invalid') }.to raise_error(Hallon::Error)
+    end
+    
+    it "should succeed when given proper parameters" do
+      expect { Hallon::Session.instance(Hallon::APPKEY, "Hallon", "tmp", "tmp/cache") }.to_not raise_error
     end
   end
   
   context "once instantiated" do
-    before :all do
-      @session = Hallon::Session.new(Hallon::APPKEY, "Hallon", "tmp", "tmp/cache")
-    end
+    subject { Hallon::Session.instance(Hallon::APPKEY, "Hallon", "tmp", "tmp/cache") }
     
-    describe '#user_agent' do
-      specify { @session.user_agent.should == "Hallon" }
-    end
-    
-    describe '#settings_path' do
-      specify { @session.settings_path.should == "tmp" }
-    end
-    
-    describe '#cache_path' do
-      specify { @session.cache_path.should == "tmp/cache" }
-    end
-    
-    describe '#state' do
-      specify { @session.state.should equal :logged_out }
-    end
+    its(:user_agent) { should == "Hallon" }
+    its(:settings_path) { should == "tmp" }
+    its(:cache_path) { should == "tmp/cache" }
+    its(:state) { should == :logged_out }
   end
 end
