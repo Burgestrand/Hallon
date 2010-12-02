@@ -18,6 +18,11 @@ describe Hallon::Session do
   context "once instantiated" do
     subject { Hallon::Session.instance(Hallon::APPKEY, "Hallon", "tmp", "tmp/cache") }
     
+    # The appkey is long, to avoid displaying it in the console we do like this.
+    describe "application_key" do
+      it "should == Hallon::APPKEY" do subject.application_key.should == Hallon::APPKEY end
+    end
+    
     its(:user_agent) { should == "Hallon" }
     its(:settings_path) { should == "tmp" }
     its(:cache_path) { should == "tmp/cache" }
