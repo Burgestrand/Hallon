@@ -13,12 +13,15 @@ static void cSession_free(sp_session **session_ptr)
 }
 
 /*
-  Document-method: initialize(appkey, user_agent = "Hallon", settings_path = Dir.mktmpdir "se.burgestrand.hallon", cache_path = settings_path)
+  call-seq: initialize(application_key, user_agent = "Hallon", settings_path = Dir.mktmpdir("se.burgestrand.hallon"), cache_path = settings_path)
   
-  @param [#to_s] appkey Your libspotify application key (binary).
-  @param [#to_s] user_agent (default: Hallon)
-  @param [#to_s] settings_path (default uses mkdtmp: /tmp/se.burgestrand.hallon.XXXXXX)
-  @param [#to_s] cache_path (default uses settings_path)
+  Creates a new Spotify session with the given parameters using `sp_session_create`.
+  
+  @note Until `libspotify` allows you to create more than one session, you must use {Session#instance} instead of this method
+  @param [#to_s] application_key (binary)
+  @param [#to_s] user_agent
+  @param [#to_s] settings_path
+  @param [#to_s] cache_path
 */
 static VALUE cSession_initialize(int argc, VALUE *argv, VALUE self)
 {
@@ -40,7 +43,7 @@ static VALUE cSession_initialize(int argc, VALUE *argv, VALUE self)
   cache_path    = rb_str_to_str(cache_path);
   
   /* readonly variables */
-  rb_iv_set(self, "@appkey", appkey);
+  rb_iv_set(self, "@application_key", appkey);
   rb_iv_set(self, "@user_agent", user_agent);
   rb_iv_set(self, "@settings_path", settings_path);
   rb_iv_set(self, "@cache_path", cache_path);
@@ -84,7 +87,12 @@ static VALUE cSession_initialize(int argc, VALUE *argv, VALUE self)
   return self;
 }
 
-VALUE cSession_state(VALUE self)
+/*
+  Retrieve the connection state for this session.
+  
+  @return [Symbol] `:logged_out`, `:logged_in`, `:disconnected` or `:undefined`
+*/
+static VALUE cSession_state(VALUE self)
 {
   sp_session *session_ptr = Data_Get_PVal(self, sp_session);
   
@@ -97,6 +105,16 @@ VALUE cSession_state(VALUE self)
   }
 }
 
+
+/*
+  Document-class: Hallon::Session
+  
+  The Session is fundamental for all communication with Spotify. Pretty much *all*
+  API calls require you to have established a session with Spotify before
+  using them.
+  
+  @see https://developer.spotify.com/en/libspotify/docs/group__session.html
+*/
 void Init_Session(VALUE mHallon)
 {
   rb_require("tmpdir");
