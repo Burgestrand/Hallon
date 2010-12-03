@@ -13,7 +13,7 @@ This is what I want it to look like, kind of:
     session = Hallon::Session.new(IO.read('spotify_appkey.key'))
     session.login username, password do |session|
       playlist_container.each do |playlist|
-        puts playlist.name
+        puts playlist.load.name
       end
     
       session.logout
@@ -22,8 +22,8 @@ This is what I want it to look like, kind of:
 
 However, current problems include:
 
-- reading object properties require the object to be fully loaded for them to have any meaningful value. should this block until it is loaded?
-- some object properties (those that return other objects) don’t need the parent object to be loaded. should we block anyway?
+- reading some attributes requires the object to be fully loaded for them to return a meaningful value. the idea is that #load will do this waiting, returning only after it is loaded fully. you can optionally give a block which will be fired when the operation is finished.
+- the above might mean code becomes littered with #load everywhere — make it default?
 - a temporary connection error might occur at any time… what to do about it?
 - a permanent connection error might occur at any time… what to do about it?
 
