@@ -20,16 +20,30 @@ This is what I want it to look like, kind of:
       # this should never be reached
     end
 
-However, current problems include:
+However, since `libspotify` is an asynchronous library I face several problems:
 
-- reading some attributes requires the object to be fully loaded for them to return a meaningful value. the idea is that #load will do this waiting, returning only after it is loaded fully. you can optionally give a block which will be fired when the operation is finished.
-- the above might mean code becomes littered with #load everywhere — make it default?
-- a temporary connection error might occur at any time… what to do about it?
-- a permanent connection error might occur at any time… what to do about it?
+- You can get disconnected at any time (temporary or permanent). The programmer
+  might want to reconnect and continue from where he was, or just exit, or
+  something else. How do I make it her choice? (*idea: use POSIX signals as
+  interrupt handlers somehow*)
+- All operations have an associated callback. For Hallon v1 these operations
+  will be blocking, which means we need to wait (not poll) for the callbacks to
+  be fired. When they are, we need to communicate this back.
 
-An [EventMachine][]y approach might be preferrable, but how should that be done? Can we leverage EventMachine in any way outsource some code?
-
-[EventMachine]: https://github.com/eventmachine/eventmachine
+  Hallon v0 solved this using global mutex and condition variable. Sticking with
+  that solution will become unmaintainable fast. I want Hallon v1 to leverage an
+  event-loop in a thread separate from the main thread. This way one could use
+  a pipe for IPC between the `libspotify` callbacks and Ruby.
+  
+  However, there is one big problem with pipe-IPC: it needs a protocol and I
+  will most likely have to pack and unpack the data I am sending through the
+  pipe. Not only that, but most of the data should be converted to ruby values
+  so I must know what they are and how many.
+  
+  Another problem is that calling no two `sp_*`-functions must be called at the
+  same time. This might happen if we have two Ruby threads that can call
+  `sp_*`-functions (even if the GIL prevents ruby code to be executed
+  concurrently, the GIL is not required for calling Spotify functions).
 
 ---
 
