@@ -26,5 +26,23 @@ module Hallon
     def Session.instance(*args, &block)
       @__instance__ ||= new(*args, &block)
     end
+    
+    # True if currently logged in.
+    # @see #state
+    def logged_in?
+      state == :logged_in
+    end
+    
+    # True if logged out.
+    # @see #state
+    def logged_out?
+      state == :logged_out
+    end
+    
+    # True if session has been disconnected.
+    # @see #state
+    def disconnected?
+      state == :disconnected
+    end
   end
 end
