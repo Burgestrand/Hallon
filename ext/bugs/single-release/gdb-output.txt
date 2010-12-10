@@ -1,0 +1,23 @@
+gdb$ thread apply all bt
+
+Thread 4 (core thread 3):
+#0  0x0000000100373411 in __progname ()
+#1  0x0000000000000009 in ?? ()
+
+Thread 3 (core thread 2):
+#0  0x00007fff866a9fca in __semwait_signal ()
+#1  0x00007fff866a9e59 in nanosleep ()
+#2  0x00007fff866a9dc3 in usleep ()
+#3  0x00000001000d866a in __progname ()
+#4  0x00007fff866a83e9 in thread_start ()
+
+Thread 2 (core thread 1):
+#0  0x00007fff8666f316 in semaphore_wait_trap ()
+#1  0x000000010021855e in __progname ()
+#2  0x00007fff866a83e9 in thread_start ()
+
+Thread 1 (core thread 0):
+#0  0x00007fff866a9fca in __semwait_signal ()
+#1  0x00007fff866d0d56 in pthread_join ()
+#2  0x00000001000d701b in __progname ()
+#3  0x0000000100000b84 in start ()
