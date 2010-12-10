@@ -115,11 +115,11 @@ static VALUE cSession_state(VALUE self)
   
   @see https://developer.spotify.com/en/libspotify/docs/group__session.html
 */
-void Init_Session(VALUE mHallon)
+void Init_Session(void)
 {
   rb_require("tmpdir");
   
-  VALUE cSession = rb_define_class_under(mHallon, "Session", rb_cObject);
+  VALUE cSession = rb_define_class_under(MHallon, "Session", rb_cObject);
   rb_define_alloc_func(cSession, cSession_alloc);
   rb_define_method(cSession, "initialize", cSession_initialize, -1);
   rb_define_method(cSession, "state", cSession_state, 0);

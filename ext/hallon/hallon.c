@@ -1,7 +1,5 @@
 #include "common.h"
 
-VALUE Hallon_Error;
-
 /*
   The Hallon namespace contains all classes and modules to avoid polluting the
   global namespace.
@@ -22,10 +20,10 @@ void Init_hallon(void)
     
     Thrown by Hallon on critical Spotify errors.
   */
-  Hallon_Error = rb_define_class_under(mHallon, "Error", rb_eStandardError);
+  rb_define_class_under(mHallon, "Error", rb_eStandardError);
   
   /* Initialize the other parts */
-  Init_Session(mHallon);
+  Init_Session();
   
   /* Require ruby part of Hallon */
   rb_require("hallon/hallon");

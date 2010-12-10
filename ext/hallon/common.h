@@ -17,12 +17,13 @@
   #include "macros.h"
   
   /*
-    Common Exception class, found in Hallon.c
-  */
-  extern VALUE Hallon_Error;
-
-  /*
     Initializers for the other classes.
   */
-  void Init_Session(VALUE);
+  void Init_Session();
+  
+  /*
+    Common accessors
+  */
+  #define MHallon rb_const_get(rb_cObject, rb_intern("Hallon"))
+  #define EHallon rb_const_get(MHallon, rb_intern("Error"))
 #endif

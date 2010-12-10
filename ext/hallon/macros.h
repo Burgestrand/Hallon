@@ -31,7 +31,7 @@
   Make sure we’re OK, or raise an error with the message.
 */
 #define ASSERT_OK(error) do {\
-  if (error != SP_ERROR_OK) rb_raise(Hallon_Error, "%s", sp_error_message(error));\
+  if (error != SP_ERROR_OK) rb_raise(EHallon, "%s", sp_error_message(error));\
 } while (0)
 
 /*
@@ -46,5 +46,5 @@
   Make sure the given pointer is not a null pointer and that its’ value is not NULL.
 */
 #define ASSERT_NOT_NULL(ptr) do {\
-  if (ptr == NULL) rb_raise(Hallon_Error, "%s is null (%s:%d)", #ptr, __FILE__, __LINE__);\
+  if (ptr == NULL) rb_raise(EHallon, "%s is null (%s:%d)", #ptr, __FILE__, __LINE__);\
 } while (0)
