@@ -3,6 +3,7 @@
 spec/support/config.rb
 tmp/
 libspotify-*
+core.*
 
 # Extension files
 *.bundle
