@@ -48,3 +48,8 @@
 #define ASSERT_NOT_NULL(ptr) do {\
   if (ptr == NULL) rb_raise(EHallon, "%s is null (%s:%d)", #ptr, __FILE__, __LINE__);\
 } while (0)
+
+/*
+  Write debug message to STDERR.
+*/
+#define DEBUG(msg) fprintf(stderr, "%s:%d -> %s\n", __FILE__, __LINE__, msg)
