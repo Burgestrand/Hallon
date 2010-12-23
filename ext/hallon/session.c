@@ -1,15 +1,30 @@
 #include "common.h"
 #include "session.h"
 
+/*
+  Allocate space for a session pointer and attach it to the returned object.
+*/
 static VALUE cSession_alloc(VALUE klass)
 {
-  return Data_Make_Ptr(klass, sp_session, NULL, cSession_free);
+  session_data_t *session_data = ALLOC(session_data_t);
+  
+  /* initialize */
+  session_data->session_ptr = ALLOC(sp_session*);
+  pthread_mutex_init(&session_data->access_mutex, NULL);
+  pthread_cond_init(&session_data->cb_notify_cond, NULL);
+  
+  return Data_Wrap_Struct(klass, NULL, cSession_free, session_data);
 }
 
-static void cSession_free(sp_session **session_ptr)
+/*
+  Release the created session and deallocate the session pointer.
+*/
+static void cSession_free(session_data_t* session_data)
 {
-  sp_session_release(*session_ptr);
-  xfree(session_ptr);
+  // sp_session_release(*session_data->session_ptr);
+  pthread_mutex_destroy(&session_data->access_mutex);
+  pthread_cond_destroy(&session_data->cb_notify_cond);
+  xfree(session_data);
 }
 
 /*
@@ -41,13 +56,14 @@ static VALUE cSession_initialize(int argc, VALUE *argv, VALUE self)
   user_agent    = rb_str_to_str(user_agent);
   settings_path = rb_str_to_str(settings_path);
   cache_path    = rb_str_to_str(cache_path);
-  
+    
   /* readonly variables */
   rb_iv_set(self, "@application_key", appkey);
   rb_iv_set(self, "@user_agent", user_agent);
   rb_iv_set(self, "@settings_path", settings_path);
   rb_iv_set(self, "@cache_path", cache_path);
   
+  /* establish the callbacks */
   sp_session_callbacks callbacks =
   {
     .logged_in              = NULL,
@@ -76,12 +92,12 @@ static VALUE cSession_initialize(int argc, VALUE *argv, VALUE self)
     .application_key_size = RSTRING_LEN(appkey),
     .user_agent           = StringValuePtr(user_agent),
     .callbacks            = &callbacks,
-    .userdata             = (void *) self,
+    .userdata             = NULL,
     .tiny_settings        = true,
   };
   
-  sp_session **session_ptr = Data_Get_Ptr(self, sp_session);
-  sp_error error = sp_session_create(&config, session_ptr);
+  session_data_t *session_data = Data_Fetch_Struct(self, session_data_t);
+  sp_error error = sp_session_create(&config, session_data->session_ptr);
   ASSERT_OK(error);
   
   return self;
@@ -94,9 +110,9 @@ static VALUE cSession_initialize(int argc, VALUE *argv, VALUE self)
 */
 static VALUE cSession_state(VALUE self)
 {
-  sp_session *session_ptr = Data_Get_PVal(self, sp_session);
+  session_data_t *session_data = Data_Fetch_Struct(self, session_data_t);
   
-  switch(sp_session_connectionstate(session_ptr))
+  switch(sp_session_connectionstate(*session_data->session_ptr))
   {
     case SP_CONNECTION_STATE_LOGGED_OUT: return STR2SYM("logged_out");
     case SP_CONNECTION_STATE_LOGGED_IN: return STR2SYM("logged_in");

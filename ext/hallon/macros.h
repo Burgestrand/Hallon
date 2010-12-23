@@ -1,30 +1,10 @@
 /*
-  Like Data_Make_Struct, but this makes a pointer to the struct pointer.
-  @note This macro is based on Statement Expressions, a GCC extension.
+  One-line the Data_Get_Struct!
 */
-#define Data_Make_Ptr(klass, type, mark, free) ({\
-  type **type_ptr;\
-  Data_Make_Struct(klass, type*, mark, free, type_ptr);\
-})
-
-/*
-  Like Data_Get_Struct, but this returns the pointer.
-  @note This macro is based on Statement Expressions, a GCC extension.
-*/
-#define Data_Get_Ptr(obj, type) ({\
-  type **type_ptr;\
-  Data_Get_Struct(obj, type*, type_ptr);\
+#define Data_Fetch_Struct(obj, type) ({\
+  type *type_ptr;\
+  Data_Get_Struct(obj, type, type_ptr);\
   type_ptr;\
-})
-
-/*
-  Data_Get_Ptr, but returns the value instead of the pointer. Raises an error
-  on a null pointer.
-*/
-#define Data_Get_PVal(obj, type) ({\
-  type **type_ptr = Data_Get_Ptr(obj, type);\
-  ASSERT_NOT_NULL(type_ptr);\
-  *type_ptr;\
 })
 
 /*
