@@ -27,5 +27,11 @@ describe Hallon::Session do
     its(:settings_path) { should == "tmp" }
     its(:cache_path) { should == "tmp/cache" }
     its(:state) { should == :logged_out }
+    
+    describe "#process_events" do
+      it "should return the timeout" do
+        subject.process_events.should be_a Fixnum
+      end
+    end
   end
 end

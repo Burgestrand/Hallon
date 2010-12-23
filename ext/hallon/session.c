@@ -121,6 +121,21 @@ static VALUE cSession_state(VALUE self)
   }
 }
 
+/*
+  Processes Spotify events using `sp_session_process_events` until it no longer
+  needs to do this.
+  
+  @private
+  @return [Fixnum] milliseconds until {#process_events} should be called again
+*/
+static VALUE cSession_process_events(VALUE self)
+{
+  session_data_t *session_data = Data_Fetch_Struct(self, session_data_t);
+  int timeout = 0;
+  while(timeout == 0) sp_session_process_events(*session_data->session_ptr, &timeout);
+  return INT2FIX(timeout);
+}
+
 
 /*
   Document-class: Hallon::Session
@@ -139,4 +154,5 @@ void Init_Session(void)
   rb_define_alloc_func(cSession, cSession_alloc);
   rb_define_method(cSession, "initialize", cSession_initialize, -1);
   rb_define_method(cSession, "state", cSession_state, 0);
+  rb_define_method(cSession, "process_events", cSession_process_events, 0);
 }
