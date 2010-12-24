@@ -2,6 +2,14 @@
 #include "session.h"
 
 /*
+  Retrieve the data pointer from the object.
+  
+  @example
+    DATA_OF(self)->access_mutex
+*/
+#define DATA_OF(obj) Data_Fetch_Struct(obj, session_data_t)
+
+/*
   Allocate space for a session pointer and attach it to the returned object.
 */
 static VALUE cSession_alloc(VALUE klass)
@@ -21,7 +29,7 @@ static VALUE cSession_alloc(VALUE klass)
 */
 static void cSession_free(session_data_t* session_data)
 {
-  // sp_session_release(*session_data->session_ptr);
+  // sp_session_release(*session_data->session_ptr); // BUG: libspotify 0.0.6
   pthread_mutex_destroy(&session_data->access_mutex);
   pthread_cond_destroy(&session_data->cb_notify_cond);
   xfree(session_data);
@@ -96,8 +104,7 @@ static VALUE cSession_initialize(int argc, VALUE *argv, VALUE self)
     .tiny_settings        = true,
   };
   
-  session_data_t *session_data = Data_Fetch_Struct(self, session_data_t);
-  sp_error error = sp_session_create(&config, session_data->session_ptr);
+  sp_error error = sp_session_create(&config, DATA_OF(self)->session_ptr);
   ASSERT_OK(error);
   
   return self;
@@ -110,9 +117,7 @@ static VALUE cSession_initialize(int argc, VALUE *argv, VALUE self)
 */
 static VALUE cSession_state(VALUE self)
 {
-  session_data_t *session_data = Data_Fetch_Struct(self, session_data_t);
-  
-  switch(sp_session_connectionstate(*session_data->session_ptr))
+  switch(sp_session_connectionstate(*DATA_OF(self)->session_ptr))
   {
     case SP_CONNECTION_STATE_LOGGED_OUT: return STR2SYM("logged_out");
     case SP_CONNECTION_STATE_LOGGED_IN: return STR2SYM("logged_in");
@@ -130,12 +135,10 @@ static VALUE cSession_state(VALUE self)
 */
 static VALUE cSession_process_events(VALUE self)
 {
-  session_data_t *session_data = Data_Fetch_Struct(self, session_data_t);
   int timeout = 0;
-  while(timeout == 0) sp_session_process_events(*session_data->session_ptr, &timeout);
+  while(timeout == 0) sp_session_process_events(*DATA_OF(self)->session_ptr, &timeout);
   return INT2FIX(timeout);
 }
-
 
 /*
   Document-class: Hallon::Session
