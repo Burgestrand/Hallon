@@ -21,8 +21,15 @@ static VALUE cSession_alloc(VALUE klass)
 */
 static void cSession_free(session_data_t* session_data)
 {
-  // how about if sp_session_create returned an error?
-  // sp_session_release(*session_data->session_ptr); // BUG: libspotify 0.0.6
+  /*
+    NOTE: if `sp_session_create` fails the session_ptr will be NULL
+    
+    BUG: libspotify 0.0.6
+    If a call has been made earlier to `sp_session_create` and it failed, this
+    cleanup call will also fail with a segfault in `sp_image_create`.
+  */
+  // sp_session_release(*session_data->session_ptr);
+  
   pthread_mutex_destroy(&session_data->event_mutex);
   pthread_cond_destroy(&session_data->event_signal);
   xfree(session_data);
