@@ -1,5 +1,6 @@
 describe Hallon::Session do
   it { Hallon::Session.should_not respond_to :new }
+  subject { Hallon::Session.instance(Hallon::APPKEY, "Hallon", "tmp", "tmp/cache") }
   
   describe "#instance" do
     it "should require an application key" do
@@ -16,8 +17,6 @@ describe Hallon::Session do
   end
   
   context "once instantiated" do
-    subject { Hallon::Session.instance(Hallon::APPKEY, "Hallon", "tmp", "tmp/cache") }
-    
     # The appkey is long, to avoid displaying it in the console we do like this.
     describe "application_key" do
       it "should == Hallon::APPKEY" do subject.application_key.should == Hallon::APPKEY end
