@@ -2,14 +2,6 @@
 #include "session.h"
 
 /*
-  Retrieve the data pointer from the object.
-  
-  @example
-    DATA_OF(self)->access_mutex
-*/
-#define DATA_OF(obj) Data_Fetch_Struct(obj, session_data_t)
-
-/*
   Allocate space for a session pointer and attach it to the returned object.
 */
 static VALUE cSession_alloc(VALUE klass)

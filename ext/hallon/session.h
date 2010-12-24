@@ -1,3 +1,14 @@
+/*
+  Retrieve the data pointer from the object.
+  
+  @example
+    DATA_OF(self)->access_mutex
+*/
+#define DATA_OF(obj) Data_Fetch_Struct(obj, session_data_t)
+
+/*
+  An easy way to share data between Spotify threads and Ruby threads.
+*/
 typedef struct
 {
   /* session pointer */
