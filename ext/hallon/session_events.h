@@ -15,7 +15,7 @@
     pthread_mutex_lock(&session_data->event_mutex); {\
       expr;\
     }\
-    pthread_cond_signal(&session_data->event_signal, &session_data->event_mutex);\
+    pthread_cond_signal(&session_data->event_signal);\
     pthread_mutex_unlock(&session_data->event_mutex);\
   } while(0)
 #endif

@@ -54,6 +54,21 @@ static VALUE session_await_event(void *data)
                    array from the values to use for dispatching.
 */
 
+/*
+  Called when background processing is needed.
+*/
+static VALUE builder_notify_main_thread(void *args)
+{
+  return rb_ary_new3(1, ID2SYM("process_events"));
+}
+
+void callback_notify_main_thread(sp_session *session_ptr)
+{
+  session_data_t *session_data = (session_data_t*) sp_session_userdata(session_ptr);
+  callback_event_t event = { builder_notify_main_thread, NULL };
+  EVENT_ATOMIC(session_data, session_data->event = &event);
+}
+
 const sp_session_callbacks HALLON_SESSION_CALLBACKS = 
 {
  .logged_in              = NULL,
@@ -65,7 +80,7 @@ const sp_session_callbacks HALLON_SESSION_CALLBACKS =
  .streaming_error        = NULL,
  .log_message            = NULL,
  .userinfo_updated       = NULL,
- .notify_main_thread     = NULL,
+ .notify_main_thread     = callback_notify_main_thread,
  .music_delivery         = NULL,
  .end_of_track           = NULL,
  .start_playback         = NULL,

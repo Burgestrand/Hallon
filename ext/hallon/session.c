@@ -69,16 +69,25 @@ static VALUE cSession_initialize(int argc, VALUE *argv, VALUE self)
     .application_key_size = RSTRING_LENINT(appkey),
     .user_agent           = StringValueCStr(user_agent),
     .callbacks            = &callbacks,
-    .userdata             = NULL,
+    .userdata             = DATA_OF(self),
     .tiny_settings        = true,
   };
   
   sp_error error = sp_session_create(&config, DATA_OF(self)->session_ptr);
   ASSERT_OK(error);
   
-  /* spawn event handling thread */
+  /*
+    Spawns event handling thread.
+    
+    @note Creating a session (`sp_session_create`) calls the notify callback
+          instantly, but only once. The `rb_thread_blocking_region` call seems
+          to schedule threads before it executes the blocking function.
+          
+          Hopefully, missing the first notify event won’t matter.
+  */
   VALUE thread = rb_thread_create(session_event_handler, (void*) self);
   rb_iv_set(self, "@event_handler", thread);
+  rb_thread_schedule();
   
   return self;
 }
