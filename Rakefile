@@ -31,10 +31,13 @@ Rake::ExtensionTask.new('hallon', Jeweler::Tasks.new do |gem|
   gem.description = gem.description.force_encoding 'UTF-8' if gem.description.respond_to?(:force_encoding)
   
   # installation
+  gem.require_paths = %w(lib ext)
   gem.extensions = FileList['ext/**/extconf.rb']
   gem.platform   = Gem::Platform::RUBY
   gem.version    = Hallon::Version::STRING
-end.gemspec)
+end.gemspec) do |ext|
+  ext.lib_dir = File.join('lib', 'hallon')
+end
 
 desc "touch spec/spec_helper.rb (for autotest)"
 task :compile do

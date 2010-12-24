@@ -24,7 +24,4 @@ void Init_hallon(void)
   
   /* Initialize the other parts */
   Init_Session();
-  
-  /* Require ruby part of Hallon */
-  rb_require("hallon/hallon");
 }

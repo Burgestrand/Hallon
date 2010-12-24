@@ -1,3 +1,4 @@
+require 'hallon/hallon' # C extension! (ext/ is in $:)
 require 'hallon/version'
 require 'hallon/session'
 
