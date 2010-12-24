@@ -3,6 +3,7 @@
   
   #include <ruby.h>
   #include <pthread.h>
+  #include <assert.h>
   
   #ifdef HAVE_LIBSPOTIFY_API_H
   #  include <libspotify/api.h>
