@@ -50,13 +50,7 @@ static VALUE cSession_initialize(int argc, VALUE *argv, VALUE self)
     case 2: settings_path = tmpdir;
     case 3: cache_path    = settings_path;
   }
-    
-  /* #to_s */
-  appkey        = rb_str_to_str(appkey);
-  user_agent    = rb_str_to_str(user_agent);
-  settings_path = rb_str_to_str(settings_path);
-  cache_path    = rb_str_to_str(cache_path);
-    
+  
   /* readonly variables */
   rb_iv_set(self, "@application_key", appkey);
   rb_iv_set(self, "@user_agent", user_agent);
@@ -86,11 +80,11 @@ static VALUE cSession_initialize(int argc, VALUE *argv, VALUE self)
   sp_session_config config =
   {
     .api_version          = SPOTIFY_API_VERSION,
-    .cache_location       = StringValuePtr(cache_path),
-    .settings_location    = StringValuePtr(settings_path),
-    .application_key      = RSTRING_PTR(appkey),
-    .application_key_size = RSTRING_LEN(appkey),
-    .user_agent           = StringValuePtr(user_agent),
+    .cache_location       = StringValueCStr(cache_path),
+    .settings_location    = StringValueCStr(settings_path),
+    .application_key      = StringValuePtr(appkey),
+    .application_key_size = RSTRING_LENINT(appkey),
+    .user_agent           = StringValueCStr(user_agent),
     .callbacks            = &callbacks,
     .userdata             = NULL,
     .tiny_settings        = true,
