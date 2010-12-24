@@ -14,6 +14,9 @@ module Hallon
     # @return [String]
     attr_reader :cache_path
     
+    # @return [Thread]
+    attr_reader :event_handler
+    
     include Singleton
     
     # Allows you to create a Spotify session. Subsequent calls to this method

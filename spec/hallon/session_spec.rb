@@ -27,6 +27,7 @@ describe Hallon::Session do
     its(:settings_path) { should == "tmp" }
     its(:cache_path) { should == "tmp/cache" }
     its(:state) { should == :logged_out }
+    its(:event_handler) { should be_alive }
     
     describe "#process_events" do
       it "should return the timeout" do

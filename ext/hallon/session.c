@@ -10,8 +10,8 @@ static VALUE cSession_alloc(VALUE klass)
   
   /* initialize */
   session_data->session_ptr = ALLOC(sp_session*);
-  pthread_mutex_init(&session_data->access_mutex, NULL);
-  pthread_cond_init(&session_data->cb_notify_cond, NULL);
+  pthread_mutex_init(&session_data->event_mutex, NULL);
+  pthread_cond_init(&session_data->event_signal, NULL);
   
   return Data_Wrap_Struct(klass, NULL, cSession_free, session_data);
 }
@@ -21,9 +21,10 @@ static VALUE cSession_alloc(VALUE klass)
 */
 static void cSession_free(session_data_t* session_data)
 {
+  // how about if sp_session_create returned an error?
   // sp_session_release(*session_data->session_ptr); // BUG: libspotify 0.0.6
-  pthread_mutex_destroy(&session_data->access_mutex);
-  pthread_cond_destroy(&session_data->cb_notify_cond);
+  pthread_mutex_destroy(&session_data->event_mutex);
+  pthread_cond_destroy(&session_data->event_signal);
   xfree(session_data);
 }
 
@@ -57,26 +58,8 @@ static VALUE cSession_initialize(int argc, VALUE *argv, VALUE self)
   rb_iv_set(self, "@settings_path", settings_path);
   rb_iv_set(self, "@cache_path", cache_path);
   
-  /* establish the callbacks */
-  sp_session_callbacks callbacks =
-  {
-    .logged_in              = NULL,
-    .logged_out             = NULL,
-    .metadata_updated       = NULL,
-    .connection_error       = NULL,
-    .message_to_user        = NULL,
-    .play_token_lost        = NULL,
-    .streaming_error        = NULL,
-    .log_message            = NULL,
-    .userinfo_updated       = NULL,
-    .notify_main_thread     = NULL,
-    .music_delivery         = NULL,
-    .end_of_track           = NULL,
-    .start_playback         = NULL,
-    .stop_playback          = NULL,
-    .get_audio_buffer_stats = NULL
-  };
-  
+  extern sp_session_callbacks HALLON_SESSION_CALLBACKS; /* session_events.c */
+  sp_session_callbacks callbacks = HALLON_SESSION_CALLBACKS;
   sp_session_config config =
   {
     .api_version          = SPOTIFY_API_VERSION,
@@ -92,6 +75,10 @@ static VALUE cSession_initialize(int argc, VALUE *argv, VALUE self)
   
   sp_error error = sp_session_create(&config, DATA_OF(self)->session_ptr);
   ASSERT_OK(error);
+  
+  /* spawn event handling thread */
+  VALUE thread = rb_thread_create(session_event_handler, (void*) self);
+  rb_iv_set(self, "@event_handler", thread);
   
   return self;
 }

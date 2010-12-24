@@ -1,28 +1,30 @@
-/*
-  Retrieve the data pointer from the object.
+#ifndef __SESSION__
+  #define __SESSION__
   
-  @example
-    DATA_OF(self)->access_mutex
-*/
-#define DATA_OF(obj) Data_Fetch_Struct(obj, session_data_t)
-
-/*
-  An easy way to share data between Spotify threads and Ruby threads.
-*/
-typedef struct
-{
-  /* session pointer */
-  sp_session** session_ptr;
+  #include "session_events.h"
   
-  /* mutex for accessing this struct */
-  pthread_mutex_t access_mutex;
+  typedef struct
+  {
+    /* session pointer */
+    sp_session** session_ptr;
   
-  /* callbacks */
-  pthread_cond_t cb_notify_cond;
-} session_data_t;
+    /* event mutex and condition signal */
+    pthread_mutex_t event_mutex;
+    pthread_cond_t  event_signal;
+    callback_event_t* event;
+  } session_data_t;
 
-static VALUE cSession_alloc(VALUE);
-static void cSession_free(session_data_t*);
+  static VALUE cSession_alloc(VALUE);
+  static void cSession_free(session_data_t*);
 
-static VALUE cSession_state(VALUE);
-static VALUE cSession_process_events(VALUE);
+  static VALUE cSession_state(VALUE);
+  static VALUE cSession_process_events(VALUE);
+
+  /*
+    Retrieve the data pointer from the object.
+  
+    @example
+      DATA_OF(self)->access_mutex
+  */
+  #define DATA_OF(obj) Data_Fetch_Struct(obj, session_data_t)
+#endif
