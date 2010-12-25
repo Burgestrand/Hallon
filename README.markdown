@@ -6,44 +6,22 @@ This branch will be the main development branch from now and on.
 
 Want to help? Look here!
 ------------------------
-I am having troubles deciding how the API should work. This is a network library, and I need to handle connection errors, music delivery and metadata updates — all of which happen in their own thread.
+I am having troubles deciding how the API should work. This is a network library, and I need to handle connection errors, music delivery and metadata updates — all of which can happen concurrently.
 
 This is what I want it to look like, kind of:
 
-    session = Hallon::Session.new(IO.read('spotify_appkey.key'))
-    session.login username, password do |session|
-      playlist_container.each do |playlist|
-        puts playlist.load.name
-      end
+    session = Hallon::Session.new IO.read('spotify_appkey.key')
+    session.login username, password
     
-      session.logout
-      # this should never be reached
+    playlist_container.each do |playlist|
+      puts playlist.name
     end
+    
+    session.logout # called through an at_exit hook as well
 
-However, since `libspotify` is an asynchronous library I face several problems:
+For simplicity I want all operations that have an associated loading-callback to appear synchronous. This is done by making each of these blocking operations wait for the appropriate callback to be executed.
 
-- You can get disconnected at any time (temporary or permanent). The programmer
-  might want to reconnect and continue from where he was, or just exit, or
-  something else. How do I make it her choice? (*idea: use POSIX signals as
-  interrupt handlers somehow*)
-- All operations have an associated callback. For Hallon v1 these operations
-  will be blocking, which means we need to wait (not poll) for the callbacks to
-  be fired. When they are, we need to communicate this back.
-
-  Hallon v0 solved this using global mutex and condition variable. Sticking with
-  that solution will become unmaintainable fast. I want Hallon v1 to leverage an
-  event-loop in a thread separate from the main thread. This way one could use
-  a pipe for IPC between the `libspotify` callbacks and Ruby.
-  
-  However, there is one big problem with pipe-IPC: it needs a protocol and I
-  will most likely have to pack and unpack the data I am sending through the
-  pipe. Not only that, but most of the data should be converted to ruby values
-  so I must know what they are and how many.
-  
-  Another problem is that calling no two `sp_*`-functions must be called at the
-  same time. This might happen if we have two Ruby threads that can call
-  `sp_*`-functions (even if the GIL prevents ruby code to be executed
-  concurrently, the GIL is not required for calling Spotify functions).
+The main issue is disconnects: they might happen at any time, and may or may not be permanent errors. My current idea is that I’ll handle them using POSIX signals, but we’ll see how that goes when I tackle that problem.
 
 ---
 
