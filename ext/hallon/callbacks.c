@@ -16,12 +16,12 @@
 static VALUE ruby_notify_main_thread(void *args)
 { return rb_ary_new3(1, STR2SYM("process_events")); }
 static void callback_process_events(sp_session *session_ptr)
-{ DEBUG("!! notify"); SESSION_EVENT_CREATE(session_ptr, ruby_notify_main_thread, NULL); }
+{ DEBUG("!! notify"); session_event_create(session_ptr, ruby_notify_main_thread, NULL); DEBUG("-> notify"); }
 
 static VALUE ruby_logged_in(void *args)
 { return rb_ary_new3(2, STR2SYM("logged_in"), INT2FIX((sp_error)args)); }
 static void callback_logged_in(sp_session *session_ptr, sp_error error)
-{ DEBUG("!! logged_in"); SESSION_EVENT_CREATE(session_ptr, ruby_logged_in, (void*) error); }
+{ DEBUG("!! logged_in"); session_event_create(session_ptr, ruby_logged_in, (void*) error); DEBUG("-> logged_in"); }
 
 // @see session.c
 const sp_session_callbacks HALLON_SESSION_CALLBACKS = 

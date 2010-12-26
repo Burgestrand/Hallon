@@ -10,7 +10,9 @@ VALUE event_producer(void *argv)
   hn_session_data_t *session_data = DATA_OF(session);
   
   pthread_mutex_lock_nogvl(&session_data->event_mutex);
+  pthread_mutex_lock_nogvl(&session_data->startup_mutex);
   pthread_cond_signal_nogvl(&session_data->startup_cond);
+  pthread_mutex_unlock(&session_data->startup_mutex);
   for(;;)
   {
     DEBUG("…");
