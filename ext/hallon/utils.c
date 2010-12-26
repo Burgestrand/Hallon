@@ -33,11 +33,6 @@ VALUE hn_funcall4(VALUE recv, ID msg, VALUE args)
 }
 
 /*
-  Wrappers for pthread functions that are executed without the GVL but returns
-  a value.
-*/
-
-/*
   Lock the given mutex, but do so without holding the GVL while waiting to lock.
   
   @param [pthread_mutex_t*] mutex
@@ -58,14 +53,14 @@ VALUE pthread_mutex_lock_nogvl(pthread_mutex_t *mutex)
   @param [pthread_cond_t*] cond
   @return [Fixnum] (see pthread_cond_wait)
 */
-static VALUE cond_wait_nogvl(void *cond) // without_gvl
+static VALUE cond_wait_nogvl(void *data) // without_gvl
 {
-  void** args = cond;
+  void **args = data;
   return (VALUE) pthread_cond_wait((pthread_cond_t*) args[0], (pthread_mutex_t*) args[1]);
 }
 VALUE pthread_cond_wait_nogvl(pthread_cond_t *cond, pthread_mutex_t *mutex)
 {
-  void* args[] = { cond, mutex };
+  void *args[] = { cond, mutex };
   return INT2FIX(hn_proc_without_gvl(cond_wait_nogvl, args));
 }
 
