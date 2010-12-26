@@ -130,7 +130,7 @@ static VALUE sp_session_create_nogvl(void *_pargs)
   
   @return [Symbol] `:logged_out`, `:logged_in`, `:disconnected` or `:undefined`
 */
-static VALUE cSession_state(VALUE self)
+static VALUE cSession_status(VALUE self)
 {
   switch(sp_session_connectionstate(*DATA_OF(self)->session_ptr))
   {
@@ -192,7 +192,7 @@ void Init_Session(void)
   VALUE cSession = rb_define_class_under(MHallon, "Session", rb_cObject);
   rb_define_alloc_func(cSession, cSession_alloc);
   rb_define_method(cSession, "initialize", cSession_initialize, -1);
-  rb_define_method(cSession, "state", cSession_state, 0);
+  rb_define_method(cSession, "status", cSession_status, 0);
   rb_define_method(cSession, "process_events", cSession_process_events, 0);
   rb_define_method(cSession, "login", cSession_login, 2);
 }
