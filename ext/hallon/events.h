@@ -61,7 +61,6 @@
 */
 
 VALUE event_producer(void *);
-VALUE event_consumer(void *);
 
 typedef struct {
   VALUE (*handler)(void*);

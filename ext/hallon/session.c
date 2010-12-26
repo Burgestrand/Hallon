@@ -88,10 +88,8 @@ static VALUE cSession_initialize(int argc, VALUE *argv, VALUE self)
   
   // @see events.h
   VALUE thargs[] = { self, rb_eval_string("Queue.new") };
-  VALUE producer = rb_thread_create(event_producer, thargs);
-  VALUE consumer = rb_thread_create(event_consumer, thargs);
-  rb_iv_set(self, "@event_producer", producer);
-  rb_iv_set(self, "@event_consumer", consumer);
+  rb_iv_set(self, "@event_producer", rb_thread_create(event_producer, thargs));
+  rb_funcall(self, rb_intern("spawn_consumer"), 1, thargs[1]);
   
   // ^ to make sure we catch first #notify_main_thread
   // The producer *MUST* have the event_mutex before we continue!

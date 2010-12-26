@@ -1,4 +1,5 @@
 require 'singleton'
+require 'hallon/session/callbacks'
 
 module Hallon
   class Session
@@ -44,5 +45,16 @@ module Hallon
     def disconnected?
       status == :disconnected
     end
+    
+    private
+      def spawn_consumer(queue)
+        @event_consumer = Thread.new(self) do |session|
+          loop do
+            event = queue.shift
+            puts "(Consumer) Handling: #{event.inspect}"
+            session.send(*event)
+          end
+        end
+      end
   end
 end

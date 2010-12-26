@@ -29,7 +29,6 @@ VALUE hn_funcall4(VALUE recv, ID msg, VALUE args)
   VALUE *argv = ALLOCA_N(VALUE, argc);
   MEMCPY(argv, RARRAY_PTR(args), VALUE, argc);
   VALUE result = rb_funcall3(recv, msg, argc, argv);
-  xfree(argv);
   return result;
 }
 
