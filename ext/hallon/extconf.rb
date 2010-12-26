@@ -2,7 +2,7 @@ require 'mkmf'
 
 # For Mac OS if installed in /Library/Frameworks/libspotify.framework/
 with_ldflags('-framework libspotify') { RUBY_PLATFORM.match 'darwin' }
-with_cflags('-pipe -ggdb -O0') { ENV['DEBUG'] }
+with_cflags('-pipe -ggdb -O0 -Wall') { ENV['DEBUG'] }
 
 # check for ruby!
 abort 'error: Missing ruby header' unless have_header 'ruby.h'
