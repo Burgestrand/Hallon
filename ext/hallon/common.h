@@ -4,6 +4,7 @@
   #include <ruby.h>
   #include <pthread.h>
   #include <assert.h>
+  #include <stdbool.h>
   
   #ifdef HAVE_LIBSPOTIFY_API_H
   #  include <libspotify/api.h>
@@ -11,11 +12,7 @@
   #  include <spotify/api.h>
   #endif
   
-  #define STR2SYM(string) ID2SYM(rb_intern(string))
-  #define true 1
-  #define false 0
-  
-  #include "macros.h"
+  #include "utils.h"
   
   /*
     Initializers for the other classes.

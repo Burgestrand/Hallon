@@ -1,30 +1,34 @@
-#ifndef __SESSION__
-  #define __SESSION__
-  
-  #include "session_events.h"
-  
-  typedef struct
-  {
-    /* session pointer */
-    sp_session** session_ptr;
-  
-    /* event mutex and condition signal */
-    pthread_mutex_t event_mutex;
-    pthread_cond_t  event_signal;
-    callback_event_t* event;
-  } session_data_t;
+#ifndef SESSION_H_N4NAEFIZ
+#define SESSION_H_N4NAEFIZ
 
-  static VALUE cSession_alloc(VALUE);
-  static void cSession_free(session_data_t*);
+typedef struct
+{
+  /* session pointer & object */
+  sp_session** session_ptr;
+  VALUE        session_obj;
 
-  static VALUE cSession_state(VALUE);
-  static VALUE cSession_process_events(VALUE);
-
-  /*
-    Retrieve the data pointer from the object.
+  /* event mutex and condition signal */
+  pthread_mutex_t event_mutex;
+  pthread_cond_t  event_cond;
+  hn_event_t* event;
   
-    @example
-      DATA_OF(self)->access_mutex
-  */
-  #define DATA_OF(obj) Data_Fetch_Struct(obj, session_data_t)
-#endif
+  /* startup condition */
+  pthread_mutex_t startup_mutex;
+  pthread_cond_t  startup_cond;
+} hn_session_data_t;
+
+static VALUE cSession_alloc(VALUE);
+static void cSession_free(hn_session_data_t*);
+static VALUE cSession_initialize(int, VALUE*, VALUE);
+  static VALUE sp_session_create_nogvl(void *);
+
+static VALUE cSession_state(VALUE);
+static VALUE cSession_process_events(VALUE);
+static VALUE cSession_login(VALUE, VALUE, VALUE);
+
+/*
+  Macros
+*/
+#define DATA_OF(obj) Data_Fetch_Struct(obj, hn_session_data_t)
+
+#endif /* end of include guard: SESSION_H_N4NAEFIZ */

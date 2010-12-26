@@ -1,4 +1,6 @@
 #include "common.h"
+#include "events.h"
+#include "callbacks.h"
 #include "session.h"
 
 /*
@@ -6,12 +8,22 @@
 */
 static VALUE cSession_alloc(VALUE klass)
 {
-  session_data_t *session_data = ALLOC(session_data_t);
+  hn_session_data_t *session_data = ALLOC(hn_session_data_t);
+  hn_event_t *event_ptr = ALLOC(hn_event_t);
   
   /* initialize */
   session_data->session_ptr = ALLOC(sp_session*);
+  session_data->session_obj = Qnil;
+  
   pthread_mutex_init(&session_data->event_mutex, NULL);
-  pthread_cond_init(&session_data->event_signal, NULL);
+  pthread_cond_init(&session_data->event_cond, NULL);
+  
+  pthread_mutex_init(&session_data->startup_mutex, NULL);
+  pthread_cond_init(&session_data->startup_cond, NULL);
+  
+  event_ptr->handler = NULL;
+  event_ptr->data    = NULL;
+  session_data->event = event_ptr;
   
   return Data_Wrap_Struct(klass, NULL, cSession_free, session_data);
 }
@@ -19,7 +31,7 @@ static VALUE cSession_alloc(VALUE klass)
 /*
   Release the created session and deallocate the session pointer.
 */
-static void cSession_free(session_data_t* session_data)
+static void cSession_free(hn_session_data_t* session_data)
 {
   /*
     NOTE: if `sp_session_create` fails the session_ptr will be NULL
@@ -31,7 +43,11 @@ static void cSession_free(session_data_t* session_data)
   // sp_session_release(*session_data->session_ptr);
   
   pthread_mutex_destroy(&session_data->event_mutex);
-  pthread_cond_destroy(&session_data->event_signal);
+  pthread_cond_destroy(&session_data->event_cond);
+  
+  pthread_mutex_destroy(&session_data->startup_mutex);
+  pthread_cond_destroy(&session_data->startup_cond);
+  
   xfree(session_data);
 }
 
@@ -51,6 +67,8 @@ static VALUE cSession_initialize(int argc, VALUE *argv, VALUE self)
   VALUE appkey, user_agent, settings_path, cache_path;
   VALUE tmp_prefix = rb_str_new2("se.burgestrand.hallon");
   VALUE tmpdir = rb_funcall3(rb_cDir, rb_intern("mktmpdir"), 1, &tmp_prefix);
+  hn_session_data_t *session_data = DATA_OF(self);
+  session_data->session_obj    = self;
   
   switch (rb_scan_args(argc, argv, "13", &appkey, &user_agent, &settings_path, &cache_path))
   {
@@ -65,8 +83,21 @@ static VALUE cSession_initialize(int argc, VALUE *argv, VALUE self)
   rb_iv_set(self, "@settings_path", settings_path);
   rb_iv_set(self, "@cache_path", cache_path);
   
-  extern sp_session_callbacks HALLON_SESSION_CALLBACKS; /* session_events.c */
-  sp_session_callbacks callbacks = HALLON_SESSION_CALLBACKS;
+  /* startup condition (synchronization) */
+  pthread_mutex_lock_nogvl(&session_data->startup_mutex);
+  
+  // @see events.h
+  VALUE thargs[] = { self, rb_eval_string("Queue.new") };
+  VALUE producer = rb_thread_create(event_producer, thargs);
+  VALUE consumer = rb_thread_create(event_consumer, thargs);
+  rb_iv_set(self, "@event_producer", producer);
+  rb_iv_set(self, "@event_consumer", consumer);
+  
+  // ^ to make sure we catch first #notify_main_thread
+  // The producer *MUST* have the event_mutex before we continue!
+  pthread_cond_wait_nogvl(&session_data->startup_cond, &session_data->startup_mutex);
+  
+  // Finally, the libspotify calls
   sp_session_config config =
   {
     .api_version          = SPOTIFY_API_VERSION,
@@ -75,28 +106,23 @@ static VALUE cSession_initialize(int argc, VALUE *argv, VALUE self)
     .application_key      = StringValuePtr(appkey),
     .application_key_size = RSTRING_LENINT(appkey),
     .user_agent           = StringValueCStr(user_agent),
-    .callbacks            = &callbacks,
-    .userdata             = DATA_OF(self),
+    .callbacks            = &HALLON_SESSION_CALLBACKS,
+    .userdata             = session_data,
     .tiny_settings        = true,
   };
   
-  sp_error error = sp_session_create(&config, DATA_OF(self)->session_ptr);
+  // @note This calls the `notify_main_thread` callback once from the same pthread.
+  void* pargs[] = { &config, session_data->session_ptr };
+  sp_error error = (sp_error) hn_proc_without_gvl(sp_session_create_nogvl, pargs);
   ASSERT_OK(error);
   
-  /*
-    Spawns event handling thread.
-    
-    @note Creating a session (`sp_session_create`) calls the notify callback
-          instantly, but only once. The `rb_thread_blocking_region` call seems
-          to schedule threads before it executes the blocking function.
-          
-          Hopefully, missing the first notify event won’t matter.
-  */
-  VALUE thread = rb_thread_create(session_event_handler, (void*) self);
-  rb_iv_set(self, "@event_handler", thread);
-  rb_thread_schedule();
-  
   return self;
+}
+
+static VALUE sp_session_create_nogvl(void *_pargs)
+{
+  void **pargs = (void**) _pargs;
+  return (VALUE) sp_session_create((sp_session_config*) pargs[0], (sp_session**) pargs[1]);
 }
 
 /*
@@ -134,6 +160,22 @@ static VALUE cSession_process_events(VALUE self)
 }
 
 /*
+  Logs in to Spotify using the given account name and password.
+  
+  @param [#to_s] username
+  @param [#to_s] password
+  @return [Session]
+*/
+static VALUE cSession_login(VALUE self, VALUE username, VALUE password)
+{
+  hn_session_data_t *session_data = DATA_OF(self);
+  sp_error error = sp_session_login(*session_data->session_ptr, StringValuePtr(username), StringValuePtr(password));
+  ASSERT_OK(error);
+  return self;
+}
+
+
+/*
   Document-class: Hallon::Session
   
   The Session is fundamental for all communication with Spotify. Pretty much *all*
@@ -144,11 +186,13 @@ static VALUE cSession_process_events(VALUE self)
 */
 void Init_Session(void)
 {
-  rb_require("tmpdir");
+  rb_require("tmpdir"); // Session#initialize
+  rb_require("thread"); // Session#initialize (Queue)
   
   VALUE cSession = rb_define_class_under(MHallon, "Session", rb_cObject);
   rb_define_alloc_func(cSession, cSession_alloc);
   rb_define_method(cSession, "initialize", cSession_initialize, -1);
   rb_define_method(cSession, "state", cSession_state, 0);
   rb_define_method(cSession, "process_events", cSession_process_events, 0);
+  rb_define_method(cSession, "login", cSession_login, 2);
 }
