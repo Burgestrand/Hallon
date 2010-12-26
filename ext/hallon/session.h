@@ -17,15 +17,6 @@ typedef struct
   pthread_cond_t  startup_cond;
 } hn_session_data_t;
 
-static VALUE cSession_alloc(VALUE);
-static void cSession_free(hn_session_data_t*);
-static VALUE cSession_initialize(int, VALUE*, VALUE);
-  static VALUE sp_session_create_nogvl(void *);
-
-static VALUE cSession_status(VALUE);
-static VALUE cSession_process_events(VALUE);
-static VALUE cSession_login(VALUE, VALUE, VALUE);
-
 /*
   Macros
 */
