@@ -161,9 +161,6 @@ static VALUE cSession_status(VALUE self)
   
   @private
   @note Callbacks might be invoked as a side-effect of executing this method.
-        These callbacks might also be invoked within the call to `process_events`,
-        and thus within the same pthread. Holding the event mutex while calling
-        this function is BAD!
   @return [Fixnum] milliseconds until {#process_events} should be called again
 */
 static VALUE cSession_process_events(VALUE self)
