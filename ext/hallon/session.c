@@ -106,7 +106,9 @@ static VALUE cSession_initialize(int argc, VALUE *argv, VALUE self)
   
   // ^ to make sure we catch first #notify_main_thread
   // The producer *MUST* have the event_mutex before we continue!
+  DEBUG("waiting for startup signal");
   pthread_cond_wait_nogvl(&session_data->startup_cond, &session_data->startup_mutex);
+  DEBUG("startup signal! YEAH!");
   pthread_mutex_unlock(&session_data->startup_mutex);
   
   // Finally, the libspotify calls
