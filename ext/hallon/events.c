@@ -4,6 +4,7 @@
 
 VALUE event_consumer(void *argv)
 {
+  ID send = rb_intern("send");
   VALUE session, queue;
   rb_scan_args(2, argv, "20", &session, &queue);
   
@@ -13,6 +14,7 @@ VALUE event_consumer(void *argv)
     VALUE event = rb_funcall3(queue, rb_intern("shift"), 0, NULL);
     VALUE s_event = rb_inspect(event);
     DEBUG(StringValueCStr(s_event));
+    rb_apply(session, send, event);
   }
 }
 
