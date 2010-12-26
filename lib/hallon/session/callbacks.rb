@@ -4,13 +4,13 @@ module Hallon
     private
       alias_method :_process_events, :process_events
       def process_events
-        puts "Processing events…"
+        print "(FIRED) process_events\n\t"
         timeout = _process_events
-        puts "Done!"
+        puts "… done!"
       end
     
       def logged_in(error)
-        puts "?? logged_in(#{error})"
+        puts "(FIRED) logged_in(#{error})"
       end
   end
 end

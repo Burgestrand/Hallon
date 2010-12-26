@@ -53,6 +53,8 @@ module Hallon
             event = queue.shift
             puts "(Consumer) Handling: #{event.inspect}"
             session.send(*event)
+            puts "---"
+            sleep 2
           end
         end
       end
