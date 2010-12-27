@@ -1,8 +1,10 @@
-Note about 1.0.0 branch
+Note about master branch
 =======================
 I’ve decided to restructure Hallon, but I’ll do it as a way of rebuilding it. This is the first major rewrite since release, and a much needed one. It’ll be easier for both me and external contributors to improve on Hallon, and that will hopefully pave the way for a 1.0.0 release.
 
-This branch will be the main development branch from now and on.
+This branch will be the main development branch from now and on. It is to be considered *unstable* and *experimental*. I will do shit in this branch that will make your bones shiver.
+
+The previous `master` branch can be found in the [obsolete](https://github.com/Burgestrand/Hallon/tree/obsolete); it is *old and obsolete* and should not be used unless you absolutely need the API **NOW**.
 
 Want to help? Look here!
 ------------------------
