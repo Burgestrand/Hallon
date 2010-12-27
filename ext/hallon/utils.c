@@ -56,6 +56,7 @@ VALUE pthread_mutex_lock_nogvl(pthread_mutex_t *mutex)
 static VALUE cond_wait_nogvl(void *data) // without_gvl
 {
   void **args = data;
+  DEBUG("(waiting)");
   return (VALUE) pthread_cond_wait((pthread_cond_t*) args[0], (pthread_mutex_t*) args[1]);
 }
 VALUE pthread_cond_wait_nogvl(pthread_cond_t *cond, pthread_mutex_t *mutex)

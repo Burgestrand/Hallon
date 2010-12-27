@@ -21,13 +21,10 @@ VALUE event_producer(void *argv)
   for(i = 0;; ++i)
   {
     // wait on the condition in a loop to guard against spurious wakeups
-    for(
-      session_data->event->handler = NULL; /* init */
-      session_data->event->handler == NULL; /* while */
-      pthread_cond_wait_nogvl(&session_data->event_cond, &session_data->event_mutex) /* wait */
-    )
+    for(session_data->event->handler = NULL; session_data->event->handler == NULL;)
     {
       DEBUG_N("…", i);
+      pthread_cond_wait_nogvl(&session_data->event_cond, &session_data->event_mutex);
     }
     
     // invoke the handler with the event data to build a ruby array representing the event
