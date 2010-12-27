@@ -17,7 +17,6 @@ VALUE hn_funcall4(VALUE, ID, VALUE);
 
 // pthread
 VALUE pthread_mutex_lock_nogvl(pthread_mutex_t*);
-VALUE pthread_cond_signal_nogvl(pthread_cond_t*);
 VALUE pthread_cond_wait_nogvl(pthread_cond_t*, pthread_mutex_t*);
 
 /*

@@ -63,19 +63,3 @@ VALUE pthread_cond_wait_nogvl(pthread_cond_t *cond, pthread_mutex_t *mutex)
   void *args[] = { cond, mutex };
   return INT2FIX(hn_proc_without_gvl(cond_wait_nogvl, args));
 }
-
-/*
-  Signal the given condition variable without holding the GVL.
-  
-  @param [pthread_cond_t*] cond
-  @param [pthread_mutex_t*] mutex
-  @return [Fixnum] (see pthread_cond_signal)
-*/
-static VALUE cond_signal_nogvl(void *cond)
-{
-  return (VALUE) pthread_cond_signal((pthread_cond_t*) cond);
-}
-VALUE pthread_cond_signal_nogvl(pthread_cond_t *cond)
-{
-  return INT2FIX(hn_proc_without_gvl(cond_signal_nogvl, cond));
-}
