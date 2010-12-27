@@ -6,25 +6,6 @@ This branch will be the main development branch from now and on. It is to be con
 
 The previous `master` branch can be found in the [obsolete](https://github.com/Burgestrand/Hallon/tree/obsolete); it is *old and obsolete* and should not be used unless you absolutely need the API **NOW**.
 
-Want to help? Look here!
-------------------------
-I am having troubles deciding how the API should work. This is a network library, and I need to handle connection errors, music delivery and metadata updates — all of which can happen concurrently.
-
-This is what I want it to look like, kind of:
-
-    session = Hallon::Session.new IO.read('spotify_appkey.key')
-    session.login username, password
-    
-    playlist_container.each do |playlist|
-      puts playlist.name
-    end
-    
-    session.logout # called through an at_exit hook as well
-
-For simplicity I want all operations that have an associated loading-callback to appear synchronous. This is done by making each of these blocking operations wait for the appropriate callback to be executed.
-
-The main issue is disconnects: they might happen at any time, and may or may not be permanent errors. My current idea is that I’ll handle them using POSIX signals, but we’ll see how that goes when I tackle that problem.
-
 ---
 
 What is Hallon?
@@ -43,9 +24,14 @@ Sweet! You contribute in more than one way!
 ### [Send me feedback and requests](http://github.com/Burgestrand/Hallon/issues)
 Really, I ❤ feedback! Suggestions on how to improve the API, tell me what is delicious about Hallon, tell me what is yucky about Hallon… anything! All feedback is useful in one way or another.
 
-You can reach me either through [Hallons issue tracker](http://github.com/Burgestrand/Hallon/issues), [GitHub messaging system](http://github.com/inbox/new/Burgestrand) or you can find [more contact details on my GitHub profile](http://github.com/Burgestrand).
+You have any questions?
+-----------------------
+If you need to discuss issues or feature requests you can use [Hallons issue tracker](http://github.com/Burgestrand/Hallon/issues). For *anything* else you have to say or ask I can also be reached via [email (found on GitHub profile)](http://github.com/Burgestrand) or [@burgestrand on twitter](http://twitter.com/Burgestrand).
 
-## What’s the catch?
+In fact, you can contact me via email or twitter even if it’s about features or issues. I’ll probably put them in the issue tracker myself after the discussion ;)
+
+What’s the catch?
+-----------------
 There are several!
 
 ### Hallon is unstable
