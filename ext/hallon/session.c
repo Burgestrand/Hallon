@@ -13,7 +13,9 @@ static VALUE cSession_initialize(int, VALUE*, VALUE);
 
 static VALUE cSession_status(VALUE);
 static VALUE cSession_process_events(VALUE);
+  static VALUE sp_session_process_events_nogvl(void *);
 static VALUE cSession_login(VALUE, VALUE, VALUE);
+  static VALUE sp_session_login_nogvl(void *);
 
 
 /*
@@ -164,9 +166,16 @@ static VALUE cSession_status(VALUE self)
 */
 static VALUE cSession_process_events(VALUE self)
 {
-  int timeout = 0;
-  while(timeout == 0) sp_session_process_events(*DATA_OF(self)->session_ptr, &timeout);
+  int timeout = (int) hn_proc_without_gvl(sp_session_process_events_nogvl, *DATA_OF(self)->session_ptr);
   return INT2FIX(timeout);
+}
+
+// this call might lead to trying to lock the event lock, so it is a blocking call
+static VALUE sp_session_process_events_nogvl(void *session_ptr)
+{
+  int timeout = 0;
+  while(timeout == 0) sp_session_process_events((sp_session*) session_ptr, &timeout);
+  return (VALUE) timeout;
 }
 
 /*
@@ -179,9 +188,17 @@ static VALUE cSession_process_events(VALUE self)
 static VALUE cSession_login(VALUE self, VALUE username, VALUE password)
 {
   hn_session_data_t *session_data = DATA_OF(self);
-  sp_error error = sp_session_login(*session_data->session_ptr, StringValuePtr(username), StringValuePtr(password));
+  void *argv[] = { *session_data->session_ptr, StringValueCStr(username), StringValueCStr(password) };
+  sp_error error = (sp_error) hn_proc_without_gvl(sp_session_login_nogvl, argv);
   ASSERT_OK(error);
   return self;
+}
+
+// just paranoia, actually
+static VALUE sp_session_login_nogvl(void *_argv)
+{
+  void **argv = (void**) _argv;
+  return (VALUE) sp_session_login((sp_session*) argv[0], (char*) argv[1], (char*) argv[2]);
 }
 
 
