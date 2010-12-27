@@ -25,6 +25,7 @@ VALUE pthread_cond_wait_nogvl(pthread_cond_t*, pthread_mutex_t*);
 
 #ifndef NDEBUG
 #  define DEBUG(msg) fprintf(stderr, "%s:%d -> %s\n", __FILE__, __LINE__, msg)
+#  define DEBUG_N(msg, n) fprintf(stderr, "%s:%d -> (#%d) %s\n", __FILE__, __LINE__, n, msg)
 #else
 #  define DEBUG(msg) /* noop */
 #endif

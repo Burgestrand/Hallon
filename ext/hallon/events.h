@@ -72,6 +72,7 @@ typedef struct {
   _event->handler = _handler;\
   _event->data    = _data;\
   pthread_cond_signal(cond);\
+  /*usleep(10);*/\
   pthread_mutex_unlock(mutex);\
 } while(0)
 
