@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <pthread.h>
 #include "common.h"
 #include "semaphore.h"
