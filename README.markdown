@@ -12,7 +12,12 @@ What is Hallon?
 ===============
 Hallon provides [Ruby][] bindings for [libspotify][], the official Spotify C API. This allows you to use an awesome language to interact with an awesome service.
 
-Hallon is inspired by [Greenstripes][], a similar library by [Jesper Särnesjö][].
+Hallon would not have been possible if not for these people:
+
+- Per Reimers, cracking synchronization bugs with me in the deep night (4 AM) and correcting me when I didn’t know better
+- [Spotify](http://www.spotify.com/), providing a service worth attention (and my money!)
+- [Linus Oleander](https://github.com/oleander), giving me a reason to look for ways of doing what Hallon does
+- [Jesper Särnesjö][], creator of [Greenstripes][] which spawned the idea of Hallon
 
 This is awesome! I want to help!
 --------------------------------
