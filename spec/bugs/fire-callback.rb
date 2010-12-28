@@ -12,6 +12,5 @@ module Hallon
 end
 
 sess = Hallon::Session.instance Hallon::APPKEY
-5.times { sess.fire! :noop }
 
 sleep 2
