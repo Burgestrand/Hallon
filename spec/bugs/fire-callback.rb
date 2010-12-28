@@ -13,4 +13,5 @@ end
 
 sess = Hallon::Session.instance Hallon::APPKEY
 
-sleep 2
+5.times { sess.fire! :noop }
+sleep 5
