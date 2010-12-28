@@ -69,8 +69,8 @@ typedef struct {
 
 #define EVENT_CREATE(_event, _handler, _data, cond, mutex) do {\
   pthread_mutex_lock(mutex);\
-  _event->handler = _handler;\
-  _event->data    = _data;\
+  (_event)->handler = (_handler);\
+  (_event)->data    = (_data);\
   pthread_cond_signal(cond);\
   /*usleep(10);*/\
   pthread_mutex_unlock(mutex);\
