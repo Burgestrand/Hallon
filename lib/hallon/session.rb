@@ -49,8 +49,16 @@ module Hallon
     private
       def spawn_consumer(queue)
         @event_consumer = Thread.new(self) do |session|
+          @events = []
+          
+          at_exit do
+            puts
+            puts
+            puts "Events: #{@events.map(&:inspect).join(', ')}"
+          end
+          
           loop do
-            event = queue.shift
+            @events << (event = queue.shift)
             puts "(Consumer) Handling: #{event.inspect}"
             session.send(*event)
             puts "(Consumer) Done!"
