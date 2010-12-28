@@ -24,9 +24,9 @@
   Locks the semaphore mutex and executes the given code within the mutex lock.
 */
 #define synchronize(sem, code) do {\
-  pthread_mutex_lock(&sem->mutex);\
+  pthread_mutex_lock(&(sem)->mutex);\
   code;\
-  pthread_mutex_unlock(&sem->mutex);\
+  pthread_mutex_unlock(&(sem)->mutex);\
 } while(0)
 
 /*
