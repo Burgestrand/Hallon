@@ -6,7 +6,7 @@
 #define SESSION_EVENT_CREATE(_session_ptr, _handler, _data) do {\
   hn_session_data_t *_session_data = (hn_session_data_t*) sp_session_userdata(_session_ptr);\
   DEBUG("!! " #_handler " !!");\
-  EVENT_CREATE(_session_data->event, _handler, _data, &_session_data->event_cond, &_session_data->event_mutex);\
+  EVENT_CREATE((_session_data)->event, _handler, _data, &(_session_data)->event_cond, &(_session_data)->event_mutex);\
   DEBUG("** " #_handler " **");\
 } while(0)
 
@@ -43,6 +43,8 @@ static VALUE ruby_process_events(void *args)
 
 static void callback_process_events(sp_session *session_ptr)
 {
+  SESSION_EVENT_CREATE(session_ptr, ruby_process_events, NULL);
+  SESSION_EVENT_CREATE(session_ptr, ruby_process_events, NULL);
   SESSION_EVENT_CREATE(session_ptr, ruby_process_events, NULL);
 }
 
