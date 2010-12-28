@@ -24,6 +24,7 @@ VALUE hn_session_fire(void *_argv)
 {
   void **argv = (void**) _argv;
   SESSION_EVENT_CREATE((sp_session*) argv[0], ruby_session_fire, argv[1]);
+  return Qnil;
 }
 
 
