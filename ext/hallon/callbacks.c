@@ -59,7 +59,7 @@ static void callback_logged_in(sp_session *session_ptr, sp_error error)
   SESSION_EVENT_CREATE(session_ptr, ruby_logged_in, (void*) error);
 }
 
-// @see session.c
+/* @see session.c */
 const sp_session_callbacks HALLON_SESSION_CALLBACKS = 
 {
  .logged_in              = callback_logged_in,

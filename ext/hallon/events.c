@@ -36,7 +36,7 @@ VALUE event_producer(void *argv)
   {
     hn_proc_without_gvl(hn_sem_wait_nogvl, session_data->event_full);
     
-    // invoke the handler with the event data to build a ruby array representing the event
+    /* invoke the handler with the event data to build a ruby array representing the event */
     VALUE ruby_event = session_data->event->handler(session_data->event->data);
     VALUE s_ruby_event = rb_inspect(ruby_event);
     rb_funcall3(queue, push, 1, &ruby_event);
@@ -44,5 +44,5 @@ VALUE event_producer(void *argv)
     hn_proc_without_gvl(hn_sem_post_nogvl, session_data->event_empty);
   } while(1);
   
-  // TODO: unlock shit?
+  /* TODO: unlock shit? */
 }

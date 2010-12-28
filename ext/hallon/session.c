@@ -54,10 +54,10 @@ static void cSession_s_free(hn_session_data_t* session_data)
     If a call has been made earlier to `sp_session_create` and it failed, this
     cleanup call will also fail with a segfault in `sp_image_create`.
   */
-  // sp_session_release(*session_data->session_ptr);
+  /* sp_session_release(*session_data->session_ptr); */
   
-  // TODO: make it kill event_producer thread
-  // IDEA: do ^ by sending the event_producer thread a rb_thread_kill event :d
+  /* TODO: make it kill event_producer thread */
+  /* IDEA: do ^ by sending the event_producer thread a rb_thread_kill event :d */
   hn_sem_destroy(session_data->event_empty);
   hn_sem_destroy(session_data->event_full);
   
@@ -96,12 +96,14 @@ static VALUE cSession_initialize(int argc, VALUE *argv, VALUE self)
   rb_iv_set(self, "@settings_path", settings_path);
   rb_iv_set(self, "@cache_path", cache_path);
   
-  // @see events.h
+  /* @see events.c and events.h */
   VALUE thargs[] = { self, rb_eval_string("Queue.new") };
   rb_iv_set(self, "@event_producer", rb_thread_create(event_producer, thargs));
+  
+  /* defined in ruby */
   rb_funcall(self, rb_intern("spawn_consumer"), 1, thargs[1]);
   
-  // Finally, the libspotify calls
+  /* Finally, the libspotify calls */
   sp_session_config config =
   {
     .api_version          = SPOTIFY_API_VERSION,
@@ -115,7 +117,7 @@ static VALUE cSession_initialize(int argc, VALUE *argv, VALUE self)
     .tiny_settings        = true,
   };
   
-  // @note This calls the `notify_main_thread` callback once from the same pthread.
+  /* @note This calls the `notify_main_thread` callback once from the same pthread. */
   void* pargs[] = { &config, session_data->session_ptr };
   sp_error error = (sp_error) hn_proc_without_gvl(sp_session_create_nogvl, pargs);
   ASSERT_OK(error);
@@ -123,7 +125,7 @@ static VALUE cSession_initialize(int argc, VALUE *argv, VALUE self)
   return self;
 }
 
-// invokes notify_main_thread callback, so it is blocking
+/* invokes notify_main_thread callback, ie. blocks until the event can be handled */
 static VALUE sp_session_create_nogvl(void *_pargs)
 {
   void **pargs = (void**) _pargs;
@@ -160,7 +162,7 @@ static VALUE cSession_process_events(VALUE self)
   return INT2FIX(timeout);
 }
 
-// this call might lead to trying to lock the event lock, so it is a blocking call
+/* this call might lead to trying to lock the event lock, so it is a blocking call */
 static VALUE sp_session_process_events_nogvl(void *session_ptr)
 {
   int timeout = 0;
@@ -184,7 +186,7 @@ static VALUE cSession_login(VALUE self, VALUE username, VALUE password)
   return self;
 }
 
-// just paranoia, actually
+/* just paranoia, actually */
 static VALUE sp_session_login_nogvl(void *_argv)
 {
   void **argv = (void**) _argv;
