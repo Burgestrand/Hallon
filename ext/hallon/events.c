@@ -24,6 +24,7 @@ VALUE event_producer(void *argv)
     for(session_data->event->handler = NULL; session_data->event->handler == NULL;)
     {
       DUMP(i, "%d…");
+      /* pthread_cond_wait_nogvl@utils.c */
       pthread_cond_wait_nogvl(&session_data->event_cond, &session_data->event_mutex);
     }
     
