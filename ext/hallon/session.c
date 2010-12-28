@@ -6,8 +6,8 @@
 /*
   Prototypes
 */
-static VALUE cSession_alloc(VALUE);
-static void cSession_free(hn_session_data_t*);
+static VALUE cSession_s_alloc(VALUE);
+static void cSession_s_free(hn_session_data_t*);
 static VALUE cSession_initialize(int, VALUE*, VALUE);
   static VALUE sp_session_create_nogvl(void *);
 
@@ -21,7 +21,7 @@ static VALUE cSession_login(VALUE, VALUE, VALUE);
 /*
   Allocate space for a session pointer and attach it to the returned object.
 */
-static VALUE cSession_alloc(VALUE klass)
+static VALUE cSession_s_alloc(VALUE klass)
 {
   hn_session_data_t *session_data = ALLOC(hn_session_data_t);
   hn_event_t *event_ptr = ALLOC(hn_event_t);
@@ -40,13 +40,13 @@ static VALUE cSession_alloc(VALUE klass)
   event_ptr->data    = NULL;
   session_data->event = event_ptr;
   
-  return Data_Wrap_Struct(klass, NULL, cSession_free, session_data);
+  return Data_Wrap_Struct(klass, NULL, cSession_s_free, session_data);
 }
 
 /*
   Release the created session and deallocate the session pointer.
 */
-static void cSession_free(hn_session_data_t* session_data)
+static void cSession_s_free(hn_session_data_t* session_data)
 {
   /*
     NOTE: if `sp_session_create` fails the session_ptr will be NULL
@@ -217,7 +217,7 @@ void Init_Session(void)
   rb_require("thread"); // Session#initialize (Queue)
   
   VALUE cSession = rb_define_class_under(MHallon, "Session", rb_cObject);
-  rb_define_alloc_func(cSession, cSession_alloc);
+  rb_define_alloc_func(cSession, cSession_s_alloc);
   rb_define_method(cSession, "initialize", cSession_initialize, -1);
   rb_define_method(cSession, "status", cSession_status, 0);
   rb_define_method(cSession, "process_events", cSession_process_events, 0);
