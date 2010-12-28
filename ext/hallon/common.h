@@ -2,9 +2,8 @@
   #define __HALLON__
   
   #include <ruby.h>
-  #include <pthread.h>
-  #include <assert.h>
   #include <stdbool.h>
+  #include <stdlib.h>
   
   #ifdef HAVE_LIBSPOTIFY_API_H
   #  include <libspotify/api.h>

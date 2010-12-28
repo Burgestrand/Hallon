@@ -40,4 +40,9 @@ VALUE pthread_cond_wait_nogvl(pthread_cond_t*, pthread_mutex_t*);
   type_ptr;\
 })
 
+#define OMGWTF(msg) do {\
+  fprintf(stderr, "%s:%d: %s", __FILE__, __LINE__, msg);\
+  abort();\
+} while(0)
+
 #endif /* end of include guard: UTILS_H_PUO0POGY */

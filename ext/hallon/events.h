@@ -67,12 +67,11 @@ typedef struct {
   void* data;
 } hn_event_t;
 
-#define EVENT_CREATE(_event, _handler, _data, cond, mutex) do {\
-  pthread_mutex_lock(mutex);\
-  (_event)->handler = (_handler);\
-  (_event)->data    = (_data);\
-  pthread_cond_signal(cond);\
-  pthread_mutex_unlock(mutex);\
+#define EVENT_CREATE(full, empty, event, ruby_handler, c_data) do {\
+  hn_sem_wait(empty);\
+  (event)->handler = (ruby_handler);\
+  (event)->data    = (c_data);\
+  hn_sem_post(full);\
 } while(0)
 
 #endif /* end of include guard: EVENTS_H_QF5CFKX */

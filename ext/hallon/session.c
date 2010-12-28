@@ -2,6 +2,7 @@
 #include "events.h"
 #include "callbacks.h"
 #include "session.h"
+#include "semaphore.h"
 
 /*
   Prototypes
@@ -31,11 +32,8 @@ static VALUE cSession_s_alloc(VALUE klass)
   session_data->session_ptr = ALLOC(sp_session*);
   session_data->session_obj = Qnil;
   
-  pthread_mutex_init(&session_data->event_mutex, NULL);
-  pthread_cond_init(&session_data->event_cond, NULL);
-  
-  pthread_mutex_init(&session_data->startup_mutex, NULL);
-  pthread_cond_init(&session_data->startup_cond, NULL);
+  session_data->event_full  = hn_sem_init(0);
+  session_data->event_empty = hn_sem_init(1);
   
   event_ptr->handler = NULL;
   event_ptr->data    = NULL;
@@ -58,11 +56,10 @@ static void cSession_s_free(hn_session_data_t* session_data)
   */
   // sp_session_release(*session_data->session_ptr);
   
-  pthread_mutex_destroy(&session_data->event_mutex);
-  pthread_cond_destroy(&session_data->event_cond);
-  
-  pthread_mutex_destroy(&session_data->startup_mutex);
-  pthread_cond_destroy(&session_data->startup_cond);
+  // TODO: make it kill event_producer thread
+  // IDEA: do ^ by sending the event_producer thread a rb_thread_kill event :d
+  hn_sem_destroy(session_data->event_empty);
+  hn_sem_destroy(session_data->event_full);
   
   xfree(session_data);
 }
@@ -99,18 +96,10 @@ static VALUE cSession_initialize(int argc, VALUE *argv, VALUE self)
   rb_iv_set(self, "@settings_path", settings_path);
   rb_iv_set(self, "@cache_path", cache_path);
   
-  /* startup condition (synchronization) */
-  pthread_mutex_lock_nogvl(&session_data->startup_mutex);
-  
   // @see events.h
   VALUE thargs[] = { self, rb_eval_string("Queue.new") };
   rb_iv_set(self, "@event_producer", rb_thread_create(event_producer, thargs));
   rb_funcall(self, rb_intern("spawn_consumer"), 1, thargs[1]);
-  
-  // ^ to make sure we catch first #notify_main_thread
-  // The producer *MUST* have the event_mutex before we continue!
-  pthread_cond_wait_nogvl(&session_data->startup_cond, &session_data->startup_mutex);
-  pthread_mutex_unlock(&session_data->startup_mutex);
   
   // Finally, the libspotify calls
   sp_session_config config =

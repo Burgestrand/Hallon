@@ -2,12 +2,12 @@
 #include "events.h" /* hn_event_t */
 #include "callbacks.h"
 #include "session.h" /* hn_session_data_t */
+#include "semaphore.h"
 
 #define SESSION_EVENT_CREATE(_session_ptr, _handler, _data) do {\
-  hn_session_data_t *_session_data = (hn_session_data_t*) sp_session_userdata(_session_ptr);\
-  DEBUG("!! " #_handler " !!");\
-  EVENT_CREATE((_session_data)->event, _handler, _data, &(_session_data)->event_cond, &(_session_data)->event_mutex);\
-  DEBUG("** " #_handler " **");\
+  hn_session_data_t *session_data = (hn_session_data_t*) sp_session_userdata(_session_ptr);\
+  EVENT_CREATE(session_data->event_full, session_data->event_empty,\
+               session_data->event, _handler, _data);\
 } while(0)
 
 /*

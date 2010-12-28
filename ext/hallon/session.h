@@ -1,6 +1,8 @@
 #ifndef SESSION_H_N4NAEFIZ
 #define SESSION_H_N4NAEFIZ
 
+#include "semaphore.h"
+
 typedef struct
 {
   /* session pointer & object */
@@ -8,13 +10,9 @@ typedef struct
   VALUE        session_obj;
 
   /* event mutex and condition signal */
-  pthread_mutex_t event_mutex;
-  pthread_cond_t  event_cond;
+  hn_sem_t* event_empty;
+  hn_sem_t* event_full;
   hn_event_t* event;
-  
-  /* startup condition */
-  pthread_mutex_t startup_mutex;
-  pthread_cond_t  startup_cond;
 } hn_session_data_t;
 
 /*
