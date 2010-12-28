@@ -30,7 +30,6 @@ VALUE event_producer(void *argv)
     // invoke the handler with the event data to build a ruby array representing the event
     VALUE ruby_event = session_data->event->handler(session_data->event->data);
     VALUE s_ruby_event = rb_inspect(ruby_event);
-    DUMP(StringValueCStr(s_ruby_event), "%s");
     rb_funcall3(queue, push, 1, &ruby_event);
   }
   

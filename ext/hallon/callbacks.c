@@ -11,6 +11,23 @@
 } while(0)
 
 /*
+  Used for debugging purposes of event system. (see Session#fire!)
+
+  @TODO: Remove this.
+*/
+static VALUE ruby_session_fire(void *args)
+{
+  return (VALUE) args;
+}
+
+VALUE hn_session_fire(void *_argv)
+{
+  void **argv = (void**) _argv;
+  SESSION_EVENT_CREATE((sp_session*) argv[0], ruby_session_fire, argv[1]);
+}
+
+
+/*
   Session callbacks
   
   @see http://developer.spotify.com/en/libspotify/docs/structsp__session__callbacks.html
