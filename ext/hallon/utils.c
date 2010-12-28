@@ -31,36 +31,3 @@ VALUE hn_funcall4(VALUE recv, ID msg, VALUE args)
   VALUE result = rb_funcall3(recv, msg, argc, argv);
   return result;
 }
-
-/*
-  Lock the given mutex, but do so without holding the GVL while waiting to lock.
-  
-  @param [pthread_mutex_t*] mutex
-  @return [Fixnum] (see pthread_mutex_lock)
-*/
-static VALUE mutex_lock_nogvl(void *mutex) // without GVL
-{
-  return (VALUE) pthread_mutex_lock((pthread_mutex_t*) mutex);
-}
-VALUE pthread_mutex_lock_nogvl(pthread_mutex_t *mutex)
-{
-  return INT2FIX(hn_proc_without_gvl(mutex_lock_nogvl, mutex));
-}
-
-/*
-  Wait for a signal on the given condition variable without holding the GVL.
-  
-  @param [pthread_cond_t*] cond
-  @return [Fixnum] (see pthread_cond_wait)
-*/
-static VALUE cond_wait_nogvl(void *data) // without_gvl
-{
-  void **args = data;
-  DEBUG("(waiting)");
-  return (VALUE) pthread_cond_wait((pthread_cond_t*) args[0], (pthread_mutex_t*) args[1]);
-}
-VALUE pthread_cond_wait_nogvl(pthread_cond_t *cond, pthread_mutex_t *mutex)
-{
-  void *args[] = { cond, mutex };
-  return INT2FIX(hn_proc_without_gvl(cond_wait_nogvl, args));
-}

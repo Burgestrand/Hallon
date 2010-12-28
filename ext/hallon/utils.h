@@ -12,14 +12,6 @@ VALUE hn_proc_without_gvl(rb_blocking_function_t *fn, void *data);
 VALUE hn_funcall4(VALUE, ID, VALUE);
 
 /*
-  Non-GVL versions of blocking C functions.
-*/
-
-// pthread
-VALUE pthread_mutex_lock_nogvl(pthread_mutex_t*);
-VALUE pthread_cond_wait_nogvl(pthread_cond_t*, pthread_mutex_t*);
-
-/*
   Macros
 */
 
