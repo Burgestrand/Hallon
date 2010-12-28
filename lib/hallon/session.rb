@@ -25,6 +25,7 @@ module Hallon
     # @see http://ruby-doc.org/core/classes/Singleton.html
     # @return [Session]
     def Session.instance(*args, &block)
+      Thread.abort_on_exception = true
       @__instance__ ||= new(*args, &block)
     end
     
