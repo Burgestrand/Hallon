@@ -6,7 +6,6 @@ end
 
 # For Mac OS if installed in /Library/Frameworks/libspotify.framework/
 with_ldflags('-framework libspotify') { RUBY_PLATFORM.match 'darwin' }
-with_cflags('-pipe -ggdb -O0 -Wall -ansi') { ENV['DEBUG'] }
 
 # check for ruby!
 error 'Missing ruby header' unless have_header 'ruby.h'
@@ -27,4 +26,5 @@ unless have_library 'pthread', 'pthread_mutex_lock'
   error 'missing posix thread-support'
 end
 
+with_cflags('-pipe -ggdb -O0 -Wall') { ENV['DEBUG'] }
 create_makefile 'hallon'
