@@ -23,14 +23,14 @@ VALUE event_producer(void *argv)
     // wait on the condition in a loop to guard against spurious wakeups
     for(session_data->event->handler = NULL; session_data->event->handler == NULL;)
     {
-      DEBUG_N("…", i);
+      DUMP(i, "%d…");
       pthread_cond_wait_nogvl(&session_data->event_cond, &session_data->event_mutex);
     }
     
     // invoke the handler with the event data to build a ruby array representing the event
     VALUE ruby_event = session_data->event->handler(session_data->event->data);
     VALUE s_ruby_event = rb_inspect(ruby_event);
-    DEBUG_N(StringValueCStr(s_ruby_event), i);
+    DUMP(StringValueCStr(s_ruby_event), "%s");
     rb_funcall3(queue, push, 1, &ruby_event);
   }
   

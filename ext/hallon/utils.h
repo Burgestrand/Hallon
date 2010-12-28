@@ -24,10 +24,11 @@ VALUE pthread_cond_wait_nogvl(pthread_cond_t*, pthread_mutex_t*);
 */
 
 #ifndef NDEBUG
-#  define DEBUG(msg) fprintf(stderr, "%s:%d -> %s\n", __FILE__, __LINE__, msg)
-#  define DEBUG_N(msg, n) fprintf(stderr, "%s:%d -> (#%d) %s\n", __FILE__, __LINE__, n, msg)
+#  define DEBUG(msg) fprintf(stderr, "%s:%u: %s\n", __FILE__, __LINE__, msg)
+#  define DUMP(x, fmt) fprintf(stderr, "%s:%u: %s = " fmt "\n", __FILE__, __LINE__, #x, x)
 #else
 #  define DEBUG(msg) /* noop */
+#  define DUMP(x, fmt) /* noop */
 #endif
 
 #define STR2SYM(string) ID2SYM(rb_intern(string))
