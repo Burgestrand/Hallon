@@ -44,8 +44,6 @@ static VALUE ruby_process_events(void *args)
 static void callback_process_events(sp_session *session_ptr)
 {
   SESSION_EVENT_CREATE(session_ptr, ruby_process_events, NULL);
-  SESSION_EVENT_CREATE(session_ptr, ruby_process_events, NULL);
-  SESSION_EVENT_CREATE(session_ptr, ruby_process_events, NULL);
 }
 
 /*
