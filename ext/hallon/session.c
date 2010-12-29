@@ -18,6 +18,7 @@ static VALUE cSession_process_events(VALUE);
 static VALUE cSession_login(VALUE, VALUE, VALUE);
   static VALUE sp_session_login_nogvl(void *);
 static VALUE cSession_fire_bang(VALUE, VALUE);
+static VALUE cSession_logout_bang(VALUE);
 
 
 /*
@@ -206,6 +207,23 @@ static VALUE cSession_fire_bang(VALUE self, VALUE argv)
   return self;
 }
 
+/*
+  Logs out of Spotify. Does nothing if not logged in.
+  
+  @raise [Hallon::Error] if libspotify returns an error
+  @return [Session]
+*/
+static VALUE cSession_logout_bang(VALUE self)
+{
+  if (rb_funcall3(self, rb_intern("logged_in?"), 0, NULL) == Qtrue)
+  {
+    sp_error error = sp_session_logout(*DATA_OF(self)->session_ptr);
+    ASSERT_OK(error);
+  }
+  
+  return self;
+}
+
 
 /*
   Document-class: Hallon::Session
@@ -228,4 +246,5 @@ void Init_Session(void)
   rb_define_method(cSession, "process_events", cSession_process_events, 0);
   rb_define_method(cSession, "login", cSession_login, 2);
   rb_define_method(cSession, "fire!", cSession_fire_bang, -2);
+  rb_define_method(cSession, "logout!", cSession_logout_bang, 0);
 }

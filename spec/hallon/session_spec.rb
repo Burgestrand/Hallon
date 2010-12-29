@@ -32,5 +32,12 @@ describe Hallon::Session do
         subject.process_events.should be_a Fixnum
       end
     end
+    
+    describe "#logout" do
+      it "should check logged in status" do
+        subject.should_receive(:logged_in?).once
+        expect { subject.logout! }.to_not raise_error
+      end
+    end
   end
 end
