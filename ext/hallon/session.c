@@ -7,19 +7,12 @@
 /*
   Prototypes
 */
-static VALUE cSession_s_alloc(VALUE);
 static void cSession_s_free(hn_session_data_t*);
-static VALUE cSession_initialize(int, VALUE*, VALUE);
-  static VALUE sp_session_create_nogvl(void *);
+static VALUE sp_session_create_nogvl(void *);
 
-static VALUE cSession_status(VALUE);
-static VALUE cSession_process_events(VALUE);
-  static VALUE sp_session_process_events_nogvl(void *);
-static VALUE cSession_login(VALUE, VALUE, VALUE);
-  static VALUE sp_session_login_nogvl(void *);
-static VALUE cSession_fire_bang(VALUE, VALUE);
-static VALUE cSession_logout_bang(VALUE);
-
+static VALUE sp_session_process_events_nogvl(void *);
+static VALUE sp_session_login_nogvl(void *);
+static VALUE sp_session_logout_nogvl(void *);
 
 /*
   Allocate space for a session pointer and attach it to the returned object.
@@ -219,11 +212,16 @@ static VALUE cSession_logout_bang(VALUE self)
 {
   if (rb_funcall3(self, rb_intern("logged_in?"), 0, NULL) == Qtrue)
   {
-    sp_error error = sp_session_logout(*DATA_OF(self)->session_ptr);
+    sp_error error = (sp_error) hn_proc_without_gvl(sp_session_logout_nogvl, *DATA_OF(self)->session_ptr);
     ASSERT_OK(error);
   }
   
   return self;
+}
+
+static VALUE sp_session_logout_nogvl(void *session_ptr)
+{
+  return (VALUE) sp_session_logot(session_ptr);
 }
 
 
