@@ -34,15 +34,25 @@ VALUE event_producer(void *argv)
   
   do
   {
+    /*
+      wait for events, when they arrive we invoke their ruby handler with the data
+      
+      the handler is expected to return an array, whereas the first element is a
+      symbol representing the event name. if it is nil, however, it means this
+      thread should die!
+    */
     hn_proc_without_gvl(hn_sem_wait_nogvl, session_data->event_full);
     
-    /* invoke the handler with the event data to build a ruby array representing the event */
-    VALUE ruby_event = session_data->event->handler(session_data->event->data);
-    VALUE s_ruby_event = rb_inspect(ruby_event);
-    rb_funcall3(queue, push, 1, &ruby_event);
+    // TODO: rb_protect? -> rb_f_abort
+    VALUE ruby_event = rb_protect(session_data->event->handler, session_data->event->data);
     
+    /* if it’s NIL (no data whatsoever from the callback), it means we quit */
+    if (ruby_event == Qnil) break;
+    
+    /* dispatch, we are done */
+    rb_funcall3(queue, push, 1, &ruby_event);
     hn_proc_without_gvl(hn_sem_post_nogvl, session_data->event_empty);
   } while(1);
   
-  /* TODO: unlock shit? */
+  return Qtrue;
 }
