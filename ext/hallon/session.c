@@ -115,7 +115,7 @@ static VALUE cSession_initialize(int argc, VALUE *argv, VALUE self)
   /* @see events.c and events.h */
   rb_iv_set(self, "@event_producer", rb_thread_create(event_producer, thargs));
   
-  /* defined in ruby */
+  /* defined in hallon/session.rb */
   rb_funcall(self, rb_intern("spawn_consumer"), 1, thargs[1]);
   
   return self;
