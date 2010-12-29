@@ -97,13 +97,6 @@ static VALUE cSession_initialize(int argc, VALUE *argv, VALUE self)
   rb_iv_set(self, "@settings_path", settings_path);
   rb_iv_set(self, "@cache_path", cache_path);
   
-  /* @see events.c and events.h */
-  VALUE thargs[] = { self, rb_eval_string("Queue.new") };
-  rb_iv_set(self, "@event_producer", rb_thread_create(event_producer, thargs));
-  
-  /* defined in ruby */
-  rb_funcall(self, rb_intern("spawn_consumer"), 1, thargs[1]);
-  
   /* Finally, the libspotify calls */
   sp_session_config config =
   {
@@ -122,6 +115,15 @@ static VALUE cSession_initialize(int argc, VALUE *argv, VALUE self)
   void* pargs[] = { &config, session_data->session_ptr };
   sp_error error = (sp_error) hn_proc_without_gvl(sp_session_create_nogvl, pargs);
   ASSERT_OK(error);
+
+  /* shared queue between consumer & producer */
+  VALUE thargs[] = { self, rb_eval_string("Queue.new") };
+  
+  /* @see events.c and events.h */
+  rb_iv_set(self, "@event_producer", rb_thread_create(event_producer, thargs));
+  
+  /* defined in ruby */
+  rb_funcall(self, rb_intern("spawn_consumer"), 1, thargs[1]);
   
   return self;
 }

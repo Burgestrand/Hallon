@@ -11,6 +11,12 @@ describe Hallon::Session do
       expect { Hallon::Session.instance('invalid') }.to raise_error(Hallon::Error)
     end
     
+    it "should not spawn event handling threads on failure" do
+      threads = Thread.list.length
+      expect { Hallon::Session.instance('invalid') }.to raise_error(Hallon::Error)
+      threads.should equal Thread.list.length
+    end
+    
     it "should succeed when given proper parameters" do
       expect { Hallon::Session.instance(Hallon::APPKEY, "Hallon", "tmp", "tmp/cache") }.to_not raise_error
     end
