@@ -47,21 +47,32 @@ module Hallon
     end
     
     private
-      def spawn_consumer(queue)
-        @event_consumer = Thread.new(self) do |session|
-          @events = []
-          
-          at_exit do
-            puts
-            puts
-            puts "Events: #{@events.map(&:inspect).join(', ')}"
-          end
-          
-          loop do
-            @events << (event = queue.shift)
-            puts "(Consumer) Handling: #{event.inspect}"
-            session.send(*event)
-            puts "(Consumer) Done!"
+      # Spawns a new thread that constantly reads from the `queue` and dispatches
+      # events to the {Session}.
+      #
+      # To exit the thread using events, throw a `:shuriken` in a handler. You
+      # can fire your own events using {Session#fire!}.
+      #
+      # @note This is called automatically by Session#initialize.
+      # @param [Queue] queue
+      # @param [#new] handler (default: {Session::Callbacks})
+      # @return [Thread]
+      def spawn_consumer(queue, handler = Callbacks.new(self))
+        @event_consumer = Thread.new(handler) do |callbacks|
+          catch :shuriken do
+            loop do
+              event = *queue.shift
+
+              begin
+                begin
+                  callbacks.public_send(*event) # First try user-given handler
+                rescue NoMethodError
+                  public_send(*event) # Fall back to Session as an event handler
+                end
+              rescue StandardError => e
+                $stderr.puts "[error] <Event #{event.inspect}> #{e.inspect}"
+              end
+            end
           end
         end
       end
