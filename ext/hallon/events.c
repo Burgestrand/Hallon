@@ -44,7 +44,7 @@ VALUE event_producer(void *argv)
     hn_proc_without_gvl(hn_sem_wait_nogvl, session_data->event_full);
     
     // TODO: rb_protect? -> rb_f_abort
-    VALUE ruby_event = rb_protect(session_data->event->handler, session_data->event->data);
+    VALUE ruby_event = session_data->event->handler(session_data->event->data);
     
     /* if it’s NIL (no data whatsoever from the callback), it means we quit */
     if (ruby_event == Qnil) break;
