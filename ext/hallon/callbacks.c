@@ -10,14 +10,14 @@
                session_data->event, _handler, _data);\
 } while(0)
 
-/*
-  Used for debugging purposes of event system. (see Session#fire!)
 
-  @TODO: Remove this.
+/*
+  Used to be for debugging purposes only, but now it is used to fire arbitrary
+  events at the event_producer.
 */
-static VALUE ruby_session_fire(void *args)
+static VALUE ruby_session_fire(void *argv)
 {
-  return (VALUE) args;
+  return (VALUE) argv;
 }
 
 VALUE hn_session_fire(void *_argv)
@@ -26,7 +26,6 @@ VALUE hn_session_fire(void *_argv)
   SESSION_EVENT_CREATE((sp_session*) argv[0], ruby_session_fire, argv[1]);
   return Qnil;
 }
-
 
 /*
   Session callbacks
