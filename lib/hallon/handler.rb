@@ -33,5 +33,10 @@ module Hallon
     def initialize(session)
       @session = session
     end
+    
+    # Called by libspotify when #process_events needs to be called.
+    def process_events
+      session.process_events
+    end
   end
 end
