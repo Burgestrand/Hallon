@@ -221,7 +221,7 @@ static VALUE cSession_logout_bang(VALUE self)
 
 static VALUE sp_session_logout_nogvl(void *session_ptr)
 {
-  return (VALUE) sp_session_logot(session_ptr);
+  return (VALUE) sp_session_logout(session_ptr);
 }
 
 
