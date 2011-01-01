@@ -19,6 +19,17 @@ Hallon would not have been possible if not for these people:
 - [Linus Oleander](https://github.com/oleander), giving me a reason to look for ways of doing what Hallon does
 - [Jesper Särnesjö][], creator of [Greenstripes][] which spawned the idea of Hallon
 
+This is what the API looks like:
+
+    session = Hallon::Session.instance(Hallon::APPKEY, :user_agent => "Chunky Bacon") do
+      def logged_in(error)
+        puts "Yeah, we’ve logged in!"
+      end
+    end
+    
+    session.login username, password
+
+
 This is awesome! I want to help!
 --------------------------------
 Sweet! You contribute in more than one way!
