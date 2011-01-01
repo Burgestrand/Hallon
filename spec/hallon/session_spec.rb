@@ -1,6 +1,13 @@
+require 'ostruct' # https://github.com/rspec/rspec-core/issues/issue/264
+
 describe Hallon::Session do
+  def instance
+    @options = {:user_agent => "RSpec", :settings_path => "tmp", :cache_path => "tmp/cache" }
+    Hallon::Session.instance(Hallon::APPKEY, @options)
+  end
+  
+  subject { instance }
   it { Hallon::Session.should_not respond_to :new }
-  subject { Hallon::Session.instance(Hallon::APPKEY, "Hallon", "tmp", "tmp/cache") }
   
   describe "#instance" do
     it "should require an application key" do
@@ -18,20 +25,31 @@ describe Hallon::Session do
     end
     
     it "should succeed when given proper parameters" do
-      expect { Hallon::Session.instance(Hallon::APPKEY, "Hallon", "tmp", "tmp/cache") }.to_not raise_error
+      expect { subject }.to_not raise_error
     end
   end
   
   context "once instantiated" do
-    # The appkey is long, to avoid displaying it in the console we do like this.
-    describe "application_key" do
-      it "should == Hallon::APPKEY" do subject.application_key.should == Hallon::APPKEY end
+    describe "appkey" do
+      it "should == Hallon::APPKEY" do subject.appkey.should == Hallon::APPKEY end
     end
     
-    its(:user_agent) { should == "Hallon" }
-    its(:settings_path) { should == "tmp" }
-    its(:cache_path) { should == "tmp/cache" }
-    its(:status) { should == :logged_out }
+    describe "options" do
+      subject { instance.options }
+      its([:user_agent]) { should == "RSpec" }
+      its([:settings_path]) { should == "tmp" }
+      its([:cache_path]) { should == "tmp/cache" }
+    end
+    
+    describe "#merge_defaults" do
+      it "should return the defaults if no options given" do
+        instance.merge_defaults(nil).should be_a Hash # values not important
+      end
+      
+      it "should allow given options to override defaults" do
+        instance.merge_defaults(:user_agent => "Cow")[:user_agent].should == "Cow"
+      end
+    end
     
     describe "#process_events" do
       it "should return the timeout" do

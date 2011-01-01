@@ -1,19 +1,17 @@
+# coding: utf-8
 require 'singleton'
-require 'hallon/session/callbacks'
 
 module Hallon
   class Session
-    # @return [String]
-    attr_reader :application_key
+    # The options Hallon used at {Session#initialize}
+    # 
+    # @return [Hash]
+    attr_reader :options
     
+    # Application key used at {Session#initialize}
+    #
     # @return [String]
-    attr_reader :user_agent
-    
-    # @return [String]
-    attr_reader :settings_path
-    
-    # @return [String]
-    attr_reader :cache_path
+    attr_reader :appkey
     
     include Singleton
     
@@ -46,35 +44,46 @@ module Hallon
       status == :disconnected
     end
     
-    private
-      # Spawns a new thread that constantly reads from the `queue` and dispatches
-      # events to the {Session}.
-      #
-      # To exit the thread using events, throw a `:shuriken` in a handler. You
-      # can fire your own events using {Session#fire!}.
-      #
-      # @note This is called automatically by Session#initialize.
-      # @param [Queue] queue
-      # @param [#new] handler (default: {Session::Callbacks})
-      # @return [Thread]
-      def spawn_consumer(queue, handler = Callbacks.new(self))
-        @event_consumer = Thread.new(handler) do |callbacks|
-          catch :shuriken do
-            loop do
-              event = *queue.shift
-
-              begin
-                begin
-                  callbacks.public_send(*event) # First try user-given handler
-                rescue NoMethodError
-                  public_send(*event) # Fall back to Session as an event handler
-                end
-              rescue StandardError => e
-                $stderr.puts "[error] <Event #{event.inspect}> #{e.inspect}"
-              end
+    # Merge the given hash with default options for Session#initialize
+    #
+    # @private
+    # @param [Hash, nil] options
+    # @return [Hash]
+    def merge_defaults(options)
+      options ||= {}
+      {
+        :user_agent => "Hallon",
+        :settings_path => ".",
+        :cache_path => ""
+      }.merge(options)
+    end
+  
+    # Spawns a new thread that constantly reads from the `queue` and dispatches
+    # events to the {Session}.
+    #
+    # To exit the thread using events, throw a `:shuriken` in a handler. You
+    # can fire your own events using {Session#fire!}.
+    #
+    # @private
+    # @note This is called automatically by Session#initialize.
+    # @param [Queue] queue
+    # @param [Class] handler (default: {Hallon::Handler})
+    # @return [Thread]
+    def spawn_consumer(queue, handler)
+      handler = handler.new(self)
+      @event_consumer = Thread.new do
+        catch :shuriken do
+          loop do
+            event = queue.shift
+          
+            begin
+              handler.public_send(*event)
+            rescue StandardError => e
+              warn "<Event #{event.inspect} raised #{e.inspect}> #{e.message}"
             end
           end
         end
       end
+    end
   end
 end

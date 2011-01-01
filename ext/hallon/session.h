@@ -5,9 +5,12 @@
 
 typedef struct
 {
+  /* ruby data */
+  VALUE session_obj;
+  VALUE event_queue;
+  
   /* session pointer & object */
   sp_session** session_ptr;
-  VALUE        session_obj;
 
   /* event mutex and condition signal */
   hn_sem_t* event_empty;

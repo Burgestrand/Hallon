@@ -25,12 +25,10 @@ static VALUE hn_sem_post_nogvl(void *hn_sem) { return (VALUE) hn_sem_post(hn_sem
     # fill work queue
     event_full.post
 */
-VALUE event_producer(void *argv)
+VALUE event_producer(void *_session_data)
 {
   ID push = rb_intern("push");
-  VALUE session, queue;
-  rb_scan_args(2, argv, "20", &session, &queue);
-  hn_session_data_t *session_data = DATA_OF(session);
+  hn_session_data_t *session_data = (hn_session_data_t*) _session_data;
   
   do
   {
@@ -50,7 +48,7 @@ VALUE event_producer(void *argv)
     if (ruby_event == Qnil) break;
     
     /* dispatch, we are done */
-    rb_funcall3(queue, push, 1, &ruby_event);
+    rb_funcall3(session_data->event_queue, push, 1, &ruby_event);
     hn_proc_without_gvl(hn_sem_post_nogvl, session_data->event_empty);
   } while(1);
   

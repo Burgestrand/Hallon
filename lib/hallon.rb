@@ -1,6 +1,7 @@
 require 'hallon/hallon' # C extension! (ext/ is in $:)
 require 'hallon/version'
 require 'hallon/session'
+require 'hallon/handler'
 
 module Hallon
   # A regex that matches all Spotify URIs

@@ -7,6 +7,7 @@
 /*
   Prototypes
 */
+static void cSession_s_mark(hn_session_data_t*);
 static void cSession_s_free(hn_session_data_t*);
 static VALUE sp_session_create_nogvl(void *);
 
@@ -25,6 +26,7 @@ static VALUE cSession_s_alloc(VALUE klass)
   /* initialize */
   session_data->session_ptr = ALLOC(sp_session*);
   session_data->session_obj = Qnil;
+  session_data->event_queue = Qnil;
   
   session_data->event_full  = hn_sem_init(0);
   session_data->event_empty = hn_sem_init(1);
@@ -33,7 +35,16 @@ static VALUE cSession_s_alloc(VALUE klass)
   event_ptr->data    = NULL;
   session_data->event = event_ptr;
   
-  return Data_Wrap_Struct(klass, NULL, cSession_s_free, session_data);
+  return Data_Wrap_Struct(klass, cSession_s_mark, cSession_s_free, session_data);
+}
+
+/*
+  Mark associated ruby VALUEs on the session.
+*/
+static void cSession_s_mark(hn_session_data_t* session_data)
+{
+  rb_gc_mark(session_data->session_obj);
+  rb_gc_mark(session_data->event_queue);
 }
 
 /*
@@ -59,38 +70,60 @@ static void cSession_s_free(hn_session_data_t* session_data)
 }
 
 /*
-  call-seq: initialize(application_key, user_agent = "Hallon", settings_path = Dir.mktmpdir("se.burgestrand.hallon"), cache_path = settings_path)
-  
+  call-seq: initialize(appkey, options = {}, &block)
+
   Creates a new Spotify session with the given parameters using `sp_session_create`.
   
-  @note Until `libspotify` allows you to create more than one session, you must use {Session#instance} instead of this method
-  @param [#to_s] application_key (binary)
-  @param [#to_s] user_agent
-  @param [#to_s] settings_path
-  @param [#to_s] cache_path
+  @example 
+     session = Hallon::Session.new(appkey, :settings_path => "tmp") do
+       def logged_in
+         puts "We logged in successfully. Lets bail!"
+         exit
+       end
+     end
+  
+  @note Until `libspotify` allows you to create more than one session, you must
+        use {Hallon::Session#instance} instead of this method.
+  
+  @param [#to_s] appkey your `libspotify` application key.
+  @param [Hash] options additional options
+  @option options [String] ("Hallon") :user_agent libspotify user agent
+  @option options [String] (".") :settings_path path to save settings to
+  @option options [String] ("") :cache_path location where spotify writes cache
+  
+  @overload initialize(appkey, handler, options = {}, &block)
+    Uses the given handler to base your event handler on. If given a block, it
+    will be evaluated and methods defined within it will be applied to the handler.
+    
+    @param [#to_s] appkey
+    @param [Class, Module, nil] handler (see {Hallon::Handler::build})
+    @param [Hash] options
 */
 static VALUE cSession_initialize(int argc, VALUE *argv, VALUE self)
 {
-  VALUE appkey, user_agent, settings_path, cache_path;
-  VALUE tmp_prefix = rb_str_new2("se.burgestrand.hallon");
-  VALUE tmpdir = rb_funcall3(rb_cDir, rb_intern("mktmpdir"), 1, &tmp_prefix);
+  VALUE appkey, handler, options, block;
   hn_session_data_t *session_data = DATA_OF(self);
-  session_data->session_obj    = self;
+  session_data->session_obj = self;
   
-  switch (rb_scan_args(argc, argv, "13", &appkey, &user_agent, &settings_path, &cache_path))
-  {
-    case 1: user_agent    = rb_str_new2("Hallon");
-    case 2: settings_path = tmpdir;
-    case 3: cache_path    = settings_path;
-  }
+  // Handle arguments, swapping if necessary
+  rb_scan_args(argc, argv, "12&", &appkey, &handler, &options, &block);
+  if (TYPE(handler) == T_HASH) { options = handler; handler = Qnil; }
   
-  /* readonly variables */
-  rb_iv_set(self, "@application_key", appkey);
-  rb_iv_set(self, "@user_agent", user_agent);
-  rb_iv_set(self, "@settings_path", settings_path);
-  rb_iv_set(self, "@cache_path", cache_path);
+  options = rb_funcall(self, rb_intern("merge_defaults"), 1, options);
+  handler = rb_funcall(hn_const_get("Handler"), rb_intern("build"), 2, handler, block);
   
-  /* Finally, the libspotify calls */
+  // TODO: freeze?
+  rb_iv_set(self, "@appkey", appkey);
+  rb_iv_set(self, "@options", options);
+  
+  /* options variables */
+  VALUE user_agent    = rb_hash_lookup(options, STR2SYM("user_agent")),
+        settings_path = rb_hash_lookup(options, STR2SYM("settings_path")),
+        cache_path    = rb_hash_lookup(options, STR2SYM("cache_path"));
+  
+  /*
+    Finally, we do the libspotify dance and spawn our threads.
+  */
   sp_session_config config =
   {
     .api_version          = SPOTIFY_API_VERSION,
@@ -109,14 +142,14 @@ static VALUE cSession_initialize(int argc, VALUE *argv, VALUE self)
   sp_error error = (sp_error) hn_proc_without_gvl(sp_session_create_nogvl, pargs);
   ASSERT_OK(error);
 
-  /* shared queue between consumer & producer */
-  VALUE thargs[] = { self, rb_eval_string("Queue.new") };
+  /* shared queue between event consumer & event producer */
+  session_data->event_queue = rb_eval_string("Queue.new");
   
   /* @see events.c and events.h */
-  rb_iv_set(self, "@event_producer", rb_thread_create(event_producer, thargs));
+  rb_iv_set(self, "@event_producer", rb_thread_create(event_producer, session_data));
   
   /* defined in hallon/session.rb */
-  rb_funcall(self, rb_intern("spawn_consumer"), 1, thargs[1]);
+  rb_funcall(self, rb_intern("spawn_consumer"), 2, session_data->event_queue, handler);
   
   return self;
 }
@@ -226,8 +259,6 @@ static VALUE sp_session_logout_nogvl(void *session_ptr)
 
 
 /*
-  Document-class: Hallon::Session
-  
   The Session is fundamental for all communication with Spotify. Pretty much *all*
   API calls require you to have established a session with Spotify before
   using them.
@@ -236,7 +267,6 @@ static VALUE sp_session_logout_nogvl(void *session_ptr)
 */
 void Init_Session(void)
 {
-  rb_require("tmpdir"); // Session#initialize
   rb_require("thread"); // Session#initialize (Queue)
   
   VALUE cSession = rb_define_class_under(hn_mHallon, "Session", rb_cObject);
