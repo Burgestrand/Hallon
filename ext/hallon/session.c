@@ -239,7 +239,7 @@ void Init_Session(void)
   rb_require("tmpdir"); // Session#initialize
   rb_require("thread"); // Session#initialize (Queue)
   
-  VALUE cSession = rb_define_class_under(MHallon, "Session", rb_cObject);
+  VALUE cSession = rb_define_class_under(hn_mHallon, "Session", rb_cObject);
   rb_define_alloc_func(cSession, cSession_s_alloc);
   rb_define_method(cSession, "initialize", cSession_initialize, -1);
   rb_define_method(cSession, "status", cSession_status, 0);

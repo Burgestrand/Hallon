@@ -8,19 +8,19 @@
 */
 void Init_hallon(void)
 {
-  VALUE mHallon = rb_define_module("Hallon");
+  rb_define_module("Hallon");
   
   /*
     libspotify API version Hallon was compiled with.
   */
-  rb_define_const(mHallon, "API_VERSION", INT2FIX(SPOTIFY_API_VERSION));
+  rb_define_const(hn_mHallon, "API_VERSION", INT2FIX(SPOTIFY_API_VERSION));
   
   /*
     Document-class: Hallon::Error
     
     Thrown by Hallon on critical Spotify errors.
   */
-  rb_define_class_under(mHallon, "Error", rb_eStandardError);
+  rb_define_class_under(hn_mHallon, "Error", rb_eStandardError);
   
   /* Initialize the other parts */
   Init_Session();

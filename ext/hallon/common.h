@@ -21,6 +21,7 @@
   /*
     Common accessors
   */
-  #define MHallon rb_const_get(rb_cObject, rb_intern("Hallon"))
-  #define EHallon rb_const_get(MHallon, rb_intern("Error"))
+  #define hn_mHallon rb_const_get(rb_cObject, rb_intern("Hallon"))
+  #define hn_cError hn_const_get("Error")
+  #define hn_const_get(name) rb_const_get(hn_mHallon, rb_intern(name))
 #endif

@@ -24,7 +24,7 @@ VALUE hn_funcall4(VALUE, ID, VALUE);
 #endif
 
 #define STR2SYM(string) ID2SYM(rb_intern(string))
-#define ASSERT_OK(error) if (error != SP_ERROR_OK) rb_raise(EHallon, "%s", sp_error_message(error))
+#define ASSERT_OK(error) if (error != SP_ERROR_OK) rb_raise(hn_cError, "%s", sp_error_message(error))
 
 #define Data_Fetch_Struct(obj, type) ({\
   type *type_ptr;\
