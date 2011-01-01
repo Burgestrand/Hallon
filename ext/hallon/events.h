@@ -31,33 +31,16 @@
   have a way of communicating from callback functions to ruby threads.
 
   However, issues arise with this as with any other concurrent program. I must
-  synchronize read and write access properly. This is done using the mutex and
-  condition variable. The final structure I end up with is:
-
-  ### Ruby Main thread
-  This is the thread your application mainly runs in. It has the GVL and can
-  call ruby functions. Nothing special about this, every ruby thread has this.
-
+  synchronize read and write access properly. This is done using semaphores.
+  
   ### Event Producer thread
-  This thread is started in Session#initialize. It is given the C structure
-  containing the event mutex, event condition variable and event structure.
-  The first thing it does is raising its’ own priority (to run as often as 
-  possible) and then it locks the event mutex.
-  
-  Once the mutex is locked it will go into an infinite loop, waiting to be
-  signaled of an event. When the event arrives it will use the event to
-  construct a ruby structure containing event data.
-  
-  As a final task it will put this event data into a ruby Queue, which is
-  being read by the Event Consumer thread. The reason for this extra consumer
-  thread is that acting upon an event might invoke a callback. Callbacks take
-  the event mutex to mark the event, which is already held by the producer.
-  Locking the same lock twice results in a deadlock!
+  The event producer is given the Session object and a Queue. It will wait for
+  events coming from libspotify, and on arrival convert them to ruby-data. This
+  is then put on the Queue, ready for the event consumer to pop.
   
   ### Event Consumer thread
-  This consumer constantly pops events off of the Event Queue; a queue which
-  is shared between the producer and the consumer to allow acting upon
-  callbacks.
+  It runs a tight loop, popping data off the Queue. Each event is then sent to
+  the event handler (given in Session#initialize), which then handles the event.
 */
 
 VALUE event_producer(void *);
