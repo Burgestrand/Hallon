@@ -16,7 +16,8 @@
   /*
     Initializers for the other classes.
   */
-  void Init_Session();
+  void Init_Error(void);
+  void Init_Session(void);
   
   /*
     Common accessors
