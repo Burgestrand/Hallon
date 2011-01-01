@@ -44,46 +44,51 @@ module Hallon
       status == :disconnected
     end
     
-    # Merge the given hash with default options for Session#initialize
-    #
-    # @private
-    # @param [Hash, nil] options
-    # @return [Hash]
-    def merge_defaults(options)
-      options ||= {}
-      {
-        :user_agent => "Hallon",
-        :settings_path => ".",
-        :cache_path => ""
-      }.merge(options)
-    end
+    private
+      # Merge the given hash with default options for Session#initialize
+      #
+      # @private
+      # @note This is called automatically by Session#initialize.
+      # @param [Hash, nil] options
+      # @option options [String] :user_agent ("Hallon")
+      # @option options [String] :settings_path (".") 
+      # @option options [String] :cache_path ("")
+      # @return [Hash]
+      def merge_defaults(options)
+        options ||= {}
+        {
+          :user_agent => "Hallon",
+          :settings_path => ".",
+          :cache_path => ""
+        }.merge(options)
+      end
   
-    # Spawns a new thread that constantly reads from the `queue` and dispatches
-    # events to the {Session}.
-    #
-    # To exit the thread using events, throw a `:shuriken` in a handler. You
-    # can fire your own events using {Session#fire!}.
-    #
-    # @private
-    # @note This is called automatically by Session#initialize.
-    # @param [Queue] queue
-    # @param [Class] handler (default: {Hallon::Handler})
-    # @return [Thread]
-    def spawn_consumer(queue, handler)
-      handler = handler.new(self)
-      @event_consumer = Thread.new do
-        catch :shuriken do
-          loop do
-            event = queue.shift
+      # Spawns a new thread that constantly reads from the `queue` and dispatches
+      # events to the {Session}.
+      #
+      # To exit the thread using events, throw a `:shuriken` in a handler. You
+      # can fire your own events using {Session#fire!}.
+      #
+      # @private
+      # @note This is called automatically by Session#initialize.
+      # @param [Queue] queue
+      # @param [Class] handler
+      # @return [Thread]
+      def spawn_consumer(queue, handler)
+        handler = handler.new(self)
+        @event_consumer = Thread.new do
+          catch :shuriken do
+            loop do
+              event = queue.shift
           
-            begin
-              handler.public_send(*event)
-            rescue StandardError => e
-              warn "<Event #{event.inspect} raised #{e.inspect}> #{e.message}"
+              begin
+                handler.public_send(*event)
+              rescue StandardError => e
+                warn "<Event #{event.inspect} raised #{e.inspect}> #{e.message}"
+              end
             end
           end
         end
       end
-    end
   end
 end
