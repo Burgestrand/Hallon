@@ -3,8 +3,9 @@ require 'singleton'
 
 module Hallon
   class Session
-    # The options Hallon used at {Session#initialize}
+    # The options Hallon used at {Session#initialize}.
     # 
+    # @see Session#merge_defaults
     # @return [Hash]
     attr_reader :options
     

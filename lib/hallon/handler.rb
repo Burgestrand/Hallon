@@ -1,5 +1,15 @@
 # coding: utf-8
 module Hallon
+  # `libspotify` sometimes calls back to C-functions on certain events. Most of
+  # the library operations are asynchronous, and fire callbacks when they are
+  # finished. This means we must be able to handle the callbacks from Ruby.
+  # 
+  # I made a system that revolves around three threads and semaphores. It is
+  # described in `ext/hallon/events.h`.
+  # 
+  # Handler, however, is the module that needs to be included to cover all 
+  # possible callbacks. By default, it doesn’t do anything, except for processing
+  # events when required.
   module Handler
     # Build a handler given either a class, module and/or block.
     #
@@ -107,6 +117,7 @@ module Hallon
     
     # There is decompressed audio data available.
     # 
+    # @note This function is not yet implemented.
     # @note This function must never block.
     # @return [Fixnum]
     def music_delivery(format, *frames) # TODO: body
@@ -115,6 +126,7 @@ module Hallon
     
     # Query application about its’ audio buffer.
     # 
+    # @note This function is not yet implemented.
     # @note This function must never block.
     def get_audio_buffer_stats(stats)
     end
