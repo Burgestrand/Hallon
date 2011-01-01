@@ -8,12 +8,12 @@
 */
 void Init_hallon(void)
 {
-  rb_define_module("Hallon");
+  VALUE mHallon = rb_define_module("Hallon");
   
   /*
     libspotify API version Hallon was compiled with.
   */
-  rb_define_const(hn_mHallon, "API_VERSION", INT2FIX(SPOTIFY_API_VERSION));
+  rb_define_const(mHallon, "API_VERSION", INT2FIX(SPOTIFY_API_VERSION));
   
   /* Initialize the other parts */
   Init_Error();

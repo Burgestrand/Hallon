@@ -12,10 +12,13 @@ static VALUE cError_explain(VALUE self, VALUE errno)
 }
 
 /*
-  Thrown by Hallon on critical Spotify errors.
+  Thrown by Hallon on `libspotify` errors.
+  
+  @see http://developer.spotify.com/en/libspotify/docs/group__error.html
 */
 void Init_Error(void)
 {
-  rb_define_class_under(hn_mHallon, "Error", rb_eStandardError);
-  rb_define_singleton_method(hn_cError, "explain", cError_explain, 1);
+  /* Tempvar for YARD */
+  VALUE cError = rb_define_class_under(hn_mHallon, "Error", rb_eStandardError);
+  rb_define_singleton_method(cError, "explain", cError_explain, 1);
 }
