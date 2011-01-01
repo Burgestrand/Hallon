@@ -4,6 +4,7 @@ spec/support/config.rb
 tmp/
 libspotify-*
 core.*
+Gemfile.lock
 
 # Extension files
 *.bundle
