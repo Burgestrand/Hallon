@@ -140,7 +140,7 @@ static VALUE cSession_initialize(int argc, VALUE *argv, VALUE self)
   /* @note This calls the `notify_main_thread` callback once from the same pthread. */
   void* pargs[] = { &config, session_data->session_ptr };
   sp_error error = (sp_error) hn_proc_without_gvl(sp_session_create_nogvl, pargs);
-  ASSERT_OK(error);
+  hn_cError_maybe_raise(error);
 
   /* shared queue between event consumer & event producer */
   session_data->event_queue = rb_eval_string("Queue.new");
@@ -211,7 +211,7 @@ static VALUE cSession_login(VALUE self, VALUE username, VALUE password)
   hn_session_data_t *session_data = DATA_OF(self);
   void *argv[] = { *session_data->session_ptr, StringValueCStr(username), StringValueCStr(password) };
   sp_error error = (sp_error) hn_proc_without_gvl(sp_session_login_nogvl, argv);
-  ASSERT_OK(error);
+  hn_cError_maybe_raise(error);
   return self;
 }
 
@@ -246,7 +246,7 @@ static VALUE cSession_logout_bang(VALUE self)
   if (rb_funcall3(self, rb_intern("logged_in?"), 0, NULL) == Qtrue)
   {
     sp_error error = (sp_error) hn_proc_without_gvl(sp_session_logout_nogvl, *DATA_OF(self)->session_ptr);
-    ASSERT_OK(error);
+    hn_cError_maybe_raise(error);
   }
   
   return self;
