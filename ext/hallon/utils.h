@@ -1,9 +1,15 @@
 #ifndef UTILS_H_PUO0POGY
 #define UTILS_H_PUO0POGY
+
 /*
   This header defines useful functions and shortcuts commonly used throughout
   the Hallon source code.
 */
+
+/*
+  Hallon utility functions.
+*/
+#include "link.h"
 
 /*
   Ruby C API extensions.

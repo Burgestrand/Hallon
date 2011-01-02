@@ -8,6 +8,17 @@
 static void cLink_s_free(sp_link**);
 
 /*
+  Create a Link without calling #initialize. Useful for constructing links out
+  of other objects.
+*/
+VALUE hn_cLink_create(sp_link *link_ptr)
+{
+  VALUE obj = rb_funcall3(hn_const_get("Link"), rb_intern("allocate"), 0, NULL);
+  LINKPTR_OF(obj) = link_ptr;
+  return obj;
+}
+
+/*
   Allocate space for an sp_link* and attach it.
 */
 static VALUE cLink_s_alloc(VALUE klass)
