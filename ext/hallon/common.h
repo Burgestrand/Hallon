@@ -23,7 +23,7 @@
     Common accessors
   */
   #define hn_mHallon rb_const_get(rb_cObject, rb_intern("Hallon"))
-  #define hn_cError hn_const_get("Error")
+  #define hn_eError hn_const_get("Error")
   #define hn_const_get(name) rb_const_get(hn_mHallon, rb_intern(name))
-  #define hn_cError_maybe_raise(error) rb_funcall(hn_cError, rb_intern("maybe_raise"), 1, INT2FIX((int) error))
+  #define hn_eError_maybe_raise(error) rb_funcall(hn_eError, rb_intern("maybe_raise"), 1, INT2FIX((int) error))
 #endif

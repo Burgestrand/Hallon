@@ -6,7 +6,7 @@
   @param [Fixnum] errno
   @return [String]
 */
-static VALUE cError_explain(VALUE self, VALUE errno)
+static VALUE eError_explain(VALUE self, VALUE errno)
 {
   return rb_str_new2(sp_error_message(FIX2INT(errno)));
 }
@@ -19,6 +19,6 @@ static VALUE cError_explain(VALUE self, VALUE errno)
 void Init_Error(void)
 {
   /* Tempvar for YARD */
-  VALUE cError = rb_define_class_under(hn_mHallon, "Error", rb_eStandardError);
-  rb_define_singleton_method(cError, "explain", cError_explain, 1);
+  VALUE eError = rb_define_class_under(hn_mHallon, "Error", rb_eStandardError);
+  rb_define_singleton_method(eError, "explain", eError_explain, 1);
 }
