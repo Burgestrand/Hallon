@@ -51,7 +51,7 @@ module Hallon
       # @private
       # @note This is called automatically by Session#initialize.
       # @param [Hash, nil] options
-      # @option options [String] :user_agent ("Hallon") User-Agent to use (0 < length <= 255)
+      # @option options [String] :user_agent ("Hallon") User-Agent to use (length < 256)
       # @option options [String] :settings_path (".") where to save settings
       # @option options [String] :cache_path ("") where to save cache files (set to "" to disable)
       # @return [Hash]

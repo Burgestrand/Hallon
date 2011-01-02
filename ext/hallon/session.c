@@ -93,6 +93,7 @@ static void cSession_s_free(hn_session_data_t* session_data)
   @option options [String] :user_agent ("Hallon") libspotify user agent
   @option options [String] :settings_path (".") path to save settings to
   @option options [String] :cache_path ("") location where spotify writes cache
+  @raise [ArgumentError] if the :user_agent is > 255 characters long
   @see Hallon::Handler
   @see Hallon::Handler::build
   @see Session#merge_defaults
