@@ -74,10 +74,25 @@ static VALUE cLink_to_str(int argc, VALUE *argv, VALUE self)
   return str;
 }
 
+/*
+  Link type as a symbol.
+  
+  @return [Symbol]
+*/
+static VALUE cLink_type(VALUE self)
+{
+  static const char * LINK_TYPES[] = {
+    "invalid", "track", "album", "artist", "search", "playlist", "profile", "starred", "local"
+  };
+  
+  return STR2SYM(LINK_TYPES[sp_link_type(LINKPTR_OF(self))]);
+}
+
 void Init_Link(void)
 {
   VALUE cLink = rb_define_class_under(hn_mHallon, "Link", rb_cObject);
   rb_define_alloc_func(cLink, cLink_s_alloc);
   rb_define_method(cLink, "initialize", cLink_initialize, 1);
   rb_define_method(cLink, "to_str", cLink_to_str, -1);
+  rb_define_method(cLink, "type", cLink_type, 0);
 }

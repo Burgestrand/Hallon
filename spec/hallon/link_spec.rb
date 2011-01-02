@@ -31,5 +31,13 @@ describe Hallon::Link do
         Hallon::Link.new("spotify:user:burgestrand").to_str(7).should == "spotify"
       end
     end
+    
+    describe "#type" do
+      example_uris.each_pair do |uri, type|
+        specify "#{uri} should equal #{type}" do
+          Hallon::Link.new(uri).type.should equal type
+        end
+      end
+    end
   end
 end
