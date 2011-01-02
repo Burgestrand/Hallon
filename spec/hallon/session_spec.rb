@@ -1,12 +1,12 @@
 require 'ostruct' # https://github.com/rspec/rspec-core/issues/issue/264
 
 describe Hallon::Session do
-  def instance
+  def session
     @options = {:user_agent => "RSpec", :settings_path => "tmp", :cache_path => "tmp/cache" }
     Hallon::Session.instance(Hallon::APPKEY, @options)
   end
   
-  subject { instance }
+  subject { session }
   it { Hallon::Session.should_not respond_to :new }
   
   describe "#instance" do
@@ -40,7 +40,7 @@ describe Hallon::Session do
     end
     
     describe "options" do
-      subject { instance.options }
+      subject { session.options }
       its([:user_agent]) { should == "RSpec" }
       its([:settings_path]) { should == "tmp" }
       its([:cache_path]) { should == "tmp/cache" }
@@ -48,11 +48,11 @@ describe Hallon::Session do
     
     describe "#merge_defaults" do
       it "should return the defaults if no options given" do
-        instance.send(:merge_defaults, nil).should be_a Hash # values not important
+        session.send(:merge_defaults, nil).should be_a Hash # values not important
       end
       
       it "should allow given options to override defaults" do
-        instance.send(:merge_defaults, :user_agent => "Cow")[:user_agent].should == "Cow"
+        session.send(:merge_defaults, :user_agent => "Cow")[:user_agent].should == "Cow"
       end
     end
     
