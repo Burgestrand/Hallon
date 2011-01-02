@@ -113,14 +113,16 @@ static VALUE cSession_initialize(int argc, VALUE *argv, VALUE self)
   options = rb_funcall(self, rb_intern("merge_defaults"), 1, options);
   handler = rb_funcall(hn_const_get("Handler"), rb_intern("build"), 2, handler, block);
   
-  // TODO: freeze?
-  rb_iv_set(self, "@appkey", appkey);
-  rb_iv_set(self, "@options", options);
-  
   /* options variables */
   VALUE user_agent    = rb_hash_lookup(options, STR2SYM("user_agent")),
         settings_path = rb_hash_lookup(options, STR2SYM("settings_path")),
         cache_path    = rb_hash_lookup(options, STR2SYM("cache_path"));
+  
+  // user_agent: “max 255 characters long”
+  if (rb_str_strlen(user_agent) > 255)
+  {
+    rb_raise(rb_eArgError, "User-Agent may not be more than 255 characters");
+  }
   
   /*
     Finally, we do the libspotify dance and spawn our threads.
@@ -151,6 +153,10 @@ static VALUE cSession_initialize(int argc, VALUE *argv, VALUE self)
   
   /* defined in hallon/session.rb */
   rb_funcall(self, rb_intern("spawn_consumer"), 2, session_data->event_queue, handler);
+  
+  // TODO: freeze?
+  rb_iv_set(self, "@appkey", appkey);
+  rb_iv_set(self, "@options", options);
   
   return self;
 }

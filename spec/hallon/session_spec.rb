@@ -24,6 +24,11 @@ describe Hallon::Session do
       threads.should equal Thread.list.length
     end
     
+    it "should fail on a huge user agent (> 255 characters)" do
+      expect { Hallon::Session.instance(Hallon::APPKEY, :user_agent => 'a' * 300) }.
+        to raise_error(ArgumentError)
+    end
+    
     it "should succeed when given proper parameters" do
       expect { subject }.to_not raise_error
     end
