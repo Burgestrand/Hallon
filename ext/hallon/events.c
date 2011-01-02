@@ -48,7 +48,11 @@ VALUE event_producer(void *_session_data)
       
       the handler is expected to return an array, whereas the first element is a
       symbol representing the event name. if it is nil, however, it means this
-      thread should die!
+      thread needs to be woken up!
+      
+      NOTE: if this thread is ever killed, no events will be allowed to fill
+            the event structure EVER, thus all callbacks will block. if thread
+            dies we need to make sure no callbacks will be called from thereon.
     */
     rb_thread_blocking_region(hn_sem_wait_nogvl, session_data->event_full, hn_event_full_unblock, session_data);
     
