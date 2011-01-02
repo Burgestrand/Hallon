@@ -4,6 +4,9 @@
 #include "session.h"
 #include "semaphore.h"
 
+#define SESSPTR_OF(obj) *DATA_OF(obj)->session_ptr
+#define DATA_OF(obj) Data_Fetch_Struct(obj, hn_session_data_t)
+
 /*
   Prototypes
 */
@@ -178,7 +181,7 @@ static VALUE sp_session_create_nogvl(void *_pargs)
 */
 static VALUE cSession_status(VALUE self)
 {
-  switch(sp_session_connectionstate(*DATA_OF(self)->session_ptr))
+  switch(sp_session_connectionstate(SESSPTR_OF(self)))
   {
     case SP_CONNECTION_STATE_LOGGED_OUT: return STR2SYM("logged_out");
     case SP_CONNECTION_STATE_LOGGED_IN: return STR2SYM("logged_in");
@@ -197,7 +200,7 @@ static VALUE cSession_status(VALUE self)
 */
 static VALUE cSession_process_events(VALUE self)
 {
-  int timeout = (int) hn_proc_without_gvl(sp_session_process_events_nogvl, *DATA_OF(self)->session_ptr);
+  int timeout = (int) hn_proc_without_gvl(sp_session_process_events_nogvl, SESSPTR_OF(self));
   return INT2FIX(timeout);
 }
 
@@ -218,8 +221,7 @@ static VALUE sp_session_process_events_nogvl(void *session_ptr)
 */
 static VALUE cSession_login(VALUE self, VALUE username, VALUE password)
 {
-  hn_session_data_t *session_data = DATA_OF(self);
-  void *argv[] = { *session_data->session_ptr, StringValueCStr(username), StringValueCStr(password) };
+  void *argv[] = { SESSPTR_OF(self), StringValueCStr(username), StringValueCStr(password) };
   sp_error error = (sp_error) hn_proc_without_gvl(sp_session_login_nogvl, argv);
   hn_eError_maybe_raise(error);
   return self;
@@ -240,7 +242,7 @@ static VALUE sp_session_login_nogvl(void *_argv)
 */
 static VALUE cSession_fire_bang(VALUE self, VALUE argv)
 {
-  void *args[] = { *DATA_OF(self)->session_ptr, (void*) argv };
+  void *args[] = { SESSPTR_OF(self), (void*) argv };
   hn_proc_without_gvl(hn_session_fire, args);
   return self;
 }
@@ -255,7 +257,7 @@ static VALUE cSession_logout_bang(VALUE self)
 {
   if (rb_funcall3(self, rb_intern("logged_in?"), 0, NULL) == Qtrue)
   {
-    sp_error error = (sp_error) hn_proc_without_gvl(sp_session_logout_nogvl, *DATA_OF(self)->session_ptr);
+    sp_error error = (sp_error) hn_proc_without_gvl(sp_session_logout_nogvl, SESSPTR_OF(self));
     hn_eError_maybe_raise(error);
   }
   

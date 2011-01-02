@@ -18,9 +18,4 @@ typedef struct
   hn_event_t* event;
 } hn_session_data_t;
 
-/*
-  Macros
-*/
-#define DATA_OF(obj) Data_Fetch_Struct(obj, hn_session_data_t)
-
 #endif /* end of include guard: SESSION_H_N4NAEFIZ */
