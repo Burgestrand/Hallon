@@ -4,6 +4,7 @@ require 'hallon/error'
 require 'hallon/version'
 require 'hallon/session'
 require 'hallon/handler'
+require 'hallon/link'
 
 # YARD have a habit of showing my “coding”-declarations. Since everything is
 # enclosed in a Hallon module, it removes my C-docs and puts the encoding line

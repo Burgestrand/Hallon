@@ -18,6 +18,7 @@
   */
   void Init_Error(void);
   void Init_Session(void);
+  void Init_Link(void);
   
   /*
     Common accessors

@@ -18,4 +18,5 @@ void Init_hallon(void)
   /* Initialize the other parts */
   Init_Error();
   Init_Session();
+  Init_Link();
 }
