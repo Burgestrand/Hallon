@@ -64,7 +64,7 @@ static VALUE cLink_to_str(int argc, VALUE *argv, VALUE self)
   
   /* retrieve string length */
   length = sp_link_as_string(LINKPTR_OF(self), buffer, 0);
-  length = MIN(length + 1, maxsize + 1); // careful, both arguments evaluated twice
+  length = MIN(length, maxsize) + 1; // careful, both arguments evaluated twice
   
   /* alloc memory for string and retrieve it */
   buffer = ALLOC_N(char, length);
