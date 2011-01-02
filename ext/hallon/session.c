@@ -84,6 +84,8 @@ static void cSession_s_free(hn_session_data_t* session_data)
   
   @note Until `libspotify` allows you to create more than one session, you must
         use {Hallon::Session#instance} instead of this method.
+  @note Available options can be seen in Session#merge_defaults (don’t know why
+        they don’t show up here).
   
   @param [#to_s] appkey your `libspotify` application key.
   @param [Hash] options additional options (see #merge_defaults)
@@ -118,7 +120,7 @@ static VALUE cSession_initialize(int argc, VALUE *argv, VALUE self)
         settings_path = rb_hash_lookup(options, STR2SYM("settings_path")),
         cache_path    = rb_hash_lookup(options, STR2SYM("cache_path"));
   
-  // user_agent: “max 255 characters long”
+  // user_agent: max 255 characters long
   if (rb_str_strlen(user_agent) > 255)
   {
     rb_raise(rb_eArgError, "User-Agent may not be more than 255 characters");

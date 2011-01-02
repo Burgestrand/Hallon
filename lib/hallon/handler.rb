@@ -7,7 +7,7 @@ module Hallon
   # described in `ext/hallon/events.h`.
   # 
   # Handler, however, is the module that needs to be included to cover all 
-  # possible callbacks. By default, it doesn't do anything, except for processing
+  # possible callbacks. By default, it doesn’t do anything, except for processing
   # events when required.
   module Handler
     # Build a handler given either a class, module and/or block.
@@ -32,7 +32,7 @@ module Hallon
       klass
     end
   
-    # Returns the handlers' associated session.
+    # Returns the handlers’ associated session.
     # @return [Session]
     attr_reader :session
 
@@ -59,7 +59,7 @@ module Hallon
     end
   
     # Logout has been processed. Either called explicitly if you logout, or
-    # implicitly if there's a permanent connection error.
+    # implicitly if there’s a permanent connection error.
     def logged_out
     end
   
@@ -67,7 +67,7 @@ module Hallon
     def metadata_updated
     end
   
-    # There's a connection error, and libspotify has problems reconnecting. Can
+    # There’s a connection error, and libspotify has problems reconnecting. Can
     # be called multiple times (as long as problem is present).
     # 
     # @param [String]
@@ -110,7 +110,7 @@ module Hallon
     def stop_playback
     end
   
-    # Currently played track has reached its' end.
+    # Currently played track has reached its’ end.
     def end_of_track
     end
   
@@ -123,7 +123,7 @@ module Hallon
       0
     end
   
-    # Query application about its' audio buffer.
+    # Query application about its’ audio buffer.
     # 
     # @note This function is not yet implemented.
     # @note This function must never block.
