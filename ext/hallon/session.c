@@ -86,18 +86,16 @@ static void cSession_s_free(hn_session_data_t* session_data)
         use {Hallon::Session#instance} instead of this method.
   
   @param [#to_s] appkey your `libspotify` application key.
-  @param [Hash] options additional options
-  @option options [String] ("Hallon") :user_agent libspotify user agent
-  @option options [String] (".") :settings_path path to save settings to
-  @option options [String] ("") :cache_path location where spotify writes cache
+  @param [Hash] options additional options (see #merge_defaults)
+  @param [Block] block will be evaluated within a handler context (see example)
+  @option options [String] :user_agent ("Hallon") libspotify user agent
+  @option options [String] :settings_path (".") path to save settings to
+  @option options [String] :cache_path ("") location where spotify writes cache
   
   @overload initialize(appkey, handler, options = {}, &block)
-    Uses the given handler to base your event handler on. If given a block, it
-    will be evaluated and methods defined within it will be applied to the handler.
+    The given `handler` should include Hallon::Handler, or be a module.
     
-    @param [#to_s] appkey
-    @param [Class, Module, nil] handler (see {Hallon::Handler::build})
-    @param [Hash] options
+    @param [Class<Hallon::Handler>, Module, nil] handler
 */
 static VALUE cSession_initialize(int argc, VALUE *argv, VALUE self)
 {

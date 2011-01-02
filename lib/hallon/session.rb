@@ -51,8 +51,8 @@ module Hallon
       # @private
       # @note This is called automatically by Session#initialize.
       # @param [Hash, nil] options
-      # @option options [String] :user_agent ("Hallon")
-      # @option options [String] :settings_path (".") 
+      # @option options [String] :user_agent ("Hallon") 0 < length <= 255
+      # @option options [String] :settings_path (".")
       # @option options [String] :cache_path ("")
       # @return [Hash]
       def merge_defaults(options)
