@@ -55,14 +55,14 @@ static void cSession_s_free(hn_session_data_t* session_data)
   /*
     NOTE: if `sp_session_create` fails the session_ptr will be NULL
     
-    BUG: libspotify 0.0.6
-    If a call has been made earlier to `sp_session_create` and it failed, this
-    cleanup call will also fail with a segfault in `sp_image_create`.
+    BUG: libspotify 0.0.6 (segfaults 5% of the time, randomly)
   */
   /* sp_session_release(*session_data->session_ptr); */
-  
-  /* TODO: make it kill event_producer thread */
-  /* IDEA: do ^ by sending the event_producer thread a rb_thread_kill event :d */
+
+  /*
+    TODO: what if session is garbage-collected before event_producer is asked
+          to quit using the UBF-function? hmm?
+  */
   hn_sem_destroy(session_data->event_empty);
   hn_sem_destroy(session_data->event_full);
   
