@@ -28,6 +28,7 @@ static void cLink_s_free(sp_link **link_ptr)
   
   Create a Link object from a given Spotify URI.
   
+  @note Unless you have a {Hallon::Session} created, `libspotify` will segfault!
   @param [#to_s] spotify_uri
   @raise [ArgumentError] if the link could not be parsed
 */
@@ -36,7 +37,7 @@ static VALUE cLink_initialize(VALUE self, VALUE str)
   char *link = StringValueCStr(str);
   sp_link *link_ptr = LINKPTR_OF(self) = sp_link_create_from_string(link);
   
-  if ( ! link_ptr)
+  if (link_ptr == NULL)
   {
     rb_raise(rb_eArgError, "“%s” is not a valid Spotify URI", link);
   }
