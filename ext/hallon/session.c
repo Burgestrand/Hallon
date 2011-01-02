@@ -91,6 +91,9 @@ static void cSession_s_free(hn_session_data_t* session_data)
   @option options [String] :user_agent ("Hallon") libspotify user agent
   @option options [String] :settings_path (".") path to save settings to
   @option options [String] :cache_path ("") location where spotify writes cache
+  @see Hallon::Handler
+  @see Hallon::Handler::build
+  @see Session#merge_defaults
   
   @overload initialize(appkey, handler, options = {}, &block)
     The given `handler` should include Hallon::Handler, or be a module.
