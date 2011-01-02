@@ -31,6 +31,11 @@ VALUE hn_funcall4(VALUE, ID, VALUE);
   type_ptr;\
 })
 
+#define Data_Build_Struct(klass, type, mark, free) ({\
+  type *type_ptr;\
+  Data_Make_Struct(klass, type, mark, free, type_ptr);\
+})
+
 #define OMGWTF(msg) do {\
   fprintf(stderr, "%s:%d: %s", __FILE__, __LINE__, msg);\
   abort();\
