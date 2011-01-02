@@ -55,8 +55,8 @@ VALUE event_producer(void *_session_data)
     // TODO: rb_protect? -> rb_f_abort
     VALUE ruby_event = session_data->event->handler(session_data->event->data);
     
-    /* if it’s NIL (no data whatsoever from the callback), it means we quit */
-    if (ruby_event == Qnil) break;
+    /* if it’s NIL (no data whatsoever from the callback), it means we were woken up */
+    if (ruby_event == Qnil) continue;
     
     /* dispatch, we are done */
     rb_funcall3(session_data->event_queue, push, 1, &ruby_event);
