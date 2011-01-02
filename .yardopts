@@ -1,5 +1,6 @@
 --title "Hallon"
 --charset UTF-8
 --markup markdown
+--private
 lib/**/*.rb
 ext/**/*.c
