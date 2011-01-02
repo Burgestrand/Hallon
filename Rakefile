@@ -44,6 +44,9 @@ task :compile do
   FileUtils.touch 'spec/spec_helper.rb'
 end
 
+desc "Do a :clobber before :compile’ing and :spec’ing"
+task :respec => [:clobber, :compile, :spec]
+
 desc "Generates YARD documentation and open it."
 task :doc => :yard do
   system 'open doc/index.html'
