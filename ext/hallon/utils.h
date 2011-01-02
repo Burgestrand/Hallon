@@ -23,6 +23,10 @@ VALUE hn_funcall4(VALUE, ID, VALUE);
 #  define DUMP(x, fmt) /* noop */
 #endif
 
+#ifndef MIN
+#  define MIN(a, b) (((a) < (b)) ? (a) : (b))
+#endif
+
 #define STR2SYM(string) ID2SYM(rb_intern(string))
 
 #define Data_Fetch_Struct(obj, type) ({\
