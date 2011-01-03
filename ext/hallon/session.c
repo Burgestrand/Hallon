@@ -117,6 +117,7 @@ static VALUE cSession_initialize(int argc, VALUE *argv, VALUE self)
   if (TYPE(handler) == T_HASH) { options = handler; handler = Qnil; }
   
   options = rb_funcall(self, rb_intern("merge_defaults"), 1, options);
+  // TODO: handler = rb_funcall_passing_block(hn_const_get("Handler"), rb_intern("build"), 1, &handler);
   handler = rb_funcall(hn_const_get("Handler"), rb_intern("build"), 2, handler, block);
   
   /* options variables */
