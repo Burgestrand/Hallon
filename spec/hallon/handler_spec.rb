@@ -7,7 +7,7 @@ describe Hallon::Handler do
         end
       end
       
-      handler = subject.build(modul, nil)
+      handler = subject.build(modul)
       handler.should <= Hallon::Handler
       modul.should >= handler
     end
@@ -15,29 +15,24 @@ describe Hallon::Handler do
     it "should build a correct handler from a Handler-including class" do
       klass = Class.new { include Hallon::Handler }
       
-      handler = subject.build(klass, nil)
+      handler = subject.build(klass)
       handler.should <= Hallon::Handler
     end
     
     it "should raise an error from a non-Handler-including class" do
       klass = Class.new
       
-      expect { subject.build(klass, nil) }.to raise_error(ArgumentError)
+      expect { subject.build(klass) }.to raise_error(ArgumentError)
     end
     
     it "should build a correct handler from nothing (ooh!)" do
-      handler = subject.build(nil, nil)
+      handler = subject.build(nil)
       handler.should <= Hallon::Handler
     end
     
     it "should allow the given block to override handlers" do
-      block = Proc.new do
-        def moo
-          puts "Hi!"
-        end
-      end
+      handler = subject.build nil, proc { def moo; end }
       
-      handler = subject.build(nil, block)
       handler.should <= Hallon::Handler
       handler.instance_methods.should include :moo
     end
