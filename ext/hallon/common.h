@@ -27,4 +27,5 @@
   #define hn_eError hn_const_get("Error")
   #define hn_const_get(name) rb_const_get(hn_mHallon, rb_intern(name))
   #define hn_eError_maybe_raise(error) rb_funcall(hn_eError, rb_intern("maybe_raise"), 1, INT2FIX((int) error))
+  #define hn_Handler_build(handler, block) rb_funcall(hn_const_get("Handler"), rb_intern("build"), 2, handler, block)
 #endif
