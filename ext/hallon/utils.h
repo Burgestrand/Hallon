@@ -23,10 +23,10 @@ VALUE hn_funcall4(VALUE, ID, VALUE);
 
 #ifndef NDEBUG
 #  define DEBUG(msg) fprintf(stderr, "%s:%u: %s\n", __FILE__, __LINE__, msg)
-#  define DUMP(x, fmt) fprintf(stderr, "%s:%u: %s = " fmt "\n", __FILE__, __LINE__, #x, x)
+#  define DUMP(fmt, x) fprintf(stderr, "%s:%u: %s = " fmt "\n", __FILE__, __LINE__, #x, x)
 #else
 #  define DEBUG(msg) /* noop */
-#  define DUMP(x, fmt) /* noop */
+#  define DUMP(fmt, x) /* noop */
 #endif
 
 #ifndef MIN

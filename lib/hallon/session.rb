@@ -75,19 +75,11 @@ module Hallon
       # @param [Queue] queue
       # @param [Class] handler
       # @return [Thread]
-      def spawn_consumer(queue, handler)
-        handler = handler.new(self)
+      def spawn_consumer(queue)
         @event_consumer = Thread.new do
-          catch :shuriken do
-            loop do
-              event = queue.shift
-          
-              begin
-                handler.public_send(*event)
-              rescue StandardError => e
-                warn "<Event #{event.inspect} raised #{e.inspect}> #{e.message}"
-              end
-            end
+          loop do
+            handler, *args = queue.shift
+            handler.public_send(*args)
           end
         end
       end

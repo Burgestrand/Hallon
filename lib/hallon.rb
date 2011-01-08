@@ -3,7 +3,7 @@ require 'hallon/hallon' # C extension! (ext/ is in $:)
 require 'hallon/error'
 require 'hallon/version'
 require 'hallon/session'
-require 'hallon/handler'
+require 'hallon/events'
 require 'hallon/link'
 
 # YARD have a habit of showing my “coding”-declarations. Since everything is

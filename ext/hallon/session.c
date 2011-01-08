@@ -1,17 +1,21 @@
 #include "common.h"
 #include "events.h"
-#include "callbacks.h"
-#include "session.h"
-#include "semaphore.h"
+#include "callbacks.h" /* hn_session_fire */
 
-#define SESSPTR_OF(obj) *DATA_OF(obj)->session_ptr
-#define DATA_OF(obj) Data_Fetch_Struct(obj, hn_session_data_t)
+/* GLOBAL: events.c */
+extern hn_event_t * g_event;
+
+/*
+  Useful macros :D
+*/
+#define SESSPTR_OF(obj) *((sp_session**) DATA_OF(obj)->spotify_ptr)
+#define DATA_OF(obj) Data_Fetch_Struct(obj, hn_spotify_data_t)
 
 /*
   Prototypes
 */
-static void cSession_s_mark(hn_session_data_t*);
-static void cSession_s_free(hn_session_data_t*);
+static void cSession_s_mark(hn_spotify_data_t*);
+static void cSession_s_free(hn_spotify_data_t*);
 static VALUE sp_session_create_nogvl(void *);
 
 static VALUE sp_session_process_events_nogvl(void *);
@@ -20,55 +24,37 @@ static VALUE sp_session_logout_nogvl(void *);
 
 /*
   Allocate space for a session pointer and attach it to the returned object.
+  
+  @note Also populates the global `g_event` variable!
 */
 static VALUE cSession_s_alloc(VALUE klass)
 {
-  hn_session_data_t *session_data = ALLOC(hn_session_data_t);
-  hn_event_t *event_ptr = ALLOC(hn_event_t);
+  g_event = ALLOC(hn_event_t);
+  g_event->sem_empty = hn_sem_init(1);
+  g_event->sem_full  = hn_sem_init(0);
+  g_event->receiver  = Qnil;
+  g_event->handler   = NULL;
+  g_event->data      = NULL;
   
-  /* initialize */
-  session_data->session_ptr = ALLOC(sp_session*);
-  session_data->session_obj = Qnil;
-  session_data->event_queue = Qnil;
-  
-  session_data->event_full  = hn_sem_init(0);
-  session_data->event_empty = hn_sem_init(1);
-  
-  event_ptr->handler = NULL;
-  event_ptr->data    = NULL;
-  session_data->event = event_ptr;
-  
-  return Data_Wrap_Struct(klass, cSession_s_mark, cSession_s_free, session_data);
+  return Data_Build_Struct(klass, hn_spotify_data_t*, cSession_s_mark, cSession_s_free);
 }
 
 /*
-  Mark associated ruby VALUEs on the session.
+  Mark the event handler to avoid GC of it.
 */
-static void cSession_s_mark(hn_session_data_t* session_data)
+static void cSession_s_mark(hn_spotify_data_t *session_data)
 {
-  rb_gc_mark(session_data->session_obj);
-  rb_gc_mark(session_data->event_queue);
+  rb_gc_mark(session_data->handler);
 }
 
 /*
   Release the created session and deallocate the session pointer.
-*/
-static void cSession_s_free(hn_session_data_t* session_data)
-{
-  /*
-    NOTE: if `sp_session_create` fails the session_ptr will be NULL
-    
-    BUG: libspotify 0.0.6 (segfaults 5% of the time, randomly)
-  */
-  /* sp_session_release(*session_data->session_ptr); */
-
-  /*
-    TODO: what if session is garbage-collected before event_producer is asked
-          to quit using the UBF-function? hmm?
-  */
-  hn_sem_destroy(session_data->event_empty);
-  hn_sem_destroy(session_data->event_full);
   
+  @note if `sp_session_create` the spotify_ptr will be null
+  @note libspotify 0.0.6 segfaults randomly on `sp_session_release`
+*/
+static void cSession_s_free(hn_spotify_data_t* session_data)
+{
   xfree(session_data);
 }
 
@@ -97,27 +83,26 @@ static void cSession_s_free(hn_session_data_t* session_data)
   @option options [String] :settings_path (".") path to save settings to
   @option options [String] :cache_path ("") location where spotify writes cache
   @raise [ArgumentError] if the :user_agent is > 255 characters long
-  @see Hallon::Handler
-  @see Hallon::Handler::build
+  @see Hallon::Events
+  @see Hallon::Events::build_handler
   @see Session#merge_defaults
   
   @overload initialize(appkey, handler, options = {}, &block)
-    The given `handler` should include Hallon::Handler, or be a module.
+    The given `handler` should include Hallon::Events, or be a module.
     
-    @param [Class<Hallon::Handler>, Module, nil] handler
+    @param [Class<Hallon::Events>, Module, nil] handler
 */
 static VALUE cSession_initialize(int argc, VALUE *argv, VALUE self)
 {
   VALUE appkey, handler, options, block;
-  hn_session_data_t *session_data = DATA_OF(self);
-  session_data->session_obj = self;
+  hn_spotify_data_t *session_data = DATA_OF(self);
   
   // Handle arguments, swapping if necessary
   rb_scan_args(argc, argv, "12&", &appkey, &handler, &options, &block);
   if (TYPE(handler) == T_HASH) { options = handler; handler = Qnil; }
   
   options = rb_funcall(self, rb_intern("merge_defaults"), 1, options);
-  handler = hn_Handler_build(handler, block);
+  session_data->handler = hn_cEvents_build_handler(self, handler, block);
   
   /* options variables */
   VALUE user_agent    = rb_hash_lookup(options, STR2SYM("user_agent")),
@@ -147,20 +132,14 @@ static VALUE cSession_initialize(int argc, VALUE *argv, VALUE self)
   };
   
   /* @note This calls the `notify_main_thread` callback once from the same pthread. */
-  void* pargs[] = { &config, session_data->session_ptr };
+  void* pargs[] = { &config, session_data->spotify_ptr };
   sp_error error = (sp_error) hn_proc_without_gvl(sp_session_create_nogvl, pargs);
   hn_eError_maybe_raise(error);
-
-  /* shared queue between event consumer & event producer */
-  session_data->event_queue = rb_eval_string("Queue.new");
   
-  /* @see events.c and events.h */
-  rb_iv_set(self, "@event_producer", rb_thread_create(event_producer, session_data));
+  /* spawn the event producer & consumer */
+  VALUE threads = rb_funcall2(hn_const_get("Events"), rb_intern("spawn_handlers"), 0, NULL);
   
-  /* defined in hallon/session.rb */
-  rb_funcall(self, rb_intern("spawn_consumer"), 2, session_data->event_queue, handler);
-  
-  // TODO: freeze?
+  rb_iv_set(self, "@threads", threads);
   rb_iv_set(self, "@appkey", appkey);
   rb_iv_set(self, "@options", options);
   
@@ -237,12 +216,22 @@ static VALUE sp_session_login_nogvl(void *_argv)
 /*
   Fires an event, as if it was generated by `libspotify`.
   
-  @param [Object, …] event data
+  @param [Object] receiver
+  @param [Symbol] method
+  @param [Object, …] arguments
   @return [Session]
 */
-static VALUE cSession_fire_bang(VALUE self, VALUE argv)
+static VALUE cSession_fire_bang(int argc, VALUE *argv, VALUE self)
 {
-  void *args[] = { SESSPTR_OF(self), (void*) argv };
+  VALUE recv, method, brgs;
+  rb_scan_args(argc, argv, "2*", &recv, &method, &brgs);
+  
+  if ( ! SYMBOL_P(method))
+  {
+    rb_raise(rb_eArgError, "second argument must be a symbol");
+  }
+  
+  void *args[] = { (void*) recv, (void*) rb_ary_unshift(brgs, method) };
   hn_proc_without_gvl(hn_session_fire, args);
   return self;
 }
@@ -279,14 +268,12 @@ static VALUE sp_session_logout_nogvl(void *session_ptr)
 */
 void Init_Session(void)
 {
-  rb_require("thread"); // Session#initialize (Queue)
-  
   VALUE cSession = rb_define_class_under(hn_mHallon, "Session", rb_cObject);
   rb_define_alloc_func(cSession, cSession_s_alloc);
   rb_define_method(cSession, "initialize", cSession_initialize, -1);
   rb_define_method(cSession, "status", cSession_status, 0);
   rb_define_method(cSession, "process_events", cSession_process_events, 0);
   rb_define_method(cSession, "login", cSession_login, 2);
-  rb_define_method(cSession, "fire!", cSession_fire_bang, -2);
+  rb_define_method(cSession, "fire!", cSession_fire_bang, -1);
   rb_define_method(cSession, "logout!", cSession_logout_bang, 0);
 }
