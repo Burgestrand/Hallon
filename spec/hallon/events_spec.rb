@@ -52,5 +52,16 @@ describe Hallon::Events do
       handler.should be_a Hallon::Events
       handler.should be_a Hallon::Events::Session
     end
+    
+    it "should allow defining handlers with #on" do
+      local   = :local
+      handler = subject.build_handler(nil) do
+        on :moo do
+          local
+        end
+      end
+      
+      handler.moo.should == local
+    end
   end
 end
