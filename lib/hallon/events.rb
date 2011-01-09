@@ -7,6 +7,8 @@ module Hallon
   module Events
     require 'hallon/events/session'
     
+    # Class methods for Hallon::Events, usable when calling #build_handler within
+    # the given block.
     module ClassMethods
       # Defines a handler for the given event.
       # 
@@ -18,6 +20,7 @@ module Hallon
       end
     end
     
+    # Methods inherited when including Hallon::Events that all handlers should have.
     module InstanceMethods
       # Retrieve the subject associated with this handler (Session, Playlist, etc)
       # 
@@ -33,6 +36,9 @@ module Hallon
       end
     end
     
+    # Assigns ClassMethods and InstanceMethods properly to the receiver.
+    # 
+    # @private
     def self.included(receiver)
       receiver.extend         ClassMethods
       receiver.send :include, InstanceMethods
@@ -83,7 +89,7 @@ module Hallon
 
     # Spawns both the Taskmaster and the Dispatcher.
     # 
-    # @return [taskmaster, dispatcher] (two threads)
+    # @return [Array<Thread, Thread>] (taskmaster, dispatcher)
     def self.spawn_handlers
       queue = Queue.new
       [spawn_taskmaster(queue), spawn_dispatcher(queue)]
@@ -93,7 +99,8 @@ module Hallon
       # Since I cannot use the `rb_funcall_passing_block` API, I use a proxy to
       # maintain the #build_handler API.
       # 
-      # @param (see #build_handler)
+      # @private
+      # @see Hallon::Events::build_handler
       def self.proxy_build_handler(subject, handler, block)
         build_handler(subject, handler, &block)
       end

@@ -1,4 +1,7 @@
 module Hallon
+  # Wraps Spotify URIs in a class, giving access to methods performable on them.
+  #
+  # @see http://developer.spotify.com/en/libspotify/docs/group__link.html
   class Link
     class << self
       # True if the given Spotify URI is valid (parsable by libspotify).
