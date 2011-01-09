@@ -5,6 +5,8 @@
 /* GLOBAL: events.c */
 extern hn_event_t * g_event;
 
+#define G_EVENT_CREATE(receiver, handler, data) EVENT_CREATE(g_event, receiver, handler, data)
+
 /*
   Used to be for debugging purposes only, but now it is used to fire arbitrary
   events at the event_producer.
@@ -13,7 +15,7 @@ static VALUE ruby_session_fire(void *argv) { return (VALUE) argv; }
 VALUE hn_session_fire(void *ary)
 {
   VALUE *argv = (VALUE*) ary;
-  EVENT_CREATE(g_event, argv[0], ruby_session_fire, (void*) argv[1]);
+  G_EVENT_CREATE(argv[0], ruby_session_fire, (void*) argv[1]);
   return Qtrue;
 }
 
@@ -26,7 +28,7 @@ static VALUE ruby_process_events(void *x) { return rb_ary_new3(1, STR2SYM("proce
 static void c_process_events(sp_session *session_ptr)
 {
   hn_spotify_data_t *data = (hn_spotify_data_t*) sp_session_userdata(session_ptr);
-  EVENT_CREATE(g_event, data->handler, ruby_process_events, NULL);
+  G_EVENT_CREATE(data->handler, ruby_process_events, NULL);
 }
 
 /* The simple callbacks, with nothing but names and no arguments. */
