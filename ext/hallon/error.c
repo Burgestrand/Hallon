@@ -1,6 +1,8 @@
 #include "common.h"
 
 /*
+  call-seq: explain(errno)
+  
   Converts a `libspotify` error code to an actual message using `sp_error_message`.
   
   @param [Fixnum] errno
