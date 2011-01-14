@@ -46,7 +46,7 @@ static VALUE cSession_s_alloc(VALUE klass)
 */
 static void cSession_s_free(hn_spotify_data_t* session_data)
 {
-  spfree(sp_session_release, session_data);
+  // spfree(sp_session_release, session_data);
   xfree(session_data);
 }
 
