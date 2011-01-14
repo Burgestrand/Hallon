@@ -268,6 +268,6 @@ void Init_Session(void)
   rb_define_method(cSession, "process_events", cSession_process_events, 0);
   rb_define_method(cSession, "login", cSession_login, 2);
   rb_define_method(cSession, "fire!", cSession_fire_bang, -1);
-  rb_define_method(cSession, "logout!", cSession_logout_bang, 0);
+  rb_define_method(cSession, "logout", cSession_logout_bang, 0);
   rb_define_method(cSession, "handler", cSession_handler, 0);
 }
