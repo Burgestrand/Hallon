@@ -31,6 +31,26 @@ static void c_process_events(sp_session *session_ptr)
   G_EVENT_CREATE(data->handler, ruby_process_events, NULL);
 }
 
+static VALUE ruby_logged_in(void *error)
+{
+  return rb_ary_new3(2, STR2SYM("logged_in"), INT2FIX((sp_error) error));
+}
+static void c_logged_in(sp_session *session_ptr, sp_error error)
+{
+  hn_spotify_data_t *data = (hn_spotify_data_t*) sp_session_userdata(session_ptr);
+  G_EVENT_CREATE(data->handler, ruby_logged_in, (void*) error);
+}
+
+static VALUE ruby_logged_out(void *x)
+{
+  return rb_ary_new3(1, STR2SYM("logged_out"));
+}
+static void c_logged_out(sp_session *session_ptr)
+{
+  hn_spotify_data_t *data = (hn_spotify_data_t*) sp_session_userdata(session_ptr);
+  G_EVENT_CREATE(data->handler, ruby_logged_out, NULL);
+}
+
 /* The simple callbacks, with nothing but names and no arguments. */
 
 
@@ -40,8 +60,8 @@ static void c_process_events(sp_session *session_ptr)
 /* @see session.c */
 const sp_session_callbacks HALLON_SESSION_CALLBACKS = 
 {
- .logged_in              = NULL,
- .logged_out             = NULL,
+ .logged_in              = c_logged_in,
+ .logged_out             = c_logged_out,
  .metadata_updated       = NULL,
  .connection_error       = NULL,
  .message_to_user        = NULL,
