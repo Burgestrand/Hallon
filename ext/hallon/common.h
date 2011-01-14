@@ -31,6 +31,18 @@
     void (**spotify_ptr);
   } hn_spotify_data_t;
   
+  hn_spotify_data_t* hn_alloc_spotify_data_t(void);
+  void hn_mark_spotify_data_t(hn_spotify_data_t*);
+  
+  #define Data_Build_SPData(klass, mark, free) ({\
+    hn_spotify_data_t *data_ptr = hn_alloc_spotify_data_t();\
+    Data_Wrap_Struct(klass, mark, free, data_ptr);\
+  })
+  
+  #define spfree(func, data) do {\
+    if ((data)->spotify_ptr && *(data)->spotify_ptr) { (func)(*(data)->spotify_ptr); }\
+  } while(0)
+  
   /*
     Common accessors
   */

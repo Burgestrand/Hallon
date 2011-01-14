@@ -35,15 +35,7 @@ static VALUE cSession_s_alloc(VALUE klass)
   g_event->c_handler  = NULL;
   g_event->c_data     = NULL;
   
-  return Data_Build_Struct(klass, hn_spotify_data_t*, cSession_s_mark, cSession_s_free);
-}
-
-/*
-  Mark the event handler to avoid GC of it.
-*/
-static void cSession_s_mark(hn_spotify_data_t *session_data)
-{
-  rb_gc_mark(session_data->handler);
+  return Data_Build_SPData(klass, hn_mark_spotify_data_t, cSession_s_free);
 }
 
 /*
@@ -54,6 +46,7 @@ static void cSession_s_mark(hn_spotify_data_t *session_data)
 */
 static void cSession_s_free(hn_spotify_data_t* session_data)
 {
+  spfree(sp_session_release, session_data);
   xfree(session_data);
 }
 
