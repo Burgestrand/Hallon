@@ -5,14 +5,14 @@
   Release the GVL, call `fn` and re-acquire the GVL. No rb_* functions may be
   called within `fn`. Returns whatever the `fn` function returns.
   
-  @note Any function passed here must be interruptible by RUBY_UBF_PROCESS
+  @note This will tell Ruby that the process is ununblockable. Careful using this.
   @param [rb_blocking_function_t] fn
   @param [void*] data
   @return [VALUE]
 */
 VALUE hn_proc_without_gvl(rb_blocking_function_t *fn, void *data)
 {
-  return rb_thread_blocking_region(fn, data, RUBY_UBF_PROCESS, NULL);
+  return rb_thread_blocking_region(fn, data, NULL /* not unblockable */, NULL);
 }
 
 /*
