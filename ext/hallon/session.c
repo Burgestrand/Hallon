@@ -30,11 +30,11 @@ static VALUE sp_session_logout_nogvl(void *);
 static VALUE cSession_s_alloc(VALUE klass)
 {
   g_event = ALLOC(hn_event_t);
-  g_event->sem_empty = hn_sem_init(1);
-  g_event->sem_full  = hn_sem_init(0);
-  g_event->receiver  = Qnil;
-  g_event->handler   = NULL;
-  g_event->data      = NULL;
+  g_event->sem_empty  = hn_sem_init(1);
+  g_event->sem_full   = hn_sem_init(0);
+  g_event->rb_handler = Qnil;
+  g_event->c_handler  = NULL;
+  g_event->c_data     = NULL;
   
   return Data_Build_Struct(klass, hn_spotify_data_t*, cSession_s_mark, cSession_s_free);
 }

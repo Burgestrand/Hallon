@@ -8,9 +8,9 @@ typedef struct {
   hn_sem_t* sem_full;
   
   /* actual event data */
-  VALUE receiver;
-  VALUE (*handler)(void*);
-  void * data;
+  VALUE rb_handler;
+  VALUE (*c_handler)(void*);
+  void * c_data;
 } hn_event_t;
 
 #define EVENT_SYNCHRONIZE(event, code) do {\
@@ -21,9 +21,9 @@ typedef struct {
 
 #define EVENT_CREATE(event, recv, fn, args) do {\
   EVENT_SYNCHRONIZE(event, {\
-    (event)->receiver = (recv);\
-    (event)->handler  = (fn);\
-    (event)->data     = (args);\
+    (event)->rb_handler = (recv);\
+    (event)->c_handler  = (fn);\
+    (event)->c_data     = (args);\
   });\
 } while(0)
 
