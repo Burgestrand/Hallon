@@ -4,6 +4,7 @@
   #include <ruby.h>
   #include <stdbool.h>
   #include <stdlib.h>
+  #include <assert.h>
   
   #ifdef HAVE_LIBSPOTIFY_API_H
   #  include <libspotify/api.h>

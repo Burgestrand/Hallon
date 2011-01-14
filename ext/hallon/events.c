@@ -45,6 +45,7 @@ static VALUE taskmaster_thread(void *q)
   {
     rb_thread_blocking_region(hn_sem_wait_nogvl, g_event->sem_full, hn_ubf_sem_full, NULL);
     if (NIL_P(g_event->receiver)) continue; // we were woken up
+    assert(g_event->handler);
     rb_funcall(queue, id_push, 1, rb_ary_unshift(g_event->handler(g_event->data), g_event->receiver));
     hn_proc_without_gvl(hn_sem_post_nogvl, g_event->sem_empty);
   }
