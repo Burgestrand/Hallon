@@ -19,15 +19,28 @@ Hallon would not have been possible if not for these people:
 - [Linus Oleander](https://github.com/oleander), giving me a reason to look for ways of doing what Hallon does
 - [Jesper Särnesjö][], creator of [Greenstripes][] which spawned the idea of Hallon
 
-This is what the API looks like:
+This is what the API looks like (fully working example, I aim to remove the mutex & condition variable ASAP):
 
-    session = Hallon::Session.instance(Hallon::APPKEY, :user_agent => "Chunky Bacon") do
+    $: << File.expand_path('../../lib', __FILE__)
+    require 'hallon'
+    require 'thread'
+    require_relative 'support/config'
+
+    mutex  = Mutex.new
+    signal = ConditionVariable.new
+
+    session = Hallon::Session.instance(Hallon::APPKEY) do
       on(:logged_in) do |error|
-        puts "Yeah, we’ve logged in!"
+        mutex.synchronize { signal.signal }
       end
     end
-    
-    session.login username, password
+
+    mutex.synchronize do
+      session.login username, password
+      signal.wait(mutex)
+    end
+
+    puts "Logged in: #{session.logged_in?}" # => Logged in: true
 
 
 This is awesome! I want to help!
