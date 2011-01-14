@@ -81,7 +81,7 @@ module Hallon
         Thread.abort_on_exception = true
 
         loop do
-          handler, args = queue.pop
+          handler, *args = queue.pop
           handler.public_send(*args)
         end
       end
