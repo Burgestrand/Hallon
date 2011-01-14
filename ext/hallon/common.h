@@ -28,7 +28,7 @@
   typedef struct
   {
     VALUE  handler;
-    void** spotify_ptr;
+    void (**spotify_ptr);
   } hn_spotify_data_t;
   
   /*

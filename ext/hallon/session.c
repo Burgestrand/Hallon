@@ -16,7 +16,6 @@ extern hn_event_t * g_event;
 */
 static void cSession_s_mark(hn_spotify_data_t*);
 static void cSession_s_free(hn_spotify_data_t*);
-static VALUE sp_session_create_nogvl(void *);
 
 static VALUE sp_session_process_events_nogvl(void *);
 static VALUE sp_session_login_nogvl(void *);
@@ -132,8 +131,7 @@ static VALUE cSession_initialize(int argc, VALUE *argv, VALUE self)
   };
   
   /* @note This calls the `notify_main_thread` callback once from the same pthread. */
-  void* pargs[] = { &config, session_data->spotify_ptr };
-  sp_error error = (sp_error) hn_proc_without_gvl(sp_session_create_nogvl, pargs);
+  sp_error error = sp_session_create(&config, (sp_session**) session_data->spotify_ptr);
   hn_eError_maybe_raise(error);
   
   /* spawn the event producer & consumer */
@@ -144,13 +142,6 @@ static VALUE cSession_initialize(int argc, VALUE *argv, VALUE self)
   rb_iv_set(self, "@options", options);
   
   return self;
-}
-
-/* invokes notify_main_thread callback, ie. blocks until the event can be handled */
-static VALUE sp_session_create_nogvl(void *_pargs)
-{
-  void **pargs = (void**) _pargs;
-  return (VALUE) sp_session_create((sp_session_config*) pargs[0], (sp_session**) pargs[1]);
 }
 
 /*
