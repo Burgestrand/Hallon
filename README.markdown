@@ -22,7 +22,7 @@ Hallon would not have been possible if not for these people:
 This is what the API looks like:
 
     session = Hallon::Session.instance(Hallon::APPKEY, :user_agent => "Chunky Bacon") do
-      def logged_in(error)
+      on(:logged_in) do |error|
         puts "Yeah, we’ve logged in!"
       end
     end
