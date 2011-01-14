@@ -258,6 +258,15 @@ static VALUE sp_session_logout_nogvl(void *session_ptr)
   return (VALUE) sp_session_logout(session_ptr);
 }
 
+/*
+  Retrieve the handler to the associated session.
+  
+  @return [Hallon::Events]
+*/
+static VALUE cSession_handler(VALUE self)
+{
+  return DATA_OF(self)->handler;
+}
 
 /*
   The Session is fundamental for all communication with Spotify. Pretty much *all*
@@ -276,4 +285,5 @@ void Init_Session(void)
   rb_define_method(cSession, "login", cSession_login, 2);
   rb_define_method(cSession, "fire!", cSession_fire_bang, -1);
   rb_define_method(cSession, "logout!", cSession_logout_bang, 0);
+  rb_define_method(cSession, "handler", cSession_handler, 0);
 }
