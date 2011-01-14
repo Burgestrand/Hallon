@@ -31,6 +31,7 @@ static VALUE cLink_s_alloc(VALUE klass)
 */
 static void cLink_s_free(sp_link **link_ptr)
 {
+  if (link_ptr && *link_ptr) sp_link_release(*link_ptr);
   xfree(link_ptr);
 }
 
