@@ -44,7 +44,7 @@ task :compile do
   FileUtils.touch 'spec/spec_helper.rb'
 end
 
-desc "Do a recompile by comining :clobber and :compile"
+desc "Do a recompile by combining :clobber and :compile"
 task :recompile => [:clobber, :compile]
 
 desc "Generates YARD documentation and open it."
