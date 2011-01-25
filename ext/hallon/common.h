@@ -5,12 +5,7 @@
   #include <stdbool.h>
   #include <stdlib.h>
   #include <assert.h>
-  
-  #ifdef HAVE_LIBSPOTIFY_API_H
-  #  include <libspotify/api.h>
-  #else
-  #  include <spotify/api.h>
-  #endif
+  #include <libspotify/api.h>
   
   #include "utils.h"
   
