@@ -120,7 +120,10 @@ static VALUE cSession_initialize(int argc, VALUE *argv, VALUE self)
     .user_agent           = StringValueCStr(user_agent),
     .callbacks            = &HALLON_SESSION_CALLBACKS,
     .userdata             = session_data,
-    .tiny_settings        = true,
+    /* TODO: add options in initializer */
+    .compress_playlists   = true,
+    .initially_unload_playlists = false,
+    .dont_save_metadata_for_playlists = false,
   };
   
   /* @note This calls the `notify_main_thread` callback once from the same pthread. */
@@ -185,8 +188,7 @@ static VALUE sp_session_process_events_nogvl(void *session_ptr)
 static VALUE cSession_login(VALUE self, VALUE username, VALUE password)
 {
   void *argv[] = { SESSPTR_OF(self), StringValueCStr(username), StringValueCStr(password) };
-  sp_error error = (sp_error) hn_proc_without_gvl(sp_session_login_nogvl, argv);
-  hn_eError_maybe_raise(error);
+  hn_proc_without_gvl(sp_session_login_nogvl, argv);
   return self;
 }
 
@@ -194,7 +196,8 @@ static VALUE cSession_login(VALUE self, VALUE username, VALUE password)
 static VALUE sp_session_login_nogvl(void *_argv)
 {
   void **argv = (void**) _argv;
-  return (VALUE) sp_session_login((sp_session*) argv[0], (char*) argv[1], (char*) argv[2]);
+  sp_session_login((sp_session*) argv[0], (char*) argv[1], (char*) argv[2]);
+  return Qnil;
 }
 
 /*
@@ -230,8 +233,7 @@ static VALUE cSession_logout_bang(VALUE self)
 {
   if (rb_funcall3(self, rb_intern("logged_in?"), 0, NULL) == Qtrue)
   {
-    sp_error error = (sp_error) hn_proc_without_gvl(sp_session_logout_nogvl, SESSPTR_OF(self));
-    hn_eError_maybe_raise(error);
+    hn_proc_without_gvl(sp_session_logout_nogvl, SESSPTR_OF(self));
   }
   
   return self;
@@ -239,7 +241,8 @@ static VALUE cSession_logout_bang(VALUE self)
 
 static VALUE sp_session_logout_nogvl(void *session_ptr)
 {
-  return (VALUE) sp_session_logout(session_ptr);
+  sp_session_logout(session_ptr);
+  return Qnil;
 }
 
 /*
