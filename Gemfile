@@ -12,5 +12,5 @@ group :development do
   gem "bundler", "~> 1"
   gem "jeweler", "~> 1.5"
   gem "rake-compiler"
-  gem "bluecloth"
+  gem "rdiscount"
 end

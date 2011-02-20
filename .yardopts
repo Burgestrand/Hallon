@@ -1,5 +1,8 @@
 --title "Hallon"
 --charset UTF-8
+--readme README.markdown
+--markup markdown
+--markup-provider rdiscount
 --private
 lib/**/*.rb
 ext/**/*.c
