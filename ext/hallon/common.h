@@ -9,6 +9,10 @@
   
   #include "utils.h"
   
+  # if SPOTIFY_API_VERSION != 7
+  #   error Hallon only officially supports libspotify v0.0.7
+  # endif
+  
   /*
     Initializers for the other classes.
   */
