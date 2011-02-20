@@ -4,6 +4,22 @@ require 'rspec'
 # Requires supporting files in ./support/
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| require f}
 
+unless ENV.values_at(*%w(HALLON_APPKEY HALLON_USERNAME HALLON_PASSWORD)).all?
+  abort <<-ERROR
+    You must supply a valid Spotify username, password and application
+    key in order to run Hallons specs. This is done by setting these
+    environment variables:
+  
+    - HALLON_APPKEY (path to spotify_appkey.key)
+    - HALLON_USERNAME (your spotify username)
+    - HALLON_PASSWORD (your spotify password)
+  ERROR
+end
+
+module Hallon
+  APPKEY = IO.read Pathname.new(ENV['HALLON_APPKEY']).expand_path
+end
+
 # Hallon::Session#instance requires that a Session object have not been created
 # so test it here instead. This assures it is tested before anything else!
 describe Hallon::Session do
