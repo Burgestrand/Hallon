@@ -27,8 +27,7 @@ Rake::ExtensionTask.new('hallon', Jeweler::Tasks.new do |gem|
   gem.email    = 'kim@burgestrand.se'
   gem.license  = 'GNU AGPL'
   
-  gem.description = IO.read('./README.markdown')
-  gem.description = gem.description.force_encoding 'UTF-8' if gem.description.respond_to?(:force_encoding)
+  gem.description = IO.read('./README.markdown', encoding: 'utf-8')
   
   # installation
   gem.require_paths = %w(lib ext)
