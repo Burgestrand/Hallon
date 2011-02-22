@@ -1,24 +1,16 @@
 # coding: utf-8
-require 'bundler'
-begin
-  Bundler.setup(:default, :development)
+begin require 'bundler/setup'
 rescue Bundler::BundlerError => e
   $stderr.puts e.message
   $stderr.puts "Run `bundle install` to install missing gems."
   exit e.status_code
 end
 require 'rake'
+
 require 'jeweler'
-require 'rspec/core/rake_task'
-require 'yard'
 require 'rake/extensiontask'
 require './lib/hallon/version'
-
-YARD::Rake::YardocTask.new
 Jeweler::RubygemsDotOrgTasks.new
-RSpec::Core::RakeTask.new
-
-# rake-compiler + jeweler
 Rake::ExtensionTask.new('hallon', Jeweler::Tasks.new do |gem|
   gem.name     = "hallon"
   gem.summary  = %Q{Delicious Ruby bindings to the official Spotify API}
@@ -39,11 +31,15 @@ end.gemspec) do |ext|
   ext.lib_dir = File.join('lib', 'hallon')
 end
 
-desc "touch spec/spec_helper.rb (for autotest)"
-task :compile do
-  FileUtils.touch 'spec/spec_helper.rb'
-end
+require 'yard'
+YARD::Rake::YardocTask.new
 
+require 'rspec/core/rake_task'
+RSpec::Core::RakeTask.new
+
+#
+# Custom tasks
+# 
 desc "Do a recompile by combining :clobber and :compile"
 task :recompile => [:clobber, :compile]
 
