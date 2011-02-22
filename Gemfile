@@ -3,8 +3,7 @@ source :rubygems
 group :development do
   # Testing
   gem 'rspec', '~> 2'
-  gem 'autotest'
-  gem 'autotest-fsevent'
+  gem 'watchr'
   gem 'test_notifier'
 
   # General

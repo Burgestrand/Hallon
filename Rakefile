@@ -48,4 +48,9 @@ task :doc => :yard do
   system 'open doc/index.html'
 end
 
+desc "Fires up watchr, allowing autotest-like behavior"
+task :watchr do
+  exec(*'bundle exec watchr hallon.watchr.rb'.split(' '))
+end
+
 task :default => [:compile, :spec]
