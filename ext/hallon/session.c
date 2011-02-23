@@ -78,6 +78,7 @@ static void cSession_s_free(hn_spotify_data_t* session_data)
   @see Hallon::Events
   @see Hallon::Events::build_handler
   @see Session#merge_defaults
+  @see http://developer.spotify.com/en/libspotify/docs/structsp__session__config.html
   
   @overload initialize(appkey, handler, options = {}, &block)
     The given `handler` should include Hallon::Events, or be a module.
