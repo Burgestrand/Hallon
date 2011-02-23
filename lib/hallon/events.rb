@@ -99,7 +99,6 @@ module Hallon
       # Since I cannot use the `rb_funcall_passing_block` API, I use a proxy to
       # maintain the #build_handler API.
       # 
-      # @private
       # @see Hallon::Events::build_handler
       def self.proxy_build_handler(subject, handler, block)
         build_handler(subject, handler, &block)

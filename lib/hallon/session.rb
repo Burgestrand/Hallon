@@ -48,7 +48,6 @@ module Hallon
     private
       # Merge the given hash with default options for Session#initialize
       #
-      # @private
       # @note This is called automatically by Session#initialize.
       # @param [Hash, nil] options
       # @option options [String] :user_agent ("Hallon") User-Agent to use (length < 256)
@@ -70,7 +69,6 @@ module Hallon
       # To exit the thread using events, throw a `:shuriken` in a handler. You
       # can fire your own events using {Session#fire!}.
       #
-      # @private
       # @note This is called automatically by Session#initialize.
       # @param [Queue] queue
       # @param [Class] handler
