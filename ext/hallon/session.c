@@ -57,23 +57,20 @@ static void cSession_s_free(hn_spotify_data_t* session_data)
   
   @example 
      session = Hallon::Session.new(appkey, :settings_path => "tmp") do
-       def logged_in
+       def logged_in(error)
          puts "We logged in successfully. Lets bail!"
          exit
        end
      end
   
   @note Until `libspotify` allows you to create more than one session, you must
-        use {Hallon::Session#instance} instead of this method.
+        use {Hallon::Session.instance} instead of this method.
   @note Available options can be seen in Session#merge_defaults (don’t know why
         they don’t show up here).
   
   @param [#to_s] appkey your `libspotify` application key.
   @param [Hash] options additional options (see #merge_defaults)
   @param [Block] block will be evaluated within a handler context (see example)
-  @option options [String] :user_agent ("Hallon") libspotify user agent
-  @option options [String] :settings_path (".") path to save settings to
-  @option options [String] :cache_path ("") location where spotify writes cache
   @raise [ArgumentError] if the :user_agent is > 255 characters long
   @see Hallon::Events
   @see Hallon::Events::build_handler
@@ -98,9 +95,13 @@ static VALUE cSession_initialize(int argc, VALUE *argv, VALUE self)
   session_data->handler = hn_cEvents_build_handler(self, handler, block);
   
   /* options variables */
-  VALUE user_agent    = rb_hash_lookup(options, STR2SYM("user_agent")),
-        settings_path = rb_hash_lookup(options, STR2SYM("settings_path")),
-        cache_path    = rb_hash_lookup(options, STR2SYM("cache_path"));
+  VALUE user_agent    = hn_hash_lookup_sym(options, "user_agent"),
+        settings_path = hn_hash_lookup_sym(options, "settings_path"),
+        cache_path    = hn_hash_lookup_sym(options, "cache_path"),
+        
+        load_playlists = hn_hash_lookup_sym(options, "load_playlists"),
+        compress_playlists = hn_hash_lookup_sym(options, "compress_playlists"),
+        cache_playlist_metadata = hn_hash_lookup_sym(options, "cache_playlist_metadata");
   
   // user_agent: max 255 characters long
   if (rb_str_strlen(user_agent) > 255)
@@ -121,10 +122,9 @@ static VALUE cSession_initialize(int argc, VALUE *argv, VALUE self)
     .user_agent           = StringValueCStr(user_agent),
     .callbacks            = &HALLON_SESSION_CALLBACKS,
     .userdata             = session_data,
-    /* TODO: add options in initializer */
-    .compress_playlists   = true,
-    .initially_unload_playlists = false,
-    .dont_save_metadata_for_playlists = false,
+    .compress_playlists   = RTEST(compress_playlists),
+    .initially_unload_playlists = ! RTEST(load_playlists),
+    .dont_save_metadata_for_playlists = ! RTEST(cache_playlist_metadata),
   };
   
   /* @note This calls the `notify_main_thread` callback once from the same pthread. */

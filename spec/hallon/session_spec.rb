@@ -11,10 +11,14 @@ describe Hallon::Session do
       end
     
       describe "options" do
-        subject { options }
+        subject { session.options }
         its([:user_agent]) { should == options[:user_agent] }
         its([:settings_path]) { should == options[:settings_path] }
         its([:cache_path]) { should == options[:cache_path] }
+        
+        its([:load_playlists]) { should == true }
+        its([:compress_playlists]) { should == true }
+        its([:cache_playlist_metadata]) { should == true }
       end
     
       describe "#merge_defaults" do
