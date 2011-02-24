@@ -56,7 +56,7 @@ static void cSession_s_free(hn_spotify_data_t* session_data)
   Creates a new Spotify session with the given parameters using `sp_session_create`.
   
   @example 
-     session = Hallon::Session.new(appkey, :settings_path => "tmp") do
+     session = Hallon::Session.instance(appkey, :settings_path => "tmp") do
        def logged_in(error)
          puts "We logged in successfully. Lets bail!"
          exit
