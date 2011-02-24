@@ -31,3 +31,14 @@ VALUE hn_funcall4(VALUE recv, ID msg, VALUE args)
   VALUE result = rb_funcall3(recv, msg, argc, argv);
   return result;
 }
+
+/*
+  Look up a symbol key in a Hash, returning nil if not found.
+  
+  @param [VALUE] receiver
+  @param [String] key
+*/
+VALUE hn_hash_lookup_sym(VALUE hash, const char *key)
+{
+  return rb_hash_lookup(hash, STR2SYM(key));
+}

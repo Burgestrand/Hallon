@@ -14,8 +14,9 @@
 /*
   Ruby C API extensions.
 */
-VALUE hn_proc_without_gvl(rb_blocking_function_t *fn, void *data);
+VALUE hn_proc_without_gvl(rb_blocking_function_t *, void *);
 VALUE hn_funcall4(VALUE, ID, VALUE);
+VALUE hn_hash_lookup_sym(VALUE, const char *);
 
 /*
   Macros
