@@ -18,8 +18,8 @@ unless ENV.values_at(*%w(HALLON_APPKEY HALLON_USERNAME HALLON_PASSWORD)).all?
 end
 
 module Hallon
-  APPKEY = IO.read Pathname.new(ENV['HALLON_APPKEY']).expand_path
-end
+  APPKEY = IO.read File.expand_path(ENV['HALLON_APPKEY'])
+end unless defined?(Hallon::APPKEY)
 
 # Hallon::Session#instance requires that a Session object have not been created
 # so test it here instead. This assures it is tested before anything else!
