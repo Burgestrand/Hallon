@@ -18,12 +18,16 @@ describe Hallon::Session do
       end
     
       describe "#merge_defaults" do
+        define_method(:merge_defaults) do |*args|
+          session.send(:merge_defaults, *args)
+        end
+        
         it "should return the defaults if no options given" do
-          session.send(:merge_defaults, nil).should be_a Hash # values not important
+          merge_defaults(nil).should be_a Hash # values not important
         end
       
         it "should allow given options to override defaults" do
-          session.send(:merge_defaults, :user_agent => "Cow")[:user_agent].should == "Cow"
+          merge_defaults(:user_agent => "Cow")[:user_agent].should == "Cow"
         end
       end
     
