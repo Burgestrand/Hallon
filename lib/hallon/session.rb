@@ -28,19 +28,19 @@ module Hallon
     end
     
     # True if currently logged in.
-    # @see #state
+    # @see #status
     def logged_in?
       status == :logged_in
     end
     
     # True if logged out.
-    # @see #state
+    # @see #status
     def logged_out?
       status == :logged_out
     end
     
     # True if session has been disconnected.
-    # @see #state
+    # @see #status
     def disconnected?
       status == :disconnected
     end
@@ -76,7 +76,7 @@ module Hallon
       # To exit the thread using events, throw a `:shuriken` in a handler. You
       # can fire your own events using {Session#fire!}.
       #
-      # @note This is called automatically by Session#initialize.
+      # @note This is called automatically by {#initialize}.
       # @param [Queue] queue
       # @param [Class] handler
       # @return [Thread]

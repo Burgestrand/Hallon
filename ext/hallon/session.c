@@ -65,16 +65,14 @@ static void cSession_s_free(hn_spotify_data_t* session_data)
   
   @note Until `libspotify` allows you to create more than one session, you must
         use {Hallon::Session.instance} instead of this method.
-  @note Available options can be seen in Session#merge_defaults (don’t know why
-        they don’t show up here).
   
   @param [#to_s] appkey your `libspotify` application key.
-  @param [Hash] options additional options (see #merge_defaults)
+  @param [Hash] options additional options (see {#merge_defaults})
   @param [Block] block will be evaluated within a handler context (see example)
   @raise [ArgumentError] if the :user_agent is > 255 characters long
   @see Hallon::Events
-  @see Hallon::Events::build_handler
-  @see Session#merge_defaults
+  @see Hallon::Events.build_handler
+  @see #merge_defaults
   @see http://developer.spotify.com/en/libspotify/docs/structsp__session__config.html
   
   @overload initialize(appkey, handler, options = {}, &block)
