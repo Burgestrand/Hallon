@@ -25,7 +25,7 @@ Rake::ExtensionTask.new('hallon', Jeweler::Tasks.new do |gem|
   gem.require_paths = %w(lib ext)
   gem.extensions = FileList['ext/**/extconf.rb']
   gem.platform   = Gem::Platform::RUBY
-  gem.version    = Hallon::Version::STRING
+  gem.version    = Hallon::VERSION
   gem.required_ruby_version = '~> 1.9'
 end.gemspec) do |ext|
   ext.lib_dir = File.join('lib', 'hallon')
