@@ -51,9 +51,9 @@ module Hallon
     end
     
     private
-      # Merge the given hash with default options for Session#initialize.
+      # Merge the given hash with default options for {#initialize}.
       #
-      # @note This is called automatically by Session#initialize.
+      # @note This is called automatically by {#initialize}.
       # @return [Hash]
       def merge_defaults(options)
         options = options || {}        
