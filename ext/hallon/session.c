@@ -19,28 +19,32 @@ static VALUE sp_session_login_nogvl(void *);
 static VALUE sp_session_logout_nogvl(void *);
 
 /*
-  call-seq: initialize(appkey, options = {}, &block)
+  @overload initialize(appkey, options = {}, &block)
 
-  Creates a new Spotify session with the given parameters using `sp_session_create`.
+    Creates a new Spotify session with the given parameters using `sp_session_create`.
   
-  @example 
-     session = Hallon::Session.instance(appkey, :settings_path => "tmp") do
-       on(:logged_in) do |error|
-         puts "We logged in successfully. Lets bail!"
-         exit
+    @example
+       session = Hallon::Session.instance(appkey, :settings_path => "tmp") do
+         on(:logged_in) do |error|
+           puts "We logged in successfully. Lets bail!"
+           exit
+         end
        end
-     end
   
-  @note Until `libspotify` allows you to create more than one session, you must
-        use {Hallon::Session.instance} instead of this method.
+    @note Until `libspotify` allows you to create more than one session, you must
+          use {Hallon::Session.instance} instead of this method.
   
-  @param [#to_s] appkey your `libspotify` application key.
-  @param [Hash] options additional options (see {#merge_defaults})
-  @yield allows you to define handlers for events
-  @raise [ArgumentError] if the :user_agent is > 255 characters long
-  @see #merge_defaults
-  @see Hallon::Base
-  @see http://developer.spotify.com/en/libspotify/docs/structsp__session__config.html
+    @param [#to_s] appkey your `libspotify` application key.
+    @param [Hash] options additional options (see {#merge_defaults})
+    @option options [String] :user_agent ("Hallon") User-Agent to use (length < 256)
+    @option options [String] :settings_path ("tmp") where to save settings and user-specific cache
+    @option options [String] :cache_path ("") where to save cache files (set to "" to disable)
+    @option options [Bool]   :load_playlists (true) load playlists into RAM on startup
+    @option options [Bool]   :compress_playlists (true) compress local copies of playlists
+    @option options [Bool]   :cache_playlist_metadata (true) cache metadata for playlists locally
+    @yield allows you to define handlers for events (see {Hallon::Base})
+    @raise [ArgumentError] if options[:user_agent] is more than 255 characters long
+    @see http://developer.spotify.com/en/libspotify/docs/structsp__session__config.html
 */
 static VALUE cSession_initialize(int argc, VALUE *argv, VALUE self)
 {

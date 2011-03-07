@@ -55,13 +55,6 @@ module Hallon
       # Merge the given hash with default options for Session#initialize
       #
       # @note This is called automatically by Session#initialize.
-      # @param [Hash, nil] options
-      # @option options [String] :user_agent ("Hallon") User-Agent to use (length < 256)
-      # @option options [String] :settings_path ("tmp") where to save settings and user-specific cache
-      # @option options [String] :cache_path ("") where to save cache files (set to "" to disable)
-      # @option options [Bool]   :load_playlists (true) load playlists into RAM on startup
-      # @option options [Bool]   :compress_playlists (true) compress local copies of playlists
-      # @option options [Bool]   :cache_playlist_metadata (true) cache metadata for playlists locally
       # @return [Hash]
       def merge_defaults(options)
         options = options || {}        
