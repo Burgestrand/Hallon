@@ -35,14 +35,13 @@ static void cLink_s_free(sp_link **link_ptr)
   xfree(link_ptr);
 }
 
-/*
-  call-seq: initialize(spotify_uri)
+/*  
+  @overload initialize(spotify_uri)
+    Create a Link object from a given Spotify URI.
   
-  Create a Link object from a given Spotify URI.
-  
-  @note Unless you have a {Hallon::Session} created, `libspotify` will segfault!
-  @param [#to_s] spotify_uri
-  @raise [ArgumentError] if the link could not be parsed
+    @note Unless you have a {Hallon::Session} created, `libspotify` will segfault!
+    @param [#to_s] spotify_uri
+    @raise [ArgumentError] if the link could not be parsed
 */
 static VALUE cLink_initialize(VALUE self, VALUE str)
 {
