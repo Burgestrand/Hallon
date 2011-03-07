@@ -20,7 +20,7 @@ module Hallon
           begin
             handler.public_send(event, *args)
           rescue => e
-            warn "#{handler}##{event}(#{args.join(', ')}) => #{e.message}"
+            warn "#{handler}##{event}(#{args.join(', ')}) => #{e.inspect}"
           end if handler.respond_to?(event)
         end
       end
