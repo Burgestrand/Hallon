@@ -67,24 +67,5 @@ module Hallon
           :cache_playlist_metadata => true
         }.merge(options)
       end
-  
-      # Spawns a new thread that constantly reads from the `queue` and dispatches
-      # events to the {Session}.
-      #
-      # To exit the thread using events, throw a `:shuriken` in a handler. You
-      # can fire your own events using {Session#fire!}.
-      #
-      # @note This is called automatically by {#initialize}.
-      # @param [Queue] queue
-      # @param [Class] handler
-      # @return [Thread]
-      def spawn_consumer(queue)
-        @event_consumer = Thread.new do
-          loop do
-            handler, *args = queue.shift
-            handler.public_send(*args)
-          end
-        end
-      end
   end
 end
