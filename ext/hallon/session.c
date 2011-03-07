@@ -31,15 +31,16 @@ static VALUE sp_session_logout_nogvl(void *);
           use {Hallon::Session.instance} instead of this method.
   
     @param [#to_s] appkey your `libspotify` application key.
-    @param [Hash] options additional options (see {#merge_defaults})
+    @param [Hash] options additional options
     @option options [String] :user_agent ("Hallon") User-Agent to use (length < 256)
     @option options [String] :settings_path ("tmp") where to save settings and user-specific cache
     @option options [String] :cache_path ("") where to save cache files (set to "" to disable)
     @option options [Bool]   :load_playlists (true) load playlists into RAM on startup
     @option options [Bool]   :compress_playlists (true) compress local copies of playlists
     @option options [Bool]   :cache_playlist_metadata (true) cache metadata for playlists locally
-    @yield allows you to define handlers for events (see {Hallon::Base})
+    @yield allows you to define handlers for events (see {Base#on})
     @raise [ArgumentError] if options[:user_agent] is more than 255 characters long
+    @raise [Hallon::Error] if `sp_session_create` fails
     @see http://developer.spotify.com/en/libspotify/docs/structsp__session__config.html
 */
 static VALUE cSession_initialize(int argc, VALUE *argv, VALUE self)
