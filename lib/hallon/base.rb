@@ -12,5 +12,9 @@ module Hallon
         define_method(:"on_#{event}", &block)
       end
     end
+    
+    def to_s
+      self.class.name
+    end
   end
 end
