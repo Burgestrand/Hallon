@@ -1,12 +1,11 @@
 #include "common.h"
 
 /*
-  call-seq: explain(errno)
+  @overload explain(errno)
+    Converts a `libspotify` error code to a string using `sp_error_message`.
   
-  Converts a `libspotify` error code to an actual message using `sp_error_message`.
-  
-  @param [Fixnum] errno
-  @return [String]
+    @param [Fixnum] errno
+    @return [String]
 */
 static VALUE eError_explain(VALUE self, VALUE errno)
 {
