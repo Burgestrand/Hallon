@@ -58,10 +58,11 @@ static VALUE cLink_initialize(VALUE self, VALUE str)
 }
 
 /*
-  Retrieve the Spotify URI this Link represents.
-  
-  @param [Fixnum] maxlength maximum string length (in bytes) to return (default: 2048)
-  @return [String]
+  @overload to_str(maxlength = 2048)
+    Spotify URI of this Link
+    
+    @param [Fixnum] maxlength maximum string length (in bytes) to return (default: 2048)
+    @return [String] Spotify URI
 */
 static VALUE cLink_to_str(int argc, VALUE *argv, VALUE self)
 {
@@ -87,7 +88,7 @@ static VALUE cLink_to_str(int argc, VALUE *argv, VALUE self)
 }
 
 /*
-  Link type as a symbol.
+  Link type
   
   @return [Symbol]
 */

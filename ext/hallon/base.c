@@ -29,8 +29,16 @@ static VALUE cBase_s_alloc(VALUE klass)
 }
 
 /*
-  Associate the current object to the internal Spotify C structure,
-  making the object itself handle its’ own events.
+  Sets the current object as its’ own event handler.
+  
+  @example
+    Hallon::Base.new do
+      on(:fired_event) do
+        puts "Handled “fired_event”!"
+      end
+    end
+  
+  @yield optional: allows you to caller event handlers using {#on}
 */
 static VALUE cBase_initialize(VALUE self)
 {
@@ -45,9 +53,6 @@ static VALUE cBase_initialize(VALUE self)
   return self;
 }
 
-/*
-  
-*/
 void Init_Base(void)
 {
   VALUE cBase = rb_define_class_under(hn_mHallon, "Base", rb_cObject);

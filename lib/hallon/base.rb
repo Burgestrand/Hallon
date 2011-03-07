@@ -1,6 +1,11 @@
 module Hallon
   # All Spotify objects share some common behavior, and this class is
-  # here to accomodate for that.
+  # here to accomodate for that. It makes sure the internal C struct
+  # is allocated properly, and that the event handler is properly
+  # set to the object inheriting from Hallon::Base.
+  # 
+  # @note this class is for internal use by Hallon only
+  # @private
   class Base
     # Defines a handler for the given event.
     # 
