@@ -45,13 +45,13 @@ module Hallon
       status == :disconnected
     end
     
-    # Executed on #notify_main_thread callback from libspotify
+    # Executed on `notify_main_thread` callback from libspotify.
     def on_process_events
       process_events
     end
     
     private
-      # Merge the given hash with default options for Session#initialize
+      # Merge the given hash with default options for Session#initialize.
       #
       # @note This is called automatically by Session#initialize.
       # @return [Hash]

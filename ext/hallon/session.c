@@ -153,6 +153,8 @@ static VALUE sp_session_process_events_nogvl(void *session_ptr)
 /*
   Logs in to Spotify using the given account name and password.
   
+  @note This call returns immediately. You are not logged in until
+        the `logged_in` event has been fired on this Session.
   @param [#to_s] username
   @param [#to_s] password
   @return [Session]
@@ -198,7 +200,8 @@ static VALUE cSession_fire_bang(int argc, VALUE *argv, VALUE self)
 /*
   Logs out of Spotify. Does nothing if not logged in.
   
-  @raise [Hallon::Error] if libspotify returns an error
+  @note This call returns immediately. You are not logged out until
+        the `logged_out` event has been fired on this session.
   @return [Session]
 */
 static VALUE cSession_logout_bang(VALUE self)
