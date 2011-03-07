@@ -2,7 +2,7 @@
 require 'singleton'
 
 module Hallon
-  class Session
+  class Session < Base
     # The options Hallon used at {Session#initialize}.
     # 
     # @see Session#merge_defaults
@@ -14,6 +14,7 @@ module Hallon
     # @return [String]
     attr_reader :appkey
     
+    # libspotify only allows one session per process.
     include Singleton
     
     # Allows you to create a Spotify session. Subsequent calls to this method
@@ -43,6 +44,11 @@ module Hallon
     # @see #status
     def disconnected?
       status == :disconnected
+    end
+    
+    # Executed on #notify_main_thread callback from libspotify
+    def on_process_events
+      process_events
     end
     
     private

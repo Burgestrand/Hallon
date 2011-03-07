@@ -14,41 +14,9 @@ extern hn_event_t * g_event;
 /*
   Prototypes
 */
-static void cSession_s_mark(hn_spotify_data_t*);
-static void cSession_s_free(hn_spotify_data_t*);
-
 static VALUE sp_session_process_events_nogvl(void *);
 static VALUE sp_session_login_nogvl(void *);
 static VALUE sp_session_logout_nogvl(void *);
-
-/*
-  Allocate space for a session pointer and attach it to the returned object.
-  
-  @note Also populates the global `g_event` variable!
-*/
-static VALUE cSession_s_alloc(VALUE klass)
-{
-  g_event = ALLOC(hn_event_t);
-  g_event->sem_empty  = hn_sem_init(1);
-  g_event->sem_full   = hn_sem_init(0);
-  g_event->rb_handler = Qnil;
-  g_event->c_handler  = NULL;
-  g_event->c_data     = NULL;
-  
-  return Data_Build_SPData(klass, hn_mark_spotify_data_t, cSession_s_free);
-}
-
-/*
-  Release the created session and deallocate the session pointer.
-  
-  @note if `sp_session_create` the spotify_ptr will be null
-  @note libspotify 0.0.6 segfaults randomly on `sp_session_release`
-*/
-static void cSession_s_free(hn_spotify_data_t* session_data)
-{
-  // spfree(sp_session_release, session_data);
-  xfree(session_data);
-}
 
 /*
   call-seq: initialize(appkey, options = {}, &block)
@@ -57,7 +25,7 @@ static void cSession_s_free(hn_spotify_data_t* session_data)
   
   @example 
      session = Hallon::Session.instance(appkey, :settings_path => "tmp") do
-       def logged_in(error)
+       on(:logged_in) do |error|
          puts "We logged in successfully. Lets bail!"
          exit
        end
@@ -68,31 +36,21 @@ static void cSession_s_free(hn_spotify_data_t* session_data)
   
   @param [#to_s] appkey your `libspotify` application key.
   @param [Hash] options additional options (see {#merge_defaults})
-  @param [Block] block will be evaluated within a handler context (see example)
+  @yield allows you to define handlers for events
   @raise [ArgumentError] if the :user_agent is > 255 characters long
-  @see Hallon::Events
-  @see Hallon::Events.build_handler
   @see #merge_defaults
+  @see Hallon::Base
   @see http://developer.spotify.com/en/libspotify/docs/structsp__session__config.html
-  
-  @overload initialize(appkey, handler, options = {}, &block)
-    The given `handler` should include Hallon::Events, or be a module.
-    
-    @param [Class<Hallon::Events>, Module, nil] handler
 */
 static VALUE cSession_initialize(int argc, VALUE *argv, VALUE self)
 {
-  VALUE appkey, handler, options, block;
+  VALUE appkey, options;
   hn_spotify_data_t *session_data = DATA_OF(self);
+  rb_call_super(0, NULL); // IMPORTANT, see Hallon::Base
   
-  // Handle arguments, swapping if necessary
-  rb_scan_args(argc, argv, "12&", &appkey, &handler, &options, &block);
-  if (TYPE(handler) == T_HASH) { options = handler; handler = Qnil; }
-  
+  /* handle options */
+  rb_scan_args(argc, argv, "12", &appkey, &options);
   options = rb_funcall(self, rb_intern("merge_defaults"), 1, options);
-  session_data->handler = hn_cEvents_build_handler(self, handler, block);
-  
-  /* options variables */
   VALUE user_agent    = hn_hash_lookup_sym(options, "user_agent"),
         settings_path = hn_hash_lookup_sym(options, "settings_path"),
         cache_path    = hn_hash_lookup_sym(options, "cache_path"),
@@ -263,8 +221,7 @@ static VALUE cSession_handler(VALUE self)
 */
 void Init_Session(void)
 {
-  VALUE cSession = rb_define_class_under(hn_mHallon, "Session", rb_cObject);
-  rb_define_alloc_func(cSession, cSession_s_alloc);
+  VALUE cSession = rb_define_class_under(hn_mHallon, "Session", hn_cBase);
   rb_define_method(cSession, "initialize", cSession_initialize, -1);
   rb_define_method(cSession, "status", cSession_status, 0);
   rb_define_method(cSession, "process_events", cSession_process_events, 0);
@@ -272,4 +229,11 @@ void Init_Session(void)
   rb_define_method(cSession, "fire!", cSession_fire_bang, -1);
   rb_define_method(cSession, "logout", cSession_logout_bang, 0);
   rb_define_method(cSession, "handler", cSession_handler, 0);
+  
+  g_event = ALLOC(hn_event_t);
+  g_event->sem_empty  = hn_sem_init(1);
+  g_event->sem_full   = hn_sem_init(0);
+  g_event->rb_handler = Qnil;
+  g_event->c_handler  = NULL;
+  g_event->c_data     = NULL;
 }

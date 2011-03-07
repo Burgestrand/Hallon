@@ -2,6 +2,8 @@
 require 'hallon/hallon' # C extension! (ext/ is in $:)
 require 'hallon/error'
 require 'hallon/version'
+
+require 'hallon/base'
 require 'hallon/session'
 require 'hallon/events'
 require 'hallon/link'
