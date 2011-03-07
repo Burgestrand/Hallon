@@ -7,19 +7,23 @@ module Hallon
   # @note this class is for internal use by Hallon only
   # @private
   class Base
-    # Defines a handler for the given event.
+    # A string representation of this object: its’ class name.
     # 
-    # @param [#to_sym] event
-    # @yield
-    # @return Method or Proc
-    def on(event, &block)
-      singleton_class.instance_eval do
-        define_method(:"on_#{event}", &block)
-      end
-    end
-    
+    # @return [String]
     def to_s
       self.class.name
     end
+    
+    private
+      # Defines a handler for the given event.
+      # 
+      # @param [#to_sym] event name of event to handle
+      # @yield (*args) event handler block
+      # @see #initialize
+      def on(event, &block)
+        singleton_class.instance_eval do
+          define_method(:"on_#{event}", &block)
+        end
+      end
   end
 end
