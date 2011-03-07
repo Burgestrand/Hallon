@@ -1,9 +1,5 @@
 #include "common.h"
-#include "events.h"
 #include "callbacks.h" /* hn_session_fire */
-
-/* GLOBAL: events.c */
-extern hn_event_t * g_event;
 
 /*
   Useful macros :D
@@ -92,13 +88,27 @@ static VALUE cSession_initialize(int argc, VALUE *argv, VALUE self)
   hn_eError_maybe_raise(error);
   
   /* spawn the event producer & consumer */
-  VALUE threads = rb_funcall2(hn_const_get("Events"), rb_intern("spawn_handlers"), 0, NULL);
+  VALUE threads = rb_funcall2(self, rb_intern("spawn_handlers"), 0, NULL);
   
   rb_iv_set(self, "@threads", threads);
   rb_iv_set(self, "@appkey", appkey);
   rb_iv_set(self, "@options", options);
   
   return self;
+}
+
+/*
+  Waits for the global event variable to contain an event. Once an event
+  arrives, it is sent to the event queue and then handled by its’ handler.
+  
+  @note We use a separate thread for firing the event to avoid deadlock.
+  
+  @param [Queue] queue event queue
+  @return [Thread] taskmaster thread
+*/
+static VALUE cSession_spawn_taskmaster(VALUE self, VALUE queue)
+{
+  return rb_thread_create(taskmaster_thread /* callbacks.c */, (void*) queue);
 }
 
 /*
@@ -234,6 +244,9 @@ void Init_Session(void)
   rb_define_method(cSession, "logout", cSession_logout_bang, 0);
   rb_define_method(cSession, "handler", cSession_handler, 0);
   
+  rb_define_private_method(cSession, "spawn_taskmaster", cSession_spawn_taskmaster, 1);
+  
+  extern hn_event_t * g_event;
   g_event = ALLOC(hn_event_t);
   g_event->sem_empty  = hn_sem_init(1);
   g_event->sem_full   = hn_sem_init(0);

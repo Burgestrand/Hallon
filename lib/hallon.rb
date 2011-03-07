@@ -5,7 +5,6 @@ require 'hallon/version'
 
 require 'hallon/base'
 require 'hallon/session'
-require 'hallon/events'
 require 'hallon/link'
 
 # YARD have a habit of showing my “coding”-declarations. Since everything is

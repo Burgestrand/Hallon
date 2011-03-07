@@ -67,5 +67,35 @@ module Hallon
           :cache_playlist_metadata => true
         }.merge(options)
       end
+      
+      # Spawns the Event Dispatcher. This is one of two threads
+      # responsible for handling events fired by `libspotify`. The other
+      # one is in `ext/hallon/callbacks.c`, responsible for sending
+      # events to this thread.
+      # 
+      # @param [Queue] queue
+      # @return [Thread]
+      def spawn_dispatcher(queue)
+        Thread.new do
+          loop do
+            handler, event, *args = queue.pop
+            event = :"on_#{event}"
+
+            begin
+              handler.public_send(event, *args)
+            rescue => e
+              warn "#{handler}##{event}(#{args.join(', ')}) => #{e.inspect}"
+            end if handler.respond_to?(event)
+          end
+        end
+      end
+      
+      # Spawns both the Taskmaster (callbacks.c) and the Dispatcher.
+      # 
+      # @return [Array<Thread, Thread>] (taskmaster, dispatcher)
+      def spawn_handlers
+        queue = Queue.new
+        [spawn_taskmaster(queue), spawn_dispatcher(queue)]
+      end
   end
 end

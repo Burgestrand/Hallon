@@ -1,10 +1,22 @@
 #ifndef CALLBACKS_H_HPVSGQG0
-#define CALLBACKS_H_HPVSGQG0
+  #define CALLBACKS_H_HPVSGQG0
 
-/* Firing arbitrary events from ruby */
-VALUE hn_session_fire(void *);
+  #include "semaphore.h"
+  
+  typedef struct {
+    hn_sem_t* sem_empty;
+    hn_sem_t* sem_full;
+  
+    /* actual event data */
+    VALUE rb_handler;
+    VALUE (*c_handler)(void*);
+    void * c_data;
+  } hn_event_t;
 
-/* Session callback methods */
-extern const sp_session_callbacks HALLON_SESSION_CALLBACKS;
+  /* Firing arbitrary events from ruby */
+  VALUE hn_session_fire(void *);
+  VALUE taskmaster_thread(void *);
 
+  /* Session callback methods */
+  extern const sp_session_callbacks HALLON_SESSION_CALLBACKS;
 #endif

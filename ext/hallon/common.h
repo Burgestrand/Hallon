@@ -17,7 +17,6 @@
     Initializers for the other classes.
   */
   void Init_Error(void);
-  void Init_Events(void);
   void Init_Base();
   void Init_Session(void);
   void Init_Link(void);
@@ -36,15 +35,6 @@
   hn_spotify_data_t* hn_alloc_spotify_data_t(void);
   void hn_mark_spotify_data_t(hn_spotify_data_t*);
   
-  #define Data_Build_SPData(klass, mark, free) ({\
-    hn_spotify_data_t *data_ptr = hn_alloc_spotify_data_t();\
-    Data_Wrap_Struct(klass, mark, free, data_ptr);\
-  })
-  
-  #define spfree(func, data) do {\
-    if ((data)->spotify_ptr && *(data)->spotify_ptr) { (func)(*(data)->spotify_ptr); }\
-  } while(0)
-  
   /*
     Common accessors
   */
@@ -53,5 +43,4 @@
   #define hn_cBase hn_const_get("Base")
   #define hn_const_get(name) rb_const_get(hn_mHallon, rb_intern(name))
   #define hn_eError_maybe_raise(error) rb_funcall(hn_eError, rb_intern("maybe_raise"), 1, INT2FIX((int) error))
-  #define hn_cEvents_build_handler(subject, handler, block) rb_funcall(hn_const_get("Events"), rb_intern("proxy_build_handler"), 3, subject, handler, block)
 #endif

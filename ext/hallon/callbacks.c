@@ -1,11 +1,65 @@
 #include "common.h"
-#include "events.h" /* hn_event_t */
 #include "callbacks.h"
 
-/* GLOBAL: events.c */
-extern hn_event_t * g_event;
+#define EVENT_SYNCHRONIZE(event, code) do {\
+  hn_sem_wait((event)->sem_empty);\
+  code;\
+  hn_sem_post((event)->sem_full);\
+} while(0)
+
+#define EVENT_CREATE(event, recv, fn, args) do {\
+  EVENT_SYNCHRONIZE(event, {\
+    (event)->rb_handler = (recv);\
+    (event)->c_handler  = (fn);\
+    (event)->c_data     = (args);\
+  });\
+} while(0)
 
 #define G_EVENT_CREATE(receiver, handler, data) EVENT_CREATE(g_event, receiver, handler, data)
+
+/*
+  Considering not all libspotify method calls require a reference to the current
+  session (meaning we cannot retrieve its’ event semaphores), we need a way to
+  reach the event semaphore without it. The only way I know how to do that is
+  using a global variable.
+  
+  At the moment, libspotify is not multi-session friendly. This means a global
+  variable will not affect future development until libspotify can handle more
+  than one session.
+*/
+hn_event_t * g_event;
+
+/* Non-GVL of sem_wait/post */
+static VALUE hn_sem_wait_nogvl(void *hn_sem) { return (VALUE) hn_sem_wait(hn_sem); }
+static VALUE hn_sem_post_nogvl(void *hn_sem) { return (VALUE) hn_sem_post(hn_sem); }
+
+/* wake up taskmaster thread when its’ sleeping */
+static void  hn_ubf_sem_full(void *x) { EVENT_CREATE(g_event, Qnil, NULL, NULL); }
+
+/* see Session#spawn_taskmaster */
+VALUE taskmaster_thread(void *q)
+{
+  VALUE queue = (VALUE) q;
+  ID id_push  = rb_intern("push");
+  
+  for (;;)
+  {
+    rb_thread_blocking_region(hn_sem_wait_nogvl, g_event->sem_full, hn_ubf_sem_full, NULL);
+    
+    // if we were woken up by ubf-function, handler will be nil (line #55)
+    if ( ! NIL_P(g_event->rb_handler))
+    {
+      rb_funcall(queue, id_push, 1,
+        rb_ary_unshift(g_event->c_handler(g_event->c_data), g_event->rb_handler));
+    }
+    
+    g_event->rb_handler = Qnil;
+    hn_proc_without_gvl(hn_sem_post_nogvl, g_event->sem_empty);
+  }
+  
+  return queue;
+}
+
 
 /*
   Used to be for debugging purposes only, but now it is used to fire arbitrary
