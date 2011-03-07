@@ -29,14 +29,14 @@ This is what the API looks like (fully working example, I aim to remove the mute
     mutex  = Mutex.new
     signal = ConditionVariable.new
 
-    session = Hallon::Session.instance IO.read(ENV['APPKEY']) do
+    session = Hallon::Session.instance(IO.read(ENV['HALLON_APPKEY'])) do
       on(:logged_in) do |error|
         mutex.synchronize { signal.signal }
       end
     end
 
     mutex.synchronize do
-      session.login ENV['USERNAME'], ENV['PASSWORD']
+      session.login ENV['HALLON_USERNAME'], ENV['HALLON_PASSWORD']
       signal.wait(mutex)
     end
 
