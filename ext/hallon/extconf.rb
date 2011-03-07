@@ -20,5 +20,5 @@ unless have_library 'pthread', 'pthread_mutex_lock'
   error 'missing posix thread-support'
 end
 
-with_cflags('-pipe -ggdb -O0 -Wall') { ENV['DEBUG'] }
+with_cflags('-pipe -ggdb -O0 -Wall') { ! ENV['DEBUG'] }
 create_makefile 'hallon'
