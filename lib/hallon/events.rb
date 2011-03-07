@@ -13,11 +13,15 @@ module Hallon
     # @return [Thread]
     def self.spawn_dispatcher(queue)
       Thread.new do
-        Thread.abort_on_exception = true
-
         loop do
-          handler, *args = queue.pop
-          handler.public_send(*args)
+          handler, event, *args = queue.pop
+          event = :"on_#{event}"
+          
+          begin
+            handler.public_send(event, *args)
+          rescue => e
+            warn "#{handler}##{event}(#{args.join(', ')}) => #{e.message}"
+          end if handler.respond_to?(event)
         end
       end
     end
