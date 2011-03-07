@@ -22,7 +22,6 @@ module Hallon
     #
     # @param (see Session#initialize)
     # @see Session#initialize
-    # @see http://ruby-doc.org/core/classes/Singleton.html
     # @return [Session]
     def Session.instance(*args, &block)
       @__instance__ ||= new(*args, &block)
