@@ -78,14 +78,14 @@ module Hallon
       def spawn_dispatcher(queue)
         Thread.new do
           loop do
-            handler, event, *args = queue.pop
-            event = :"on_#{event}"
+            handler, method, *args = queue.pop
+            method = :"on_#{method}"
 
             begin
-              handler.public_send(event, *args)
+              handler.public_send(method, *args)
             rescue => e
-              warn "#{handler}##{event}(#{args.join(', ')}) => #{e.inspect}"
-            end if handler.respond_to?(event)
+              warn "#{handler}##{method}(#{args.join(', ')}) => #{e.inspect}"
+            end if handler.respond_to?(method)
           end
         end
       end
