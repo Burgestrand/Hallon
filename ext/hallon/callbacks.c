@@ -60,10 +60,16 @@ VALUE taskmaster_thread(void *q)
   return queue;
 }
 
-
 /*
-  Used to be for debugging purposes only, but now it is used to fire arbitrary
-  events at the event_producer.
+  -------------------------------------------------------------------
+  
+  Used to be for debugging purposes only, but now it is used to fire
+  arbitrary events. It takes a ruby array as an argument;
+  
+  [0]: receiver, object to handle the callback
+  [1]: array of:
+    [0]: method to call (symbol)
+    [1…]: arguments
 */
 static VALUE ruby_session_fire(void *argv) { return (VALUE) argv; }
 VALUE hn_session_fire(void *ary)
