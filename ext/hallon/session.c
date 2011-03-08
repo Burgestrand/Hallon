@@ -203,7 +203,7 @@ static VALUE cSession_fire_bang(int argc, VALUE *argv, VALUE self)
         the `logged_out` event has been fired on this session.
   @return [Session]
 */
-static VALUE cSession_logout_bang(VALUE self)
+static VALUE cSession_logout(VALUE self)
 {
   if (rb_funcall3(self, rb_intern("logged_in?"), 0, NULL) == Qtrue)
   {
@@ -234,7 +234,7 @@ void Init_Session(void)
   rb_define_method(cSession, "process_events", cSession_process_events, 0);
   rb_define_method(cSession, "login", cSession_login, 2);
   rb_define_method(cSession, "fire!", cSession_fire_bang, -1);
-  rb_define_method(cSession, "logout", cSession_logout_bang, 0);
+  rb_define_method(cSession, "logout", cSession_logout, 0);
   
   rb_define_private_method(cSession, "spawn_taskmaster", cSession_spawn_taskmaster, 1);
   
