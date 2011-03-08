@@ -190,12 +190,6 @@ static VALUE cSession_fire_bang(int argc, VALUE *argv, VALUE self)
 {
   VALUE recv, method, brgs;
   rb_scan_args(argc, argv, "2*", &recv, &method, &brgs);
-  
-  if ( ! SYMBOL_P(method))
-  {
-    rb_raise(rb_eArgError, "second argument must be a symbol");
-  }
-  
   void *args[] = { (void*) recv, (void*) rb_ary_unshift(brgs, method) };
   hn_proc_without_gvl(hn_session_fire, args);
   return self;
