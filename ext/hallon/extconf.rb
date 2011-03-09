@@ -7,6 +7,7 @@ end
 error 'Missing ruby header' unless have_header 'ruby.h'
 error 'Hallon requires ruby ~> 1.9' unless RUBY_VERSION =~ /\A1\.9/
 
+dir_config 'libspotify'
 checking_for 'libspotify' do
   with_ldflags('-framework libspotify') do
     try_link 'int main(void) { return 0; }'
