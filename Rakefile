@@ -29,6 +29,7 @@ Rake::ExtensionTask.new('hallon', Jeweler::Tasks.new do |gem|
   gem.required_ruby_version = '~> 1.9'
 end.gemspec) do |ext|
   ext.lib_dir = File.join('lib', 'hallon')
+  ext.config_options << ENV['CONFIGURE_FLAGS'].to_s
 end
 
 require 'yard'
