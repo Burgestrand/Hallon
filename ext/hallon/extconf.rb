@@ -16,7 +16,7 @@ checking_for 'libspotify' do
   have_func 'sp_session_create', 'libspotify/api.h'
 end or error 'libspotify not installed'
 
-# make sure we have pthread support
+dir_config 'pthread'
 unless have_library 'pthread', 'pthread_mutex_lock'
   error 'missing posix thread-support'
 end
