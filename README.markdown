@@ -43,6 +43,14 @@ This is what the API looks like (fully working example, I aim to remove the mute
     puts "Logged in: #{session.logged_in?}" # => Logged in: true
 
 
+I want to try it!
+-----------------
+How exciting! I've written some tutorials on how to do this in the wiki. Follow the steps (in this order).
+
+1. [How to install libspotify](https://github.com/Burgestrand/Hallon/wiki/How-to-install-libspotify)
+2. [How to install Hallon](https://github.com/Burgestrand/Hallon/wiki/How-to-hack-on-Hallon)
+3. [How to run the tests](https://github.com/Burgestrand/Hallon/wiki/How-to-run-the-tests)
+
 This is awesome! I want to help!
 --------------------------------
 Sweet! You contribute in more than one way!
