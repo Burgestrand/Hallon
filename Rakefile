@@ -55,6 +55,8 @@ task :watchr do
 end
 
 desc "Start watchr, open a new tab and open Hallon directory in $EDITOR using terminitor"
-task(:work) { system 'terminitor start' }
+task(:work) do
+  Bundler.with_clean_env { system 'terminitor start' }
+end
 
 task :default => [:compile, :spec]
