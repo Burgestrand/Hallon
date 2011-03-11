@@ -22,4 +22,4 @@ unless have_library 'pthread', 'pthread_mutex_lock'
 end
 
 with_cflags('-pipe -ggdb -O0 -Wall') { ! ENV['DEBUG'] }
-create_makefile 'hallon'
+create_makefile 'hallon_ext'

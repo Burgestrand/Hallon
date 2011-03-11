@@ -22,13 +22,12 @@ Rake::ExtensionTask.new('hallon', Jeweler::Tasks.new do |gem|
   gem.description = IO.read('./README.markdown', encoding: 'utf-8')
   
   # installation
-  gem.require_paths = %w(lib ext)
   gem.extensions = FileList['ext/**/extconf.rb']
   gem.platform   = Gem::Platform::RUBY
   gem.version    = Hallon::VERSION
   gem.required_ruby_version = '~> 1.9'
 end.gemspec) do |ext|
-  ext.lib_dir = File.join('lib', 'hallon')
+  ext.name = 'hallon_ext'
   ext.config_options << ENV['CONFIGURE_FLAGS'].to_s
 end
 

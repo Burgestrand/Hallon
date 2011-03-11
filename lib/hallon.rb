@@ -1,5 +1,5 @@
 # coding: utf-8
-require 'hallon/hallon' # C extension! (ext/ is in $:)
+require 'hallon_ext'
 require 'hallon/error'
 require 'hallon/version'
 
