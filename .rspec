@@ -1,6 +1,5 @@
 --color
 -fs
--Iext
 -Ilib
 -Ispec
 --require spec_helper
