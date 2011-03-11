@@ -1,5 +1,10 @@
 # coding: utf-8
-require 'bundler/setup'
+begin
+  require 'bundler/setup'
+rescue LoadError
+  # Not required, but used if available :)
+end
+
 require 'rake'
 
 require 'jeweler'
