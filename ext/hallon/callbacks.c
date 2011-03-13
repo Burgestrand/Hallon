@@ -63,11 +63,11 @@ VALUE taskmaster_thread(void *q)
     [0]: method to call (symbol)
     [1…]: arguments
 */
-static VALUE ruby_session_fire(void *argv) { return (VALUE) argv; }
-VALUE hn_session_fire(void *ary)
+static VALUE ruby_as_callback_fire(void *argv) { return (VALUE) argv; }
+VALUE hn_as_callback_fire(void *ary)
 {
   VALUE *argv = (VALUE*) ary;
-  EVENT_CREATE(argv[0], ruby_session_fire, (void*) argv[1]);
+  EVENT_CREATE(argv[0], ruby_as_callback_fire, (void*) argv[1]);
   return Qtrue;
 }
 

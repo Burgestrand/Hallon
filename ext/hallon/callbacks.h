@@ -14,7 +14,7 @@
   } hn_event_t;
 
   /* Firing arbitrary events from ruby */
-  VALUE hn_session_fire(void *);
+  VALUE hn_as_callback_fire(void *);
   VALUE taskmaster_thread(void *);
 
   /* Each of these are defined in callbacks/<spotify object>.c */

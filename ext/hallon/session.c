@@ -197,7 +197,7 @@ static VALUE cSession_fire_bang(int argc, VALUE *argv, VALUE self)
   VALUE recv, method, brgs;
   rb_scan_args(argc, argv, "2*", &recv, &method, &brgs);
   void *args[] = { (void*) recv, (void*) rb_ary_unshift(brgs, method) };
-  hn_proc_without_gvl(hn_session_fire, args);
+  hn_proc_without_gvl(hn_as_callback_fire, args);
   return self;
 }
 
