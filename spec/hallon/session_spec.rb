@@ -1,4 +1,5 @@
 require 'thread'
+require 'stringio'
 
 describe Hallon::Session do
   # Hallon::Session#instance requires that a session have NOT been established,
@@ -48,27 +49,42 @@ describe Hallon::Session do
         end
       end
       
-      describe "#fire!" do
-        it "fires the event on the object in the proper thread" do
-          mutex  = Mutex.new
-          cond   = ConditionVariable.new
-          objekt = Object.new
-          objekt.define_singleton_method(:on_roflcopter) do |thread|
-            mutex.synchronize do
-              $current_thread = Thread.current
-              $received_thread = thread
-              cond.signal
+      describe "dispatcher thread" do
+        def dispatch(*arg, &block)
+          raise ArgumentError, "no block given" unless block_given?
+          m = Mutex.new
+          c = ConditionVariable.new
+          o = Object.new
+          result = nil
+          
+          o.define_singleton_method(:on_get_thread) do |*args|
+            begin
+              result = block.call(*args)
+            ensure
+              m.synchronize { c.signal }
             end
           end
           
-          mutex.synchronize do
-            session.fire!(objekt, :roflcopter, Thread.current)
-            cond.wait(mutex)
+          m.synchronize do
+            session.fire!(o, :get_thread, *arg)
+            c.wait(m)
           end
           
-          $current_thread.should_not be_nil
-          $current_thread.should_not equal Thread.current
-          $received_thread.should equal Thread.current
+          result
+        end
+
+        it "should not equal current thread" do
+          dispatch { Thread.current }.should_not equal Thread.current
+        end
+        
+        it "should print a warning when an error is raised" do
+          stderr = $stderr
+          $stderr = io = StringIO.new
+          dispatch { raise "omgwtf" }
+          $stderr = stderr
+          io.rewind
+          
+          io.read.should match 'RuntimeError: omgwtf'
         end
       end
     end
