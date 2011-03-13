@@ -99,13 +99,16 @@ static VALUE cSession_initialize(int argc, VALUE *argv, VALUE self)
 }
 
 /*
-  Waits for the global event variable to contain an event. Once an event
-  arrives, it is sent to the event queue and then handled by its’ handler.
+  @overload spawn_taskmaster(queue)
+    Spawn one of the two internal threads related to libspotify callbacks.
   
-  @note We use a separate thread for firing the event to avoid deadlock.
-  
-  @param [Queue] queue event queue
-  @return [Thread] taskmaster thread
+    The taskmaster is responsible for receiving events from libspotify.
+    Once an event has been fired, the taskmaster will put the event in
+    a queue for the event dispatcher (see #spawn_dispatcher) to handle.
+    
+    @private
+    @param [Queue] queue used for writing incoming events to
+    @return [Thread]
 */
 static VALUE cSession_spawn_taskmaster(VALUE self, VALUE queue)
 {
