@@ -7,6 +7,7 @@
   #include <assert.h>
   #include <libspotify/api.h>
   
+  #include "base.h"
   #include "utils.h"
   
   # if SPOTIFY_API_VERSION != 7
@@ -20,20 +21,6 @@
   void Init_Base();
   void Init_Session(void);
   void Init_Link(void);
-  
-  /*
-    The data structure required for all Spotify objects.
-  */
-  typedef void (*sp_free_func)(void*);
-  typedef struct
-  {
-    VALUE  handler;
-    void (**spotify_ptr);
-    sp_free_func free_func;
-  } hn_spotify_data_t;
-  
-  hn_spotify_data_t* hn_alloc_spotify_data_t(void);
-  void hn_mark_spotify_data_t(hn_spotify_data_t*);
   
   /*
     Common accessors
