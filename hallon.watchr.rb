@@ -41,7 +41,7 @@ scripts.watch(File.basename(__FILE__)) { reload }
 
 # C changes:
 scripts.watch('ext/.*\.(c|h)')  { |md| pending_specs << spec_for(md[0]) }
-scripts.watch('hallon\.bundle') { rspec pending_specs }
+scripts.watch('lib/hallon_ext.*') { rspec(*pending_specs) }
 
 # Ruby changes:
 scripts.watch('lib/.*\.rb') { |md| rspec spec_for(md[0]) }
