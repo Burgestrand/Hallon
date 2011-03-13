@@ -1,22 +1,6 @@
 #include "common.h"
 #include "callbacks.h"
 
-#define EVENT_SYNCHRONIZE(event, code) do {\
-  hn_sem_wait((event)->sem_empty);\
-  code;\
-  hn_sem_post((event)->sem_full);\
-} while(0)
-
-#define EVENT_CREATE(event, recv, fn, args) do {\
-  EVENT_SYNCHRONIZE(event, {\
-    (event)->rb_handler = (recv);\
-    (event)->c_handler  = (fn);\
-    (event)->c_data     = (args);\
-  });\
-} while(0)
-
-#define G_EVENT_CREATE(receiver, handler, data) EVENT_CREATE(g_event, receiver, handler, data)
-
 /*
   Considering not all libspotify method calls require a reference to the current
   session (meaning we cannot retrieve its’ event semaphores), we need a way to
@@ -29,12 +13,22 @@
 */
 hn_event_t * g_event;
 
+#define EVENT_CREATE(rb_h, c_h, data) do {\
+  hn_sem_wait(g_event->sem_empty);\
+  g_event->rb_handler = (rb_h);\
+  g_event->c_handler  = (c_h);\
+  g_event->c_data     = (data);\
+  hn_sem_post(g_event->sem_full);\
+} while(0)
+
+#define G_EVENT_CREATE(rb_h, c_h, data) EVENT_CREATE(rb_h, c_h, data)
+
 /* Non-GVL of sem_wait/post */
 static VALUE hn_sem_wait_nogvl(void *hn_sem) { return (VALUE) hn_sem_wait(hn_sem); }
 static VALUE hn_sem_post_nogvl(void *hn_sem) { return (VALUE) hn_sem_post(hn_sem); }
 
 /* wake up taskmaster thread when its’ sleeping */
-static void  hn_ubf_sem_full(void *x) { EVENT_CREATE(g_event, Qnil, NULL, NULL); }
+static void  hn_ubf_sem_full(void *x) { EVENT_CREATE(Qnil, NULL, NULL); }
 
 /* see Session#spawn_taskmaster */
 VALUE taskmaster_thread(void *q)
@@ -75,7 +69,7 @@ static VALUE ruby_session_fire(void *argv) { return (VALUE) argv; }
 VALUE hn_session_fire(void *ary)
 {
   VALUE *argv = (VALUE*) ary;
-  G_EVENT_CREATE(argv[0], ruby_session_fire, (void*) argv[1]);
+  EVENT_CREATE(argv[0], ruby_session_fire, (void*) argv[1]);
   return Qtrue;
 }
 
