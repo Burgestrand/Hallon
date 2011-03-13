@@ -107,6 +107,7 @@ static VALUE cSession_initialize(int argc, VALUE *argv, VALUE self)
     a queue for the event dispatcher (see #spawn_dispatcher) to handle.
     
     @private
+    @note This is a private method, and should not be called.
     @param [Queue] queue used for writing incoming events to
     @return [Thread]
 */
