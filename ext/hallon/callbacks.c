@@ -46,7 +46,7 @@ VALUE taskmaster_thread(void *q)
   {
     rb_thread_blocking_region(hn_sem_wait_nogvl, g_event->sem_full, hn_ubf_sem_full, NULL);
     
-    // if we were woken up by ubf-function, handler will be nil (line #55)
+    // if we were woken up by ubf-function, handler will be nil
     if ( ! NIL_P(g_event->rb_handler))
     {
       rb_funcall(queue, id_push, 1,
