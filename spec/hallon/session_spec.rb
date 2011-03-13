@@ -1,4 +1,3 @@
-require 'ostruct' # https://github.com/rspec/rspec-core/issues/issue/264
 require 'thread'
 
 describe Hallon::Session do
