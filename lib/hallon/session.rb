@@ -68,10 +68,19 @@ module Hallon
         }.merge(options)
       end
       
-      # Spawns the Event Dispatcher. This is one of two threads
-      # responsible for handling events fired by `libspotify`. The other
-      # one is in `ext/hallon/callbacks.c`, responsible for sending
-      # events to this thread.
+      # Spawns the Event Dispatcher.
+      # 
+      # This is one of two threads responsible for handling events fired
+      # by `libspotify`. The other one is in `ext/hallon/callbacks.c`,
+      # responsible for sending events to this thread.
+      # 
+      # Events are received by reading from the given queue; each item
+      # in the queue is expected to be an array containing *at least*
+      # two items: an object to handle the event, and the event name.
+      # Any following items will be considered arguments to the handler.
+      # 
+      # The event name is prefixed with “on_” and then dispatched to
+      # the handler: `handler.on_#{method}(*args)`
       # 
       # @param [Queue] queue
       # @return [Thread]
