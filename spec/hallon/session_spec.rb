@@ -1,4 +1,5 @@
 require 'ostruct' # https://github.com/rspec/rspec-core/issues/issue/264
+require 'thread'
 
 describe Hallon::Session do
   # Hallon::Session#instance requires that a session have NOT been established,
@@ -45,6 +46,30 @@ describe Hallon::Session do
         it "should check logged in status" do
           session.should_receive(:logged_in?).once
           expect { session.logout }.to_not raise_error
+        end
+      end
+      
+      describe "#fire!" do
+        it "fires the event on the object in the proper thread" do
+          mutex  = Mutex.new
+          cond   = ConditionVariable.new
+          objekt = Object.new
+          objekt.define_singleton_method(:on_roflcopter) do |thread|
+            mutex.synchronize do
+              $current_thread = Thread.current
+              $received_thread = thread
+              cond.signal
+            end
+          end
+          
+          mutex.synchronize do
+            session.fire!(objekt, :roflcopter, Thread.current)
+            cond.wait(mutex)
+          end
+          
+          $current_thread.should_not be_nil
+          $current_thread.should_not equal Thread.current
+          $received_thread.should equal Thread.current
         end
       end
     end
