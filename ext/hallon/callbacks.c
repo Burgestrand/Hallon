@@ -21,8 +21,6 @@ hn_event_t * g_event;
   hn_sem_post(g_event->sem_full);\
 } while(0)
 
-#define G_EVENT_CREATE(rb_h, c_h, data) EVENT_CREATE(rb_h, c_h, data)
-
 /* Non-GVL of sem_wait/post */
 static VALUE hn_sem_wait_nogvl(void *hn_sem) { return (VALUE) hn_sem_wait(hn_sem); }
 static VALUE hn_sem_post_nogvl(void *hn_sem) { return (VALUE) hn_sem_post(hn_sem); }
@@ -74,59 +72,19 @@ VALUE hn_session_fire(void *ary)
 }
 
 /*
-  Session callbacks
+  Callback-definitions.
   
-  @see http://developer.spotify.com/en/libspotify/docs/structsp__session__callbacks.html
+  Each of these files define pairs of ruby- and C handlers, and in the
+  very end they define a structure that contains pointers to each C
+  handler.
+  
+  The C handler is what gets called by libspotify, and will populate the
+  g_event data structure with information about the event. It will also
+  define which ruby handler to use to unmarshal the data.
+  
+  The ruby handler has a tricky name; it is a C function that returns
+  a ruby array containing the data that the C handler was invoked with.
+  It does this by pulling data out of the pointer in the g_event struct.
 */
-static VALUE ruby_process_events(void *x) { return rb_ary_new3(1, STR2SYM("process_events")); }
-static void c_process_events(sp_session *session_ptr)
-{
-  hn_spotify_data_t *data = (hn_spotify_data_t*) sp_session_userdata(session_ptr);
-  G_EVENT_CREATE(data->handler, ruby_process_events, NULL);
-}
-
-static VALUE ruby_logged_in(void *error)
-{
-  return rb_ary_new3(2, STR2SYM("logged_in"), INT2FIX((sp_error) error));
-}
-static void c_logged_in(sp_session *session_ptr, sp_error error)
-{
-  hn_spotify_data_t *data = (hn_spotify_data_t*) sp_session_userdata(session_ptr);
-  G_EVENT_CREATE(data->handler, ruby_logged_in, (void*) error);
-}
-
-static VALUE ruby_logged_out(void *x)
-{
-  return rb_ary_new3(1, STR2SYM("logged_out"));
-}
-static void c_logged_out(sp_session *session_ptr)
-{
-  hn_spotify_data_t *data = (hn_spotify_data_t*) sp_session_userdata(session_ptr);
-  G_EVENT_CREATE(data->handler, ruby_logged_out, NULL);
-}
-
-/* The simple callbacks, with nothing but names and no arguments. */
-
-
-/* Even trickier: string argument! (does stack get popped? do we need to copy the string?) */
-
-
-/* @see session.c */
-const sp_session_callbacks HALLON_SESSION_CALLBACKS = 
-{
- .logged_in              = c_logged_in,
- .logged_out             = c_logged_out,
- .metadata_updated       = NULL,
- .connection_error       = NULL,
- .message_to_user        = NULL,
- .play_token_lost        = NULL,
- .streaming_error        = NULL,
- .log_message            = NULL,
- .userinfo_updated       = NULL,
- .notify_main_thread     = c_process_events,
- .music_delivery         = NULL,
- .end_of_track           = NULL,
- .start_playback         = NULL,
- .stop_playback          = NULL,
- .get_audio_buffer_stats = NULL
-};
+#define EVENT_ARRAY(name, argc, ...) (rb_ary_new3((argc) + 1, STR2SYM((name)) , ##__VA_ARGS__))
+#include "callbacks/session.c"

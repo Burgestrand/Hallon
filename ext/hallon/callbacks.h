@@ -17,6 +17,6 @@
   VALUE hn_session_fire(void *);
   VALUE taskmaster_thread(void *);
 
-  /* Session callback methods */
+  /* Each of these are defined in callbacks/<spotify object>.c */
   extern const sp_session_callbacks HALLON_SESSION_CALLBACKS;
 #endif
