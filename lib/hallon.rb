@@ -7,12 +7,9 @@ require 'hallon/base'
 require 'hallon/session'
 require 'hallon/link'
 
-# YARD have a habit of showing my “coding”-declarations. Since everything is
-# enclosed in a Hallon module, it removes my C-docs and puts the encoding line
-# there instead. This method is to prevent anything like that from happening.
-def hallon_yard_fix
-end
-
+# The Hallon module wraps around all Hallon objects to avoid polluting
+# the global namespace. To start using Hallon, you most likely want to
+# be looking for the documentation on {Hallon::Session}.
 module Hallon
   # A regex that matches all Spotify URIs
   #

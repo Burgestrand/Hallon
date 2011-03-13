@@ -1,11 +1,5 @@
 #include "common.h"
 
-/*
-  The Hallon namespace contains all classes and modules to avoid polluting the
-  global namespace.
-  
-  However, the goodies you are looking for are probably in the {Hallon::Session} class.
-*/
 void Init_hallon_ext(void)
 {
   VALUE mHallon = rb_define_module("Hallon");
