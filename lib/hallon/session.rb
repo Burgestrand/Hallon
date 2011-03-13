@@ -82,7 +82,7 @@ module Hallon
       # The event name is prefixed with “on_” and then dispatched to
       # the handler: `handler.on_#{method}(*args)`
       # 
-      # @param [Queue] queue
+      # @param [Queue] queue used to read incoming events from
       # @return [Thread]
       def spawn_dispatcher(queue)
         Thread.new do
@@ -100,6 +100,16 @@ module Hallon
       end
       
       # Spawns both the Taskmaster (callbacks.c) and the Dispatcher.
+      # 
+      # libspotify calls out to C functions when events occur, but
+      # unfortunately this is done in an internal libspotify thread.
+      # This means we are unable to call ruby functions directly in the
+      # callbacks, and must find a way to bring the events and their
+      # data into Ruby; the taskmaster and the dispatcher is how.
+      # 
+      # - libspotify is an event producer for the taskmaster
+      # - the taskmaster is an event producer for the dispatcher
+      # - the dispatcher executes the correct handler for each event
       # 
       # @return [Array<Thread, Thread>] (taskmaster, dispatcher)
       def spawn_handlers
