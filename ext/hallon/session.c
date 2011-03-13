@@ -132,7 +132,6 @@ static VALUE cSession_status(VALUE self)
   Processes Spotify events using `sp_session_process_events` until the returned
   timeout is > 0.
   
-  @private
   @note Callbacks might be invoked as a side-effect of executing this method.
   @return [Fixnum] milliseconds until {#process_events} should be called again
 */
@@ -240,7 +239,6 @@ void Init_Session(void)
   rb_define_method(cSession, "login", cSession_login, 2);
   rb_define_method(cSession, "fire!", cSession_fire_bang, -1);
   rb_define_method(cSession, "logout", cSession_logout, 0);
-  
   rb_define_private_method(cSession, "spawn_taskmaster", cSession_spawn_taskmaster, 1);
   
   extern hn_event_t * g_event;
