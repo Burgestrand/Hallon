@@ -41,6 +41,16 @@ static void c_metadata_updated(sp_session *session_ptr)
 }
 
 
+static VALUE ruby_play_token_lost(void *x)
+{
+  return EVENT_ARRAY("play_token_lost", 0);
+}
+static void c_play_token_lost(sp_session *session_ptr)
+{
+  EVENT_CREATE(DATA_HANDLER(session_ptr), ruby_play_token_lost, NULL);
+}
+
+
 
 /*
   primitive data-callbacks (nothing but typecasts)
@@ -102,7 +112,7 @@ const sp_session_callbacks HALLON_SESSION_CALLBACKS =
  .metadata_updated       = c_metadata_updated,
  .connection_error       = c_connection_error,
  .message_to_user        = c_message_to_user,
- .play_token_lost        = NULL,
+ .play_token_lost        = c_play_token_lost,
  .streaming_error        = NULL,
  .log_message            = c_log_message,
  .userinfo_updated       = NULL,
