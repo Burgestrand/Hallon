@@ -45,11 +45,6 @@ module Hallon
       status == :disconnected
     end
     
-    # Executed on `notify_main_thread` callback from libspotify.
-    def on_notify_main_thread
-      process_events
-    end
-    
     private
       # Merge the given hash with default options for {#initialize}.
       #
