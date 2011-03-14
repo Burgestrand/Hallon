@@ -24,12 +24,16 @@ describe Hallon::Link do
     
     describe "#to_str" do
       it "should return the Spotify URI as a string" do
-        Hallon::Link.new("spotify:user:burgestrand").to_str.should == "spotify:user:burgestrand"
+        subject.new("spotify:user:burgestrand").to_str.should == "spotify:user:burgestrand"
       end
       
       it "should truncate if given a small maximum length" do
-        Hallon::Link.new("spotify:user:burgestrand").to_str(7).should == "spotify"
+        subject.new("spotify:user:burgestrand").to_str(7).should == "spotify"
       end
+    end
+    
+    describe "#length" do
+      it { subject.new("spotify:user:burgestrand").length.should == "spotify:user:burgestrand".length }
     end
     
     describe "#type" do

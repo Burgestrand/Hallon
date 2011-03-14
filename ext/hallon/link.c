@@ -57,33 +57,41 @@ static VALUE cLink_initialize(VALUE self, VALUE str)
 }
 
 /*
-  @overload to_str(maxlength = 2048)
-    Spotify URI of this Link
+  @overload to_str(length = length)
+    Spotify URI of this Link.
     
-    @param [Fixnum] maxlength maximum string length (in bytes) to return (default: 2048)
-    @return [String] Spotify URI
+    @param [Fixnum] length maximum length of string to return (default: {#length})
+    @return [String]
 */
 static VALUE cLink_to_str(int argc, VALUE *argv, VALUE self)
 {
-  VALUE maxlength = Qnil;
-  int length = 0;
-  int maxsize = 0;
+  VALUE length = Qnil;
+  VALUE uri = Qnil;
+  int buffsize = 0;
   char *buffer = NULL;
-  VALUE str = Qnil;
   
-  rb_scan_args(argc, argv, "01", &maxlength);
-  maxsize = NIL_P(maxlength) ? 2048 : FIX2INT(maxlength);
+  rb_scan_args(argc, argv, "01", &length);
   
-  /* retrieve string length */
-  length = sp_link_as_string(LINKPTR_OF(self), buffer, 0);
-  length = MIN(length, maxsize) + 1; // careful, both arguments evaluated twice
+  if (NIL_P(length))
+  {
+    length = rb_funcall3(self, rb_intern("length"), 0, NULL);
+  }
   
-  /* alloc memory for string and retrieve it */
-  buffer = ALLOC_N(char, length);
-  sp_link_as_string(LINKPTR_OF(self), buffer, length);
-  str = rb_str_new2(buffer);
+  buffer = ALLOC_N(char, buffsize = FIX2INT(length) + 1);
+  sp_link_as_string(LINKPTR_OF(self), buffer, buffsize);
+  uri = rb_str_new2(buffer);
   xfree(buffer);
-  return str;
+  return uri;
+}
+
+/*
+  Length of the underlying Spotify URI.
+  
+  @return [Fixnum]
+*/
+static VALUE cLink_length(VALUE self)
+{
+  return INT2FIX(sp_link_as_string(LINKPTR_OF(self), NULL, 0));
 }
 
 /*
@@ -106,5 +114,6 @@ void Init_Link(void)
   rb_define_alloc_func(cLink, cLink_s_alloc);
   rb_define_method(cLink, "initialize", cLink_initialize, 1);
   rb_define_method(cLink, "to_str", cLink_to_str, -1);
+  rb_define_method(cLink, "length", cLink_length, 0);
   rb_define_method(cLink, "type", cLink_type, 0);
 }
