@@ -61,6 +61,16 @@ static void c_end_of_track(sp_session *session_ptr)
 }
 
 
+static VALUE ruby_userinfo_updated(void *x)
+{
+  return EVENT_ARRAY("userinfo_updated", 0);
+}
+static void c_userinfo_updated(sp_session *session_ptr)
+{
+  EVENT_CREATE(DATA_HANDLER(session_ptr), ruby_userinfo_updated, NULL);
+}
+
+
 
 /*
   primitive data-callbacks (nothing but typecasts)
@@ -138,7 +148,7 @@ const sp_session_callbacks HALLON_SESSION_CALLBACKS =
  .log_message            = c_log_message,
  .end_of_track           = c_end_of_track,
  .streaming_error        = c_streaming_error,
- .userinfo_updated       = NULL,
+ .userinfo_updated       = c_userinfo_updated,
  .start_playback         = NULL,
  .stop_playback          = NULL,
  .get_audio_buffer_stats = NULL
