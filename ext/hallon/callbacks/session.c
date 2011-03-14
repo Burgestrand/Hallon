@@ -81,6 +81,16 @@ static void c_start_playback(sp_session *session_ptr)
 }
 
 
+static VALUE ruby_stop_playback(void *x)
+{
+  return EVENT_ARRAY("stop_playback", 0);
+}
+static void c_stop_playback(sp_session *session_ptr)
+{
+  EVENT_CREATE(DATA_HANDLER(session_ptr), ruby_stop_playback, NULL);
+}
+
+
 
 /*
   primitive data-callbacks (nothing but typecasts)
@@ -160,6 +170,6 @@ const sp_session_callbacks HALLON_SESSION_CALLBACKS =
  .streaming_error        = c_streaming_error,
  .userinfo_updated       = c_userinfo_updated,
  .start_playback         = c_start_playback,
- .stop_playback          = NULL,
+ .stop_playback          = c_stop_playback,
  .get_audio_buffer_stats = NULL
 };
