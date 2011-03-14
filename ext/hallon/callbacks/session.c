@@ -51,6 +51,16 @@ static void c_play_token_lost(sp_session *session_ptr)
 }
 
 
+static VALUE ruby_end_of_track(void *x)
+{
+  return EVENT_ARRAY("end_of_track", 0);
+}
+static void c_end_of_track(sp_session *session_ptr)
+{
+  EVENT_CREATE(DATA_HANDLER(session_ptr), ruby_end_of_track, NULL);
+}
+
+
 
 /*
   primitive data-callbacks (nothing but typecasts)
@@ -116,7 +126,7 @@ const sp_session_callbacks HALLON_SESSION_CALLBACKS =
  .music_delivery         = NULL,
  .play_token_lost        = c_play_token_lost,
  .log_message            = c_log_message,
- .end_of_track           = NULL,
+ .end_of_track           = c_end_of_track,
  .streaming_error        = NULL,
  .userinfo_updated       = NULL,
  .start_playback         = NULL,
