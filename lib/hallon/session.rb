@@ -46,7 +46,7 @@ module Hallon
     end
     
     # Executed on `notify_main_thread` callback from libspotify.
-    def on_process_events
+    def on_notify_main_thread
       process_events
     end
     

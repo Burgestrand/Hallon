@@ -11,13 +11,13 @@
 /*
   no data-callbacks
 */
-static VALUE ruby_process_events(void *x)
+static VALUE ruby_notify_main_thread(void *x)
 {
-  return EVENT_ARRAY("process_events", 0);
+  return EVENT_ARRAY("notify_main_thread", 0);
 }
-static void c_process_events(sp_session *session_ptr)
+static void c_notify_main_thread(sp_session *session_ptr)
 {
-  EVENT_CREATE(DATA_HANDLER(session_ptr), ruby_process_events, NULL);
+  EVENT_CREATE(DATA_HANDLER(session_ptr), ruby_notify_main_thread, NULL);
 }
 
 
@@ -106,7 +106,7 @@ const sp_session_callbacks HALLON_SESSION_CALLBACKS =
  .streaming_error        = NULL,
  .log_message            = c_log_message,
  .userinfo_updated       = NULL,
- .notify_main_thread     = c_process_events,
+ .notify_main_thread     = c_notify_main_thread,
  .music_delivery         = NULL,
  .end_of_track           = NULL,
  .start_playback         = NULL,
