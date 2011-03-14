@@ -85,6 +85,16 @@ static void c_connection_error(sp_session *session_ptr, sp_error error)
 }
 
 
+static VALUE ruby_streaming_error(void *error)
+{
+  return EVENT_ARRAY("streaming_error", 1, INT2FIX((sp_error) error));
+}
+static void c_streaming_error(sp_session *session_ptr, sp_error error)
+{
+  EVENT_CREATE(DATA_HANDLER(session_ptr), ruby_streaming_error, (void*) error);
+}
+
+
 
 /*
   complex data-callbacks (mallocation)
@@ -127,7 +137,7 @@ const sp_session_callbacks HALLON_SESSION_CALLBACKS =
  .play_token_lost        = c_play_token_lost,
  .log_message            = c_log_message,
  .end_of_track           = c_end_of_track,
- .streaming_error        = NULL,
+ .streaming_error        = c_streaming_error,
  .userinfo_updated       = NULL,
  .start_playback         = NULL,
  .stop_playback          = NULL,
