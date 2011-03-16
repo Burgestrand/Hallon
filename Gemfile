@@ -1,5 +1,7 @@
 source :rubygems
 
+gem 'ffi', '~> 1'
+
 group :development do
   gem 'rspec', '~> 2'
   gem 'watchr'
