@@ -1,17 +1,10 @@
 # coding: utf-8
-begin
-  require 'bundler/setup'
-rescue LoadError
-  # Not required, but used if available :)
-end
-
 require 'rake'
 
 require 'jeweler'
-require 'rake/extensiontask'
 require './lib/hallon/version'
 Jeweler::RubygemsDotOrgTasks.new
-Rake::ExtensionTask.new('hallon', Jeweler::Tasks.new do |gem|
+Jeweler::Tasks.new do |gem|
   gem.name     = "hallon"
   gem.summary  = %Q{Delicious Ruby bindings to the official Spotify API}
   gem.homepage = "http://github.com/Burgestrand/Hallon"
@@ -26,9 +19,6 @@ Rake::ExtensionTask.new('hallon', Jeweler::Tasks.new do |gem|
   gem.platform   = Gem::Platform::RUBY
   gem.version    = Hallon::VERSION
   gem.required_ruby_version = '~> 1.9'
-end.gemspec) do |ext|
-  ext.name = 'hallon_ext'
-  ext.config_options << ENV['CONFIGURE_FLAGS'].to_s
 end
 
 require 'yard'
@@ -40,9 +30,6 @@ RSpec::Core::RakeTask.new
 #
 # Custom tasks
 # 
-desc "Do a recompile by combining :clobber and :compile"
-task :recompile => [:clobber, :compile]
-
 desc "Generates YARD documentation and open it."
 task :doc => :yard do
   system 'open doc/index.html'
@@ -58,4 +45,4 @@ task(:work) do
   Bundler.with_clean_env { system 'terminitor start' }
 end
 
-task :default => [:compile, :spec]
+task :default => [:spec]
