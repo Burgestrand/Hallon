@@ -44,7 +44,7 @@ describe Hallon::Session do
     
       describe "#logout" do
         it "should check logged in status" do
-          session.should_receive(:logged_in?).once
+          session.should_receive(:logged_in?).once.and_return(false)
           expect { session.logout }.to_not raise_error
         end
       end
