@@ -32,7 +32,7 @@ describe Hallon::Session do
     end
     
     it "should fail on an invalid application key" do
-      expect { Hallon::Session.instance('invalid') }.to raise_error(Hallon::Error)
+      expect { Hallon::Session.instance('invalid') }.to raise_error(Hallon::Error, /BAD_APPLICATION_KEY/)
     end
     
     it "should fail on a huge user agent (> 255 characters)" do
