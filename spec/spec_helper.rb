@@ -42,7 +42,7 @@ describe Hallon::Session do
     end
     
     it "should fail on a huge user agent (> 255 characters)" do
-      expect { Hallon::Session.send(:new, Hallon::APPKEY, :user_agent => 'a' * 300) }.
+      expect { Hallon::Session.send(:new, Hallon::APPKEY, :user_agent => 'a' * 256) }.
         to raise_error(ArgumentError)
     end
   end
