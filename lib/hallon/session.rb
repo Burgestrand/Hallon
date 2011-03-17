@@ -80,6 +80,14 @@ module Hallon
       end
     end
     
+    # Logs out of Spotify. Does nothing if not logged in.
+    # 
+    # @return [self]
+    def logout
+      Spotify::session_logout(@session) if logged_in?
+      self
+    end
+    
     # Retrieve current connection status.
     # 
     # @return [Symbol]
