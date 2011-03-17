@@ -41,6 +41,10 @@ describe Hallon::Session do
           session.process_events.should be_a Fixnum
         end
       end
+      
+      describe "#status" do
+        it { session.status.should equal :logged_out }
+      end
     
       describe "#logout" do
         it "should check logged in status" do
