@@ -30,17 +30,11 @@ describe Hallon::Session do
     it "should require an application key" do
       expect { Hallon::Session.instance }.to raise_error(ArgumentError)
     end
-  
+    
     it "should fail on an invalid application key" do
       expect { Hallon::Session.instance('invalid') }.to raise_error(Hallon::Error)
     end
-  
-    it "should not spawn event handling threads on failure" do
-      threads = Thread.list.length
-      expect { Hallon::Session.instance('invalid') }.to raise_error(Hallon::Error)
-      threads.should equal Thread.list.length
-    end
-  
+    
     it "should fail on a huge user agent (> 255 characters)" do
       expect { Hallon::Session.send(:new, Hallon::APPKEY, :user_agent => 'a' * 300) }.
         to raise_error(ArgumentError)
