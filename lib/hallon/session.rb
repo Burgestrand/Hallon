@@ -64,7 +64,7 @@ module Hallon
       # You pass a pointer to the session pointer to libspotify >:)
       FFI::MemoryPointer.new(:pointer) do |p|
         Hallon::Error::maybe_raise Spotify::session_create(config, p)
-        @session = Spotify::Pointer.new(p.read_pointer, :session)
+        @pointer = Spotify::Pointer.new(p.read_pointer, :session)
       end
     end
     
@@ -73,16 +73,26 @@ module Hallon
     # @return [Fixnum] minimum time until it should be called again
     def process_events
       FFI::MemoryPointer.new(:int) do |p|
-        Spotify::session_process_events(@session, p)
+        Spotify::session_process_events(@pointer, p)
         return p.read_int
       end
+    end
+    
+    # Log into Spotify using the given credentials.
+    # 
+    # @param [String] username
+    # @param [String] password
+    # @return [self]
+    def login(username, password)
+      Spotify::session_login(@pointer, username, password)
+      self
     end
     
     # Logs out of Spotify. Does nothing if not logged in.
     # 
     # @return [self]
     def logout
-      Spotify::session_logout(@session) if logged_in?
+      Spotify::session_logout(@pointer) if logged_in?
       self
     end
     
@@ -90,7 +100,7 @@ module Hallon
     # 
     # @return [Symbol]
     def status
-      Spotify::session_connection_state(@session)
+      Spotify::session_connection_state(@pointer)
     end
     
     # True if currently logged in.
