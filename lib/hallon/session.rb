@@ -80,6 +80,13 @@ module Hallon
       end
     end
     
+    # Retrieve current connection status.
+    # 
+    # @return [Symbol]
+    def status
+      Spotify::session_connection_state(@session)
+    end
+    
     # True if currently logged in.
     # @see #status
     def logged_in?
