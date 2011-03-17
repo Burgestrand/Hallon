@@ -1,8 +1,14 @@
 describe Hallon::Base do
   subject do
-    Hallon::Base.new do
+    klass = Class.new do
+      include Hallon::Base
+    end
+    
+    obj = klass.new
+    obj.instance_eval do
       on(:fired_event) { :fired! }
     end
+    obj
   end
   
   its(:private_methods) { should include :on }

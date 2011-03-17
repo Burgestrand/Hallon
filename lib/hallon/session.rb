@@ -2,7 +2,8 @@
 require 'singleton'
 
 module Hallon
-  class Session < Base
+  class Session
+    
     # The options Hallon used at {Session#initialize}.
     # 
     # @see Session#merge_defaults
