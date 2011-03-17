@@ -51,8 +51,8 @@ module Hallon
         :cache_playlist_metadata => true
       }.merge(options)
       
-      if @options[:user_agent].length > 256
-        raise ArgumentError, "User-agent must be less than 256 characters long"
+      if @options[:user_agent].bytesize > 255
+        raise ArgumentError, "User-agent must be less than 256 bytes long"
       end
       
       config  = Spotify::SessionConfig.new
