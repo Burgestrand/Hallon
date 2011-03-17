@@ -1,14 +1,21 @@
 describe Hallon::Error do
   subject { described_class }
   
-  it { should <= StandardError }
+  it { should <= RuntimeError }
+  
+  describe "::disambiguate" do
+    it "should not fail on invalid numbers" do
+      subject.disambiguate(10000).should eq [-1, nil]
+    end
+    
+    it "should not fail on invalid symbols" do
+      subject.disambiguate(:fail).should eq [-1, nil]
+    end
+  end
   
   describe "::explain" do
-    it { subject.explain(0).should be_a String }
-    
-    it "should not fail when given an invalid number" do
-      subject.explain(-1).should be_a String
-    end
+    it { subject.explain(0).should eq 'No error' }
+    it { subject.explain(-1).should eq 'invalid error code' }
   end
   
   describe "::maybe_raise" do
