@@ -1,3 +1,4 @@
+# coding: utf-8
 require 'hallon'
 require 'rspec'
 require 'test_notifier/runner/rspec'
@@ -33,6 +34,11 @@ describe Hallon::Session do
     
     it "should fail on an invalid application key" do
       expect { Hallon::Session.instance('invalid') }.to raise_error(Hallon::Error, /BAD_APPLICATION_KEY/)
+    end
+    
+    it "should fail on a small user-agent of multibyte chars (> 255 characters)" do
+      expect { Hallon::Session.send(:new, Hallon::APPKEY, :user_agent => 'ö' * 128) }.
+        to raise_error(ArgumentError)
     end
     
     it "should fail on a huge user agent (> 255 characters)" do
