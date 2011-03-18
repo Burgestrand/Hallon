@@ -58,6 +58,11 @@ module Hallon
     enum :sampletype, [:int16_native_endian]
     enum :bitrate, %w(160k 320k)
     
+    # FFI::Struct for Audio Format.
+    # 
+    # @attr [:sampletype] sample_type
+    # @attr [Fixnum] sample_rate
+    # @attr [Fixnum] channels
     class AudioFormat < FFI::Struct
       layout sample_type: :sampletype,
              sample_rate: :int,
