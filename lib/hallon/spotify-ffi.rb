@@ -162,22 +162,13 @@ module Hallon
       def compress_playlists=(bool)
         self[:compress_playlists] = bool ? 1 : 0
       end
-      def compress_playlists
-        self[:compress_playlists] == 1
-      end
       
       def load_playlists=(bool)
         self[:initially_unload_playlists] = ! bool ? 1 : 0
       end
-      def load_playlists
-        self[:initially_unload_playlists] == 0
-      end
       
       def cache_playlist_metadata=(bool)
         self[:dont_save_metadata_for_playlists] = ! bool ? 1 : 0
-      end
-      def cache_playlist_metadata
-        self[:dont_save_metadata_for_playlists] == 0
       end
     end
     
