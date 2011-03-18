@@ -69,6 +69,10 @@ module Hallon
              channels: :int
     end
     
+    # FFI::Struct for Audio Buffer Stats.
+    # 
+    # @attr [Fixnum] samples
+    # @attr [Fixnum] stutter
     class AudioBufferStats < FFI::Struct
       layout samples: :int,
              stutter: :int
