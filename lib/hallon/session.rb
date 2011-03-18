@@ -2,6 +2,11 @@
 require 'singleton'
 
 module Hallon
+  # The Session is fundamental for all communication with Spotify.
+  # Pretty much all API calls require you to have established a session
+  # with Spotify before using them.
+  # 
+  # @see https://developer.spotify.com/en/libspotify/docs/group__session.html
   class Session
     # The options Hallon used at {Session#initialize}.
     # 
