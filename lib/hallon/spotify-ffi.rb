@@ -440,6 +440,9 @@ module Hallon
     end
     
     # FFI::Struct for Subscribers of a {Hallon::Playlist}.
+    # 
+    # @attr [Fixnum] count
+    # @attr [Pointer<String>] subscribers
     class Subscribers < FFI::Struct
       layout count: :uint,
              subscribers: :pointer # array of count strings
