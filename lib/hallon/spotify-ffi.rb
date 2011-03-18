@@ -159,6 +159,17 @@ module Hallon
       end
     end
     
+    # FFI::Struct for {Hallon::Session} configuration.
+    # 
+    # @attr [Fixnum] api_version
+    # @attr [Pointer] cache_location
+    # @attr [Pointer] settings_location
+    # @attr [size_t] application_key_size
+    # @attr [Pointer] user_agent
+    # @attr [Pointer] callbacks
+    # @attr [Pointer] userdata
+    # @attr [Fixnum] dont_save_metadata_for_playlists
+    # @attr [Fixnum] initially_unload_playlists
     class SessionConfig < FFI::Struct
       layout api_version: :int,
              cache_location: :pointer,
