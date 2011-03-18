@@ -1,4 +1,7 @@
 module Hallon
+  # Thrown by Hallon on libspotify errors.
+  # 
+  # @see http://developer.spotify.com/en/libspotify/docs/group__error.html
   class Error < RuntimeError
     class << self
       # Given a number or a symbol, return the pair [Fixnum, Symbol] for
