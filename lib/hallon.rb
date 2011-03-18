@@ -11,6 +11,7 @@ require 'hallon/link'
 # the global namespace. To start using Hallon, you most likely want to
 # be looking for the documentation on {Hallon::Session}.
 module Hallon
+  # @see Spotify::API_VERSION
   API_VERSION = Spotify::API_VERSION
   
   # A regex that matches all Spotify URIs
