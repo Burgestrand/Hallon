@@ -1,10 +1,6 @@
-Note about master branch
-=======================
-I’ve decided to restructure Hallon, but I’ll do it as a way of rebuilding it. This is the first major rewrite since release, and a much needed one. It’ll be easier for both me and external contributors to improve on Hallon, and that will hopefully pave the way for a 1.0.0 release.
-
-This branch will be the main development branch from now and on. It is to be considered *unstable* and *experimental*. I will do shit in this branch that will make your bones shiver.
-
-The previous `master` branch can be found in the [obsolete](https://github.com/Burgestrand/Hallon/tree/obsolete); it is *old and obsolete* and should not be used unless you absolutely need the API **NOW**.
+Note about FFI branch
+=====================
+I decided to have a go using [Ruby FFI](https://github.com/ffi/ffi), and see how that approach performs. As of current writing, this branch supports all of the API in the master branch; and that took less than two days to implement from nothing.
 
 ---
 
@@ -21,35 +17,23 @@ Hallon would not have been possible if not for these people:
 
 This is what the API looks like (fully working example, I aim to remove the mutex & condition variable ASAP):
 
-    $: << File.expand_path('../../lib', __FILE__)
     require 'hallon'
-    require 'thread'
     require_relative 'support/config'
-
-    mutex  = Mutex.new
-    signal = ConditionVariable.new
 
     session = Hallon::Session.instance(IO.read(ENV['HALLON_APPKEY'])) do
       on(:logged_in) do |error|
-        mutex.synchronize { signal.signal }
+        puts "Logged in! Time to bail."
       end
     end
 
-    mutex.synchronize do
-      session.login ENV['HALLON_USERNAME'], ENV['HALLON_PASSWORD']
-      signal.wait(mutex)
+    session.login ENV['HALLON_USERNAME'], ENV['HALLON_PASSWORD']
+    
+    until session.logged_in?
+      session.process_events
+      sleep 0.1
     end
-
+    
     puts "Logged in: #{session.logged_in?}" # => Logged in: true
-
-
-I want to try it!
------------------
-How exciting! I've written some tutorials on how to do this in the wiki. Follow the steps (in this order).
-
-1. [How to install libspotify](https://github.com/Burgestrand/Hallon/wiki/How-to-install-libspotify)
-2. [How to install Hallon](https://github.com/Burgestrand/Hallon/wiki/How-to-hack-on-Hallon)
-3. [How to run the tests](https://github.com/Burgestrand/Hallon/wiki/How-to-run-the-tests)
 
 This is awesome! I want to help!
 --------------------------------
@@ -72,13 +56,10 @@ What’s the catch?
 There are several!
 
 ### Hallon is unstable
-This is *the only* project I’ve ever used C for. With that said, Hallon should be considered extremely experimental.
+The API is unstable, my code is likely unstable. Everything should be considered unstable!
 
 ### Hallon only supports one session per process
 You can only keep one session with Spotify alive at a time in the same process, due to a limitation of `libspotify`.
-
-### Hallon only supports Ruby 1.9 on YARV
-If it happens to work on any other platform or version, consider it black magic.
 
 ### Hallon is licensed under GNU AGPL
 Hallon is licensed under the [GNU AGPL](http://www.gnu.org/licenses/agpl-3.0.html), which is a very special license:
