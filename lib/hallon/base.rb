@@ -1,4 +1,13 @@
 module Hallon
+  # An internal module which allows easy definition of callback handlers
+  # using {#on}.
+  # 
+  # @example
+  #   on(:callback) do
+  #     # handle it
+  #   end
+  # 
+  # @private
   module Base
     private
       # Defines a handler for the given event.
