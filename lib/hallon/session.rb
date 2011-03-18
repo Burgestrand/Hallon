@@ -39,7 +39,7 @@ module Hallon
     # @option options [Bool]   :load_playlists (true) load playlists into RAM on startup
     # @option options [Bool]   :compress_playlists (true) compress local copies of playlists
     # @option options [Bool]   :cache_playlist_metadata (true) cache metadata for playlists locally
-    # @yield allows you to define handlers for events (see {#on})
+    # @yield allows you to define handlers for events (see {Hallon::Base#on})
     # @raise [ArgumentError] if options[:user_agent] is more than 256 characters long
     # @raise [Hallon::Error] if `sp_session_create` fails
     # @see http://developer.spotify.com/en/libspotify/docs/structsp__session__config.html
