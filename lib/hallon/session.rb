@@ -16,6 +16,9 @@ module Hallon
     # libspotify only allows one session per process.
     include Singleton
     
+    # Session allows you to define your own callbacks.
+    include Hallon::Base
+    
     # Allows you to create a Spotify session. Subsequent calls to this method
     # will return the previous instance, ignoring any passed arguments.
     #
@@ -55,11 +58,14 @@ module Hallon
         raise ArgumentError, "User-agent must be less than 256 bytes long"
       end
       
+      # Set configuration, as well as callbacks
       config  = Spotify::SessionConfig.new
-      config[:api_version]     = Spotify::API_VERSION
-      config.application_key   = @appkey
+      config[:api_version]   = Spotify::API_VERSION
+      config.application_key = @appkey
       @options.each { |(key, value)| config.send(:"#{key}=", value) }
-      config[:callbacks]     = nil
+      config[:callbacks]     = Spotify::SessionCallbacks.new(self, @sp_callbacks = {})
+      
+      instance_eval(&block) if block_given?
       
       # You pass a pointer to the session pointer to libspotify >:)
       FFI::MemoryPointer.new(:pointer) do |p|
