@@ -66,16 +66,6 @@ module Hallon
              stutter: :int
     end
     
-    class Subscribers < FFI::Struct
-      layout count: :uint,
-             subscribers: :pointer # array of count strings
-    end
-    
-    #
-    # Playlists
-    # 
-    enum :playlist_type, [:playlist, :start_folder, :end_folder, :placeholder]
-    
     #
     # Session
     # 
@@ -339,21 +329,7 @@ module Hallon
     #
     # Playlists
     # 
-    class PlaylistCallbacks < FFI::Struct
-      layout tracks_added: callback([ :pointer, :pointer, :int, :int, :pointer ], :void),
-             tracks_removed: callback([ :pointer, :pointer, :int, :pointer ], :void),
-             tracks_moved: callback([ :pointer, :pointer, :int, :int, :pointer ], :void),
-             playlist_renamed: callback([ :pointer, :pointer ], :void),
-             playlist_state_changed: callback([ :pointer, :pointer ], :void),
-             playlist_update_in_progress: callback([ :pointer, :bool, :pointer ], :void),
-             playlist_metadata_updated: callback([ :pointer, :pointer ], :void),
-             track_created_changed: callback([ :pointer, :int, :pointer, :int, :pointer ], :void),
-             track_seen_changed: callback([ :pointer, :int, :bool, :pointer ], :void),
-             description_changed: callback([ :pointer, :string, :pointer ], :void),
-             image_changed: callback([ :pointer, :pointer, :pointer ], :void),
-             track_message_changed: callback([ :pointer, :int, :string, :pointer ], :void),
-             subscribers_changed: callback([ :pointer, :pointer ], :void)
-    end
+    enum :playlist_type, [:playlist, :start_folder, :end_folder, :placeholder]
     
     attach_function :playlist_is_loaded, :sp_playlist_is_loaded, [ :pointer ], :bool
     attach_function :playlist_add_callbacks, :sp_playlist_add_callbacks, [ :pointer, :pointer, :pointer ], :void
@@ -387,15 +363,32 @@ module Hallon
     attach_function :playlist_add_ref, :sp_playlist_add_ref, [ :pointer ], :void
     attach_function :playlist_release, :sp_playlist_release, [ :pointer ], :void
     
+    # FFI::Struct for {Hallon::Playlist} callbacks.
+    class PlaylistCallbacks < FFI::Struct
+      layout tracks_added: callback([ :pointer, :pointer, :int, :int, :pointer ], :void),
+             tracks_removed: callback([ :pointer, :pointer, :int, :pointer ], :void),
+             tracks_moved: callback([ :pointer, :pointer, :int, :int, :pointer ], :void),
+             playlist_renamed: callback([ :pointer, :pointer ], :void),
+             playlist_state_changed: callback([ :pointer, :pointer ], :void),
+             playlist_update_in_progress: callback([ :pointer, :bool, :pointer ], :void),
+             playlist_metadata_updated: callback([ :pointer, :pointer ], :void),
+             track_created_changed: callback([ :pointer, :int, :pointer, :int, :pointer ], :void),
+             track_seen_changed: callback([ :pointer, :int, :bool, :pointer ], :void),
+             description_changed: callback([ :pointer, :string, :pointer ], :void),
+             image_changed: callback([ :pointer, :pointer, :pointer ], :void),
+             track_message_changed: callback([ :pointer, :int, :string, :pointer ], :void),
+             subscribers_changed: callback([ :pointer, :pointer ], :void)
+    end
+    
+    # FFI::Struct for Subscribers of a {Hallon::Playlist}.
+    class Subscribers < FFI::Struct
+      layout count: :uint,
+             subscribers: :pointer # array of count strings
+    end
+    
     #
     # Playlist Container
     # 
-    class PlaylistcontainerCallbacks < FFI::Struct
-      layout playlist_added: callback([ :pointer, :pointer, :int, :pointer ], :void),
-             playlist_removed: callback([ :pointer, :pointer, :int, :pointer ], :void),
-             playlist_moved: callback([ :pointer, :pointer, :int, :int, :pointer ], :void),
-             container_loaded: callback([ :pointer, :pointer ], :void)
-    end
     
     attach_function :playlistcontainer_add_callbacks, :sp_playlistcontainer_add_callbacks, [ :pointer, :pointer, :pointer ], :void
     attach_function :playlistcontainer_remove_callbacks, :sp_playlistcontainer_remove_callbacks, [ :pointer, :pointer, :pointer ], :void
@@ -412,6 +405,14 @@ module Hallon
     attach_function :playlistcontainer_owner, :sp_playlistcontainer_owner, [ :pointer ], :pointer
     attach_function :playlistcontainer_add_ref, :sp_playlistcontainer_add_ref, [ :pointer ], :void
     attach_function :playlistcontainer_release, :sp_playlistcontainer_release, [ :pointer ], :void
+    
+    # FFI::Struct for the Spotify {Hallon::PlaylistContainer}.
+    class PlaylistContainerCallbacks < FFI::Struct
+      layout playlist_added: callback([ :pointer, :pointer, :int, :pointer ], :void),
+             playlist_removed: callback([ :pointer, :pointer, :int, :pointer ], :void),
+             playlist_moved: callback([ :pointer, :pointer, :int, :int, :pointer ], :void),
+             container_loaded: callback([ :pointer, :pointer ], :void)
+    end
     
     #
     # User handling
