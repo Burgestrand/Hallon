@@ -199,14 +199,28 @@ module Hallon
         self[:application_key_size] = appkey.bytesize
       end
       
+      # Allows setting compress_playlists using a boolean.
+      # 
+      # @param [Boolean]
+      # @return [Boolean]
       def compress_playlists=(bool)
         self[:compress_playlists] = bool ? 1 : 0
       end
       
+      # Allows setting initially_unload_playlists using a boolean.
+      # 
+      # @note Set to the inverse of the requested value.
+      # @param [Boolean]
+      # @return [Boolean]
       def load_playlists=(bool)
         self[:initially_unload_playlists] = ! bool ? 1 : 0
       end
       
+      # Allows setting dont_save_metadata_for_playlists using a boolean.
+      # 
+      # @note Set to the inverse of the requested value.
+      # @param [Boolean]
+      # @return [Boolean]
       def cache_playlist_metadata=(bool)
         self[:dont_save_metadata_for_playlists] = ! bool ? 1 : 0
       end
