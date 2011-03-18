@@ -3,7 +3,7 @@ module Hallon
     private
       # Defines a handler for the given event.
       # 
-      # @param [#to_sym] event name of event to handle
+      # @param [#to_s] event name of event to handle
       # @yield (*args) event handler block
       # @see #initialize
       def on(event, &block)
