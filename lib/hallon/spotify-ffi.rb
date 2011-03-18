@@ -120,6 +120,24 @@ module Hallon
              start_playback: callback([ :pointer ], :void),
              stop_playback: callback([ :pointer ], :void),
              get_audio_buffer_stats: callback([ :pointer, :pointer ], :void)
+      
+      # Assigns the callbacks to call the given target; the callback
+      # procs are stored in the `storage` parameter. Make sure the
+      # storage does not get garbage collected as long as these callbacks
+      # are needed!
+      # 
+      # @param [Object] target
+      # @param [#&#91;&#93;&#61;] storage
+      # @return [self]     
+      def initialize(target, storage)
+        members.each do |member|
+          callback = :"on_#{member}"
+          self[member] = storage[member] = lambda do |ptr, *args|
+            target.public_send(callback, *args) if target.respond_to? callback
+          end
+        end
+        self
+      end
     end
     
     class SessionConfig < FFI::Struct
@@ -140,17 +158,6 @@ module Hallon
         define_method(:"#{method}") { self[field].get_string(0) }
         define_method(:"#{method}=") do |string|
           self[field] = FFI::MemoryPointer.from_string(string)
-        end
-      end
-      
-      # Set up the target to handle *all* callbacks.
-      def callbacks=(target)
-        self[:callbacks] = callbacks = SessionCallbacks.new
-        callbacks.members.each do |field|
-          method = :"on_#{field}"
-          callbacks[field] = lambda do |*args|
-            target.public_send(method, *args) if target.respond_to?(method)
-          end
         end
       end
       

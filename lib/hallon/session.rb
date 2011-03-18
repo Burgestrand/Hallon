@@ -59,7 +59,7 @@ module Hallon
       config[:api_version]     = Spotify::API_VERSION
       config.application_key   = @appkey
       @options.each { |(key, value)| config.send(:"#{key}=", value) }
-      config.callbacks         = nil
+      config[:callbacks]     = nil
       
       # You pass a pointer to the session pointer to libspotify >:)
       FFI::MemoryPointer.new(:pointer) do |p|
