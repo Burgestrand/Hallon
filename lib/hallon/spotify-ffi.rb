@@ -409,6 +409,20 @@ module Hallon
     attach_function :playlist_release, :sp_playlist_release, [ :pointer ], :void
     
     # FFI::Struct for {Hallon::Playlist} callbacks.
+    # 
+    # @attr [callback(:pointer, :pointer, :int, :int, :pointer):void] tracks_added
+    # @attr [callback(:pointer, :pointer, :int, :pointer):void] tracks_removed
+    # @attr [callback(:pointer, :pointer, :int, :int, :pointer):void] tracks_moved
+    # @attr [callback(:pointer, :pointer):void] playlist_renamed
+    # @attr [callback(:pointer, :pointer):void] playlist_state_changed
+    # @attr [callback(:pointer, :bool, :pointer):void] playlist_update_in_progress
+    # @attr [callback(:pointer, :pointer):void] playlist_metadata_updated
+    # @attr [callback(:pointer, :int, :pointer, :int, :pointer):void] track_created_changed
+    # @attr [callback(:pointer, :int, :bool, :pointer):void] track_seen_changed
+    # @attr [callback(:pointer, :string, :pointer):void] description_changed
+    # @attr [callback(:pointer, :pointer, :pointer):void] image_changed
+    # @attr [callback(:pointer, :int, :string, :pointer):void] track_message_changed
+    # @attr [callback(:pointer, :pointer):void] subscribers_changed
     class PlaylistCallbacks < FFI::Struct
       layout tracks_added: callback([ :pointer, :pointer, :int, :int, :pointer ], :void),
              tracks_removed: callback([ :pointer, :pointer, :int, :pointer ], :void),
