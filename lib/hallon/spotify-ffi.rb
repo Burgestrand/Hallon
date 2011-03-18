@@ -30,10 +30,6 @@ module Hallon
       end
     end
     
-    def self.dummy_release(ptr)
-      puts "Dummy release: #{ptr}!"
-    end
-    
     # libspotify API version this file was created for.
     API_VERSION = 7
     
