@@ -4,6 +4,9 @@ require 'ffi'
 module Hallon
   # FFI wrapper around libspotify.
   # 
+  # See official documentation for more detailed documentation.
+  # 
+  # @see http://developer.spotify.com/en/libspotify/docs/
   # @private
   module Spotify
     extend FFI::Library
