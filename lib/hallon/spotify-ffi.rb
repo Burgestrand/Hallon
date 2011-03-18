@@ -469,6 +469,11 @@ module Hallon
     attach_function :playlistcontainer_release, :sp_playlistcontainer_release, [ :pointer ], :void
     
     # FFI::Struct for the Spotify {Hallon::PlaylistContainer}.
+    # 
+    # @attr [callback(:pointer, :pointer, :int, :pointer):void] playlist_added
+    # @attr [callback(:pointer, :pointer, :int, :pointer):void] playlist_removed
+    # @attr [callback(:pointer, :pointer, :int, :int, :pointer):void] playlist_moved
+    # @attr [callback(:pointer, :pointer):void] container_loaded
     class PlaylistContainerCallbacks < FFI::Struct
       layout playlist_added: callback([ :pointer, :pointer, :int, :pointer ], :void),
              playlist_removed: callback([ :pointer, :pointer, :int, :pointer ], :void),
