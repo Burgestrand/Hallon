@@ -4,7 +4,7 @@ describe Hallon::Link do
 
     describe "::new" do
       it "should raise an ArgumentError on an invalid link" do
-        expect { subject.new("") }.to raise_error(ArgumentError)
+        expect { subject.new("omgwtfbbq") }.to raise_error(ArgumentError, /omgwtfbbq/)
       end
 
       it "should not raise error on valid links" do
