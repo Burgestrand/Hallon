@@ -148,9 +148,9 @@ module Hallon
              get_audio_buffer_stats: callback([ :pointer, :pointer ], :void)
       
       # Assigns the callbacks to call the given target; the callback
-      # procs are stored in the `storage` parameter. Make sure the
+      # procs are stored in the `storage` parameter. **Make sure the
       # storage does not get garbage collected as long as these callbacks
-      # are needed!
+      # are needed!**
       # 
       # @param [Object] target
       # @param [#&#91;&#93;&#61;] storage
