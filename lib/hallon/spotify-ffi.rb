@@ -16,20 +16,27 @@ module Hallon
     # objects. It will automatically release the inner pointer with the
     # proper function, based on the given type to #initialize.
     class Pointer < FFI::AutoPointer
-      # Initialize a Spotify pointer of the given type.
+      # Initialize the Spotify::Pointer
       # 
       # @param [FFI::Pointer] ptr
       # @param [Symbol] type session, link, etc
+      # @return [FFI::AutoPointer]
       def initialize(ptr, type)
-        @type = type
-        super ptr, method(:release)
+        super ptr, releaser_for(@type = type)
       end
       
-      # Relase the given pointer using @type, but only if it’s not null.
+      # Create a proc that will accept a pointer of a given type and
+      # release it with the correct function if it’s not null.
       # 
-      # @param [FFI::Pointer]
-      def release(ptr)
-        Spotify::send(:"#{@type}_release", ptr) unless ptr.null?
+      # @param [Symbol]
+      # @return [Proc]
+      def releaser_for(type)
+        lambda do |ptr|
+          unless ptr.null?
+            $stdout.puts "Spotify::#{type}_release(#{ptr})" if Hallon::debug
+            Spotify::send(:"#{type}_release", ptr)
+          end
+        end
       end
     end
     
