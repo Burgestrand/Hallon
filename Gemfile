@@ -6,6 +6,8 @@ group :development do
   gem 'rspec', '~> 2'
   gem 'watchr'
   gem 'test_notifier'
+  
+  gem 'cover_me', '~> 1.0.0.rc'
 
   gem 'yard', '~> 0.6.4'
   gem 'rdiscount'
