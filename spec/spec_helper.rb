@@ -3,6 +3,10 @@ require 'hallon'
 require 'rspec'
 require 'test_notifier/runner/rspec'
 
+RSpec.configure do |config|
+  config.alias_it_should_behave_like_to :has_requirement, 'has requirement:'
+end
+
 # Requires supporting files in ./support/
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| require f}
 

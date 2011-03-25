@@ -2,7 +2,7 @@ describe Hallon::Session do
   # Hallon::Session#instance requires that a session have NOT been established,
   # thus its’ tests are declared in the spec_helper.rb
   context "once instantiated" do
-    it_behaves_like "spotify objects" do
+    has_requirement "pre-initialized Session" do
       describe "appkey" do
         it "should == Hallon::APPKEY" do session.appkey.should == Hallon::APPKEY end
       end

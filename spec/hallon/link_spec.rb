@@ -1,5 +1,5 @@
 describe Hallon::Link do
-  it_behaves_like "spotify objects" do
+  has_requirement "pre-initialized Session" do
     subject { described_class }
 
     describe "::new" do
