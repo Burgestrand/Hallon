@@ -13,4 +13,8 @@ describe Hallon do
       it { should match uri }
     end
   end
+  
+  describe ".debug" do
+    specify { Hallon::debug.should == !!ENV['DEBUG'] }
+  end
 end
