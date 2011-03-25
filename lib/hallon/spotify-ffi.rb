@@ -10,7 +10,7 @@ module Hallon
   # @private
   module Spotify
     extend FFI::Library
-    ffi_lib [:libspotify]
+    ffi_lib ['libspotify']
     
     # The Pointer is a kind of AutoPointer specially tailored for Spotify
     # objects. It will automatically release the inner pointer with the
