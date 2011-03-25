@@ -43,5 +43,10 @@ describe Hallon::Link do
         end
       end
     end
+    
+    describe "#to_s" do
+      subject { Hallon::Link.new("spotify:user:burgestrand").to_s }
+      it("should include the Spotify URI") { should include subject.to_str }
+    end
   end
 end
