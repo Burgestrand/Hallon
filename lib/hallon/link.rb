@@ -23,17 +23,6 @@ module Hallon
       raise ArgumentError, "Could not parse Spotify URI" if @pointer.null?
     end
     
-    # Get the Spotify URI this Link represents.
-    # 
-    # @param [Fixnum] length maximum length 
-    # @return [String]
-    def to_str(length = length)
-      FFI::Buffer.alloc_out(length + 1) do |b|
-        Spotify::link_as_string(@pointer, b, b.size)
-        return b.get_string(0)
-      end
-    end
-    
     # Link type as a symbol.
     # 
     # @return [Symbol]
@@ -46,6 +35,18 @@ module Hallon
     # @return [Fixnum]
     def length
       Spotify::link_as_string(@pointer, nil, 0)
+    end
+    
+    # Get the Spotify URI this Link represents.
+    # 
+    # @see #length
+    # @param [Fixnum] length truncate to this size
+    # @return [String]
+    def to_str(length = length)
+      FFI::Buffer.alloc_out(length + 1) do |b|
+        Spotify::link_as_string(@pointer, b, b.size)
+        return b.get_string(0)
+      end
     end
     
     # String representation of the given Link.
