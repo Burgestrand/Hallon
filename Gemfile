@@ -7,7 +7,7 @@ group :development do
   gem 'watchr'
   gem 'test_notifier'
   
-  gem 'cover_me', '~> 1.0.0.rc'
+  gem 'simplecov', '~> 0.4.0'
 
   gem 'yard', '~> 0.6.4'
   gem 'rdiscount'

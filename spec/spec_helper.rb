@@ -1,5 +1,6 @@
 # coding: utf-8
-require 'cover_me'
+require 'simplecov'
+SimpleCov.start { add_filter 'spec/' }
 require 'rspec'
 require 'test_notifier/runner/rspec'
 require 'hallon'
@@ -7,13 +8,6 @@ require 'hallon'
 RSpec.configure do |config|
   config.alias_it_should_behave_like_to :has_requirement, 'has requirement:'
 end
-
-CoverMe.config do |c|
-  c.project.root = File.expand_path('lib/../')
-  c.file_pattern = %r"#{CoverMe.config.project.root}/lib"i
-end
-
-at_exit { CoverMe.complete! }
 
 # Requires supporting files in ./support/
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| require f}
