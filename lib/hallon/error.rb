@@ -4,11 +4,11 @@ module Hallon
   # @see http://developer.spotify.com/en/libspotify/docs/group__error.html
   class Error < RuntimeError
     class << self
-      # Given a number or a symbol, return the pair [Fixnum, Symbol] for
-      # which this error represents.
+      # Given a number or a symbol, find both the symbol and the error
+      # number it represents.
       # 
       # @param [Symbol, Fixnum]
-      # @return a pair (Fixnum, Symbol)
+      # @return [[Fixnum, Symbol]]
       def disambiguate(error)
         @enum ||= Spotify::enum_type(:error)
         
@@ -33,8 +33,7 @@ module Hallon
         Spotify::error_message disambiguate(error)[0]
       end
 
-      # Raise a {Hallon::Error} error if, and only if, the given errno is not 0.
-      # If so, the raised exception will correspond to the error number.
+      # Raise an {Error} with the given errno, unless it is `0` or `:ok`.
       # 
       # @param [Fixnum, Symbol] error
       # @return [nil]
