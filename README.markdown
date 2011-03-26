@@ -9,6 +9,8 @@ I switched to FFI from C for a few reasons:
 - *way* faster to develop in (less code, less repetition, boo for C)
 - portability
 
+All in all, this means **that this branch (C) is no longer supported!**
+
 ---
 
 What is Hallon?
