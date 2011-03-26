@@ -1,9 +1,3 @@
-Note about FFI branch
-=====================
-I decided to have a go using [Ruby FFI](https://github.com/ffi/ffi), and see how that approach performs. As of current writing, this branch supports all of the API in the master branch; and that took less than two days to implement from nothing.
-
----
-
 What is Hallon?
 ===============
 Hallon provides [Ruby][] bindings for [libspotify][], the official Spotify C API. This allows you to use an awesome language to interact with an awesome service.
