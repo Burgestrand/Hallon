@@ -1,10 +1,13 @@
-Note about master branch
-=======================
-I’ve decided to restructure Hallon, but I’ll do it as a way of rebuilding it. This is the first major rewrite since release, and a much needed one. It’ll be easier for both me and external contributors to improve on Hallon, and that will hopefully pave the way for a 1.0.0 release.
+Note about C branch
+===================
+This branch is what I originally considered the main development branch of Hallon starting early december 2010. As of now, this currently is not so, and the main development branch of Hallon is the master branch, known (by me) as the `FFI` branch.
 
-This branch will be the main development branch from now and on. It is to be considered *unstable* and *experimental*. I will do shit in this branch that will make your bones shiver.
+I switched to FFI from C for a few reasons:
 
-The previous `master` branch can be found in the [obsolete](https://github.com/Burgestrand/Hallon/tree/obsolete); it is *old and obsolete* and should not be used unless you absolutely need the API **NOW**.
+- stability (ruby FFI is well tested and more stable than my C code)
+- easier to contribute (you only need to know ruby!)
+- *way* faster to develop in (less code, less repetition, boo for C)
+- portability
 
 ---
 
