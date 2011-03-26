@@ -9,14 +9,14 @@ Hallon would not have been possible if not for these people:
 - [Linus Oleander](https://github.com/oleander), giving me a reason to look for ways of doing what Hallon does
 - [Jesper Särnesjö][], creator of [Greenstripes][] which spawned the idea of Hallon
 
-This is what the API looks like (fully working example, I aim to remove the mutex & condition variable ASAP):
+This is what the API looks like:
 
     require 'hallon'
     require_relative 'support/config'
 
-    session = Hallon::Session.instance(IO.read(ENV['HALLON_APPKEY'])) do
+    session = Hallon::Session.instance IO.read(ENV['HALLON_APPKEY']) do
       on(:logged_in) do |error|
-        puts "Logged in! Time to bail."
+        puts "We logged in! YAY!"
       end
     end
 
