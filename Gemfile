@@ -4,8 +4,9 @@ gem 'ffi', '~> 1'
 
 group :development do
   gem 'rspec', '~> 2'
-  gem 'watchr'
-  gem 'test_notifier'
+  gem 'autotest-standalone'
+  gem 'autotest-fsevent'
+  gem 'autotest-growl'
   
   gem 'simplecov', '~> 0.4.0'
 
