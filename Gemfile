@@ -8,7 +8,7 @@ group :development do
   gem 'autotest-fsevent'
   gem 'autotest-growl'
   
-  gem 'simplecov', '~> 0.4.0'
+  gem 'cover_me'
 
   gem 'yard', '~> 0.6.4'
   gem 'rdiscount'

@@ -1,9 +1,11 @@
 # coding: utf-8
-require 'simplecov'
-SimpleCov.start { add_filter 'spec/' }
-require 'rspec'
-require 'test_notifier/runner/rspec'
+require 'cover_me'
 require 'hallon'
+
+at_exit do
+  CoverMe::Results.merge_results!(Coverage.result)
+  CoverMe.complete!
+end
 
 RSpec.configure do |config|
   config.alias_it_should_behave_like_to :has_requirement, 'has requirement:'
