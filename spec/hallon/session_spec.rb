@@ -1,3 +1,5 @@
+require 'monitor'
+
 describe Hallon::Session do
   # Hallon::Session#instance requires that a session have NOT been established,
   # thus its’ tests are declared in the spec_helper.rb
@@ -32,6 +34,33 @@ describe Hallon::Session do
         it "should check logged in status" do
           session.should_receive(:logged_in?).once.and_return(false)
           expect { session.logout }.to_not raise_error
+        end
+      end
+      
+      describe "#login" do
+        it "should log in to Spotify" do
+          mutex  = Monitor.new
+          notify = mutex.new_cond
+          
+          mutex.synchronize do
+            session.on(:notify_main_thread) do
+              mutex.synchronize { notify.signal }
+            end
+            
+            session.on(:logged_in) do |error|
+              mutex.synchronize { notify.signal }
+            end
+            
+            session.login ENV['HALLON_USERNAME'], ENV['HALLON_PASSWORD']
+            session.process_events
+            
+            notify.wait_until do
+              session.process_events
+              session.logged_in?
+            end
+          end
+          
+          session.logged_in?.should be true
         end
       end
     end
