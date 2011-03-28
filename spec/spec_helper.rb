@@ -5,8 +5,13 @@ require 'hallon'
 CoverMe.config { |c| c.at_exit = proc {} }
 
 at_exit do
+  # workaround for CoverMe not generating coverage report
   CoverMe::Results.merge_results!(Coverage.result)
   CoverMe.complete!
+  
+  # workaround for warning at end of specs, this is evil!
+  CoverMe::Results.define_singleton_method(:merge_results!) { |*args| }
+  Coverage.define_singleton_method(:result) { }
 end
 
 RSpec.configure do |config|
