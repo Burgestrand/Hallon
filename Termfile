@@ -3,5 +3,5 @@
 # This is a Termfile, and is used by a gem named “terminitor” that
 # allows me to set up the work environment for Hallon much easier.
 
-run 'rake watchr'
+run 'bundle exec autotest'
 tab '$EDITOR .'
