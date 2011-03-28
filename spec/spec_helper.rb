@@ -2,6 +2,8 @@
 require 'cover_me'
 require 'hallon'
 
+CoverMe.config { |c| c.at_exit = proc {} }
+
 at_exit do
   CoverMe::Results.merge_results!(Coverage.result)
   CoverMe.complete!
