@@ -41,6 +41,7 @@ describe Hallon::Session do
         it "should log in to Spotify" do
           mutex  = Monitor.new
           notify = mutex.new_cond
+          login_error = nil
           
           mutex.synchronize do
             session.on(:notify_main_thread) do
@@ -48,7 +49,7 @@ describe Hallon::Session do
             end
             
             session.on(:logged_in) do |error|
-              mutex.synchronize { notify.signal }
+              login_error = error
             end
             
             session.login ENV['HALLON_USERNAME'], ENV['HALLON_PASSWORD']
@@ -61,6 +62,7 @@ describe Hallon::Session do
           end
           
           session.logged_in?.should be true
+          login_error.should be :ok
         end
       end
     end
