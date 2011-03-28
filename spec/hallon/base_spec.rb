@@ -11,7 +11,7 @@ describe Hallon::Base do
     obj
   end
   
-  its(:private_methods) { should include :on }
+  its(:public_methods) { should include :on }
 
   describe "#on" do
     it { should respond_to :on_fired_event }
