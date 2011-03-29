@@ -49,7 +49,10 @@ describe Hallon::Session do
             end
             
             session.on(:logged_in) do |error|
-              login_error = error
+              mutex.synchronize do
+                login_error = error
+                notify.signal
+              end
             end
             
             session.login ENV['HALLON_USERNAME'], ENV['HALLON_PASSWORD']
