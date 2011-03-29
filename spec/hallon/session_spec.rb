@@ -56,7 +56,6 @@ describe Hallon::Session do
             end
             
             session.login ENV['HALLON_USERNAME'], ENV['HALLON_PASSWORD']
-            session.process_events
             
             notify.wait_until do
               session.process_events
