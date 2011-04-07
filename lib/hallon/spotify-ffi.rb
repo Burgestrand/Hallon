@@ -358,9 +358,7 @@ module Hallon
                        NEW_WAVE: 0x400, REGGAE: 0x4000, DISCO: 0x8,
                        RAP: 0x80, RNB: 0x800, POP_ROCK: 0x8000}.flatten
     
-    callback :search_complete, [ :pointer, :pointer ], :void
-    
-    attach_function :search_create, :sp_search_create, [ :pointer, :string, :int, :int, :int, :int, :int, :int, :search_complete, :pointer ], :pointer
+    attach_function :search_create, :sp_search_create, [ :pointer, :string, :int, :int, :int, :int, :int, :int, callback([:pointer, :pointer], :void), :pointer ], :pointer
     attach_function :radio_search_create, :sp_radio_search_create, [ :pointer, :uint, :uint, :radio_genre, :pointer, :pointer ], :pointer
     attach_function :search_is_loaded, :sp_search_is_loaded, [ :pointer ], :bool
     attach_function :search_error, :sp_search_error, [ :pointer ], :error
