@@ -1,25 +1,8 @@
 # coding: utf-8
 require 'rake'
 
-require 'jeweler'
-require './lib/hallon/version'
-Jeweler::RubygemsDotOrgTasks.new
-Jeweler::Tasks.new do |gem|
-  gem.name     = "hallon"
-  gem.summary  = %Q{Delicious Ruby bindings to the official Spotify API}
-  gem.homepage = "http://github.com/Burgestrand/Hallon"
-  gem.authors  = ["Kim Burgestrand"]
-  gem.email    = 'kim@burgestrand.se'
-  gem.license  = 'GNU AGPL'
-  
-  gem.description = IO.read('./README.markdown', encoding: 'utf-8')
-  
-  # installation
-  gem.extensions = FileList['ext/**/extconf.rb']
-  gem.platform   = Gem::Platform::RUBY
-  gem.version    = Hallon::VERSION
-  gem.required_ruby_version = '~> 1.9'
-end
+require 'bundler'
+Bundler::GemHelper.install_tasks
 
 require 'yard'
 YARD::Rake::YardocTask.new
