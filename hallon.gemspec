@@ -20,7 +20,7 @@ Gem::Specification.new do |gem|
   gem.platform    = Gem::Platform::RUBY
   gem.required_ruby_version = '~> 1.9'
   
-  gem.add_dependency 'ffi'
+  gem.add_dependency 'spotify', '~> 7.0.0'
   gem.add_development_dependency 'rspec', '~> 2'
   gem.add_development_dependency 'autotest-standalone'
   gem.add_development_dependency 'autotest-fsevent'

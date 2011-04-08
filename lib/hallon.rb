@@ -1,7 +1,8 @@
 # coding: utf-8
-require 'hallon/version'
-require 'hallon/spotify-ffi'
+require 'spotify'
+require 'hallon/ext/spotify'
 
+require 'hallon/version'
 require 'hallon/base'
 require 'hallon/error'
 require 'hallon/session'

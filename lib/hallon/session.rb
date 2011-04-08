@@ -112,7 +112,7 @@ module Hallon
     # 
     # @return [Symbol]
     def status
-      Spotify::session_connection_state(@pointer)
+      Spotify::session_connectionstate(@pointer)
     end
     
     # True if currently logged in.
