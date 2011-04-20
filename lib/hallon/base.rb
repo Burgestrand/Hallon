@@ -15,9 +15,7 @@ module Hallon
     # @yield (*args) event handler block
     # @see #initialize
     def on(event, &block)
-      singleton_class.instance_eval do
-        define_method(:"on_#{event}", &block)
-      end
+      define_singleton_method(:"on_#{event}", &block)
     end
   end
 end
