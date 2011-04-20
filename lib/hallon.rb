@@ -26,7 +26,7 @@ module Hallon
     ))
   /x
   
-  # True if ENV['DEBUG'] is set.
+  # True if `ENV['DEBUG']` is set.
   # 
   # Setting this to `true` will make Hallon print a message every time
   # a Spotify-pointer is released.
