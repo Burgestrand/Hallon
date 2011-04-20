@@ -5,9 +5,7 @@ describe Hallon::Base do
     end
     
     obj = klass.new
-    obj.instance_eval do
-      on(:fired_event) { :fired! }
-    end
+    obj.on(:fired_event) { :fired! }
     obj
   end
   
