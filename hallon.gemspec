@@ -23,7 +23,6 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'spotify', '~> 7.0.0'
   gem.add_development_dependency 'rspec', '~> 2'
   gem.add_development_dependency 'autotest-standalone'
-  gem.add_development_dependency 'autotest-fsevent'
   gem.add_development_dependency 'autotest-growl'
   gem.add_development_dependency 'cover_me'
   gem.add_development_dependency 'yard', '~> 0.6.4'

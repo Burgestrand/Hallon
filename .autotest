@@ -1,6 +1,6 @@
 require 'autotest/rspec2'
-require 'autotest/fsevent'
 require 'autotest/growl'
+require 'autotest/fsevent' rescue nil
 
 Autotest::add_discovery { 'rspec2' }
 Autotest::Growl::image_dir = 'ampelmaennchen'
