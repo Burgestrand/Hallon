@@ -10,7 +10,7 @@ at_exit do
   CoverMe.complete!
   
   # workaround for warning at end of specs, this is evil!
-  CoverMe::Results.define_singleton_method(:merge_results!) { |*args| }
+  CoverMe::Results.define_singleton_method(:merge_results!) { |*| }
   Coverage.define_singleton_method(:result) { }
 end
 
@@ -34,8 +34,8 @@ unless ENV.values_at(*%w(HALLON_APPKEY HALLON_USERNAME HALLON_PASSWORD)).all?
 end
 
 module Hallon
-  APPKEY = IO.read File.expand_path(ENV['HALLON_APPKEY'])
-end unless defined?(Hallon::APPKEY)
+  APPKEY ||= IO.read File.expand_path(ENV['HALLON_APPKEY'])
+end
 
 # Hallon::Session#instance requires that a Session object have not been created
 # so test it here instead. This assures it is tested before anything else!
