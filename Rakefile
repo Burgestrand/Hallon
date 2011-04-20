@@ -11,6 +11,7 @@ require 'rspec/core/rake_task'
 RSpec::Core::RakeTask.new
 task :test => :spec
 
+desc "Run tests and generate a coverage report"
 task 'test:coverage' do
   require 'cover_me'
   Rake::Task['test'].invoke
