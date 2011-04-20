@@ -1,15 +1,19 @@
 module Hallon
-  # An internal module which allows easy definition of callback handlers
-  # using {#on}.
-  # 
-  # @example
-  #   on(:callback) do
-  #     # handle it
-  #   end
+  # A module providing event capabilities to Hallon objects.
   # 
   # @private
   module Base
     # Defines a handler for the given event.
+    # 
+    # @example
+    #   o = Object.new
+    #   o.instance_eval { include Hallon::Base }
+    #   
+    #   on(:callback) do |*args|
+    #     # handle it
+    #   end
+    # 
+    #   o.on_callback("Moo!")
     # 
     # @param [#to_s] event name of event to handle
     # @yield (*args) event handler block
@@ -19,6 +23,18 @@ module Hallon
     end
     
     # Run the given block, protecting all previous event handlers.
+    # 
+    # @example
+    #   o = Object.new
+    #   o.instance_eval { include Hallon::Base }
+    #   o.on(:method) { "outside" }
+    #   
+    #   puts o.on_method # => "outside"
+    #   o.protecting_handlers do
+    #     o.on(:method) { "inside" }
+    #     puts o.on_method # => "inside"
+    #   end
+    #   puts o.on_method # => "outside"
     # 
     # @yield
     # @return whatever the given block returns
