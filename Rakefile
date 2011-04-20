@@ -11,6 +11,12 @@ require 'rspec/core/rake_task'
 RSpec::Core::RakeTask.new
 task :test => :spec
 
+task 'test:coverage' do
+  require 'cover_me'
+  Rake::Task['test'].invoke
+  CoverMe.complete!
+end
+
 #
 # Custom tasks
 # 
