@@ -1,3 +1,4 @@
+require 'timeout'
 require 'monitor'
 
 describe Hallon::Session do
@@ -57,10 +58,12 @@ describe Hallon::Session do
             
             session.login ENV['HALLON_USERNAME'], ENV['HALLON_PASSWORD']
             
-            notify.wait_until do
-              session.process_events
-              session.logged_in?
-            end
+            Timeout::timeout(2) do
+              notify.wait_until do
+                session.process_events
+                session.logged_in?
+              end
+            end rescue nil
           end
           
           session.logged_in?.should be true
