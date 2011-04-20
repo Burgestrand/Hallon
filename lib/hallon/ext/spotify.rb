@@ -35,6 +35,7 @@ module Spotify
     end
   end
   
+  # Extensions to SessionCallbacks, making it easier to define callbacks.
   class SessionCallbacks < FFI::Struct
     # Assigns the callbacks to call the given target; the callback
     # procs are stored in the `storage` parameter. **Make sure the
@@ -43,7 +44,6 @@ module Spotify
     # 
     # @param [Object] target
     # @param [#&#91;&#93;&#61;] storage
-    # @return [self]     
     def initialize(target, storage)
       members.each do |member|
         callback = :"on_#{member}"
@@ -51,10 +51,10 @@ module Spotify
           target.public_send(callback, *args) if target.respond_to? callback
         end
       end
-      self
     end
   end
   
+  # Extensions to SessionConfig, allowing more sensible configuration names.
   class SessionConfig < FFI::Struct
     [:cache_location, :settings_location, :application_key, :user_agent].each do |field|
       method = field.to_s.gsub('location', 'path')
