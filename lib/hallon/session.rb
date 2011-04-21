@@ -81,11 +81,10 @@ module Hallon
     
     # Process pending Spotify events (might fire callbacks).
     # 
-    # @param [Bool] exhaust process events until timeout > 0
     # @return [Fixnum] minimum time until it should be called again
-    def process_events(exhaust = true)
+    def process_events
       FFI::MemoryPointer.new(:int) do |p|
-        Spotify::session_process_events(@pointer, p) while exhaust && p.read_int == 0
+        Spotify::session_process_events(@pointer, p)
         return p.read_int
       end
     end
