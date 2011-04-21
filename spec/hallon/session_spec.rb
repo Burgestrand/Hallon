@@ -1,6 +1,3 @@
-require 'timeout'
-require 'monitor'
-
 describe Hallon::Session do
   # Hallon::Session#instance requires that a session have NOT been established,
   # thus its’ tests are declared in the spec_helper.rb
@@ -58,12 +55,10 @@ describe Hallon::Session do
             
             session.login ENV['HALLON_USERNAME'], ENV['HALLON_PASSWORD']
             
-            Timeout::timeout(2) do
-              notify.wait_until do
-                session.process_events
-                session.logged_in?
-              end
-            end rescue nil
+            notify.wait_while do
+              session.process_events
+              login_error.nil?
+            end
           end
         end
         
