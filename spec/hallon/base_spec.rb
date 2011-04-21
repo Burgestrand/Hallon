@@ -51,4 +51,18 @@ describe Hallon::Base do
       @subject.on_after_block(1, 2).should eq [1, 2]
     end
   end
+  
+  describe "#synchronize" do
+    it "should not deadlock when called recursively in itself" do
+      expect do
+        @subject.synchronize { @subject.synchronize {} }
+      end.to_not raise_error
+    end
+  end
+  
+  describe "#new_cond" do
+    it "should give us a new condition variable" do
+      @subject.new_cond.should be_a Monitor::ConditionVariable
+    end
+  end
 end

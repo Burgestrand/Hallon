@@ -1,8 +1,13 @@
+require 'monitor'
+
 module Hallon
   # A module providing event capabilities to Hallon objects.
   # 
   # @private
   module Base
+    # Required for maintaining thread-safety around #monitor.
+    IMonitor = Monitor.new
+    
     # Defines a handler for the given event.
     # 
     # @example
@@ -58,5 +63,29 @@ module Hallon
         define_singleton_method(event, handler)
       end
     end
+    
+    # Conceive a new condition variable bound to this object.
+    # 
+    # @see Monitor#new_cond
+    # @return [Monitor::ConditionVariable]
+    def new_cond
+      monitor.new_cond
+    end
+    
+    # Execute a code block under a critical (thread-safe) time slice.
+    # 
+    # @see Monitor#synchronize
+    def synchronize(&block)
+      monitor.synchronize(&block)
+    end
+    
+    private
+      # Retrieve our Monitor instance, creating a new one if necessary.
+      # 
+      # @note This function is thread-safe.
+      # @return [Monitor]
+      def monitor
+        IMonitor.synchronize { @monitor ||= Monitor.new }
+      end
   end
 end
