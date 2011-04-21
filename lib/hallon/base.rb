@@ -44,7 +44,10 @@ module Hallon
       
       define_singleton_method(on_method.name) do |event, &block|
         handler_name = :"on_#{event}"
-        overridden_callbacks[handler_name] = method(handler_name)
+        if respond_to?(handler_name, true)
+          overridden_callbacks[handler_name] = method(handler_name)
+        end
+        
         on_method.call(event, &block)
       end
       

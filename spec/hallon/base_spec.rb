@@ -34,6 +34,14 @@ describe Hallon::Base do
       @subject.on_before_block.should eq "unchanged"
     end
     
+    it "should not fail if an on(method) does not exist" do
+      expect do
+        @subject.protecting_handlers do
+          @subject.on(:non_existing_method) {}
+        end
+      end.to_not raise_error
+    end
+    
     specify "#on should still work properly afterwards" do
       @subject.protecting_handlers do
         # nothing!
