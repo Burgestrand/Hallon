@@ -65,7 +65,7 @@ module Hallon
       
       # Set configuration, as well as callbacks
       config  = Spotify::SessionConfig.new
-      config[:api_version]   = Spotify::API_VERSION
+      config[:api_version]   = Hallon::API_VERSION
       config.application_key = @appkey
       @options.each { |(key, value)| config.send(:"#{key}=", value) }
       config[:callbacks]     = Spotify::SessionCallbacks.new(self, @sp_callbacks = {})
