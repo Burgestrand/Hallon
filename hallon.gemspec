@@ -25,6 +25,6 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'autotest-standalone'
   gem.add_development_dependency 'autotest-growl'
   gem.add_development_dependency 'cover_me'
-  gem.add_development_dependency 'yard', '~> 0.6.4'
+  gem.add_development_dependency 'yard'
   gem.add_development_dependency 'rdiscount'
 end
