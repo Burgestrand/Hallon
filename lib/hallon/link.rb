@@ -4,7 +4,7 @@ module Hallon
   # @see http://developer.spotify.com/en/libspotify/docs/group__link.html
   class Link
     # True if the given Spotify URI is valid (parsable by libspotify).
-    # 
+    #
     # @param (see Hallon::Link#initialize)
     # @return [Boolean]
     def self.valid?(spotify_uri)
@@ -12,33 +12,40 @@ module Hallon
     rescue ArgumentError
       false
     end
-    
+
     # Parse the given Spotify URI into a Link.
-    # 
+    #
     # @note Unless you have a {Session} initialized, this will segfault!
     # @param [#to_s] uri
     # @raise [ArgumentError] link could not be parsed
     def initialize(uri)
-      @pointer = Spotify::Pointer.new(Spotify::link_create_from_string(uri), :link)
-      raise ArgumentError, "#{uri} is not a Spotify URI" if @pointer.null?
+      @pointer = begin
+        if uri.is_a? FFI::Pointer
+          uri
+        else
+          Spotify::Pointer.new(Spotify::link_create_from_string(uri), :link)
+        end
+      end
+
+      raise ArgumentError, "#{uri} is not a valid Spotify link" if @pointer.null?
     end
-    
+
     # Link type as a symbol.
-    # 
+    #
     # @return [Symbol]
     def type
       Spotify::link_type(@pointer)
     end
-    
+
     # Spotify URI length.
-    # 
+    #
     # @return [Fixnum]
     def length
       Spotify::link_as_string(@pointer, nil, 0)
     end
-    
+
     # Get the Spotify URI this Link represents.
-    # 
+    #
     # @see #length
     # @param [Fixnum] length truncate to this size
     # @return [String]
@@ -50,7 +57,7 @@ module Hallon
     end
     
     # String representation of the given Link.
-    # 
+    #
     # @return [String]
     def to_s
       "<#{self.class.name} #{to_str}>"
