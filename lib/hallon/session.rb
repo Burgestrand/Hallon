@@ -5,25 +5,25 @@ module Hallon
   # The Session is fundamental for all communication with Spotify.
   # Pretty much all API calls require you to have established a session
   # with Spotify before using them.
-  # 
+  #
   # @see https://developer.spotify.com/en/libspotify/docs/group__session.html
   class Session
     # The options Hallon used at {Session#initialize}.
-    # 
+    #
     # @return [Hash]
     attr_reader :options
-    
+
     # Application key used at {Session#initialize}
     #
     # @return [String]
     attr_reader :appkey
-    
+
     # libspotify only allows one session per process.
     include Singleton
-    
+
     # Session allows you to define your own callbacks.
     include Hallon::Base
-    
+
     # Allows you to create a Spotify session. Subsequent calls to this method
     # will return the previous instance, ignoring any passed arguments.
     #
@@ -33,9 +33,9 @@ module Hallon
     def Session.instance(*args, &block)
       @__instance__ ||= new(*args, &block)
     end
-    
+
     # Create a new Spotify session.
-    # 
+    #
     # @param [#to_s] appkey
     # @param [Hash] options
     # @option options [String] :user_agent ("Hallon") User-Agent to use (length < 256)
@@ -58,29 +58,29 @@ module Hallon
         :compress_playlists => true,
         :cache_playlist_metadata => true
       }.merge(options)
-      
+
       if @options[:user_agent].bytesize > 255
         raise ArgumentError, "User-agent must be less than 256 bytes long"
       end
-      
+
       # Set configuration, as well as callbacks
       config  = Spotify::SessionConfig.new
       config[:api_version]   = Hallon::API_VERSION
       config.application_key = @appkey
       @options.each { |(key, value)| config.send(:"#{key}=", value) }
       config[:callbacks]     = Spotify::SessionCallbacks.new(self, @sp_callbacks = {})
-      
+
       instance_eval(&block) if block_given?
-      
+
       # You pass a pointer to the session pointer to libspotify >:)
       FFI::MemoryPointer.new(:pointer) do |p|
         Hallon::Error::maybe_raise Spotify::session_create(config, p)
         @pointer = p.read_pointer
       end
     end
-    
+
     # Process pending Spotify events (might fire callbacks).
-    # 
+    #
     # @return [Fixnum] minimum time until it should be called again
     def process_events
       FFI::MemoryPointer.new(:int) do |p|
@@ -88,9 +88,9 @@ module Hallon
         return p.read_int
       end
     end
-    
+
     # Log into Spotify using the given credentials.
-    # 
+    #
     # @param [String] username
     # @param [String] password
     # @return [self]
@@ -98,38 +98,45 @@ module Hallon
       Spotify::session_login(@pointer, username, password)
       self
     end
-    
+
     # Logs out of Spotify. Does nothing if not logged in.
-    # 
+    #
     # @return [self]
     def logout
       Spotify::session_logout(@pointer) if logged_in?
       self
     end
-    
+
     # Retrieve current connection status.
-    # 
+    #
     # @return [Symbol]
     def status
       Spotify::session_connectionstate(@pointer)
     end
-    
+
     # True if currently logged in.
     # @see #status
     def logged_in?
       status == :logged_in
     end
-    
+
     # True if logged out.
     # @see #status
     def logged_out?
       status == :logged_out
     end
-    
+
     # True if session has been disconnected.
     # @see #status
     def disconnected?
       status == :disconnected
+    end
+
+    # String representation of the Session.
+    #
+    # @return [String]
+    def to_s
+      "<#{self.class.name}>"
     end
   end
 end
