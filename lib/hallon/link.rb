@@ -55,7 +55,14 @@ module Hallon
         return b.get_string(0)
       end
     end
-    
+
+    # Retrieve the full Spotify HTTP URL for this Link.
+    #
+    # @return [String]
+    def to_url
+      "http://open.spotify.com/%s" % to_str[8..-1].gsub(':', '/')
+    end
+
     # String representation of the given Link.
     #
     # @return [String]

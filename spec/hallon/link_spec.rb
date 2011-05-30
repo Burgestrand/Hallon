@@ -41,7 +41,13 @@ describe Hallon::Link do
         subject.to_str(7).should == "spotify"
       end
     end
-    
+
+    describe "#to_url" do
+      it "should return the correct http URL" do
+        subject.to_url.should == "http://open.spotify.com/user/burgestrand"
+      end
+    end
+
     describe "#length" do
       it { subject.length.should == "spotify:user:burgestrand".length }
     end
