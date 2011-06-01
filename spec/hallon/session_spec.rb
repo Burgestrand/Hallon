@@ -41,25 +41,21 @@ describe Hallon::Session do
         login_error = nil
 
         session.synchronize do
-          session.protecting_handlers do
-            session.on(:notify_main_thread) do
-              session.synchronize do
-                notify.signal
-              end
-            end
+          session.on(:notify_main_thread) do
+            session.synchronize { notify.signal }
+          end
 
-            session.on(:logged_in) do |error|
-              session.synchronize do
-                login_error = error
-                notify.signal
-              end
+          session.on(:logged_in) do |error|
+            session.synchronize do
+              login_error = error
+              notify.signal
             end
+          end
 
-            session.login ENV['HALLON_USERNAME'], ENV['HALLON_PASSWORD']
-            notify.wait_while do
-              session.process_events
-              login_error == nil || session.status == :undefined
-            end
+          session.login ENV['HALLON_USERNAME'], ENV['HALLON_PASSWORD']
+          notify.wait_until do
+            session.process_events
+            session.logged_in?
           end
         end
 
