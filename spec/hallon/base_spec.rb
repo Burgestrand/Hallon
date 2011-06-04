@@ -95,6 +95,11 @@ describe Hallon::Base do
 
       @subject.trigger(:protected).should eq "before"
     end
+
+    it "should still allow #trigger to work on non-defined events" do
+      @subject.protecting_handlers {}
+      expect { @subject.trigger(:does_not_exist) }.to_not raise_error
+    end
   end
 
   describe "#synchronize" do

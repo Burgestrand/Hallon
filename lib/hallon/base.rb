@@ -73,7 +73,10 @@ module Hallon
     # @yield
     # @return whatever the given block returns
     def protecting_handlers
-      deep_copy = Hash[__handlers.map { |(k, v)| [k, v.dup] }]
+      deep_copy = __handlers.dup.clear
+      __handlers.each do |k, v|
+        deep_copy[k] = v.dup
+      end
       yield
     ensure
       __handlers.replace deep_copy
