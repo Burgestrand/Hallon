@@ -8,7 +8,13 @@ require 'yard'
 YARD::Rake::YardocTask.new
 
 require 'rspec/core/rake_task'
-RSpec::Core::RakeTask.new
+desc "Run all specs (even those requiring logging in to Spotify)"
+RSpec::Core::RakeTask.new('spec:full')
+RSpec::Core::RakeTask.new('spec') do |task|
+  task.pattern = 'spec/hallon/*_spec.rb'
+  task.rspec_opts = '--tag ~online'
+end
+
 task :test => :spec
 
 desc "Run tests and generate a coverage report"
@@ -20,7 +26,7 @@ end
 
 #
 # Custom tasks
-# 
+#
 desc "Generates YARD documentation and open it."
 task :doc => :yard do
   system 'open doc/index.html'

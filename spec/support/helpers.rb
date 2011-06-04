@@ -17,6 +17,9 @@ shared_examples_for "existing session" do
 end
 
 shared_examples_for "logged in" do
+  # Tag this entire example group as an online-spec
+  metadata[:online] = true
+
   before(:all) do
     session.login ENV['HALLON_USERNAME'], ENV['HALLON_PASSWORD']
 
