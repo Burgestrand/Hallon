@@ -11,23 +11,35 @@ module Hallon
 
     # Defines a handler for the given event.
     #
-    # @example
-    #   o = Object.new
-    #   o.instance_eval { include Hallon::Base }
-    #
-    #   on(:callback) do |*args|
-    #     # handle it
+    # @example defining a handler and triggering it
+    #   on(:callback) do |message|
+    #     puts message
     #   end
     #
-    #   o.on_callback("Moo!")
+    #   trigger(:callback, "Moo!") # => prints "Moo!"
     #
+    # @example multiple events with one handler
+    #   on(:a, :b, :c) do |name, *args|
+    #     puts "#{name} called with: #{args.inspect}"
+    #   end
+    #
+    #   trigger(:a) # => prints ":a called with: []"
+    #   trigger(:b, :c) # => prints ":b called with: [:c]"
+    #
+    # @note when defining a handler for multiple events, the
+    #       first argument passed to the handler is the name
+    #       of the event that called it
     # @param [#to_sym] event name of event to handle
     # @yield (*args) event handler block
     # @see #initialize
-    def on(event)
-      event = event.to_sym
-      __handlers[event] = [] unless __handlers.has_key?(event)
-      __handlers[event] << Proc.new
+    def on(*events, &block)
+      raise ArgumentError, "no block given" unless block
+      wrap = events.length > 1
+      events.each do |event|
+        block = proc { |*args| yield(event, *args) } if wrap
+        __handlers[event] = [] unless __handlers.has_key?(event)
+        __handlers[event] << block
+      end
     end
 
     # Trigger a handler for a given event.

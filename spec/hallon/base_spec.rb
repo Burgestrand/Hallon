@@ -12,6 +12,29 @@ describe Hallon::Base do
   its(:instance_methods) { should include :on }
   its(:instance_methods) { should include :trigger }
 
+  describe "#on" do
+    it "should allow defining one handler for multiple events" do
+      @subject.on(:a, :b, :c) do |event, *args|
+        "yay"
+      end
+
+      @subject.trigger(:a).should eq "yay"
+      @subject.trigger(:b).should eq "yay"
+      @subject.trigger(:c).should eq "yay"
+    end
+
+    specify "a multi-declared handler should know its name" do
+      @subject.on(:a, :b) { |event, *args| event }
+      @subject.trigger(:a).should eq :a
+      @subject.trigger(:b).should eq :b
+    end
+
+    specify "a single-declared handler should not know its name" do
+      @subject.on(:a) { |event, *args| event }
+      @subject.trigger(:a).should eq nil
+    end
+  end
+
   describe "#trigger and #on" do
     it "should define and call event handlers" do
       called = false
