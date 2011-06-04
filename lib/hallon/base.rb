@@ -1,4 +1,5 @@
 require 'monitor'
+require 'forwardable'
 
 module Hallon
   # A module providing event capabilities to Hallon objects.
@@ -66,6 +67,9 @@ module Hallon
       __handlers.replace deep_copy
     end
 
+    # We delegate Monitor methods using this.
+    extend Forwardable
+
     # Conceive a new condition variable bound to this object.
     #
     # @see Monitor#new_cond
@@ -74,12 +78,7 @@ module Hallon
       monitor.new_cond
     end
 
-    # Execute a code block under a critical (thread-safe) time slice.
-    #
-    # @see Monitor#synchronize
-    def synchronize(&block)
-      monitor.synchronize(&block)
-    end
+    def_delegators :monitor, :synchronize
 
     private
       # Retrieve our Monitor instance, creating a new one if necessary.
