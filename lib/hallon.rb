@@ -1,6 +1,7 @@
 # coding: utf-8
 require 'spotify'
 require 'hallon/ext/spotify'
+require 'hallon/ext/monitor'
 
 require 'hallon/version'
 require 'hallon/base'
@@ -14,7 +15,7 @@ require 'hallon/link'
 module Hallon
   # @see Spotify::API_VERSION
   API_VERSION = Spotify::API_VERSION
-  
+
   # A regex that matches all Spotify URIs
   #
   # @example
@@ -25,12 +26,12 @@ module Hallon
     |search:(?:[-\w$\.+!*'(),]+|%[a-fA-F0-9]{2})+
     ))
   /x
-  
+
   # True if `ENV['DEBUG']` is set.
-  # 
+  #
   # Setting this to `true` will make Hallon print a message every time
   # a Spotify-pointer is released.
-  # 
+  #
   # @return [Boolean]
   def self.debug
     !! ENV['DEBUG']

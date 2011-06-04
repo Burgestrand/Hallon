@@ -75,7 +75,9 @@ module Hallon
     # @see Monitor#new_cond
     # @return [Monitor::ConditionVariable]
     def new_cond
-      monitor.new_cond
+      monitor.new_cond.tap do |cv|
+        cv.extend Monitor::Extensions
+      end
     end
 
     def_delegators :monitor, :synchronize
