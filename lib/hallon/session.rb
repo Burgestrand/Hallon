@@ -89,6 +89,39 @@ module Hallon
       end
     end
 
+    # Process events on each event until the block returns true.
+    #
+    # @param [Symbol, ] events
+    # @return [Hash<Event, Arguments>]
+    def process_events_on(*events, &block)
+      notify = new_cond
+      result = Hash.new do |h, k|
+        h[k] = []
+      end
+
+      protecting_handlers do
+        synchronize do
+          on(:notify_main_thread) do
+            synchronize { notify.signal }
+          end
+
+          on(*events) do |event, *args|
+            synchronize do
+              result[event] << args
+              notify.signal
+            end
+          end
+
+          notify.wait_for(1) do
+            process_events
+            block.call
+          end
+
+          return result
+        end
+      end
+    end
+
     # Log into Spotify using the given credentials.
     #
     # @param [String] username

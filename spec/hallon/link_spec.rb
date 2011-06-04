@@ -1,5 +1,5 @@
 describe Hallon::Link do
-  has_requirement "pre-initialized Session" do
+  has_requirement "existing session" do
     subject do
       Hallon::Link.new("spotify:user:burgestrand")
     end

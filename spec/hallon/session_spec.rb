@@ -1,9 +1,9 @@
 describe Hallon::Session do
-  # Hallon::Session#instance requires that a session have NOT been established,
-  # thus its’ tests are declared in the spec_helper.rb
-  has_requirement "pre-initialized Session" do
+  has_requirement "existing session" do
     describe "appkey" do
-      it "should == Hallon::APPKEY" do session.appkey.should == Hallon::APPKEY end
+      it "should == Hallon::APPKEY" do
+        session.appkey.should == Hallon::APPKEY
+      end
     end
 
     describe "options" do
@@ -34,33 +34,9 @@ describe Hallon::Session do
       end
     end
 
-    describe "#login" do
-      it "should log in to Spotify" do
-        session = @session # blocks cannot access let(:methods)
-        notify  = session.new_cond
-        login_error = nil
-
-        session.synchronize do
-          session.on(:notify_main_thread) do
-            session.synchronize { notify.signal }
-          end
-
-          session.on(:logged_in) do |error|
-            session.synchronize do
-              login_error = error
-              notify.signal
-            end
-          end
-
-          session.login ENV['HALLON_USERNAME'], ENV['HALLON_PASSWORD']
-          notify.wait_until do
-            session.process_events
-            session.logged_in?
-          end
-        end
-
-        login_error.should be :ok
-        session.should be_logged_in
+    has_requirement "logged in" do
+      it "should be logged in" do
+        @session.should be_logged_in
       end
     end
   end

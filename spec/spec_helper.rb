@@ -13,7 +13,7 @@ unless ENV.values_at(*%w(HALLON_APPKEY HALLON_USERNAME HALLON_PASSWORD)).all?
     You must supply a valid Spotify username, password and application
     key in order to run Hallons specs. This is done by setting these
     environment variables:
-  
+
     - HALLON_APPKEY (path to spotify_appkey.key)
     - HALLON_USERNAME (your spotify username)
     - HALLON_PASSWORD (your spotify password)
@@ -33,16 +33,16 @@ describe Hallon::Session do
     it "should require an application key" do
       expect { Hallon::Session.instance }.to raise_error(ArgumentError)
     end
-    
+
     it "should fail on an invalid application key" do
       expect { Hallon::Session.instance('invalid') }.to raise_error(Hallon::Error, /BAD_APPLICATION_KEY/)
     end
-    
+
     it "should fail on a small user-agent of multibyte chars (> 255 characters)" do
       expect { Hallon::Session.send(:new, Hallon::APPKEY, :user_agent => 'ö' * 128) }.
         to raise_error(ArgumentError)
     end
-    
+
     it "should fail on a huge user agent (> 255 characters)" do
       expect { Hallon::Session.send(:new, Hallon::APPKEY, :user_agent => 'a' * 256) }.
         to raise_error(ArgumentError)
