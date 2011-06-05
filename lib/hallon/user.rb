@@ -12,8 +12,8 @@ module Hallon
     # @note Currently you cannot construct users yourself, use {Session#user}
     # @private
     def initialize(user)
-      Spotify::user_add_ref(@pointer)
       @pointer = Spotify::Pointer.new(user, :user)
+      Spotify::user_add_ref(@pointer)
     end
 
     # @return [Boolean] true if the user is loaded
