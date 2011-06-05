@@ -1,5 +1,4 @@
 require 'monitor'
-require 'forwardable'
 
 module Hallon
   # A module providing event capabilities to Hallon objects.

@@ -138,6 +138,13 @@ module Hallon
       self
     end
 
+    # Retrieve the currently logged in User.
+    #
+    # @return [User]
+    def user
+      User.send(:new, Spotify::session_user(@pointer))
+    end
+
     # Retrieve current connection status.
     #
     # @return [Symbol]

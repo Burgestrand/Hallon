@@ -1,12 +1,14 @@
 # coding: utf-8
 require 'spotify'
 require 'hallon/ext/spotify'
+require 'forwardable'
 
 require 'hallon/version'
 require 'hallon/base'
 require 'hallon/error'
 require 'hallon/session'
 require 'hallon/link'
+require 'hallon/user'
 
 # The Hallon module wraps around all Hallon objects to avoid polluting
 # the global namespace. To start using Hallon, you most likely want to
