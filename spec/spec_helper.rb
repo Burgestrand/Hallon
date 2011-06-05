@@ -1,6 +1,9 @@
 # coding: utf-8
 require 'hallon'
 
+# Bail on failure
+Thread.abort_on_exception = true
+
 RSpec.configure do |config|
   config.alias_it_should_behave_like_to :has_requirement, 'has requirement:'
 end
