@@ -19,13 +19,11 @@ module Hallon
     # @param [#to_s] uri
     # @raise [ArgumentError] link could not be parsed
     def initialize(uri)
-      @pointer = begin
-        if uri.is_a? FFI::Pointer
-          uri
-        else
-          Spotify::Pointer.new(Spotify::link_create_from_string(uri), :link)
-        end
+      unless (link = uri).is_a? FFI::Pointer
+        link = Spotify::link_create_from_string(link)
       end
+
+      @pointer = Spotify::Pointer.new(link, :link)
 
       raise ArgumentError, "#{uri} is not a valid Spotify link" if @pointer.null?
     end
