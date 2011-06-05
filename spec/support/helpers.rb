@@ -21,9 +21,11 @@ shared_examples_for "logged in" do
   metadata[:logged_in] = true
 
   before(:all) do
-    session.login ENV['HALLON_USERNAME'], ENV['HALLON_PASSWORD']
-    session.process_events_on(:logged_in) do
-      session.logged_in?
+    unless session.logged_in?
+      session.login ENV['HALLON_USERNAME'], ENV['HALLON_PASSWORD']
+      session.process_events_on(:logged_in) do
+        session.logged_in?
+      end
     end
   end
 
