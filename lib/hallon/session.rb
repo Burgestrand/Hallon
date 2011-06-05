@@ -138,7 +138,7 @@ module Hallon
       self
     end
 
-    # Retrieve the currently logged in User.
+    # Retrieve the currently logged in {User}.
     #
     # @return [User]
     def user
