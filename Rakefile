@@ -12,7 +12,7 @@ desc "Run all specs (even those requiring logging in to Spotify)"
 RSpec::Core::RakeTask.new('spec:full')
 RSpec::Core::RakeTask.new('spec') do |task|
   task.pattern = 'spec/hallon/*_spec.rb'
-  task.rspec_opts = '--tag ~online'
+  task.rspec_opts = '--tag ~logged_in'
 end
 
 task :test => :spec
