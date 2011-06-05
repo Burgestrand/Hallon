@@ -85,17 +85,7 @@ module Hallon
     # We delegate Monitor methods using this.
     extend Forwardable
 
-    # Conceive a new condition variable bound to this object.
-    #
-    # @see Monitor#new_cond
-    # @return [Monitor::ConditionVariable]
-    def new_cond
-      monitor.new_cond.tap do |cv|
-        cv.extend Monitor::Extensions
-      end
-    end
-
-    def_delegators :monitor, :synchronize
+    def_delegators :monitor, :synchronize, :new_cond
 
     private
       # Retrieve our Monitor instance, creating a new one if necessary.

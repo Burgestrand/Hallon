@@ -1,5 +1,7 @@
 # coding: utf-8
 require 'singleton'
+require 'timeout'
+require 'thread'
 
 module Hallon
   # The Session is fundamental for all communication with Spotify.
@@ -89,35 +91,31 @@ module Hallon
       end
     end
 
-    # Process events on each event until the block returns true.
+    # Wait for the given callbacks to fire until the block returns true
     #
-    # @param [Symbol, ] events
+    # @note Even if no callbacks are fired, your block will be executed
+    #       every 1 seconds.
+    # @param [Symbol, ...] *events list of events to wait for
+    # @yield [Symbol, *args] name of the callback that fired, and its’ arguments
     # @return [Hash<Event, Arguments>]
     def process_events_on(*events, &block)
-      notify = new_cond
-      result = Hash.new do |h, k|
-        h[k] = []
-      end
+      channel = SizedQueue.new(1)
 
+      events += [:notify_main_thread]
       protecting_handlers do
-        synchronize do
-          on(:notify_main_thread) do
-            synchronize { notify.signal }
-          end
+        on(*events) { |*args| channel << args }
 
-          on(*events) do |event, *args|
-            synchronize do
-              result[event] << args
-              notify.signal
-            end
-          end
-
-          notify.wait_for(1) do
+        loop do
+          begin
             process_events
-            block.call
+            params = Timeout::timeout(1) { channel.pop }
+          rescue Timeout::Error
+            retry
           end
 
-          return result
+          if result = block.call(*params)
+            return result
+          end
         end
       end
     end
