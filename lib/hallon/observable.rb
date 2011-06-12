@@ -1,12 +1,10 @@
-require 'monitor'
-
 module Hallon
   # A module providing event capabilities to Hallon objects.
   #
   # @private
-  module Base
-    # Required for maintaining thread-safety around #monitor.
-    IMonitor = Monitor.new
+  module Observable
+    # Required for maintaining thread-safety around #handlers
+    include Hallon::Synchronizable
 
     # Defines a handler for the given event.
     #
@@ -81,20 +79,7 @@ module Hallon
       __handlers.replace deep_copy
     end
 
-    # We delegate Monitor methods using this.
-    extend Forwardable
-
-    def_delegators :monitor, :synchronize, :new_cond
-
     private
-      # Retrieve our Monitor instance, creating a new one if necessary.
-      #
-      # @note This function is thread-safe.
-      # @return [Monitor]
-      def monitor
-        IMonitor.synchronize { @monitor ||= Monitor.new }
-      end
-
       # Hash mapping events to handlers.
       #
       # @return [Hash]

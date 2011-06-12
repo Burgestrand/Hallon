@@ -24,7 +24,7 @@ module Hallon
     include Singleton
 
     # Session allows you to define your own callbacks.
-    include Hallon::Base
+    include Hallon::Observable
 
     # Allows you to create a Spotify session. Subsequent calls to this method
     # will return the previous instance, ignoring any passed arguments.
