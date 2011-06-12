@@ -2,4 +2,5 @@
 -fs
 -Ilib
 -Ispec
+--fail-fast
 --require spec_helper
