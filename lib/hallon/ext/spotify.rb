@@ -15,9 +15,11 @@ module Spotify
     #
     # @param [FFI::Pointer] ptr
     # @param [Symbol] type session, link, etc
+    # @param [Boolean[ add_ref increase reference count
     # @return [FFI::AutoPointer]
-    def initialize(ptr, type)
+    def initialize(ptr, type, add_ref = false)
       super ptr, releaser_for(@type = type)
+      Spotify::send(:"#{type}_add_ref", ptr) if add_ref
     end
 
     # Create a proc that will accept a pointer of a given type and
