@@ -1,12 +1,12 @@
 describe Hallon::Synchronizable do
   subject do
-    Class.new { include described_class }.new
+    Class.new { include Hallon::Synchronizable }.new
   end
 
   describe "#synchronize" do
     it "should not deadlock when called recursively in itself" do
       expect do
-        subject.synchronize { @subject.synchronize {} }
+        subject.synchronize { subject.synchronize {} }
       end.to_not raise_error
     end
   end
