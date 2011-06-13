@@ -13,6 +13,13 @@ module Hallon
       false
     end
 
+    # Overloaded to short-circuit when given a Link.
+    #
+    # @return [Hallon::Link]
+    def self.new(uri)
+      uri.is_a?(Link) ? uri : super
+    end
+
     # Parse the given Spotify URI into a Link.
     #
     # @note Unless you have a {Session} initialized, this will segfault!

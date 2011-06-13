@@ -19,6 +19,12 @@ describe Hallon::Link do
         it "should accept an FFI pointer" do
           expect { subject.new FFI::Pointer.new(0) }.to raise_error(ArgumentError, /is not a valid Spotify link/)
         end
+
+        it "should not initialize when given a Link" do
+          link = subject.new('spotify:user:burgestrand')
+          link.should_not_receive :to_str
+          subject.new link
+        end
       end
 
       describe "::valid?" do
