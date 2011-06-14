@@ -21,12 +21,13 @@ shared_examples_for "logged in" do
   metadata[:logged_in] = true
 
   before(:all) do
-    unless session.logged_in?
+    unless $has_logged_in
       session.login ENV['HALLON_USERNAME'], ENV['HALLON_PASSWORD']
-      session.process_events_on(:logged_in) do
-        session.logged_in?
-      end
+      session.process_events_on(:logged_in, :connection_error) { |_, e| e }.should eq :ok
+      $has_logged_in = true
     end
+
+    session.should be_logged_in
   end
 
   before(:each) do
