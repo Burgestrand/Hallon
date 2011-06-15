@@ -93,22 +93,21 @@ module Hallon
 
     # Wait for the given callbacks to fire until the block returns true
     #
-    # @note Even if no callbacks are fired, your block will be executed
-    #       every 1 seconds.
     # @param [Symbol, ...] *events list of events to wait for
     # @yield [Symbol, *args] name of the callback that fired, and its’ arguments
     # @return [Hash<Event, Arguments>]
     def process_events_on(*events, &block)
       channel = SizedQueue.new(1)
 
-      events += [:notify_main_thread]
       protecting_handlers do
         on(*events) { |*args| channel << args }
+        on(:notify_main_thread) { channel << :notify }
 
         loop do
           begin
             process_events
             params = Timeout::timeout(1) { channel.pop }
+            redo if params == :notify
           rescue Timeout::Error
             retry
           end

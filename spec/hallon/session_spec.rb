@@ -23,6 +23,23 @@ describe Hallon::Session do
       end
     end
 
+    describe "#process_events_on" do
+      it "should not call given block on :notify_main_thread implicitly" do
+        notified = false
+
+        session.should_receive(:process_events).twice.and_return do
+          unless notified
+            session.trigger(:notify_main_thread)
+            notified = true
+          else
+            session.trigger(:bogus)
+          end
+        end
+
+        session.process_events_on(:bogus) { |e| e.inspect }.should eq "nil"
+      end
+    end
+
     describe "#status" do
       it { session.status.should equal :logged_out }
     end
