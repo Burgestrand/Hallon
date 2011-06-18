@@ -53,7 +53,7 @@ describe Hallon::Session do
 
     has_requirement "logged in" do
       it "should be logged in" do
-        @session.should be_logged_in
+        session.should be_logged_in
       end
     end
   end

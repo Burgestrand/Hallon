@@ -106,10 +106,10 @@ module Hallon
         loop do
           begin
             process_events
-            params = Timeout::timeout(1) { channel.pop }
+            params = Timeout::timeout(0.25) { channel.pop }
             redo if params == :notify
           rescue Timeout::Error
-            retry
+            params = :timeout
           end
 
           if result = block.call(*params)
