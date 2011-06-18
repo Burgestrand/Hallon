@@ -1,4 +1,5 @@
 --title "Hallon"
+--list-undoc
 --charset UTF-8
 --readme README.markdown
 --markup markdown
