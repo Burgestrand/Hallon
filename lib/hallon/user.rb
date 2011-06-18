@@ -37,13 +37,7 @@ module Hallon
     private
       def from_link(link)
         if link.is_a? FFI::Pointer then link else
-          link = Link.new(link)
-
-          unless link.type == :profile
-            raise ArgumentError, "expected profile link, but was given #{link.type}"
-          end
-
-          Spotify::link_as_user(link.pointer)
+          Spotify::link_as_user Link.new(link).pointer(:profile)
         end
       end
   end

@@ -3,8 +3,6 @@ module Hallon
   #
   # @see http://developer.spotify.com/en/libspotify/docs/group__link.html
   class Link
-    attr_reader :pointer
-
     # True if the given Spotify URI is valid (parsable by libspotify).
     #
     # @param (see Hallon::Link#initialize)
@@ -75,6 +73,18 @@ module Hallon
     # @return [String]
     def to_s
       "<#{self.class.name} #{to_str}>"
+    end
+
+    # Retrieve the underlying pointer.
+    #
+    # @param [Symbol] expected_type if given, makes sure the link is of this type
+    # @return [FFI::Pointer]
+    # @raise ArgumentError if `type` is given and does not match link {#type}
+    def pointer(expected_type = nil)
+      unless type == expected_type
+        raise ArgumentError, "expected #{expected_type} link, but it is of type #{type}"
+      end if expected_type
+      @pointer
     end
   end
 end
