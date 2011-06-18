@@ -5,15 +5,11 @@ module Hallon
   # Methods are available for retrieving metadata and relationship
   # status between users.
   class User
-    private_class_method :new
-
     # Construct a new instance of User.
     #
-    # @note Currently you cannot construct users yourself, use {Session#user}
-    # @private
-    def initialize(user)
-      @pointer = Spotify::Pointer.new(user, :user)
-      Spotify::user_add_ref(@pointer)
+    # @param [String, Link, FFI::Pointer] link
+    def initialize(link)
+      @pointer = Spotify::Pointer.new from_link(link), :user, true
     end
 
     # @return [Boolean] true if the user is loaded
@@ -37,5 +33,18 @@ module Hallon
     def picture
       Spotify::user_picture(@pointer).to_s
     end
+
+    private
+      def from_link(link)
+        if link.is_a? FFI::Pointer then link else
+          link = Link.new(link)
+
+          unless link.type == :profile
+            raise ArgumentError, "expected profile link, but was given #{link.type}"
+          end
+
+          Spotify::link_as_user(link.pointer)
+        end
+      end
   end
 end

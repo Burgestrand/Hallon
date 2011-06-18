@@ -141,7 +141,7 @@ module Hallon
     #
     # @return [User]
     def user
-      User.send(:new, Spotify::session_user(@pointer))
+      User.new Spotify::session_user(@pointer)
     end
 
     # Retrieve current connection status.
