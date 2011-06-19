@@ -40,10 +40,6 @@ describe Hallon::Session do
       end
     end
 
-    describe "#status" do
-      it { session.status.should equal :logged_out }
-    end
-
     describe "#logout" do
       it "should check logged in status" do
         session.should_receive(:logged_in?).once.and_return(false)
