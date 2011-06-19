@@ -40,7 +40,13 @@ You can only keep one session with Spotify alive at a time in the same process, 
 ### You still have to worry about threads
 I have been doing my best at hiding the complexity in `libspotify`, but it’s still a work in progress. Despite my efforts, you’ll need to be familiar with concurrent programming to use Hallon properly.
 
+License
+-------
+Hallon is licensed under a 2-clause (Simplified) BSD license. More information can be found in the `LICENSE.txt` file.
+
 [Ruby]: http://www.ruby-lang.org/en/
 [libspotify]: http://developer.spotify.com/en/libspotify/overview/
 [Greenstripes]: http://github.com/sarnesjo/greenstripes
 [Jesper Särnesjö]: http://jesper.sarnesjo.org/
+
+
