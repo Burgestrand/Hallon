@@ -1,6 +1,7 @@
 # coding: utf-8
 require 'spotify'
 require 'hallon/ext/spotify'
+require 'hallon/ext/ffi'
 
 require 'hallon/synchronizable'
 require 'hallon/observable'
