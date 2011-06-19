@@ -12,6 +12,9 @@ module Hallon
     # - `#new_cond`
     #
     # These all delegate to `#monitor`.
+    #
+    # @note This module is part of Hallons private API
+    # @private
     def self.included(o)
       o.instance_exec do
         @monitor = Monitor.new
