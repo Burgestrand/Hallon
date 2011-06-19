@@ -20,6 +20,11 @@ module Hallon
     # @return [String]
     attr_reader :appkey
 
+    # Underlying Spotify pointer.
+    #
+    # @return [FFI::Pointer]
+    attr_reader :pointer
+
     # libspotify only allows one session per process.
     include Singleton
 
