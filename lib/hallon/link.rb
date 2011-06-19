@@ -3,6 +3,8 @@ module Hallon
   #
   # @see http://developer.spotify.com/en/libspotify/docs/group__link.html
   class Link
+    include Comparable
+
     # True if the given Spotify URI is valid (parsable by libspotify).
     #
     # @param (see Hallon::Link#initialize)
@@ -66,6 +68,14 @@ module Hallon
     # @return [String]
     def to_url
       "http://open.spotify.com/%s" % to_str[8..-1].gsub(':', '/')
+    end
+
+    # Compare this Link to another object
+    #
+    # @param [#to_str] other
+    # @return [Integer]
+    def <=>(other)
+      to_str <=> String.try_convert(other)
     end
 
     # String representation of the given Link.

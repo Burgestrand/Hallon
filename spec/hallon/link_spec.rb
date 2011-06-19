@@ -71,5 +71,18 @@ describe Hallon::Link do
         subject.to_s.should include subject.to_str
       end
     end
+
+    describe "#==" do
+      it "should compare using #to_str" do
+        obj = Object.new
+        obj.should_receive(:to_str).and_return(subject.to_str)
+
+        subject.should eq obj
+      end
+
+      it "should not fail when #to_str is unavailable" do
+        subject.should_not eq Object.new
+      end
+    end
   end
 end
