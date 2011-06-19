@@ -32,7 +32,4 @@ task :doc => :yard do
   system 'open doc/index.html'
 end
 
-desc "Start watchr, open a new tab and open Hallon directory in $EDITOR using terminitor"
-task(:work) { system 'terminitor start' }
-
 task :default => [:spec]
