@@ -5,11 +5,17 @@ module Hallon
   # Methods are available for retrieving metadata and relationship
   # status between users.
   class User
+    extend Linkable
+
+    link_converter(:profile) do |link|
+      Spotify::link_as_user(link)
+    end
+
     # Construct a new instance of User.
     #
     # @param [String, Link, FFI::Pointer] link
     def initialize(link)
-      @pointer = Spotify::Pointer.new from_link(link), :user, true
+      @pointer = Spotify::Pointer.new convert(link), :user, true
     end
 
     # @return [Boolean] true if the user is loaded
@@ -33,12 +39,5 @@ module Hallon
     def picture
       Spotify::user_picture(@pointer).to_s
     end
-
-    private
-      def from_link(link)
-        if link.is_a? FFI::Pointer then link else
-          Spotify::link_as_user Link.new(link).pointer(:profile)
-        end
-      end
   end
 end

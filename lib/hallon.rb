@@ -4,6 +4,7 @@ require 'hallon/ext/spotify'
 
 require 'hallon/synchronizable'
 require 'hallon/observable'
+require 'hallon/linkable'
 
 require 'hallon/version'
 require 'hallon/error'
