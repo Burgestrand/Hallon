@@ -1,6 +1,8 @@
 What is Hallon?
 ===============
-Hallon provides [Ruby][] bindings for [libspotify][], the official Spotify C API. This allows you to use an awesome language to interact with an awesome service.
+We rubyists have this awesome [spotify gem][] allowing us to use [libspotify][] from within Ruby, but it has a significant drawback: the `libspotify` API is very hard to use. Now, we can’t have that, so what do we do? We make Hallon!
+
+Hallon is Swedish for “Raspberry”, and has been written to satisfy my needs for API simplicity. It provides you with a wrapper around the spotify gem, making the experience of using `libspotify` from Ruby much more enjoyable.
 
 Hallon would not have been possible if not for these people:
 
@@ -44,9 +46,7 @@ License
 -------
 Hallon is licensed under a 2-clause (Simplified) BSD license. More information can be found in the `LICENSE.txt` file.
 
-[Ruby]: http://www.ruby-lang.org/en/
+[spotify gem]: https://rubygems.org/gems/spotify
 [libspotify]: http://developer.spotify.com/en/libspotify/overview/
 [Greenstripes]: http://github.com/sarnesjo/greenstripes
 [Jesper Särnesjö]: http://jesper.sarnesjo.org/
-
-
