@@ -1,3 +1,4 @@
+# coding: utf-8
 module Hallon
   # Current release version of Hallon
   #

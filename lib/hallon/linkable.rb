@@ -1,3 +1,4 @@
+# coding: utf-8
 module Hallon
   # Methods shared between objects that can be created from Spotify URIs,
   # or can be turned into Spotify URIs.

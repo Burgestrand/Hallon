@@ -1,3 +1,4 @@
+# coding: utf-8
 module Hallon
   # Wraps Spotify URIs in a class, giving access to methods performable on them.
   #

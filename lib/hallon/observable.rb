@@ -1,3 +1,4 @@
+# coding: utf-8
 module Hallon
   # A module providing event capabilities to Hallon objects.
   #
