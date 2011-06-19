@@ -17,13 +17,14 @@ module Hallon
       #   end
       #
       # @param [Symbol] type expected link type
-      # @yield [link] called when conversion is needed from Link to Pointer
+      # @yield [link, *args] called when conversion is needed from Link to Pointer
       # @yieldparam [Hallon::Link] link
+      # @yieldparam *args any extra arguments given to `#convert`
       # @see Link#pointer
       def link_converter(type)
-        define_singleton_method(:convert) do |link|
+        define_singleton_method(:convert) do |link, *args|
           if link.is_a? FFI::Pointer then link else
-            yield Link.new(link).pointer(type)
+            yield Link.new(link).pointer(type), *args
           end
         end
 

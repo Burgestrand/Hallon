@@ -11,16 +11,33 @@ describe Hallon::Linkable do
     klass.should respond_to :convert
   end
 
-  specify "#convert should call the given block if necessary" do
-    called = false
-    klass = Class.new
+  describe "#convert" do
+    it "should call the given block if necessary" do
+      called = false
+      klass = Class.new
 
-    klass.instance_exec do
-      extend Hallon::Linkable
-      link_converter(nil) { called = true }
+      klass.instance_exec do
+        extend Hallon::Linkable
+        link_converter(nil) { called = true }
+      end
+
+      klass.convert("spotify:search:whatever")
+      called.should eq true
     end
 
-    klass.convert("spotify:search:whatever")
-    called.should eq true
+    it "should pass extra parameters to the defining block" do
+      klass = Class.new
+
+      link = mock
+      link.stub(:pointer)
+      Hallon::Link.stub(:new => link)
+
+      klass.instance_exec do
+        extend Hallon::Linkable
+        link_converter(nil) { |link, *args| args }
+      end
+
+      klass.convert("spotify:user:burgestrand", :cool, 5).should eq [:cool, 5]
+    end
   end
 end
