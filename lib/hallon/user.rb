@@ -39,5 +39,12 @@ module Hallon
     def picture
       Spotify::user_picture(@pointer).to_s
     end
+
+    # Convert the user to a Spotify URI.
+    #
+    # @return [Hallon::Link]
+    def to_link
+      Hallon::Link.new Spotify::link_create_from_user(@pointer)
+    end
   end
 end

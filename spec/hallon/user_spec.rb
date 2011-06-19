@@ -1,3 +1,4 @@
+# coding: utf-8
 describe Hallon::User do
   describe ".new" do
     it "should raise ArgumentError when given an invalid link" do
@@ -47,6 +48,15 @@ describe Hallon::User do
       it "should have a picture" do
         @user.picture.should be_a String
       end
+    end
+
+    specify "#to_link should return the Link for the users’ Spotify URI" do
+      link = Hallon::Link.new("spotify:user:burgestrand")
+
+      user = Hallon::User.new(link)
+      session.process_events_on(:userinfo_updated) { user.loaded? }
+
+      user.to_link.should eq link
     end
   end
 end
