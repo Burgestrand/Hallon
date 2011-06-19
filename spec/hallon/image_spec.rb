@@ -18,9 +18,15 @@ describe Hallon::Image do
         @uri.should match @image.id
       end
 
-      specify "its #data should correspond to the fixture image" do
-        image_path = File.expand_path('./../../support/image_fixture.jpg', __FILE__)
-        @image.data.should eq File.read(image_path, :encoding => 'binary')
+      describe "#data" do
+        it "should correspond to the fixture image" do
+          image_path = File.expand_path('./../../support/image_fixture.jpg', __FILE__)
+          @image.data.should eq File.read(image_path, :encoding => 'binary')
+        end
+
+        it "should have a binary encoding" do
+          @image.data.encoding.name.should eq 'ASCII-8BIT'
+        end
       end
     end
   end
