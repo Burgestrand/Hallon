@@ -6,8 +6,8 @@ Hallon would not have been possible if not for these people:
 
 - Per Reimers, cracking synchronization bugs with me in the deep night (4 AM) and correcting me when I didn’t know better
 - [Spotify](http://www.spotify.com/), providing a service worth attention (and my money!)
-- [Linus Oleander](https://github.com/oleander), giving me a reason to look for ways of doing what Hallon does
-- [Jesper Särnesjö][], creator of [Greenstripes][] which spawned the idea of Hallon
+- [Linus Oleander](https://github.com/oleander), involving me with the `radiofy.se` project, ultimately spawning the necessity of Hallon
+- [Jesper Särnesjö][], creator of [Greenstripes][], making me think of Hallon as an achievable goal
 
 Code samples can be found under `examples/` directory.
 
@@ -37,12 +37,8 @@ The API is unstable, my code is likely unstable. Everything should be considered
 ### Hallon only supports one session per process
 You can only keep one session with Spotify alive at a time in the same process, due to a limitation of `libspotify`.
 
-### Hallon is licensed under GNU AGPL
-Hallon is licensed under the [GNU AGPL](http://www.gnu.org/licenses/agpl-3.0.html), which is a very special license:
-
-> If you are releasing your program under the GNU AGPL, and it can interact with users over a network, the program should offer its source to those users in some way. For example, if your program is a web application, its interface could display a “Source” link that leads users to an archive of the code. The GNU AGPL is flexible enough that you can choose a method that's suitable for your specific program—see section 13 for details.
-
-The license is likely to change to the X11 license sometime under 2011. If the AGPL license makes trouble for you, contact me and I’ll most likely give you an exception. :)
+### You still have to worry about threads
+I have been doing my best at hiding the complexity in `libspotify`, but it’s still a work in progress. Despite my efforts, you’ll need to be familiar with concurrent programming to use Hallon properly.
 
 [Ruby]: http://www.ruby-lang.org/en/
 [libspotify]: http://developer.spotify.com/en/libspotify/overview/
