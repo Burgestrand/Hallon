@@ -29,5 +29,16 @@ describe Hallon::Image do
         end
       end
     end
+
+    describe "callbacks" do
+      it "should trigger :load when loaded" do
+        uri = "spotify:image:c78f091482e555bd2ffacfcd9cbdc0714b221663"
+        image = Hallon::Image.new(uri)
+        image.should_not be_loaded
+        image.should_receive(:trigger).with(:load).once
+
+        session.process_events_on { image.loaded? }
+      end
+    end
   end
 end

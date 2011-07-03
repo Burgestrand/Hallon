@@ -10,12 +10,18 @@ module Hallon
       Spotify::image_create_from_link(session.pointer, link)
     end
 
+    # Image triggers `:load` when loaded
+    include Hallon::Observable
+
     # Create a new instance of an Image.
     #
+    # @note (TODO) a load callback is registered, but never unregistered; this
+    #       is bad form. remove it when image loads, or when it is GC’d.
     # @param [String, Link, FFI::Pointer] link
     # @param [Hallon::Session] session
     def initialize(link, session = Session.instance)
       @pointer = Spotify::Pointer.new convert(link, session), :image
+      Spotify::image_add_load_callback(@pointer, proc { trigger(:load) }, nil)
     end
 
     # True if the image has been loaded.
