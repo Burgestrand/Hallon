@@ -28,7 +28,7 @@ task :test => :spec
 #
 desc "Generates YARD documentation and open it."
 task :doc => :yard do
-  system 'open doc/index.html'
+  sh 'open doc/index.html'
 end
 
 task :default => [:spec]
