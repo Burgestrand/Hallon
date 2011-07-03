@@ -4,6 +4,8 @@ module Hallon
   #
   # Methods are available for retrieving metadata and relationship
   # status between users.
+  #
+  # @see http://developer.spotify.com/en/libspotify/docs/group__user.html
   class User
     extend Linkable
 
