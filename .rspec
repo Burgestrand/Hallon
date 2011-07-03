@@ -3,4 +3,5 @@
 -Ilib
 -Ispec
 --fail-fast
+--require cover_me
 --require spec_helper

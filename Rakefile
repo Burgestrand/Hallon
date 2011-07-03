@@ -15,14 +15,13 @@ RSpec::Core::RakeTask.new('spec') do |task|
   task.rspec_opts = '--tag ~logged_in'
 end
 
-task :test => :spec
-
-desc "Run tests and generate a coverage report"
-task 'test:coverage' do
+desc "Run the full test suite and generate a coverage report"
+task 'spec:cov' => 'spec:full' do
   require 'cover_me'
-  Rake::Task['test'].invoke
   CoverMe.complete!
 end
+
+task :test => :spec
 
 #
 # Custom tasks
