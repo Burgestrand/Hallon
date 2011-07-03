@@ -1,0 +1,11 @@
+# Quirks, oddities and general notes about libspotify
+
+## Session
+- `sp_session_release` will segfault (rare)
+- `login` callback fires even if the login fails; instead,
+  `connection_error` will fire a few moments later
+- creating a session, releasing it, and then creating one again
+  will segfault
+
+## Link
+- segfaults if created before a session
