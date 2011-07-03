@@ -20,8 +20,9 @@ module Hallon
     # @param [String, Link, FFI::Pointer] link
     # @param [Hallon::Session] session
     def initialize(link, session = Session.instance)
-      @pointer = Spotify::Pointer.new convert(link, session), :image
-      Spotify::image_add_load_callback(@pointer, proc { trigger(:load) }, nil)
+      @callback = proc { trigger(:load) }
+      @pointer  = Spotify::Pointer.new convert(link, session), :image
+      Spotify::image_add_load_callback(@pointer, @callback, nil)
     end
 
     # True if the image has been loaded.
