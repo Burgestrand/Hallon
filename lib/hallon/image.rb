@@ -1,5 +1,8 @@
 # coding: utf-8
 module Hallon
+  # Images are JPEG images that can be linked to and saved.
+  #
+  # @see http://developer.spotify.com/en/libspotify/docs/group__image.html
   class Image
     extend Linkable
 
