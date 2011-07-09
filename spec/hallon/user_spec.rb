@@ -62,5 +62,12 @@ describe Hallon::User do
         expect { user.name(:i_am_invalid) }.to raise_error
       end
     end
+
+    describe "#picture" do
+      it "should retrieve the user picture" do
+        Spotify.should_receive(:user_picture)
+        user.picture.should be_a String
+      end
+    end
   end
 end
