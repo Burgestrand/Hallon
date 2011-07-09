@@ -7,7 +7,7 @@ module Hallon
   #
   # @see http://developer.spotify.com/en/libspotify/docs/group__user.html
   class User
-    extend Linkable
+    include Linkable
 
     link_converter(:profile) do |link|
       Spotify::link_as_user(link)

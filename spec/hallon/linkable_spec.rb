@@ -4,7 +4,7 @@ describe Hallon::Linkable do
     klass.should_not respond_to :convert
 
     klass.instance_exec do
-      extend Hallon::Linkable
+      include Hallon::Linkable
       link_converter :foobar
     end
 
@@ -17,7 +17,7 @@ describe Hallon::Linkable do
       klass = Class.new
 
       klass.instance_exec do
-        extend Hallon::Linkable
+        include Hallon::Linkable
         link_converter(nil) { called = true }
       end
 
@@ -33,7 +33,7 @@ describe Hallon::Linkable do
       Hallon::Link.stub(:new => link)
 
       klass.instance_exec do
-        extend Hallon::Linkable
+        include Hallon::Linkable
         link_converter(nil) { |link, *args| args }
       end
 
