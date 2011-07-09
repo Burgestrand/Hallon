@@ -114,7 +114,7 @@ module Hallon
             params = Timeout::timeout(0.25) { channel.pop }
             redo if params == :notify
           rescue Timeout::Error
-            params = :timeout
+            params = nil
           end
 
           if result = block.call(*params)

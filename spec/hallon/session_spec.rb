@@ -30,14 +30,19 @@ describe Hallon::Session do
 
       session.should_receive(:process_events).twice.and_return do
         unless notified
-          session.trigger(:notify_main_thread)
+          session.trigger(:notify_main_thread, :notify)
           notified = true
         else
-          session.trigger(:bogus)
+          session.trigger(:bogus, :bogus)
         end
       end
 
-      session.process_events_on(:bogus) { |e| e.inspect }.should eq "nil"
+      session.process_events_on(:bogus) { |e| e.inspect }.should eq ":bogus"
+    end
+
+    it "should time out if waiting for events too long" do
+      session.should_receive(:process_events).once.and_return { session.trigger(:whatever) }
+      session.process_events_on(:whatever) { |e| e.inspect }.should eq "nil"
     end
   end
 
@@ -48,7 +53,7 @@ describe Hallon::Session do
     end
   end
 
-  context :logged_in => true do
+  context "when logged in", :logged_in => true do
     it "should be logged in" do
       session.should be_logged_in
     end
