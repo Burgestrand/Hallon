@@ -3,36 +3,24 @@ require 'hallon'
 require './spec/support/config'
 
 session = Hallon::Session.instance IO.read(ENV['HALLON_APPKEY']) do
-  on(:logged_in) do |error|
-    puts "logged_in callback: #{error}"
+  on(:log_message) do |message|
+    puts "[LOG] #{message}"
   end
 end
 
-notify = session.new_cond
+session.login ENV['HALLON_USERNAME'], ENV['HALLON_PASSWORD']
+logged_in  = session.process_events_on(:logged_in) { |error| error }
 
-session.protecting_handlers do
-  session.synchronize do
-    session.on(:notify_main_thread) do
-      session.synchronize { notify.signal }
-    end
-
-    session.on(:logged_in) do |error|
-      session.synchronize do
-        login_error = error
-        notify.signal
-      end
-    end
-
-    session.login ENV['HALLON_USERNAME'], ENV['HALLON_PASSWORD']
-    notify.wait_until do
-      session.process_events
-      session.logged_in?
-    end
-  end
+unless logged_in == :ok
+  abort "[ERROR] (:logged_in) #{Hallon::Error.explain(logged_in)}"
 end
 
-if session.logged_in?
-  puts "YAY! We’ve logged in!"
-else
-  puts "Boo. We didn’t log in: #{login_error}"
+conn_error = session.process_events_on(:connection_error) do |error|
+  session.logged_in? or error
 end
+
+unless conn_error == true
+  abort "[ERROR] (:connection_error) #{Hallon::Error.explain(conn_error)}"
+end
+
+puts "Successfully logged in!"
