@@ -31,4 +31,9 @@ task :doc => :yard do
   sh 'open doc/index.html'
 end
 
+desc "Remove generated files"
+task :clean do
+  sh 'git clean -fdx --exclude Gemfile.lock --exclude spec/support/config.rb'
+end
+
 task :default => [:spec]
