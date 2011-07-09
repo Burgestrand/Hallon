@@ -36,9 +36,11 @@ module Hallon
         Spotify::user_display_name(@pointer)
       when :full
         Spotify::user_full_name(@pointer)
-      else
+      when :canonical
         Spotify::user_canonical_name(@pointer)
-      end
+      else
+        raise ArgumentError, "expected type to be :display, :full or :canonical, but was #{type}"
+      end.to_s
     end
 
     # Retrieve the URL to the users’ profile picture.

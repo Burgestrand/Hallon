@@ -41,5 +41,26 @@ describe Hallon::User do
         user.to_link.should eq link
       end
     end
+
+    describe "#name" do
+      it "should be able to get the display name" do
+        Spotify.should_receive(:user_display_name)
+        user.name(:display).should be_a String
+      end
+
+      it "should be able to get the full name" do
+        Spotify.should_receive(:user_full_name)
+        user.name(:full).should be_a String
+      end
+
+      it "should get the canonical name when unspecified" do
+        Spotify.should_receive(:user_canonical_name)
+        user.name.should be_a String
+      end
+
+      it "should fail on invalid name types", :logged_in => false do
+        expect { user.name(:i_am_invalid) }.to raise_error
+      end
+    end
   end
 end
