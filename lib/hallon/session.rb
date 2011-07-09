@@ -149,6 +149,13 @@ module Hallon
       User.new Spotify::session_user(@pointer)
     end
 
+    # Retrieve the relation type between logged in {User} and `user`.
+    #
+    # @return [Symbol] :unknown, :none, :unidirectional or :bidirectional
+    def relation_type?(user)
+      Spotify::user_relation_type(@pointer, user.pointer)
+    end
+
     # Retrieve current connection status.
     #
     # @return [Symbol]

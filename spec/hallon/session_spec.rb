@@ -57,5 +57,11 @@ describe Hallon::Session do
     it "should be logged in" do
       session.should be_logged_in
     end
+
+    describe "#relation_type?" do
+      it "should retrieve the relation between the current user and given user" do
+        session.relation_type?(session.user).should eq :unknown
+      end
+    end
   end
 end
