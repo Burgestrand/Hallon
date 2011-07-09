@@ -10,50 +10,36 @@ describe Hallon::User do
     end
   end
 
-  context :logged_in => true do
-    describe "creating a User" do
-      context "from Spotify URI" do
-        before(:all) do
-          @user = Hallon::User.new("spotify:user:burgestrand")
-          session.process_events_on(:userinfo_updated) { @user.loaded? }
-        end
-
-        specify "its name should equal burgestrand" do
-          @user.name.should eq "burgestrand"
-        end
-      end
-
-      context "from Link" do
-        before(:all) do
-          link = Hallon::Link.new("spotify:user:burgestrand")
-          @user = Hallon::User.new(link)
-          session.process_events_on(:userinfo_updated) { @user.loaded? }
-        end
-
-        specify "its name should equal burgestrand" do
-          @user.name.should eq "burgestrand"
-        end
-      end
-
-      context "from Session#user" do
-        subject { @user }
-
-        before(:all) do
-          @user = session.user
-          session.process_events_on(:userinfo_updated) { @user.loaded? }
-        end
-
-        it { should be_loaded }
-      end
+  describe "creating a User", :logged_in => true do
+    context ".new", "from a Spotify URI" do
+      subject { Hallon::User.new("spotify:user:burgestrand") }
+      it_should_behave_like "a loadable object"
     end
 
-    specify "#to_link should return the Link for the users’ Spotify URI" do
-      link = Hallon::Link.new("spotify:user:burgestrand")
+    context ".new", "from a Link" do
+      subject { Hallon::User.new Hallon::Link.new("spotify:user:burgestrand") }
+      it_should_behave_like "a loadable object"
+    end
 
-      user = Hallon::User.new(link)
+    context "from Session#user" do
+      subject { session.user }
+      it_should_behave_like "a loadable object"
+    end
+  end
+
+  describe "an instance", :logged_in => true do
+    let(:link) { Hallon::Link.new("spotify:user:burgestrand") }
+    let(:user) { Hallon::User.new(link) }
+    subject { user }
+
+    before(:all) do
       session.process_events_on(:userinfo_updated) { user.loaded? }
+    end
 
-      user.to_link.should eq link
+    describe "#to_link" do
+      it "should return a Link for this user" do
+        user.to_link.should eq link
+      end
     end
   end
 end

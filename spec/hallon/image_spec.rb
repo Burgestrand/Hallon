@@ -19,8 +19,7 @@ describe Hallon::Image, :logged_in => true do
 
     describe "#data" do
       it "should correspond to the fixture image" do
-        image_path = File.expand_path('./../../support/image_fixture.jpg', __FILE__)
-        @image.data.should eq File.read(image_path, :encoding => 'binary')
+        @image.data.should eq File.read(fixture_image_path, :encoding => 'binary')
       end
 
       it "should have a binary encoding" do

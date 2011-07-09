@@ -1,21 +1,3 @@
-RSpec.configure do
-  def options
-    {
-      :user_agent => "Hallon (rspec)",
-      :settings_path => "tmp",
-      :cache_path => "tmp/cache"
-    }
-  end
-
-  def session
-    @session ||= Hallon::Session.instance(Hallon::APPKEY, options)
-  end
-end
-
-shared_context "initialized session", :session do
-  before(:all) { @session = session }
-end
-
 shared_context "logged in", :logged_in do
   before(:all) do
     unless session.logged_in?

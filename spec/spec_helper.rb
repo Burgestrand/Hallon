@@ -5,12 +5,28 @@ require 'hallon'
 Thread.abort_on_exception = true
 
 RSpec.configure do |config|
-  config.alias_it_should_behave_like_to :has_requirement, 'has requirement:'
   config.treat_symbols_as_metadata_keys_with_true_values = true
+
+  def options
+    {
+      :user_agent => "Hallon (rspec)",
+      :settings_path => "tmp",
+      :cache_path => "tmp/cache"
+    }
+  end
+
+  def session
+    @session ||= Hallon::Session.instance(Hallon::APPKEY, options)
+  end
+
+  def fixture_image_path
+    File.expand_path('../fixtures/pink_cover.jpg', __FILE__)
+  end
 end
 
-# Requires supporting files in ./support/
+# Requires supporting files in ./support/ and ./fixtures/
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| require f}
+Dir["#{File.dirname(__FILE__)}/fixtures/**/*.rb"].each {|f| require f}
 
 unless ENV.values_at(*%w(HALLON_APPKEY HALLON_USERNAME HALLON_PASSWORD)).all?
   abort <<-ERROR
