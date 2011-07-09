@@ -31,8 +31,14 @@ module Hallon
     # @param [Symbol] type one of :canonical, :display, :full
     # @return [String]
     def name(type = :canonical)
-      method = :"user_#{type}_name"
-      Spotify::public_send(method, @pointer).to_s
+      case type
+      when :display
+        Spotify::user_display_name(@pointer)
+      when :full
+        Spotify::user_full_name(@pointer)
+      else
+        Spotify::user_canonical_name(@pointer)
+      end
     end
 
     # Retrieve the URL to the users’ profile picture.
