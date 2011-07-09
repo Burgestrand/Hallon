@@ -24,6 +24,30 @@ task 'spec:cov' => ['clean', 'spec:full'] do
   CoverMe.complete!
 end
 
+desc "Process the Hallon codebase, finding out which Spotify methods are being used"
+task 'spotify:cov' do
+  require 'set'
+  require 'spotify'
+
+  methods = Spotify.methods(false).map(&:to_s)
+  covered = Set.new(methods)
+  matcher = /Spotify::([\w_]+)[ \(]/
+
+  FileList['lib/**/*.rb'].each do |file|
+    File.read(file).scan(matcher) { |method, _| covered.delete(method) }
+  end
+
+  covered.group_by { |m| m[/[^_]+/] }.each_pair do |group, methods|
+    puts "#{group.capitalize}:"
+    covered.each do |m|
+      puts "  #{m}"
+    end
+    puts
+  end
+
+  puts "Coverage: %.02f%%" % (100 * (1 - covered.size.fdiv(methods.size)))
+end
+
 task :test => :spec
 
 #
