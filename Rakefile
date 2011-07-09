@@ -16,8 +16,11 @@ RSpec::Core::RakeTask.new('spec') do |task|
 end
 
 desc "Run the full test suite and generate a coverage report"
-task 'spec:cov' => 'spec:full' do
+task 'spec:cov' => ['clean', 'spec:full'] do
   require 'cover_me'
+  require './spec/support/cover_me'
+
+  CoverMe.config.at_exit = proc { `open coverage/index.html` }
   CoverMe.complete!
 end
 
