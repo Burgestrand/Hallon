@@ -25,7 +25,7 @@ task 'spec:cov' => ['clean', 'spec:full'] do
 end
 
 desc "Process the Hallon codebase, finding out which Spotify methods are being used"
-task 'spotify:cov' do
+task 'spotify:coverage' do
   require 'set'
   require 'spotify'
 
