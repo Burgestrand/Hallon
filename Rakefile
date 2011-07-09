@@ -39,7 +39,7 @@ task 'spotify:coverage' do
 
   covered.group_by { |m| m[/[^_]+/] }.each_pair do |group, methods|
     puts "#{group.capitalize}:"
-    covered.each do |m|
+    methods.each do |m|
       puts "  #{m}"
     end
     puts
