@@ -6,6 +6,7 @@ Thread.abort_on_exception = true
 
 RSpec.configure do |config|
   config.alias_it_should_behave_like_to :has_requirement, 'has requirement:'
+  config.treat_symbols_as_metadata_keys_with_true_values = true
 end
 
 # Requires supporting files in ./support/

@@ -10,43 +10,40 @@ describe Hallon::User do
     end
   end
 
-  has_requirement "logged in" do
-    context "from Spotify URI" do
-      before(:all) do
-        @user = Hallon::User.new("spotify:user:burgestrand")
-        session.process_events_on(:userinfo_updated) { @user.loaded? }
+  context :logged_in => true do
+    describe "creating a User" do
+      context "from Spotify URI" do
+        before(:all) do
+          @user = Hallon::User.new("spotify:user:burgestrand")
+          session.process_events_on(:userinfo_updated) { @user.loaded? }
+        end
+
+        specify "its name should equal burgestrand" do
+          @user.name.should eq "burgestrand"
+        end
       end
 
-      specify "its name should equal burgestrand" do
-        @user.name.should eq "burgestrand"
-      end
-    end
+      context "from Link" do
+        before(:all) do
+          link = Hallon::Link.new("spotify:user:burgestrand")
+          @user = Hallon::User.new(link)
+          session.process_events_on(:userinfo_updated) { @user.loaded? }
+        end
 
-    context "from Link" do
-      before(:all) do
-        link = Hallon::Link.new("spotify:user:burgestrand")
-        @user = Hallon::User.new(link)
-        session.process_events_on(:userinfo_updated) { @user.loaded? }
-      end
-
-      specify "its name should equal burgestrand" do
-        @user.name.should eq "burgestrand"
-      end
-    end
-
-    context "from Session#user" do
-      before(:all) do
-        @user = session.user
-        session.process_events_on(:userinfo_updated) { @user.loaded? }
+        specify "its name should equal burgestrand" do
+          @user.name.should eq "burgestrand"
+        end
       end
 
-      specify "its name should equal #{ENV['HALLON_USERNAME'].downcase}" do
-        canonical_name = ENV['HALLON_USERNAME'].downcase
-        @user.name.should match canonical_name
-      end
+      context "from Session#user" do
+        subject { @user }
 
-      it "should have a picture" do
-        @user.picture.should be_a String
+        before(:all) do
+          @user = session.user
+          session.process_events_on(:userinfo_updated) { @user.loaded? }
+        end
+
+        it { should be_loaded }
       end
     end
 
