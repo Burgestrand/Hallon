@@ -77,7 +77,7 @@ module Spotify
     # @param [Boolean]
     # @return [Boolean]
     def compress_playlists=(bool)
-      self[:compress_playlists] = bool ? 1 : 0
+      self[:compress_playlists] = !! bool
     end
 
     # Allows setting initially_unload_playlists using a boolean.
@@ -86,7 +86,7 @@ module Spotify
     # @param [Boolean]
     # @return [Boolean]
     def load_playlists=(bool)
-      self[:initially_unload_playlists] = ! bool ? 1 : 0
+      self[:initially_unload_playlists] = ! bool
     end
 
     # Allows setting dont_save_metadata_for_playlists using a boolean.
@@ -95,7 +95,7 @@ module Spotify
     # @param [Boolean]
     # @return [Boolean]
     def cache_playlist_metadata=(bool)
-      self[:dont_save_metadata_for_playlists] = ! bool ? 1 : 0
+      self[:dont_save_metadata_for_playlists] = ! bool
     end
   end
 end
