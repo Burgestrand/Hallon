@@ -27,6 +27,9 @@ module Hallon
 
     # libspotify only allows one session per process.
     include Singleton
+    class << self
+      undef :instance
+    end
 
     # Session allows you to define your own callbacks.
     include Hallon::Observable

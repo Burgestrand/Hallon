@@ -56,9 +56,9 @@ module Spotify
 
   # Extensions to SessionConfig, allowing more sensible configuration names.
   class SessionConfig < FFI::Struct
-    [:cache_location, :settings_location, :application_key, :user_agent].each do |field|
+    [:cache_location, :settings_location, :user_agent].each do |field|
       method = field.to_s.gsub('location', 'path')
-      define_method(:"#{method}") { self[field].get_string(0) }
+      define_method(:"#{method}") { self[field].read_string }
       define_method(:"#{method}=") do |string|
         self[field] = FFI::MemoryPointer.from_string(string)
       end
