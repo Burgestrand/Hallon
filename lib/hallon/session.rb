@@ -15,11 +15,6 @@ module Hallon
     # @return [Hash]
     attr_reader :options
 
-    # Application key used at {Session#initialize}
-    #
-    # @return [String]
-    attr_reader :appkey
-
     # Underlying Spotify pointer.
     #
     # @return [FFI::Pointer]

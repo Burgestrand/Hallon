@@ -1,12 +1,6 @@
 describe Hallon::Session do
   include_context "initialized session"
 
-  describe "appkey" do
-    it "should == Hallon::APPKEY" do
-      session.appkey.should == Hallon::APPKEY
-    end
-  end
-
   describe "options" do
     subject { session.options }
     its([:user_agent]) { should == options[:user_agent] }
