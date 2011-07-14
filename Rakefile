@@ -8,8 +8,17 @@ require 'yard'
 YARD::Rake::YardocTask.new
 
 require 'rspec/core/rake_task'
+
 desc "Run all specs (even those requiring logging in to Spotify)"
 RSpec::Core::RakeTask.new('spec:full')
+
+desc "Run all specs like spec:full, but with debug mode and full warnings enabled"
+RSpec::Core::RakeTask.new('spec:debug') do |task|
+  task.skip_bundler = true
+  task.ruby_opts    = '-d -W2'
+end
+
+desc "Run all offline specs"
 RSpec::Core::RakeTask.new('spec') do |task|
   task.pattern = 'spec/hallon/*_spec.rb'
   task.rspec_opts = '--tag ~logged_in'
