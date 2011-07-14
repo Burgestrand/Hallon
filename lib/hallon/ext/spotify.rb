@@ -30,7 +30,7 @@ module Spotify
     def releaser_for(type)
       lambda do |ptr|
         unless ptr.null?
-          $stdout.puts "Spotify::#{type}_release(#{ptr})" if Hallon::debug
+          $stdout.puts "Spotify::#{type}_release(#{ptr})" if $DEBUG
           Spotify::send(:"#{type}_release", ptr)
         end
       end
