@@ -15,14 +15,16 @@ module Hallon
 
     # Create a new instance of an Image.
     #
-    # @note (TODO) a load callback is registered, but never unregistered; this
-    #       is bad form. remove it when image loads, or when it is GC’d.
     # @param [String, Link, FFI::Pointer] link
     # @param [Hallon::Session] session
     def initialize(link, session = Session.instance)
       @callback = proc { trigger(:load) }
       @pointer  = Spotify::Pointer.new convert(link, session), :image
       Spotify::image_add_load_callback(@pointer, @callback, nil)
+
+      # TODO: remove load_callback when @pointer is released
+      # TODO: this makes libspotify segfault, figure out why
+      # on(:load) { Spotify::image_remove_load_callback(@pointer, @callback, nil) }
     end
 
     # True if the image has been loaded.
