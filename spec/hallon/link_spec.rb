@@ -56,8 +56,10 @@ describe Hallon::Link, :session => true do
   end
 
   describe "#type" do
-    it "should equal the type of the given link" do
-      Hallon::Link.new("spotify:track:3oN2Kq1h07LSSBSLYQp0Ns").type.should equal :track
+    example_uris.each_pair do |uri, type|
+      specify "#{uri} should equal #{type}" do
+        Hallon::Link.new(uri).type.should equal type
+      end
     end
   end
 
