@@ -1,3 +1,0 @@
-[submodule "spec/libmockspotify"]
-	path = spec/libmockspotify
-	url = git://github.com/Burgestrand/libmockspotify.git
