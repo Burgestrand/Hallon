@@ -57,8 +57,10 @@ describe Hallon::User do
         Spotify.should_receive(:user_canonical_name)
         user.name.should be_a String
       end
+    end
 
-      it "should fail on invalid name types", :logged_in => false do
+    describe "#name" do
+      it "should fail on invalid name types" do
         expect { user.name(:i_am_invalid) }.to raise_error
       end
     end

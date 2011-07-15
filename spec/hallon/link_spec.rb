@@ -6,7 +6,7 @@ describe Hallon::Link, :session => true do
 
     describe "::new" do
       it "should raise an ArgumentError on an invalid link" do
-        expect { subject.new("omgwtfbbq") }.to raise_error(ArgumentError, /omgwtfbbq/)
+        expect { subject.new("invalid_link") }.to raise_error(ArgumentError, /invalid_link/)
       end
 
       it "should not raise error on valid links" do
@@ -30,7 +30,7 @@ describe Hallon::Link, :session => true do
       end
 
       it "should be false for an invalid link" do
-        subject.valid?("omgwtfbbq").should be_false
+        subject.valid?("invalid_link").should be_false
       end
     end
   end
@@ -56,10 +56,8 @@ describe Hallon::Link, :session => true do
   end
 
   describe "#type" do
-    example_uris.each_pair do |uri, type|
-      specify "#{uri} should equal #{type}" do
-        Hallon::Link.new(uri).type.should equal type
-      end
+    it "should equal the type of the given link" do
+      Hallon::Link.new("spotify:track:3oN2Kq1h07LSSBSLYQp0Ns").type.should equal :track
     end
   end
 

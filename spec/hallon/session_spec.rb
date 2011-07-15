@@ -1,5 +1,26 @@
+# coding: utf-8
 describe Hallon::Session do
-  include_context "initialized session"
+  it { Hallon::Session.should_not respond_to :new }
+
+  describe "#instance" do
+    it "should require an application key" do
+      expect { Hallon::Session.instance }.to raise_error(ArgumentError)
+    end
+  end
+
+  describe "#new" do
+    it "should fail on an invalid application key" do
+      expect { create_session(false) }.to raise_error(Hallon::Error, /BAD_APPLICATION_KEY/)
+    end
+
+    it "should fail on a small user-agent of multibyte chars (> 255 characters)" do
+      expect { create_session(true, :user_agent => 'ö' * 128) }.to raise_error(ArgumentError)
+    end
+
+    it "should fail on a huge user agent (> 255 characters)" do
+      expect { create_session(true, :user_agent => 'a' * 256) }.to raise_error(ArgumentError)
+    end
+  end
 
   describe "options" do
     subject { session.options }
