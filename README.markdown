@@ -42,6 +42,12 @@ You can only keep one session with Spotify alive at a time in the same process, 
 ### You still have to worry about threads
 I have been doing my best at hiding the complexity in `libspotify`, but it’s still a work in progress. Despite my efforts, you’ll need to be familiar with concurrent programming to use Hallon properly.
 
+Versioning policy
+-----------------
+Hallon uses [semantic versioning](http://semver.org) as of v0.0.0. As long
+as Hallon stays at major version 0, no guarantees of backwards-compatibility
+are made. CHANGELOG will be kept up to date with the different versions.
+
 License
 -------
 Hallon is licensed under a 2-clause (Simplified) BSD license. More information can be found in the `LICENSE.txt` file.
