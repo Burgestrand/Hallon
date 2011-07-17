@@ -26,7 +26,7 @@ module Hallon
     # Parse the given Spotify URI into a Link.
     #
     # @note Unless you have a {Session} initialized, this will segfault!
-    # @param [#to_s] uri
+    # @param [#to_str] uri
     # @raise [ArgumentError] link could not be parsed
     def initialize(uri)
       if (link = uri).respond_to? :to_str
