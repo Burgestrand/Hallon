@@ -121,6 +121,7 @@ module Hallon
         end
       end
     end
+    alias :wait_for :process_events_on
 
     # Log into Spotify using the given credentials.
     #
