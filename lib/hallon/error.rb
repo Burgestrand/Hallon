@@ -40,14 +40,13 @@ module Hallon
       # @return [nil]
       def maybe_raise(error)
         error, symbol = disambiguate(error)
+        return symbol if symbol == :ok
 
-        unless symbol == :ok
-          message = []
-          message << "[#{symbol.upcase}]"
-          message << explain(error)
-          message << "(#{error})"
-          raise Hallon::Error, message.join(' ')
-        end
+        message = []
+        message << "[#{symbol.upcase}]"
+        message << explain(error)
+        message << "(#{error})"
+        raise Hallon::Error, message.join(' ')
       end
     end
   end
