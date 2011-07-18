@@ -1,0 +1,20 @@
+Hallon’s Changelog
+==================
+
+v0.1.0
+------------------
+Initial, first, release! This version is merely made to
+have a starting point, a point of reference, for future
+releases soon to come.
+
+- Error subsystem is covered (`sp_error_message(error_code)`)
+- Image subsystem is complete, however you can only create images
+  from links at this moment.
+- Session API is partial. Currently you can login, logout, retrieve
+  the logged in user and query user relations.
+- User API is complete, but you can only create users from your
+  currently logged in user (through Session) or from links.
+
+The API is still very young, and I expect a lot of changes to
+happen to it, to make the asynchronous nature of libspotify
+easier to handle.
