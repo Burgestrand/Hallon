@@ -8,8 +8,8 @@ module Hallon
       # Given a number or a symbol, find both the symbol and the error
       # number it represents.
       #
-      # @param [Symbol, Fixnum]
-      # @return [[Fixnum, Symbol]]
+      # @param [Symbol, Fixnum] error
+      # @return [[Fixnum, Symbol]] (error code, error symbol)
       def disambiguate(error)
         @enum ||= Spotify::enum_type(:error)
 
