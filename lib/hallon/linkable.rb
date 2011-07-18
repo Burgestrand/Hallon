@@ -7,44 +7,44 @@ module Hallon
   # @private
   module Linkable
     # These are extended onto a class when {Linkable} is included.
-    module ClassMethods
-      include Forwardable
+    include Forwardable
 
-      # Creates `#convert` method which’ll convert a link to a pointer
-      #
-      # @example
-      #   # Creates instance method `convert(link)`
-      #   link_converter(:playlist) do |link|
-      #     Spotify::link_as_playlist(link)
-      #   end
-      #
-      # @param [Symbol] type expected link type
-      # @yield [link, *args] called when conversion is needed from Link to Pointer
-      # @yieldparam [Hallon::Link] link
-      # @yieldparam *args any extra arguments given to `#convert`
-      # @see Link#pointer
-      def link_converter(type)
-        define_singleton_method(:convert) do |link, *args|
-          if link.is_a? FFI::Pointer then link else
-            yield Link.new(link).pointer(type), *args
-          end
-        end
-
-        def_delegators 'self.class', :convert
-      end
-    end
-
-    # When included, Linkable also defines the {ClassMethods#link_converter} method.
-    def self.included(other)
-      other.instance_eval do
-        private
-          extend ClassMethods
-      end
-    end
-
-    # Underlying Spotify pointer.
+    # Creates `from_link` class & instance method which’ll convert a link to a pointer
     #
-    # @return [FFI::Pointer]
-    attr_reader :pointer
+    # @example
+    #   # Creates instance method `from_link(link)`
+    #   from_link(:playlist) { |link| Spotify::link_as_playlist(link) }
+    #
+    # @param [Symbol] type expected link type
+    # @yield [link, *args] called when conversion is needed from Link pointer
+    # @yieldparam [Hallon::Link] link
+    # @yieldparam *args any extra arguments given to `#from_link`
+    # @see Link#pointer
+    def from_link(type)
+      define_singleton_method(:from_link) do |link, *args|
+        if link.is_a? FFI::Pointer then link else
+          yield Link.new(link).pointer(type), *args
+        end
+      end
+
+      def_delegators 'self.class', :from_link
+    end
+
+    # Defines `to_link` class & instance method.
+    #
+    # @example
+    #   to_link(:artist)
+    #
+    # @note Calls down to `Spotify::link_create_from_#{type}(@pointer)`
+    # @param [Symbol] type object kind
+    # @return [Link]
+    def to_link(type)
+      define_singleton_method(:to_link) do |ptr, *args|
+        link = Spotify.__send__(:"link_create_from_#{type}", ptr, *args)
+        Hallon::Link.new(link)
+      end
+
+      define_method(:to_link) { |*args, &block| self.class.to_link(@pointer, *args, &block) }
+    end
   end
 end

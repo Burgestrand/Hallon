@@ -4,11 +4,13 @@ module Hallon
   #
   # @see http://developer.spotify.com/en/libspotify/docs/group__image.html
   class Image
-    include Linkable
+    extend Linkable
 
-    link_converter(:image) do |link, session|
+    from_link(:image) do |link, session|
       Spotify::image_create_from_link(session.pointer, link)
     end
+
+    to_link(:image)
 
     # Image triggers `:load` when loaded
     include Hallon::Observable
@@ -19,7 +21,7 @@ module Hallon
     # @param [Hallon::Session] session
     def initialize(link, session = Session.instance)
       @callback = proc { trigger(:load) }
-      @pointer  = Spotify::Pointer.new convert(link, session), :image
+      @pointer  = Spotify::Pointer.new from_link(link, session), :image
       Spotify::image_add_load_callback(@pointer, @callback, nil)
 
       # TODO: remove load_callback when @pointer is released

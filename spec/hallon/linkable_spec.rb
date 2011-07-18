@@ -1,27 +1,27 @@
 describe Hallon::Linkable do
-  it "should define the #convert method" do
+  it "should define the #from_link method" do
     klass = Class.new
-    klass.should_not respond_to :convert
+    klass.should_not respond_to :from_link
 
     klass.instance_exec do
-      include Hallon::Linkable
-      link_converter :foobar
+      extend Hallon::Linkable
+      from_link :foobar
     end
 
-    klass.should respond_to :convert
+    klass.should respond_to :from_link
   end
 
-  describe "#convert" do
+  describe "#from_link" do
     it "should call the given block if necessary" do
       called = false
       klass = Class.new
 
       klass.instance_exec do
-        include Hallon::Linkable
-        link_converter(nil) { called = true }
+        extend Hallon::Linkable
+        from_link(nil) { called = true }
       end
 
-      klass.convert("spotify:search:whatever")
+      klass.from_link("spotify:search:whatever")
       called.should eq true
     end
 
@@ -33,11 +33,11 @@ describe Hallon::Linkable do
       Hallon::Link.stub(:new => link)
 
       klass.instance_exec do
-        include Hallon::Linkable
-        link_converter(nil) { |link, *args| args }
+        extend Hallon::Linkable
+        from_link(nil) { |link, *args| args }
       end
 
-      klass.convert("spotify:user:burgestrand", :cool, 5).should eq [:cool, 5]
+      klass.from_link("spotify:user:burgestrand", :cool, 5).should eq [:cool, 5]
     end
   end
 end

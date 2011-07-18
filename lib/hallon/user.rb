@@ -7,17 +7,33 @@ module Hallon
   #
   # @see http://developer.spotify.com/en/libspotify/docs/group__user.html
   class User
-    include Linkable
+    extend Linkable
 
-    link_converter(:profile) do |link|
-      Spotify::link_as_user(link)
-    end
+    # @macro [attach] from_link
+    #   Given a Link, get its’ underlying pointer.
+    #
+    #   @method to_link
+    #   @scope  class
+    #   @param  [String, Hallon::Link, FFI::Pointer] link
+    #   @return [FFI::Pointer]
+    from_link(:profile) { |link| Spotify::link_as_user(link) }
+
+    # @macro [attach] to_link
+    #   Create a Link to the current object.
+    #
+    #   @method to_link
+    #   @scope  instance
+    #   @return [Hallon::Link]
+    to_link(:user)
+
+    # Used by {Session#relation_type?}
+    attr_reader :pointer
 
     # Construct a new instance of User.
     #
     # @param [String, Link, FFI::Pointer] link
     def initialize(link)
-      @pointer = Spotify::Pointer.new convert(link), :user, true
+      @pointer = Spotify::Pointer.new from_link(link), :user, true
     end
 
     # @return [Boolean] true if the user is loaded
@@ -48,13 +64,6 @@ module Hallon
     # @return [String]
     def picture
       Spotify::user_picture(@pointer).to_s
-    end
-
-    # Convert the user to a Spotify URI.
-    #
-    # @return [Hallon::Link]
-    def to_link
-      Hallon::Link.new Spotify::link_create_from_user(@pointer)
     end
   end
 end
