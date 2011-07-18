@@ -58,7 +58,7 @@ describe Hallon::User do
         user.name.should be_a String
       end
 
-      it "should fail on invalid name types", :logged_in => false do
+      it "should fail on invalid name types" do
         expect { user.name(:i_am_invalid) }.to raise_error
       end
     end
