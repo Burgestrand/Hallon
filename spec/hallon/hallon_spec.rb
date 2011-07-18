@@ -1,6 +1,6 @@
 describe Hallon do
   describe "VERSION" do
-    specify { Hallon::VERSION.should == "0.0.0" }
+    specify { Hallon::VERSION.should be_a String }
   end
 
   describe "API_VERSION" do
