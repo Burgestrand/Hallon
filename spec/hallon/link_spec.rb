@@ -1,4 +1,4 @@
-describe Hallon::Link, :session => true do
+describe Hallon::Link do
   subject { Hallon::Link.new("spotify:user:burgestrand") }
 
   context "class methods" do
@@ -6,7 +6,7 @@ describe Hallon::Link, :session => true do
 
     describe "::new" do
       it "should raise an ArgumentError on an invalid link" do
-        expect { subject.new("invalid_link") }.to raise_error(ArgumentError, /invalid_link/)
+        expect { subject.new("omgwtfbbq") }.to raise_error(ArgumentError, /omgwtfbbq/)
       end
 
       it "should not raise error on valid links" do
@@ -30,7 +30,7 @@ describe Hallon::Link, :session => true do
       end
 
       it "should be false for an invalid link" do
-        subject.valid?("invalid_link").should be_false
+        subject.valid?("omgwtfbbq").should be_false
       end
     end
   end

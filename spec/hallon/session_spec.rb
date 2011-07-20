@@ -4,7 +4,7 @@ describe Hallon::Session do
 
   describe "#instance" do
     it "should require an application key" do
-      expect { Hallon::Session.instance }.to raise_error(ArgumentError)
+      expect { Hallon::Session.send(:new) }.to raise_error(ArgumentError)
     end
   end
 
@@ -75,7 +75,7 @@ describe Hallon::Session do
 
     describe "#relation_type?" do
       it "should retrieve the relation between the current user and given user" do
-        session.relation_type?(session.user).should eq :unknown
+        session.relation_type?(session.user).should eq :none
       end
     end
   end
