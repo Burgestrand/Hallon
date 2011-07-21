@@ -2,35 +2,50 @@
 require 'ostruct'
 
 describe Hallon::Image, :session => true do
-  let(:session) { double.stub(:pointer).and_return(nil) }
-  let(:image) do
-    Hallon::Session.should_receive(:instance).and_return double.stub(:pointer => nil)
+  let(:session) { OpenStruct.new(:pointer => nil) }
 
-    image = Spotify.mock_image(
-      "3ad93423add99766e02d563605c6e76ed2b0e450".gsub(/../) { |x| x.to_i(16).chr },
-      :jpeg,
-      File.size(fixture_image_path),
-      File.read(fixture_image_path),
-      :ok
-    )
+  describe "an image instance" do
+    let(:image) do
+      Hallon::Session.should_receive(:instance).and_return session
 
-    Hallon::Image.new(image)
+      image = Spotify.mock_image(
+        "3ad93423add99766e02d563605c6e76ed2b0e450".gsub(/../) { |x| x.to_i(16).chr },
+        :jpeg,
+        File.size(fixture_image_path),
+        File.read(fixture_image_path),
+        :ok
+      )
+
+      Hallon::Image.new(image)
+    end
+
+    subject { image }
+
+    its(:status) { should be :ok }
+    its(:format) { should be :jpeg }
+    its(:id) { should eq "3ad93423add99766e02d563605c6e76ed2b0e450" }
+
+    describe "#data" do
+      it "should correspond to the fixture image" do
+        image.data.should eq File.read(fixture_image_path, :encoding => 'binary')
+      end
+
+      it "should have a binary encoding" do
+        image.data.encoding.name.should eq 'ASCII-8BIT'
+      end
+    end
+
+    describe "#to_link" do
+      it "should retrieve the Spotify URI" do
+        image.to_link.should eq "spotify:image:#{image.id}"
+      end
+    end
   end
 
-  subject { image }
-
-  its(:status) { should be :ok }
-  its(:format) { should be :jpeg }
-  its(:id) { should eq "3ad93423add99766e02d563605c6e76ed2b0e450" }
-
-  describe "#data" do
-    it "should correspond to the fixture image" do
-      image.data.should eq File.read(fixture_image_path, :encoding => 'binary')
-    end
-
-    it "should have a binary encoding" do
-      image.data.encoding.name.should eq 'ASCII-8BIT'
-    end
+  context "created from an uri" do
+    let(:image) { Hallon::Image.new("spotify:image:c78f091482e555bd2ffacfcd9cbdc0714b221663", session) }
+    subject { image }
+    its(:id) { should eq "c78f091482e555bd2ffacfcd9cbdc0714b221663" }
   end
 
   describe "callbacks" do
