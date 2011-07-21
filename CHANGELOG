@@ -1,6 +1,16 @@
 Hallon’s Changelog
 ==================
 
+v0.2.0
+------------------
+- Alias Session#process_events_on to Session#wait_until
+- Have Error.maybe_raise return error code
+- Use mockspotify gem (https://rubygems.org/gems/mockspotify) for testing
+
+v0.1.1
+------------------
+Don’t show the README in the gem description.
+
 v0.1.0
 ------------------
 Initial, first, release! This version is merely made to
