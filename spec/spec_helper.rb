@@ -1,5 +1,5 @@
 # coding: utf-8
-require 'support/libmockspotify'
+require 'mockspotify'
 require 'hallon'
 
 # Bail on failure
