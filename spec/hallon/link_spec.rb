@@ -1,4 +1,4 @@
-describe Hallon::Link, :session => true do
+describe Hallon::Link do
   subject { Hallon::Link.new("spotify:user:burgestrand") }
 
   context "class methods" do

@@ -14,8 +14,13 @@ describe Hallon::Error do
   end
 
   describe "::explain" do
-    it { subject.explain(0).should eq 'No error' }
-    it { subject.explain(-1).should eq 'invalid error code' }
+    it "should work properly given an integer" do
+      subject.explain(0).should eq 'sp_error: 0'
+    end
+
+    it "should work properly given a symbol" do
+      subject.explain(:bad_api_version).should eq 'sp_error: 1'
+    end
   end
 
   describe "::maybe_raise" do

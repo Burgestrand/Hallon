@@ -28,34 +28,34 @@ describe Hallon::User do
   end
 
   describe "an instance", :logged_in => true do
-    let(:link) { Hallon::Link.new("spotify:user:burgestrand") }
-    let(:user) { Hallon::User.new(link) }
-    subject { user }
-
-    before(:all) do
-      session.process_events_on(:userinfo_updated) { user.loaded? }
+    let(:user) do
+      user = Spotify.mock_user(
+        "burgestrand", "Burgestrand", "Kim Burgestrand",
+        "https://secure.gravatar.com/avatar/b67b73b5b1fd84119ec788b1c3df02ad",
+        :none, true
+      )
+      Hallon::User.new(user)
     end
+
+    subject { user }
 
     describe "#to_link" do
       it "should return a Link for this user" do
-        user.to_link.should eq link
+        user.to_link.should eq "spotify:user:burgestrand"
       end
     end
 
     describe "#name" do
       it "should be able to get the display name" do
-        Spotify.should_receive(:user_display_name)
-        user.name(:display).should be_a String
+        user.name(:display).should eq "Burgestrand"
       end
 
       it "should be able to get the full name" do
-        Spotify.should_receive(:user_full_name)
-        user.name(:full).should be_a String
+        user.name(:full).should eq "Kim Burgestrand"
       end
 
       it "should get the canonical name when unspecified" do
-        Spotify.should_receive(:user_canonical_name)
-        user.name.should be_a String
+        user.name.should eq "burgestrand"
       end
 
       it "should fail on invalid name types" do
@@ -65,8 +65,7 @@ describe Hallon::User do
 
     describe "#picture" do
       it "should retrieve the user picture" do
-        Spotify.should_receive(:user_picture)
-        user.picture.should be_a String
+        user.picture.should eq "https://secure.gravatar.com/avatar/b67b73b5b1fd84119ec788b1c3df02ad"
       end
     end
   end
