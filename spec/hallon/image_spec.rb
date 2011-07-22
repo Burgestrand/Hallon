@@ -26,18 +26,21 @@ describe Hallon::Image, :session => true do
     its(:id) { should eq "3ad93423add99766e02d563605c6e76ed2b0e450" }
 
     describe "#data" do
+      subject { image.data }
+
       it "should correspond to the fixture image" do
-        image.data.should eq File.read(fixture_image_path, :encoding => 'binary')
+        should eq File.open(fixture_image_path, 'r:binary', &:read)
       end
 
       it "should have a binary encoding" do
-        image.data.encoding.name.should eq 'ASCII-8BIT'
+        pending "ruby 1.8 does not support String#encoding" unless subject.respond_to?(:encoding)
+        subject.encoding.name.should eq 'ASCII-8BIT'
       end
     end
 
     describe "#to_link" do
       it "should retrieve the Spotify URI" do
-        image.to_link.should eq "spotify:image:#{image.id}"
+        image.to_link.should eq Hallon::Link.new("spotify:image:#{image.id}")
       end
     end
   end

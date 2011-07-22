@@ -18,9 +18,7 @@ module FFI
       #
       # @param [Integer] count how many to read
       # @return a type of appropriate size
-      define_method(:read_size_t) do |*args|
-        public_send("read_#{type}", *args)
-      end
+      alias_method :read_size_t, "read_#{type}"
     end
   end
 end

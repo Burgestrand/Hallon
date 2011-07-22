@@ -1,4 +1,11 @@
 # coding: utf-8
+
+begin
+  require 'cover_me'
+rescue LoadError
+  # ignore, only for development, it’s in the Gemfile
+end
+
 require 'mockspotify'
 require 'hallon'
 

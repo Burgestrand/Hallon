@@ -4,10 +4,8 @@ describe Hallon::Observable do
   end
 
   describe "instance methods" do
-    subject { described_class.instance_methods }
-
-    it { should include :on }
-    it { should include :trigger }
+    it { should respond_to :on }
+    it { should respond_to :trigger }
   end
 
   describe "#on" do

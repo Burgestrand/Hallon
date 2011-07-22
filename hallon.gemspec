@@ -16,15 +16,14 @@ Gem::Specification.new do |gem|
 
   gem.version     = Hallon::VERSION
   gem.platform    = Gem::Platform::RUBY
-  gem.required_ruby_version = '~> 1.9'
+  gem.required_ruby_version = '~> 1.8'
 
   gem.add_dependency 'spotify', '~> 8.0.5'
-  gem.add_development_dependency 'mockspotify', '~> 0.1.3'
+  gem.add_development_dependency 'mockspotify', '~> 0.1.4'
   gem.add_development_dependency 'rake', '~> 0.8'
   gem.add_development_dependency 'rspec', '~> 2'
   gem.add_development_dependency 'autotest-standalone'
   gem.add_development_dependency 'autotest-growl'
-  gem.add_development_dependency 'cover_me'
   gem.add_development_dependency 'yard'
   gem.add_development_dependency 'rdiscount'
 end

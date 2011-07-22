@@ -43,7 +43,7 @@ module Hallon
         return symbol if symbol == :ok
 
         message = []
-        message << "[#{symbol.upcase}]"
+        message << "[#{symbol.to_s.upcase}]"
         message << explain(error)
         message << "(#{error})"
         raise Hallon::Error, message.join(' ')

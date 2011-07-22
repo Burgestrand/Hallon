@@ -76,7 +76,17 @@ module Hallon
     # @param [#to_str] other
     # @return [Integer]
     def <=>(other)
-      to_str <=> String.try_convert(other)
+      if other.respond_to?(:to_str)
+        to_str <=> other.to_str
+      end
+    end
+
+    # True if this link equals `other.to_str`
+    #
+    # @param [#to_str] other
+    # @return [Boolean]
+    def ==(other)
+      (self <=> other) == 0
     end
 
     # String representation of the given Link.

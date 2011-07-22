@@ -2,6 +2,7 @@
 require 'spotify'
 require 'hallon/ext/spotify'
 require 'hallon/ext/ffi'
+require 'hallon/ext/object'
 
 require 'hallon/synchronizable'
 require 'hallon/observable'

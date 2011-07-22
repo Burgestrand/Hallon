@@ -2,5 +2,4 @@
 -fs
 -Ilib
 -Ispec
---require cover_me
 --require spec_helper
