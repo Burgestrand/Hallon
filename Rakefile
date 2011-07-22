@@ -8,7 +8,9 @@ require 'yard'
 YARD::Rake::YardocTask.new
 
 require 'rspec/core/rake_task'
-RSpec::Core::RakeTask.new('spec')
+RSpec::Core::RakeTask.new('spec') do |task|
+  task.ruby_opts = '-W2'
+end
 
 desc "Run the full test suite and generate a coverage report"
 task 'spec:cov' => ['clean', 'spec:full'] do
