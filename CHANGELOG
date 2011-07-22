@@ -1,6 +1,10 @@
 Hallon’s Changelog
 ==================
 
+v0.2.2 (to be released)
+------------------
+- Don’t use bundler for :spec and :test rake tasks
+
 v0.2.1
 ------------------
 - Fix compatibility with v1.8
