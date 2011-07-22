@@ -1,6 +1,10 @@
 Hallon’s Changelog
 ==================
 
+v0.2.1
+------------------
+- Fix compatibility with v1.8
+
 v0.2.0
 ------------------
 - Alias Session#process_events_on to Session#wait_until
