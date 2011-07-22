@@ -1,5 +1,8 @@
 What is Hallon?
 ===============
+
+> [Hallon, delicious Ruby bindings for libspotify](http://burgestrand.se/articles/hallon-delicious-ruby-bindings-to-libspotify.html)
+
 We rubyists have this awesome [spotify gem][] allowing us to use [libspotify][] from within Ruby, but it has a significant drawback: the `libspotify` API is very hard to use. Now, we can’t have that, so what do we do? We make Hallon!
 
 Hallon is Swedish for “Raspberry”, and has been written to satisfy my needs for API simplicity. It provides you with a wrapper around the spotify gem, making the experience of using `libspotify` from Ruby much more enjoyable.
