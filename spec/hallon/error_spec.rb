@@ -36,4 +36,10 @@ describe Hallon::Error do
       subject.maybe_raise(0).should eq :ok
     end
   end
+
+  describe "::table" do
+    it "should return a hash of symbol to integer" do
+      Hallon::Error.table[:ok].should eq 0
+    end
+  end
 end

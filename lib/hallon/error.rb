@@ -5,6 +5,13 @@ module Hallon
   # @see http://developer.spotify.com/en/libspotify/docs/group__error.html
   class Error < RuntimeError
     class << self
+      # Hash of error (Symbol) to code (Integer).
+      #
+      # @return [Hash<Symbol, Integer>]
+      def table
+        Spotify::enum_type(:error).to_hash
+      end
+
       # Given a number or a symbol, find both the symbol and the error
       # number it represents.
       #
