@@ -44,7 +44,9 @@ module Hallon
         Hallon::Link.new(link)
       end
 
-      define_method(:to_link) { |*args, &block| self.class.to_link(@pointer, *args, &block) }
+      define_method(:to_link) do |*args, &block|
+        self.class.to_link(@pointer, *args, &block)
+      end
     end
   end
 end
