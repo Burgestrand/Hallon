@@ -7,5 +7,6 @@ def example_uris
     "spotify:user:burgestrand:playlist:4nQnbGi4kALbME9csEqdW2" => :playlist,
     "spotify:user:burgestrand" => :profile,
     "spotify:user:burgestrand:starred" => :starred,
+    "spotify:track:7N2Vc8u56VGA4KUrGbikC2#1:40" => :track
   }
 end
