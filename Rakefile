@@ -27,9 +27,21 @@ task 'spotify:coverage' do
   require 'set'
   require 'spotify'
 
-  methods = Spotify.methods(false).map(&:to_s)
+  dynamicly_used = []
+  dynamicly_used << "link_create_from_track" # lib/hallon/track.rb
+  dynamicly_used << "track_add_ref"          # lib/ext/spotify.rb
+  dynamicly_used << "track_release"          # lib/ext/spotify.rb
+  dynamicly_used << "link_create_from_image" # lib/hallon/image.rb
+  dynamicly_used << "image_release"          # lib/ext/spotify.rb
+  dynamicly_used << "link_create_from_user"  # lib/hallon/user.rb
+  dynamicly_used << "user_add_ref"           # lib/ext/spotify.rb
+  dynamicly_used << "user_release"           # lib/ext/spotify.rb
+  dynamicly_used << "link_as_track"          # IGNORE
+  dynamicly_used << "link_release"           # lib/ext/spotify.rb
+
+  methods = Spotify.methods(false).map(&:to_s) - dynamicly_used
   covered = Set.new(methods)
-  matcher = /Spotify::([\w_]+)[ \(]/
+  matcher = /Spotify(?:::|\.)([\w_]+)[ \(]/
 
   FileList['lib/**/*.rb'].each do |file|
     File.read(file).scan(matcher) { |method, _| covered.delete(method) }
