@@ -22,8 +22,6 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'mockspotify', '~> 0.1.7'
   gem.add_development_dependency 'rake', '~> 0.8'
   gem.add_development_dependency 'rspec', '~> 2'
-  gem.add_development_dependency 'autotest-standalone'
-  gem.add_development_dependency 'autotest-growl'
   gem.add_development_dependency 'yard'
   gem.add_development_dependency 'rdiscount'
 end
