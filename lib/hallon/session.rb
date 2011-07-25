@@ -15,7 +15,7 @@ module Hallon
     # @return [Hash]
     attr_reader :options
 
-    # Underlying Spotify pointer.
+    # Used in {Image#initialize}.
     #
     # @return [FFI::Pointer]
     attr_reader :pointer

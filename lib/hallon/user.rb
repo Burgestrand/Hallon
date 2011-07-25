@@ -28,7 +28,9 @@ module Hallon
     #   @return [Hallon::Link]
     to_link :from_user
 
-    # Used by {Session#relation_type?}
+    # Used by {Session#relation_type?}.
+    #
+    # @return [FFI::Pointer]
     attr_reader :pointer
 
     # Construct a new instance of User.

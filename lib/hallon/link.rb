@@ -96,7 +96,7 @@ module Hallon
       "<#{self.class.name} #{to_str}>"
     end
 
-    # Retrieve the underlying pointer.
+    # Retrieve the underlying pointer. Used by {Linkable}.
     #
     # @param [Symbol] expected_type if given, makes sure the link is of this type
     # @return [FFI::Pointer]

@@ -11,6 +11,7 @@ module Hallon
     to_link   :from_track_and_offset
 
     # Overriden to use default parameter.
+    # @see #to_link
     alias_method :_to_link, :to_link
     # Create a Link to the current track and offset in seconds.
     #
