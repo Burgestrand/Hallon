@@ -15,5 +15,4 @@
 - segfaults if created before a session
 
 ## Track
-- `sp_link_as_track_and_offset` and `sp_link_create_from_track`
-  both operate in milliseconds, yet the documentation states seconds
+- `sp_link_as_track_and_offset` operate in milliseconds, but documentation states seconds
