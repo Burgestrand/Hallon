@@ -1,5 +1,9 @@
 # Quirks, oddities and general notes about libspotify
 
+- HTTP links with track offset (spotify:track:7N2Vc8u56VGA4KUrGbikC2#1:40) don’t
+  work, even if you URL encode the hash: http://open.spotify.com/track/7N2Vc8u56VGA4KUrGbikC2%231:40
+  this appears to have worked at least 7 months ago
+
 ## Session
 - `sp_session_release` will segfault (rare)
 - `login` callback fires even if the login fails; instead,
