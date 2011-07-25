@@ -1,9 +1,12 @@
 Hallon’s Changelog
 ==================
 
-v0.2.2 (to be released)
+v0.3.0
 ------------------
 - Don’t use bundler for :spec and :test rake tasks
+- Add Error.table
+- Add Track subsystem
+- Fix spec:cov and spotify:coverage rake tasks
 
 v0.2.1
 ------------------
