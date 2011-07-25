@@ -7,15 +7,17 @@ module Hallon
   class Track
     extend Linkable
 
-    from_link(:track) { |link, ptr| Spotify.link_as_track_and_offset(link, ptr) }
-    to_link(:track)
+    from_link :as_track_and_offset
+    to_link   :from_track_and_offset
 
+    # Overriden to use default parameter.
+    alias_method :_to_link, :to_link
     # Create a Link to the current track and offset in seconds.
     #
     # @param [Float] offset offset into track in seconds
     # @return [Hallon::Link]
     def to_link(offset = offset)
-      self.class.to_link(@pointer, (offset * 1000).to_i)
+      _to_link (offset * 1000).to_i
     end
 
     # Offset into track in seconds this track was created with.

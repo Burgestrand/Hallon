@@ -6,11 +6,11 @@ module Hallon
   class Image
     extend Linkable
 
-    from_link(:image) do |link, session|
+    from_link :as_image do |link, session|
       Spotify::image_create_from_link(session.pointer, link)
     end
 
-    to_link(:image)
+    to_link :from_image
 
     # Image triggers `:load` when loaded
     include Hallon::Observable

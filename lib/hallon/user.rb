@@ -13,10 +13,12 @@ module Hallon
     #   Given a Link, get its’ underlying pointer.
     #
     #   @method to_link
-    #   @scope  class
+    #   @scope  instance
     #   @param  [String, Hallon::Link, FFI::Pointer] link
     #   @return [FFI::Pointer]
-    from_link(:profile) { |link| Spotify::link_as_user(link) }
+    from_link :profile do |link|
+      Spotify::link_as_user(link)
+    end
 
     # @macro [attach] to_link
     #   Create a Link to the current object.
@@ -24,7 +26,7 @@ module Hallon
     #   @method to_link
     #   @scope  instance
     #   @return [Hallon::Link]
-    to_link(:user)
+    to_link :from_user
 
     # Used by {Session#relation_type?}
     attr_reader :pointer
