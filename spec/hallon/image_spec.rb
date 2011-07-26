@@ -7,16 +7,7 @@ describe Hallon::Image, :session => true do
   describe "an image instance" do
     let(:image) do
       Hallon::Session.should_receive(:instance).and_return session
-
-      image = Spotify.mock_image(
-        "3ad93423add99766e02d563605c6e76ed2b0e450".gsub(/../) { |x| x.to_i(16).chr },
-        :jpeg,
-        File.size(fixture_image_path),
-        File.read(fixture_image_path),
-        :ok
-      )
-
-      Hallon::Image.new(image)
+      Hallon::Image.new(mock_image)
     end
 
     subject { image }

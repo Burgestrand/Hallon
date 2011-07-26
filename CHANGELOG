@@ -1,6 +1,12 @@
 Hallon’s Changelog
 ==================
 
+NEXT
+------------------
+- No longer uses autotest as development dependency
+- Add Hallon::Base class
+- Cleaned up specs to use same mocks everywhere
+
 v0.3.0
 ------------------
 - Don’t use bundler for :spec and :test rake tasks

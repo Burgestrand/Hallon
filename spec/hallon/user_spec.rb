@@ -28,16 +28,7 @@ describe Hallon::User do
   end
 
   describe "an instance", :logged_in => true do
-    let(:user) do
-      user = Spotify.mock_user(
-        "burgestrand", "Burgestrand", "Kim Burgestrand",
-        "https://secure.gravatar.com/avatar/b67b73b5b1fd84119ec788b1c3df02ad",
-        :none, true
-      )
-      Hallon::User.new(user)
-    end
-
-    subject { user }
+    let(:user) { Hallon::User.new(mock_user) }
 
     describe "#to_link" do
       it "should return a Link for this user" do

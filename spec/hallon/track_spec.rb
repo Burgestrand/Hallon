@@ -1,28 +1,8 @@
 # coding: utf-8
 describe Hallon::Track, :session => true do
-  let(:artist) { Spotify.mock_artist("Artist", true) }
-  let(:album)  { Spotify.mock_album("Album", artist, 2011, nil, :unknown, true, true) }
+  subject { Hallon::Track.new(mock_track) }
 
-  subject do
-    artists = FFI::MemoryPointer.new(:pointer)
-    artists.write_pointer artist
-
-    track = Spotify.mock_track(
-      "Elucteene", # name
-      1, artists, # num_artists, artists
-      album, # album
-      123_456, # duration
-      42,  # popularity
-      2, 7, # disc, index
-      0, true  # error, loaded
-    )
-
-    artists.free
-
-    Hallon::Track.new(track)
-  end
-
-  its(:name)   { should eq "Elucteene" }
+  its(:name)   { should eq "They" }
   its(:disc)   { should be 2 }
   its(:index)  { should be 7 }
   its(:status) { should be :ok }
@@ -30,19 +10,18 @@ describe Hallon::Track, :session => true do
   its(:duration) { should eq 123.456 }
   its(:popularity) { should eq 0.42 }
 
-  xit("artist.name") { should eq "Artist" }
-  xit("album.name")  { should eq "Album"  }
+  pending("album.name")  { should eq "Finally Woken"  }
+  pending("artist.name") { should eq "Jem" }
 
   it { should be_loaded }
 
   describe "album" do
-    it "should be an album when there is one" do
-
+    it "should be an album when there is one", :pending => true do
+      subject.album.should eq Hallon::Album.new(mock_album)
     end
 
     it "should be nil when there isn’t one" do
       Spotify.should_receive(:track_album).and_return(FFI::Pointer.new(0))
-
       subject.album.should be_nil
     end
   end
@@ -80,12 +59,12 @@ describe Hallon::Track, :session => true do
 
   describe "a local track" do
     subject do
-      Hallon::Track.local "Title", "Artist", "Coolio", 100
+      Hallon::Track.local "Nissy", "Emmy", "Coolio", 100
     end
 
-    its(:name) { should eq "Title" }
-    pending("artist.name") { should eq "Artist" }
-    pending("album.name") { should eq "Album" }
+    its(:name) { should eq "Nissy" }
+    pending("album.name") { should eq "Coolio" }
+    pending("artist.name") { should eq "Emmy" }
     its(:duration) { should eq 0.1 }
   end
 end
