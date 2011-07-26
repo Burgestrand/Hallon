@@ -6,12 +6,9 @@ module Hallon
   # @note Linkable is not part of Hallons’ public API.
   # @private
   module Linkable
-    # These are extended onto a class when {Linkable} is included.
-    include Forwardable
-
-    # Creates `from_link` class & instance method which’ll convert a link to a pointer
+    # Defines `#from_link`, used in converting a link to a pointer.
     #
-    # @overload from_link(as_object)
+    # @overload from_link(type)
     #   Convert from a link using said method.
     #
     #   @example
@@ -44,7 +41,7 @@ module Hallon
       end
     end
 
-    # Defines `to_link` class & instance method, using `Spotify.__send__(cmethod)`.
+    # Defines `#to_link` method, which converts the the current object to a {Link}
     #
     # @example
     #   to_link :from_artist # => Spotify.link_create_from_artist
