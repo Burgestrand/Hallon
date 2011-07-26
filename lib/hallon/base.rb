@@ -4,7 +4,6 @@ module Hallon
   class Base
     # Underlying FFI pointer.
     #
-    # @protected
     # @return [FFI::Pointer]
     attr_reader :pointer
 
