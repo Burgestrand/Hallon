@@ -9,16 +9,11 @@ module Hallon
   # with Spotify before using them.
   #
   # @see https://developer.spotify.com/en/libspotify/docs/group__session.html
-  class Session
+  class Session < Base
     # The options Hallon used at {Session#initialize}.
     #
     # @return [Hash]
     attr_reader :options
-
-    # Used in {Image#initialize}.
-    #
-    # @return [FFI::Pointer]
-    attr_reader :pointer
 
     # libspotify only allows one session per process.
     include Singleton

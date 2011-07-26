@@ -6,7 +6,7 @@ module Hallon
   # status between users.
   #
   # @see http://developer.spotify.com/en/libspotify/docs/group__user.html
-  class User
+  class User < Base
     extend Linkable
 
     # @macro [attach] from_link
@@ -27,11 +27,6 @@ module Hallon
     #   @scope  instance
     #   @return [Hallon::Link]
     to_link :from_user
-
-    # Used by {Session#relation_type?}.
-    #
-    # @return [FFI::Pointer]
-    attr_reader :pointer
 
     # Construct a new instance of User.
     #

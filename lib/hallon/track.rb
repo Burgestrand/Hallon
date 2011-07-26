@@ -4,7 +4,7 @@ module Hallon
   # are browsable entities that can also be played by streaming.
   #
   # @see http://developer.spotify.com/en/libspotify/docs/group__track.html
-  class Track
+  class Track < Base
     extend Linkable
 
     from_link :as_track_and_offset
@@ -25,12 +25,6 @@ module Hallon
     #
     # @return [Rational]
     attr_reader :offset
-
-    # Underlying Spotify pointer.
-    #
-    # @private
-    # @return [FFI::Pointer]
-    attr_reader :pointer
 
     # Construct a new Track instance.
     #

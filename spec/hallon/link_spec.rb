@@ -78,7 +78,20 @@ describe Hallon::Link do
     end
 
     it "should not fail when #to_str is unavailable" do
-      subject.should_not eq Object.new
+      object = Object.new
+      object.should_not respond_to :to_str
+      subject.should_not eq object
+    end
+
+    it "should compare underlying pointers if #to_str is unavailable" do
+      object = Hallon::Link.new(FFI::Pointer.new(subject.pointer))
+
+      def object.respond_to?(o)
+        return false if o == :to_str
+        super
+      end
+
+      subject.should eq object
     end
   end
 end

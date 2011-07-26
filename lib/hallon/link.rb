@@ -3,9 +3,7 @@ module Hallon
   # Wraps Spotify URIs in a class, giving access to methods performable on them.
   #
   # @see http://developer.spotify.com/en/libspotify/docs/group__link.html
-  class Link
-    include Comparable
-
+  class Link < Base
     # True if the given Spotify URI is valid (parsable by libspotify).
     #
     # @param (see Hallon::Link#initialize)
@@ -71,22 +69,13 @@ module Hallon
       "http://open.spotify.com/%s" % to_str[8..-1].gsub(':', '/')
     end
 
-    # Compare this Link to another object
-    #
-    # @param [#to_str] other
-    # @return [Integer]
-    def <=>(other)
-      if other.respond_to?(:to_str)
-        to_str <=> other.to_str
-      end
-    end
-
     # True if this link equals `other.to_str`
     #
     # @param [#to_str] other
     # @return [Boolean]
     def ==(other)
-      (self <=> other) == 0
+      return super unless other.respond_to?(:to_str)
+      to_str == other.to_str
     end
 
     # String representation of the given Link.
@@ -105,7 +94,7 @@ module Hallon
       unless type == expected_type
         raise ArgumentError, "expected #{expected_type} link, but it is of type #{type}"
       end if expected_type
-      @pointer
+      super()
     end
   end
 end
