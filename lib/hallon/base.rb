@@ -7,7 +7,6 @@ module Hallon
     # @protected
     # @return [FFI::Pointer]
     attr_reader :pointer
-    protected   :pointer
 
     # True if both objects represent the *same* object.
     #
