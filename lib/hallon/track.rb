@@ -8,7 +8,7 @@ module Hallon
     extend Linkable
 
     from_link :as_track_and_offset
-    to_link   :from_track_and_offset
+    to_link   :from_track
 
     # Overriden to use default parameter.
     # @see #to_link

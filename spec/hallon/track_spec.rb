@@ -51,14 +51,14 @@ describe Hallon::Track, :session => true do
     before(:each) { Hallon::Link.stub(:new) }
 
     it "should pass the current offset by default" do
-      Spotify.should_receive(:link_create_from_track_and_offset).with(subject.pointer, 10_000)
+      Spotify.should_receive(:link_create_from_track).with(subject.send(:pointer), 10_000)
       subject.should_receive(:offset).and_return(10)
 
       subject.to_link
     end
 
     it "should accept offset as parameter" do
-      Spotify.should_receive(:link_create_from_track_and_offset).with(subject.pointer, 1_337_000)
+      Spotify.should_receive(:link_create_from_track).with(subject.send(:pointer), 1_337_000)
       subject.should_not_receive(:offset)
 
       subject.to_link(1337)
