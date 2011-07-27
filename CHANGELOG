@@ -7,6 +7,10 @@ NEXT
 - Add Hallon::Base class
 - Cleaned up specs to use same mocks everywhere
 - Album subsystem support (except for #cover and #artist)
+- Add optional parameter to have Image#id return raw id
+- Make Hallon::URI match image URIs
+- Allow Image.new to accept an image id
+- Add Album#cover
 
 v0.3.0
 ------------------
