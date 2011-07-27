@@ -36,9 +36,23 @@ describe Hallon::Image, :session => true do
     end
   end
 
+  context "created from an url" do
+    subject { Hallon::Image.new("http://open.spotify.com/image/c78f091482e555bd2ffacfcd9cbdc0714b221663", session) }
+    its(:id) { should eq "c78f091482e555bd2ffacfcd9cbdc0714b221663" }
+  end
+
   context "created from an uri" do
-    let(:image) { Hallon::Image.new("spotify:image:c78f091482e555bd2ffacfcd9cbdc0714b221663", session) }
-    subject { image }
+    subject { Hallon::Image.new("spotify:image:c78f091482e555bd2ffacfcd9cbdc0714b221663", session) }
+    its(:id) { should eq "c78f091482e555bd2ffacfcd9cbdc0714b221663" }
+  end
+
+  context "created from an id" do
+    subject { Hallon::Image.new(mock_image_id, session) }
+    its(:id) { should eq mock_image_hex }
+  end
+
+  context "created from a link" do
+    subject { Hallon::Image.new(Hallon::Link.new("spotify:image:c78f091482e555bd2ffacfcd9cbdc0714b221663"), session) }
     its(:id) { should eq "c78f091482e555bd2ffacfcd9cbdc0714b221663" }
   end
 
