@@ -1,9 +1,5 @@
 # coding: utf-8
-require 'ostruct'
-
 describe Hallon::Image, :session => true do
-  let(:session) { OpenStruct.new(:pointer => nil) }
-
   describe "an image instance" do
     let(:image) do
       Hallon::Session.should_receive(:instance).and_return session
@@ -14,7 +10,11 @@ describe Hallon::Image, :session => true do
 
     its(:status) { should be :ok }
     its(:format) { should be :jpeg }
-    its(:id) { should eq "3ad93423add99766e02d563605c6e76ed2b0e450" }
+
+    describe "id" do
+      specify("in hex") { subject.id.should eq mock_image_hex }
+      specify("raw") { subject.id(true).should eq mock_image_id }
+    end
 
     describe "#data" do
       subject { image.data }
