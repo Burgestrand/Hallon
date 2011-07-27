@@ -19,12 +19,21 @@ describe Hallon::Album do
   end
 
   describe "cover" do
+    before { Hallon::Session.should_receive(:instance).and_return(session) }
+
     it "should be nil if there is no image" do
       Spotify.should_receive(:album_cover).and_return(null_pointer)
       subject.cover.should be_nil
     end
 
-    it "should be an image if it exists"
+    it "should be an image if it exists" do
+      FFI::MemoryPointer.new(:string, 20) do |ptr|
+        ptr.write_string(mock_image_id)
+
+        Spotify.should_receive(:album_cover).and_return(ptr)
+        subject.cover.id.should eq mock_image_hex
+      end
+    end
   end
 
   describe ".types" do

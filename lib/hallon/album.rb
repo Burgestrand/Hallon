@@ -60,10 +60,12 @@ module Hallon
       Spotify.album_is_loaded(@pointer)
     end
 
-    # Not yet implemented.
-    def cover
-      return if (ptr = Spotify.album_cover(@pointer)).null?
-      raise NotImplementedError
+    # Retrieve album cover art.
+    #
+    # @return [Image]
+    def cover(session = Session.instance)
+      image_id = Spotify.album_cover(@pointer)
+      Hallon::Image.new(image_id.read_string(20), session) unless image_id.null?
     end
 
     # Not yet implemented.
