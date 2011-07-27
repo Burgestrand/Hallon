@@ -10,13 +10,13 @@ describe Hallon::Track, :session => true do
   its(:duration) { should eq 123.456 }
   its(:popularity) { should eq 0.42 }
 
-  pending("album.name")  { should eq "Finally Woken"  }
+  its("album.name")  { should eq "Finally Woken"  }
   pending("artist.name") { should eq "Jem" }
 
   it { should be_loaded }
 
   describe "album" do
-    it "should be an album when there is one", :pending => true do
+    it "should be an album when there is one" do
       subject.album.should eq Hallon::Album.new(mock_album)
     end
 
@@ -63,7 +63,7 @@ describe Hallon::Track, :session => true do
     end
 
     its(:name) { should eq "Nissy" }
-    pending("album.name") { should eq "Coolio" }
+    its("album.name") { should eq "Coolio" }
     pending("artist.name") { should eq "Emmy" }
     its(:duration) { should eq 0.1 }
   end

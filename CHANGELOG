@@ -6,6 +6,7 @@ NEXT
 - No longer uses autotest as development dependency
 - Add Hallon::Base class
 - Cleaned up specs to use same mocks everywhere
+- Album subsystem support (except for #cover and #artist)
 
 v0.3.0
 ------------------

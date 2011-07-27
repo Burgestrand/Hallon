@@ -16,6 +16,7 @@ require 'hallon/link'
 require 'hallon/user'
 require 'hallon/image'
 require 'hallon/track'
+require 'hallon/album'
 
 # The Hallon module wraps around all Hallon objects to avoid polluting
 # the global namespace. To start using Hallon, you most likely want to
