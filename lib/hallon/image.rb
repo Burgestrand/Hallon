@@ -21,7 +21,7 @@ module Hallon
     # @param [Hallon::Session] session
     def initialize(link, session = Session.instance)
       if link.is_a?(String)
-        link = to_id($1) if link =~ %r|image[:/](\h{40})|
+        link = to_id($1) if link =~ %r|image[:/]([a-fA-F0-9]{40})|
 
         FFI::MemoryPointer.new(:char, 20) do |ptr|
           ptr.write_bytes link
