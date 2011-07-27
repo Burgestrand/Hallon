@@ -11,7 +11,7 @@ Hallon would not have been possible if not for these people:
 
 - Per Reimers, cracking synchronization bugs with me in the deep night (4 AM) and correcting me when I didn’t know better
 - [Spotify](http://www.spotify.com/), providing a service worth attention (and my money!)
-- [Linus Oleander](https://github.com/oleander), involving me with the `radiofy.se` project, ultimately spawning the necessity of Hallon
+- [Linus Oleander](https://github.com/oleander), involving me with the [radiofy.se](http://radiofy.se) project, ultimately spawning the necessity of Hallon
 - [Jesper Särnesjö][], creator of [Greenstripes][], making me think of Hallon as an achievable goal
 
 Code samples can be found under `examples/` directory.
