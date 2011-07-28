@@ -1,7 +1,5 @@
-What is Hallon?
+[What is Hallon?][] [![Build Status][]](http://travis-ci.org/Burgestrand/Hallon)
 ===============
-
-> [Hallon, delicious Ruby bindings for libspotify](http://burgestrand.se/articles/hallon-delicious-ruby-bindings-to-libspotify.html)
 
 We rubyists have this awesome [spotify gem][] allowing us to use [libspotify][] from within Ruby, but it has a significant drawback: the `libspotify` API is very hard to use. Now, we can’t have that, so what do we do? We make Hallon!
 
@@ -55,7 +53,9 @@ License
 -------
 Hallon is licensed under a 2-clause (Simplified) BSD license. More information can be found in the `LICENSE.txt` file.
 
-[spotify gem]: https://rubygems.org/gems/spotify
-[libspotify]: http://developer.spotify.com/en/libspotify/overview/
-[Greenstripes]: http://github.com/sarnesjo/greenstripes
+[spotify gem]:     https://rubygems.org/gems/spotify
+[libspotify]:      http://developer.spotify.com/en/libspotify/overview/
+[Greenstripes]:    http://github.com/sarnesjo/greenstripes
 [Jesper Särnesjö]: http://jesper.sarnesjo.org/
+[What is Hallon?]: http://burgestrand.se/articles/hallon-delicious-ruby-bindings-to-libspotify.html
+[Build Status]:    https://secure.travis-ci.org/Burgestrand/Hallon.png
