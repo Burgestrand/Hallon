@@ -2,13 +2,27 @@
 describe Hallon::Session do
   it { Hallon::Session.should_not respond_to :new }
 
-  describe "#instance" do
-    it "should require an application key" do
-      expect { Hallon::Session.send(:new) }.to raise_error(ArgumentError)
+  describe ".initialize and .instance" do
+    before { Hallon.instance_eval { @__instance = nil } }
+    after  { Hallon.instance_eval { @__instance = nil } }
+
+    it "should fail if calling instance before initialize" do
+      expect { Hallon.instance }.to raise_error
+    end
+
+    it "should fail if calling initialize twice" do
+      expect {
+        Hallon.initialize
+        Hallon.initialize
+      }.to raise_error
     end
   end
 
-  describe "#new" do
+  describe ".new" do
+    it "should require an application key" do
+      expect { Hallon::Session.send(:new) }.to raise_error(ArgumentError)
+    end
+
     it "should fail on an invalid application key" do
       expect { create_session(false) }.to raise_error(Hallon::Error, /BAD_APPLICATION_KEY/)
     end

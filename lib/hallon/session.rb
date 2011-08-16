@@ -24,14 +24,26 @@ module Hallon
     # Session allows you to define your own callbacks.
     include Hallon::Observable
 
-    # Allows you to create a Spotify session. Subsequent calls to this method
-    # will return the previous instance, ignoring any passed arguments.
+    # Initializes the Spotify session. If you need to access the
+    # instance at a later time, you can use {instance}.
+    #
+    # @see Session.instance
+    # @see Session#initialize
     #
     # @param (see Session#initialize)
-    # @see Session#initialize
     # @return [Session]
-    def Session.instance(*args, &block)
-      @__instance__ ||= new(*args, &block)
+    def Session.initialize(*args, &block)
+      raise "Session has already been initialized" if @__instance__
+      @__instance__ = new(*args, &block)
+    end
+
+    # Returns the previously initialized Session.
+    #
+    # @see Session.instance
+    #
+    # @return [Session]
+    def Session.instance
+      @__instance__ or raise "Session has not been initialized"
     end
 
     # Create a new Spotify session.
