@@ -1,4 +1,5 @@
 # coding: utf-8
+require 'bundler/setup'
 
 begin
   require 'cover_me'

@@ -19,6 +19,7 @@ Gem::Specification.new do |gem|
   gem.required_ruby_version = '~> 1.8'
 
   gem.add_dependency 'spotify', '~> 8.0.5'
+  gem.add_development_dependency 'bundler', '~> 1.0'
   gem.add_development_dependency 'mockspotify', '~> 0.1.8'
   gem.add_development_dependency 'rake', '~> 0.8'
   gem.add_development_dependency 'rspec', '~> 2'
