@@ -27,24 +27,44 @@ task 'spotify:coverage' do
   require 'set'
   require 'spotify'
 
-  dynamicly_used = []
-  dynamicly_used << "link_create_from_track" # lib/hallon/track.rb
-  dynamicly_used << "track_add_ref"          # lib/ext/spotify.rb
-  dynamicly_used << "track_release"          # lib/ext/spotify.rb
-  dynamicly_used << "link_create_from_image" # lib/hallon/image.rb
-  dynamicly_used << "image_release"          # lib/ext/spotify.rb
-  dynamicly_used << "link_create_from_user"  # lib/hallon/user.rb
-  dynamicly_used << "user_add_ref"           # lib/ext/spotify.rb
-  dynamicly_used << "user_release"           # lib/ext/spotify.rb
-  dynamicly_used << "link_as_track"          # IGNORE
-  dynamicly_used << "link_release"           # lib/ext/spotify.rb
+  begin
+    require 'ruby_parser'
+  rescue LoadError
+    puts "You need ruby_parser for the spotify:coverage rake task"
+    abort
+  end
 
-  methods = Spotify.methods(false).map(&:to_s) - dynamicly_used
+  methods = Spotify.methods(false).map(&:to_s)
   covered = Set.new(methods)
-  matcher = /Spotify(?:::|\.)([\w_]+)[ \(]/
+
+  # Handlers for different AST nodes
+  printer  = proc { |*args| p args }
+  silencer = proc { }
+  handlers = Hash.new(Hash.new(silencer))
+
+  # Direct calls
+  handlers[Sexp.new(:const, :Spotify)] = Hash.new(proc { |_, meth, _| meth })
+
+  # Spotify Pointer
+  pointer = handlers[Sexp.new(:colon2, [:const, :Spotify], :Pointer)] = Hash.new(printer)
+  pointer[:new] = proc do |recv, meth, (_, ptr, name, release)|
+    name = name.value
+    ["#{name}_release", "#{name if !!release}_add_ref"]
+  end
+
+  # DSL Methods
+  no_receiver = handlers[nil] = Hash.new(silencer)
+  no_receiver[:from_link] = no_receiver[:to_link] = proc do |recv, meth, (_, name)|
+    prefix = meth == :to_link ? "link_create" : "link"
+    "%s_%s" % [prefix, name.value]
+  end
 
   FileList['lib/**/*.rb'].each do |file|
-    File.read(file).scan(matcher) { |method, _| covered.delete(method) }
+    ast   = RubyParser.new.parse File.read(file)
+    ast.each_of_type(:call) do |_, recv, meth, args, *rest|
+      name = handlers[recv][meth].call(recv, meth, args)
+      covered.subtract Array(name).map(&:to_s)
+    end
   end
 
   covered.group_by { |m| m[/[^_]+/] }.each_pair do |group, methods|
