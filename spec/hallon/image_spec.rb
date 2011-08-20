@@ -8,6 +8,7 @@ describe Hallon::Image, :session => true do
 
     subject { image }
 
+    it { should be_loaded }
     its(:status) { should be :ok }
     its(:format) { should be :jpeg }
 
