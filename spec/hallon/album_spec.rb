@@ -37,8 +37,6 @@ describe Hallon::Album do
   end
 
   describe ".types" do
-    it "should not be an empty hash" do
-      Hallon::Album.types.should_not be_empty
-    end
+    specify { Hallon::Album.types.should_not be_empty }
   end
 end
