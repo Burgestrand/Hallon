@@ -33,11 +33,14 @@ module Hallon
 
       @pointer = Spotify::Pointer.new link, :image
 
-      @callback = proc { trigger(:load) }
+      @callback = proc { trigger :load }
       Spotify::image_add_load_callback(@pointer, @callback, nil)
 
       # TODO: remove load_callback when @pointer is released
-      # TODO: this makes libspotify segfault, figure out why
+      # NOTE: on(:load) will trigger while load callback is still executing,
+      #       and removing the load callback from within the load callback
+      #       does not make libspotify happy, and thus segfaults D:
+      #
       # on(:load) { Spotify::image_remove_load_callback(@pointer, @callback, nil) }
     end
 
