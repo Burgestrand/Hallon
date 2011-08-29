@@ -68,10 +68,12 @@ module Hallon
       Hallon::Image.new(image_id.read_string(20), session) unless image_id.null?
     end
 
-    # Not yet implemented.
+    # Retrieve the album Artist.
+    #
+    # @return [Artist]
     def artist
       return if (ptr = Spotify.album_artist(@pointer)).null?
-      raise NotImplementedError
+      Hallon::Artist.new(ptr)
     end
   end
 end

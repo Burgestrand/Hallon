@@ -15,7 +15,9 @@ describe Hallon::Album do
       subject.artist.should be_nil
     end
 
-    it "should be an artist if it exists"
+    it "should be an artist if it exists" do
+      subject.artist.should be_a Hallon::Artist
+    end
   end
 
   describe "cover" do
