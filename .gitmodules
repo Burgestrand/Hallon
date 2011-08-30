@@ -1,0 +1,3 @@
+[submodule "mockspotify"]
+	path = mockspotify
+	url = git://github.com/Burgestrand/libmockspotify.git
