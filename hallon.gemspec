@@ -1,5 +1,7 @@
 # -*- encoding: utf-8 -*-
-require './lib/hallon/version'
+lib = File.expand_path('../lib/', __FILE__)
+$:.unshift lib unless $:.include?(lib)
+require 'hallon/version'
 
 Gem::Specification.new do |gem|
   gem.name     = "hallon"
