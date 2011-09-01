@@ -11,6 +11,9 @@ NEXT
 - Make Hallon::URI match image URIs
 - Allow Image.new to accept an image id
 - Add Album#cover
+- Artist subsystem support
+- Update to Spotify v9.0.0
+- Add Hallon::API_BUILD
 
 v0.3.0
 ------------------
