@@ -11,7 +11,7 @@ Gem::Specification.new do |gem|
   gem.email    = 'kim@burgestrand.se'
   gem.license  = 'X11 License'
 
-  gem.files         = `git ls-files`.split("\n")
+  gem.files         = `git ls-files`.split("\n") - %w[mockspotify]
   gem.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   gem.executables   = []
   gem.require_paths = ["lib"]
@@ -20,7 +20,7 @@ Gem::Specification.new do |gem|
   gem.platform    = Gem::Platform::RUBY
   gem.required_ruby_version = '~> 1.8'
 
-  gem.add_dependency 'spotify', '~> 8.0.5'
+  gem.add_dependency 'spotify', '~> 9.0.0'
   gem.add_development_dependency 'bundler', '~> 1.0'
   gem.add_development_dependency 'mockspotify', '~> 0.1.8'
   gem.add_development_dependency 'rake', '~> 0.8'
