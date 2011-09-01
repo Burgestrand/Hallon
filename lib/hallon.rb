@@ -26,6 +26,11 @@ module Hallon
   # @see Spotify::API_VERSION
   API_VERSION = Spotify::API_VERSION
 
+  # Spotify API build.
+  #
+  # @see Spotify#api_build
+  API_BUILD = Spotify::build_id
+
   # A regex that matches all Spotify URIs
   #
   # @example

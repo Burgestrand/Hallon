@@ -7,6 +7,10 @@ describe Hallon do
     specify { Hallon::API_VERSION.should == 9 }
   end
 
+  describe "API_BUILD" do
+    specify { Hallon::API_BUILD.should be_a String }
+  end
+
   describe "URI" do
     subject { Hallon::URI }
     example_uris.keys.each do |uri|
