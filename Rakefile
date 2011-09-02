@@ -78,6 +78,14 @@ task 'spotify:coverage' do
   puts "Coverage: %.02f%%" % (100 * (1 - covered.size.fdiv(methods.size)))
 end
 
+task :mockspotify do
+  Dir.chdir 'spec/mockspotify' do
+    sh 'ruby extconf.rb'
+    sh 'make'
+  end
+end
+
+task :spec => :mockspotify
 task :test => :spec
 
 #

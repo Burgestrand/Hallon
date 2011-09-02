@@ -22,7 +22,6 @@ Gem::Specification.new do |gem|
 
   gem.add_dependency 'spotify', '~> 9.0.0'
   gem.add_development_dependency 'bundler', '~> 1.0'
-  gem.add_development_dependency 'mockspotify', '~> 0.1.8'
   gem.add_development_dependency 'rake', '~> 0.8'
   gem.add_development_dependency 'rspec', '~> 2'
   gem.add_development_dependency 'yard'
