@@ -35,9 +35,11 @@ module Hallon
       type    = as_object.to_s[/^(as_)?([^_]+)/, 2].to_sym
 
       define_method(:from_link) do |link, *args|
-        if link.is_a? FFI::Pointer then link else
+        link = if link.is_a? FFI::Pointer then link else
           block.call Link.new(link).pointer(type), *args
         end
+
+        link.tap { raise Hallon::Error, "invalid link" if link.null? }
       end
     end
 
