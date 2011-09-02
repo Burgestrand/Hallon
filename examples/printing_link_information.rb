@@ -9,7 +9,7 @@ def prompt(str)
 end
 
 # Hallon
-session = Hallon::Session.instance IO.read(ENV['HALLON_APPKEY']) do
+session = Hallon::Session.initialize IO.read(ENV['HALLON_APPKEY']) do
   on(:log_message) do |message|
     $stderr.puts "[LOG] #{message}"
   end
