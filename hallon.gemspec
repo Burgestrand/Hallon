@@ -11,7 +11,8 @@ Gem::Specification.new do |gem|
   gem.email    = 'kim@burgestrand.se'
   gem.license  = 'X11 License'
 
-  gem.files         = `git ls-files`.split("\n") - %w[mockspotify]
+  gem.files         = `git ls-files`.split("\n")
+  gem.files        += `cd spec/mockspotify/libmockspotify && git ls-files src`.split("\n").map { |path| "spec/mockspotify/libmockspotify/#{path}" }
   gem.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   gem.executables   = []
   gem.require_paths = ["lib"]
