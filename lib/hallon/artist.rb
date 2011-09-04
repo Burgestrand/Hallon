@@ -13,7 +13,7 @@ module Hallon
     extend Linkable
 
     from_link :as_artist
-    to_link   :from_album
+    to_link   :from_artist
 
     # Construct an artist given a link.
     #
