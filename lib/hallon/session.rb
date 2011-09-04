@@ -144,8 +144,7 @@ module Hallon
     #
     # @return [self]
     def logout
-      Spotify::session_logout(@pointer) if logged_in?
-      self
+      tap { Spotify::session_logout(@pointer) if logged_in? }
     end
 
     # Retrieve the currently logged in {User}.
