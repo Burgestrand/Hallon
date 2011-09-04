@@ -7,13 +7,25 @@ describe Hallon::Track, :session => true do
   its(:index)  { should be 7 }
   its(:status) { should be :ok }
 
-  its(:duration) { should eq 123.456 }
+  its(:duration)   { should eq 123.456 }
   its(:popularity) { should eq 0.42 }
 
-  its("album.name")  { should eq "Finally Woken"  }
-  pending("artist.name") { should eq "Jem" }
-
+  its(:album) { should eq Hallon::Album.new(mock_album) }
   it { should be_loaded }
+
+  describe "session bound queries" do
+    subject do
+      Hallon::Session.should_receive(:instance).and_return session
+      Hallon::Track.new(mock_track)
+    end
+
+    it { should be_available }
+    it { should_not be_local }
+    it { should be_autolinked }
+    it { should be_starred }
+  end
+
+  pending("artist.name") { should eq "Jem" }
 
   describe "album" do
     it "should be an album when there is one" do
@@ -66,5 +78,10 @@ describe Hallon::Track, :session => true do
     its("album.name") { should eq "Coolio" }
     pending("artist.name") { should eq "Emmy" }
     its(:duration) { should eq 0.1 }
+
+    it do
+      Hallon::Session.should_receive(:instance).and_return(session)
+      should be_local
+    end
   end
 end

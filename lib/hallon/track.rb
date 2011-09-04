@@ -107,10 +107,38 @@ module Hallon
       Hallon::Album.new(album) unless album.null?
     end
 
-    # TODO: available?(session)
-    # TODO: local?(session)
-    # TODO: autolinked?(session)
-    # TODO: starred?(session)
+    # True if the Track is available.
+    #
+    # @note This’ll always return false unless the track is loaded.
+    # @return [Boolean]
+    def available?(session = Session.instance)
+      Spotify.track_is_available(session.pointer, @pointer)
+    end
+
+    # True if the Track is a local track.
+    #
+    # @note This’ll always return false unless the track is loaded.
+    # @return [Boolean]
+    def local?(session = Session.instance)
+      Spotify.track_is_local(session.pointer, @pointer)
+    end
+
+    # True if the Track is autolinked.
+    #
+    # @note This’ll always return false unless the track is loaded.
+    # @return [Boolean]
+    def autolinked?(session = Session.instance)
+      Spotify.track_is_autolinked(session.pointer, @pointer)
+    end
+
+    # True if the track is starred.
+    #
+    # @note This’ll always return false unless the track is loaded.
+    # @return [Boolean]
+    def starred?(session = Session.instance)
+      Spotify.track_is_starred(session.pointer, @pointer)
+    end
+
     # TODO: starred = true (session, array of tracks)
     # TODO: artists (count, by index)
   end
