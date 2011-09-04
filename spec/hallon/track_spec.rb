@@ -11,7 +11,10 @@ describe Hallon::Track, :session => true do
   its(:popularity) { should eq 0.42 }
 
   its(:album) { should eq Hallon::Album.new(mock_album) }
+  its(:artist) { should eq Hallon::Artist.new(mock_artist) }
   it { should be_loaded }
+
+  pending("artists", "should be a collection of artists")
 
   describe "session bound queries" do
     subject do
@@ -24,8 +27,6 @@ describe Hallon::Track, :session => true do
     it { should be_autolinked }
     it { should be_starred }
   end
-
-  pending("artist.name") { should eq "Jem" }
 
   describe "album" do
     it "should be an album when there is one" do
@@ -76,7 +77,7 @@ describe Hallon::Track, :session => true do
 
     its(:name) { should eq "Nissy" }
     its("album.name") { should eq "Coolio" }
-    pending("artist.name") { should eq "Emmy" }
+    its("artist.name") { should eq "Emmy" }
     its(:duration) { should eq 0.1 }
 
     it do

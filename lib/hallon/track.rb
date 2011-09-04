@@ -107,6 +107,16 @@ module Hallon
       Hallon::Album.new(album) unless album.null?
     end
 
+    # Artist who performed this Track.
+    #
+    # @note There may be more than one artist, see {artists} for retrieving them all!
+    # @note This’ll be nil unless the track is loaded.
+    # @return [Hallon::Artist]
+    def artist
+      artist = Spotify.track_artist(@pointer, 0)
+      Hallon::Artist.new(artist) unless artist.null?
+    end
+
     # True if the Track is available.
     #
     # @note This’ll always return false unless the track is loaded.
