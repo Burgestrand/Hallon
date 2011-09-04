@@ -46,7 +46,7 @@ describe Hallon::Track, :session => true do
 
   describe "offset" do
     let(:without_offset) { 'spotify:track:7N2Vc8u56VGA4KUrGbikC2' }
-    let(:with_offset) { without_offset + '#1:00' }
+    let(:with_offset)    { without_offset + '#1:00' }
 
     specify "with offset" do
       Hallon::Track.new(with_offset).offset.should eq 60

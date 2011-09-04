@@ -7,7 +7,7 @@ RSpec::Core::ExampleGroup.instance_eval do
     track = nil
     FFI::MemoryPointer.new(:pointer) do |ary|
       ary.write_pointer mock_artist
-      track = Spotify.mock_track("They", 1, ary, mock_album, 123_456, 42, 2, 7, 0, true)
+      track = Spotify.mock_track("They", 1, ary, mock_album, 123_456, 42, 2, 7, 0, true, true, false, true, true)
     end
     track
   end
@@ -15,4 +15,9 @@ RSpec::Core::ExampleGroup.instance_eval do
   let(:mock_image_hex) { "3ad93423add99766e02d563605c6e76ed2b0e450" }
   let(:mock_image_id)  { ":\xD94#\xAD\xD9\x97f\xE0-V6\x05\xC6\xE7n\xD2\xB0\xE4P" }
   let(:null_pointer)   { FFI::Pointer.new(0) }
+end
+
+RSpec::Core::ExampleGroup.new.instance_eval do
+  Spotify.registry_add 'spotify:track:7N2Vc8u56VGA4KUrGbikC2', mock_track
+  Spotify.registry_add 'spotify:user:burgestrand', mock_user
 end

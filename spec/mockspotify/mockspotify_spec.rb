@@ -24,4 +24,18 @@ describe Spotify::Mock do
       end
     end
   end
+
+  describe "the registry" do
+    it "should find previously added entries" do
+      Spotify.registry_add("i_exist", FFI::Pointer.new(1))
+      Spotify.registry_add("i_exist_too", FFI::Pointer.new(2))
+
+      Spotify.registry_find("i_exist").should eq FFI::Pointer.new(1)
+      Spotify.registry_find("i_exist_too").should eq FFI::Pointer.new(2)
+    end
+
+    it "should return nil for entries not in the registry" do
+      Spotify.registry_find("i_do_not_exist").should be_null
+    end
+  end
 end
