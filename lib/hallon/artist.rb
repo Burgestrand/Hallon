@@ -9,7 +9,7 @@ module Hallon
   # we have for {Album}s.
   #
   # Both Albums and Tracks can have more than one artist.
-  class Artist
+  class Artist < Base
     extend Linkable
 
     from_link :as_artist
