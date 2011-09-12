@@ -10,8 +10,8 @@ end
 
 session.login ENV['HALLON_USERNAME'], ENV['HALLON_PASSWORD']
 
-session.process_events_on(:logged_in) { |error| Hallon::Error.maybe_raise(error) }
-session.process_events_on(:connection_error) do |error|
+session.wait_for(:logged_in) { |error| Hallon::Error.maybe_raise(error) }
+session.wait_for(:connection_error) do |error|
   session.logged_in? or Hallon::Error.maybe_raise(error)
 end
 
