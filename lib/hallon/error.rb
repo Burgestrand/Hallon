@@ -45,8 +45,10 @@ module Hallon
       #
       # @param [Fixnum, Symbol] error
       # @return [nil]
-      def maybe_raise(error)
-        error, symbol = disambiguate(error)
+      def maybe_raise(x)
+        return nil if x.nil?
+
+        error, symbol = disambiguate(x)
         return symbol if symbol == :ok
 
         message = []

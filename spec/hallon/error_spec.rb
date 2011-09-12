@@ -35,6 +35,12 @@ describe Hallon::Error do
     it "should return the error symbol if it's ok" do
       subject.maybe_raise(0).should eq :ok
     end
+
+    # to account for the following case:
+    # session.wait_for(:timeout) { |param| Hallon::Error.maybe_raise(param) }
+    it "should return nil when the error is nil" do
+      subject.maybe_raise(nil).should eq nil
+    end
   end
 
   describe "::table" do
