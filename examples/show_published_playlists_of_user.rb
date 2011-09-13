@@ -61,6 +61,8 @@ while username = prompt("Enter a Spotify username: ")
       next
     end
 
+    session.wait_for { Spotify::playlistcontainer_is_loaded(container) }
+
     num_playlists = Spotify::playlistcontainer_num_playlists(container)
     puts "Listing #{num_playlists} playlists."
 
@@ -82,6 +84,8 @@ while username = prompt("Enter a Spotify username: ")
         puts "\t (#{j+1}/#{num_tracks}) #{track.name}"
       end
     end
+  rescue Interrupt
+    # do nothing, continue with loop
   ensure
     Spotify::playlistcontainer_release(container) unless container.nil?
   end
