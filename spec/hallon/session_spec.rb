@@ -66,12 +66,17 @@ describe Hallon::Session do
         end
       end
 
-      session.process_events_on(:bogus) { |e| e.inspect }.should eq ":bogus"
+      session.process_events_on(:bogus) { |e| e == :bogus }.should be_true
     end
 
     it "should time out if waiting for events too long" do
-      session.should_receive(:process_events).once.and_return { session.trigger(:whatever) }
-      session.process_events_on(:whatever) { |e| e.inspect }.should eq "nil"
+      session.should_receive(:process_events).once # and do nothing
+      session.wait_for(:ever) { |x| x }.should eq :timeout
+    end
+
+    it "should call the given block once before waiting" do
+      session.should_not_receive(:process_events)
+      session.process_events_on { true }
     end
   end
 

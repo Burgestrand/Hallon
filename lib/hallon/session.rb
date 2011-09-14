@@ -106,10 +106,9 @@ module Hallon
     # @param [Symbol, ...] *events list of events to wait for
     # @yield [Symbol, *args] name of the callback that fired, and its’ arguments
     # @return [Hash<Event, Arguments>]
-    def process_events_on(*events, &block)
-      channel = SizedQueue.new(1)
-
-      protecting_handlers do
+    def process_events_on(*events)
+      yield or protecting_handlers do
+        channel = SizedQueue.new(1)
         on(*events) { |*args| channel << args }
         on(:notify_main_thread) { channel << :notify }
 
@@ -119,10 +118,10 @@ module Hallon
             params = Timeout::timeout(0.25) { channel.pop }
             redo if params == :notify
           rescue Timeout::Error
-            params = nil
+            params = :timeout
           end
 
-          if result = block.call(*params)
+          if result = yield(*params)
             return result
           end
         end
