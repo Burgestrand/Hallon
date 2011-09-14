@@ -41,6 +41,10 @@ describe Hallon::Error do
     it "should return nil when the error is nil" do
       subject.maybe_raise(nil).should eq nil
     end
+
+    it "should return nil when the error is timeout" do
+      subject.maybe_raise(:timeout).should eq nil
+    end
   end
 
   describe "::table" do

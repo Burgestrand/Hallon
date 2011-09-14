@@ -41,12 +41,12 @@ module Hallon
         Spotify::error_message disambiguate(error)[0]
       end
 
-      # Raise an {Error} with the given errno, unless it is `0` or `:ok`.
+      # Raise an {Error} with the given errno, unless it is `nil`, `:timeout`, `0` or `:ok`.
       #
       # @param [Fixnum, Symbol] error
       # @return [nil]
       def maybe_raise(x)
-        return nil if x.nil?
+        return nil if [nil, :timeout].include?(x)
 
         error, symbol = disambiguate(x)
         return symbol if symbol == :ok
