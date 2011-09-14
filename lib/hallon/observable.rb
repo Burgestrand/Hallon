@@ -4,9 +4,6 @@ module Hallon
   #
   # @private
   module Observable
-    # Required for maintaining thread-safety around #handlers
-    include Hallon::Synchronizable
-
     # Defines a handler for the given event.
     #
     # @example defining a handler and triggering it
