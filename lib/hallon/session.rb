@@ -216,6 +216,13 @@ module Hallon
       Spotify::session_set_cache_size(@pointer, @cache_size = size)
     end
 
+    # @return [String] Currently logged in users’ country.
+    def country
+      coded = Spotify::session_user_country(@pointer)
+      country = ((coded >> 8) & 0xFF).chr
+      country << (coded & 0xFF).chr
+    end
+
     # True if currently logged in.
     # @see #status
     def logged_in?

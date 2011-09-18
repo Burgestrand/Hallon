@@ -121,6 +121,12 @@ describe Hallon::Session do
     end
   end
 
+  describe "#country" do
+    it "should retrieve the current sessions’ country as a string" do
+      session.country.should eq 'SE'
+    end
+  end
+
   describe "#cache_size" do
     it "should default to 0" do
       session.cache_size.should eq 0
