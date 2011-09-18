@@ -222,6 +222,30 @@ module Hallon
       country << (coded & 0xFF).chr
     end
 
+    # Star the given tracks.
+    #
+    # @example
+    #   track = Hallon::Track.new("spotify:track:2LFQV2u6wXZmmySCWBkYGu")
+    #   session.star(track)
+    #
+    # @param [Track…]
+    # @return [Session]
+    def star(*tracks)
+      tap { tracks_starred(tracks, true) }
+    end
+
+    # Unstar the given tracks.
+    #
+    # @example
+    #   track = Hallon::Track.new("spotify:track:2LFQV2u6wXZmmySCWBkYGu")
+    #   session.unstar(track)
+    #
+    # @param [Track…]
+    # @return [Session]
+    def unstar(*tracks)
+      tap { tracks_starred(tracks, false) }
+    end
+
     # True if currently logged in.
     # @see #status
     def logged_in?
@@ -252,5 +276,17 @@ module Hallon
     def to_s
       "<#{self.class.name}:0x#{object_id.to_s(16)} status=#{status} @options=#{options.inspect}>"
     end
+
+    private
+      # Set starred status of given tracks.
+      #
+      # @param [Array<Track>] tracks
+      # @param [Boolean] starred
+      def tracks_starred(tracks, starred)
+        FFI::MemoryPointer.new(:pointer, tracks.size) do |ptr|
+          ptr.write_array_of_pointer tracks.map(&:pointer)
+          Spotify::track_set_starred(pointer, ptr, tracks.size, starred)
+        end
+      end
   end
 end

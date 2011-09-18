@@ -126,6 +126,24 @@ describe Hallon::Session do
     end
   end
 
+  describe "#star and #unstar" do
+    it "should be able to star and unstar tracks" do
+      # for track#starred?
+      Hallon::Session.should_receive(:instance).exactly(6).times.and_return(session)
+
+      tracks = [mock_track, mock_track_two]
+      tracks.map! { |x| Hallon::Track.new(x) }
+      tracks.all?(&:starred?).should be_true # starred by default
+
+      session.unstar(*tracks)
+      tracks.none?(&:starred?).should be_true
+
+      session.star(tracks[0])
+      tracks[0].should be_starred
+      tracks[1].should_not be_starred
+    end
+  end
+
   describe "#cache_size" do
     it "should default to 0" do
       session.cache_size.should eq 0
