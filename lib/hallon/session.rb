@@ -103,6 +103,9 @@ module Hallon
 
     # Wait for the given callbacks to fire until the block returns true
     #
+    # @note Given block will be called once instantly without parameters.
+    # @note If no events happen for 0.25 seconds, the given block will be called
+    #       with `:timeout` as parameter.
     # @param [Symbol, ...] *events list of events to wait for
     # @yield [Symbol, *args] name of the callback that fired, and its’ arguments
     # @return [Hash<Event, Arguments>]
