@@ -80,6 +80,40 @@ describe Hallon::Session do
     end
   end
 
+  describe "#relogin" do
+    it "should raise if no credentials have been saved" do
+      expect { session.relogin }.to raise_error(Hallon::Error)
+    end
+
+    it "should not raise if credentials have been saved" do
+      session.login 'Kim', 'pass', true
+      session.logout
+      expect { session.relogin }.to_not raise_error
+      session.should be_logged_in
+    end
+  end
+
+  describe "#remembered_user" do
+    it "should be nil if no username is stored in libspotify" do
+      session.remembered_user.should eq nil
+    end
+
+    it "should retrieve the remembered username if stored" do
+      session.login 'Kim', 'pass', true
+      session.remembered_user.should eq 'Kim'
+    end
+  end
+
+  describe "#forget_me!" do
+    before { session.login 'Kim', 'pass', true }
+
+    it "should forget the currently stored user credentials" do
+      session.remembered_user.should eq 'Kim'
+      session.forget_me!
+      session.remembered_user.should eq nil
+    end
+  end
+
   describe "#logout" do
     it "should check logged in status" do
       session.should_receive(:logged_in?).once.and_return(false)

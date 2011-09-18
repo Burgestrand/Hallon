@@ -154,6 +154,32 @@ module Hallon
       tap { Spotify::session_login(@pointer, username, password, @remembered = remember_me) }
     end
 
+    # Login the remembered user (see {#login}).
+    #
+    # @raise [Hallon::Error] if no credentials are stored in libspotify
+    def relogin
+      Hallon::Error.maybe_raise Spotify::session_relogin(@pointer)
+    end
+
+    # Username of the user stored in libspotify-remembered credentials.
+    #
+    # @return [String]
+    def remembered_user
+      bufflen = Spotify::session_remembered_user(@pointer, nil, 0)
+      FFI::Buffer.alloc_out(bufflen + 1) do |b|
+        Spotify::session_remembered_user(@pointer, b, b.size)
+        return b.get_string(0)
+      end if bufflen > 0
+    end
+
+    # Remove stored login credentials in libspotify.
+    #
+    # @note If no credentials are stored nothing’ll happen.
+    # @return [self]
+    def forget_me!
+      tap { Spotify::session_forget_me(@pointer) }
+    end
+
     # Logs out of Spotify. Does nothing if not logged in.
     #
     # @return [self]
