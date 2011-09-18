@@ -27,6 +27,31 @@ describe Hallon::Track, :session => true do
     end
   end
 
+  describe "#starred=" do
+    it "should delegate to session to unstar" do
+      Hallon::Session.should_receive(:instance).and_return(session)
+
+      session.should_receive(:unstar).with(subject)
+      subject.starred = false
+    end
+
+
+    it "should delegate to session to star" do
+      Hallon::Session.should_receive(:instance).and_return(session)
+
+      session.should_receive(:star).with(subject)
+      subject.starred = true
+    end
+
+    it "should change starred status of track" do
+      Hallon::Session.should_receive(:instance).exactly(3).times.and_return(session)
+
+      subject.should be_starred
+      subject.starred = false
+      subject.should_not be_starred
+    end
+  end
+
   describe "session bound queries" do
     subject do
       Hallon::Session.should_receive(:instance).and_return session

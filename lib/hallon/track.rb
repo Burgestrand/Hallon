@@ -159,7 +159,14 @@ module Hallon
       Spotify.track_is_starred(session.pointer, @pointer)
     end
 
-    # TODO: starred = true (session, array of tracks)
-    # TODO: artists (count, by index)
+    # Set {#starred?} status of current track.
+    #
+    # @note It’ll set the starred status for the current Session.instance.
+    # @param [Boolean] starred
+    # @return [Boolean]
+    def starred=(starred)
+      session = Session.instance
+      starred ? session.star(self) : session.unstar(self)
+    end
   end
 end
