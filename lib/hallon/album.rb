@@ -9,6 +9,7 @@ module Hallon
   #
   # @see http://developer.spotify.com/en/libspotify/docs/group__album.html
   class Album < Base
+    # An array of different kinds of albums. Singles, compilations etc.
     def self.types
       Spotify.enum_type(:albumtype).symbols
     end
