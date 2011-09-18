@@ -188,6 +188,12 @@ module Hallon
       status == :disconnected
     end
 
+    # True if offline.
+    # @see #status
+    def offline?
+      status == :offline
+    end
+
     # String representation of the Session.
     #
     # @return [String]
