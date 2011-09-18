@@ -70,7 +70,6 @@ module Hallon
     # @raise [Hallon::Error] if `sp_session_create` fails
     # @see http://developer.spotify.com/en/libspotify/docs/structsp__session__config.html
     def initialize(appkey, options = {}, &block)
-      @appkey  = appkey.to_s
       @options = {
         :user_agent => "Hallon",
         :settings_path => "tmp",
@@ -87,7 +86,7 @@ module Hallon
       # Set configuration, as well as callbacks
       config  = Spotify::SessionConfig.new
       config[:api_version]   = Hallon::API_VERSION
-      config.application_key = @appkey
+      config.application_key = appkey
       @options.each { |(key, value)| config.send(:"#{key}=", value) }
       config[:callbacks]     = Spotify::SessionCallbacks.new(self, @sp_callbacks = {})
 
@@ -251,7 +250,7 @@ module Hallon
     #
     # @return [String]
     def to_s
-      "<#{self.class.name}>"
+      "<#{self.class.name}:0x#{object_id.to_s(16)} status=#{status} @options=#{options.inspect}>"
     end
   end
 end

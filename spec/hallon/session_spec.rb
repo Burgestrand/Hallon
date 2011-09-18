@@ -105,9 +105,8 @@ describe Hallon::Session do
   end
 
   describe "#forget_me!" do
-    before { session.login 'Kim', 'pass', true }
-
     it "should forget the currently stored user credentials" do
+      session.login 'Kim', 'pass', true
       session.remembered_user.should eq 'Kim'
       session.forget_me!
       session.remembered_user.should eq nil

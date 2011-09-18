@@ -50,5 +50,10 @@ module Hallon
         result.call
       end
     end
+
+    # @return [String] String representation of the Enumerator.
+    def to_s
+      "<#{self.class.name}:0x#{object_id.to_s(16)} @size=#{size}>"
+    end
   end
 end
