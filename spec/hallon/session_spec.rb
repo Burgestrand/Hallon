@@ -87,6 +87,17 @@ describe Hallon::Session do
     end
   end
 
+  describe "#cache_size" do
+    it "should default to 0" do
+      session.cache_size.should eq 0
+    end
+
+    it "should be settable" do
+      session.cache_size = 10
+      session.cache_size.should eq 10
+    end
+  end
+
   context "when logged in", :logged_in => true do
     it "should be logged in" do
       session.should be_logged_in

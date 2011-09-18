@@ -15,6 +15,15 @@ module Hallon
     # @return [Hash]
     attr_reader :options
 
+    # The current session cache size (in megabytes).
+    #
+    # @note This is not provided by libspotify, and the value is only valid
+    #       as long as the cache size is only adjusted through {#cache_size=}
+    #       and not the Spotify FFI interface.
+    #
+    # @return [Integer]
+    attr_reader :cache_size
+
     # libspotify only allows one session per process.
     include Singleton
     class << self
@@ -81,6 +90,9 @@ module Hallon
       config.application_key = @appkey
       @options.each { |(key, value)| config.send(:"#{key}=", value) }
       config[:callbacks]     = Spotify::SessionCallbacks.new(self, @sp_callbacks = {})
+
+      # Default cache size is 0 (automatic)
+      @cache_size = 0
 
       instance_eval(&block) if block_given?
 
@@ -168,6 +180,14 @@ module Hallon
     # @return [Symbol]
     def status
       Spotify::session_connectionstate(@pointer)
+    end
+
+    # Set session cache size in megabytes.
+    #
+    # @param [Integer]
+    # @return [Integer]
+    def cache_size=(size)
+      Spotify::session_set_cache_size(@pointer, @cache_size = size)
     end
 
     # True if currently logged in.
