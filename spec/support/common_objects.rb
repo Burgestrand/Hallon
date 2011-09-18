@@ -1,13 +1,16 @@
 RSpec::Core::ExampleGroup.instance_eval do
   let(:mock_artist) { Spotify.mock_artist("Jem", true) }
+  let(:mock_artist_two) { Spotify.mock_artist("Maroon 5", true) }
+
   let(:mock_album)  { Spotify.mock_album("Finally Woken", mock_artist, 2004, "DEADBEEFDEADBEEFDEAD", :single, true, true) }
   let(:mock_user)   { Spotify.mock_user("burgestrand", "Burgestrand", "Kim Burgestrand", "https://secure.gravatar.com/avatar/b67b73b5b1fd84119ec788b1c3df02ad", :none, true) }
   let(:mock_image)  { Spotify.mock_image(mock_image_id, :jpeg, File.size(fixture_image_path), File.read(fixture_image_path), :ok) }
+
   let(:mock_track) do
     track = nil
-    FFI::MemoryPointer.new(:pointer) do |ary|
-      ary.write_pointer mock_artist
-      track = Spotify.mock_track("They", 1, ary, mock_album, 123_456, 42, 2, 7, 0, true, true, false, true, true)
+    FFI::MemoryPointer.new(:pointer, 2) do |ary|
+      ary.write_array_of_pointer [mock_artist, mock_artist_two]
+      track = Spotify.mock_track("They", ary.size / ary.type_size, ary, mock_album, 123_456, 42, 2, 7, 0, true, true, false, true, true)
     end
     track
   end

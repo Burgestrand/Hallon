@@ -14,7 +14,18 @@ describe Hallon::Track, :session => true do
   its(:artist) { should eq Hallon::Artist.new(mock_artist) }
   it { should be_loaded }
 
-  pending("artists", "should be a collection of artists")
+  describe "#artists" do
+    subject { Hallon::Track.new(mock_track).artists }
+
+    its(:size) { should eq 2 }
+
+    it "should be a collection of artists" do
+      artists = [mock_artist, mock_artist_two]
+      artists.map! { |x| Hallon::Artist.new(x) }
+
+      subject.to_a.should eq artists
+    end
+  end
 
   describe "session bound queries" do
     subject do
