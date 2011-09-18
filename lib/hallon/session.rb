@@ -148,7 +148,7 @@ module Hallon
     #
     # @param [String] username
     # @param [String] password
-    # @param [Boolean] remember_me have libspotify remember credentials for {relogin}
+    # @param [Boolean] remember_me have libspotify remember credentials for {#relogin}
     # @return [self]
     def login(username, password, remember_me = false)
       tap { Spotify::session_login(@pointer, username, password, @remembered = remember_me) }
