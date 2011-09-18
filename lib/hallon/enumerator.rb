@@ -1,4 +1,9 @@
 module Hallon
+  # Hallon::Enumerator is like a lazy Array.
+  #
+  # It provides methods from Enumerable to enumerate through its’ contents,
+  # size information and Array access methods. It’s used throughout Hallon
+  # for collections of items such as artist tracks, albums and so on.
   class Enumerator
     include Enumerable
 
