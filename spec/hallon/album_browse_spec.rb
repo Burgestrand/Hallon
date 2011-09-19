@@ -1,6 +1,11 @@
 # coding: utf-8
-describe Hallon::AlbumBrowse, :pending => true do
-  subject { Hallon::AlbumBrowse.new(mock_albumbrowse) }
+describe Hallon::AlbumBrowse do
+  subject do
+    Hallon::Session.should_receive(:instance).and_return(session)
+    album = Hallon::Album.new(mock_album)
+    Spotify.should_receive(:albumbrowse_create).and_return(mock_albumbrowse)
+    Hallon::AlbumBrowse.new(album)
+  end
 
   it { should be_loaded }
   its(:error)  { should eq :ok }
