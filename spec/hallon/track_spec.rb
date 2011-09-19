@@ -2,30 +2,17 @@
 describe Hallon::Track, :session => true do
   subject { Hallon::Track.new(mock_track) }
 
+  it { should be_loaded }
   its(:name)   { should eq "They" }
   its(:disc)   { should be 2 }
   its(:index)  { should be 7 }
   its(:status) { should be :ok }
-
   its(:duration)   { should eq 123.456 }
   its(:popularity) { should eq 0.42 }
-
   its(:album) { should eq Hallon::Album.new(mock_album) }
   its(:artist) { should eq Hallon::Artist.new(mock_artist) }
-  it { should be_loaded }
-
-  describe "#artists" do
-    subject { Hallon::Track.new(mock_track).artists }
-
-    its(:size) { should eq 2 }
-
-    it "should be a collection of artists" do
-      artists = [mock_artist, mock_artist_two]
-      artists.map! { |x| Hallon::Artist.new(x) }
-
-      subject.to_a.should eq artists
-    end
-  end
+  its('artists.size') { should eq 2 }
+  its('artists.to_a') { should eq [mock_artist, mock_artist_two].map{ |p| Hallon::Artist.new(p) } }
 
   describe "#starred=" do
     it "should delegate to session to unstar" do
