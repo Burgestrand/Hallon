@@ -5,7 +5,13 @@ describe Hallon::Album do
   its(:name) { should eq "Finally Woken" }
   its(:year) { should be 2004 }
   its(:type) { should be :single }
-  its(:browse) { should eq Hallon::AlbumBrowse.new(mock_album) }
+
+  its(:browse) do
+    Hallon::Session.should_receive(:instance).exactly(2).times.and_return(session)
+    Spotify.should_receive(:albumbrowse_create).exactly(2).times.and_return(mock_albumbrowse)
+
+    should eq Hallon::AlbumBrowse.new(mock_album)
+  end
 
   it { should be_available }
   it { should be_loaded }
