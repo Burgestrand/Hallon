@@ -76,5 +76,12 @@ module Hallon
       artist = Spotify.album_artist(@pointer)
       Hallon::Artist.new(artist) unless artist.null?
     end
+
+    # Retrieve an AlbumBrowse object for this Album.
+    #
+    # @return [AlbumBrowse]
+    def browse
+      Hallon::AlbumBrowse.new(pointer)
+    end
   end
 end

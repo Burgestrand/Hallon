@@ -5,6 +5,7 @@ describe Hallon::Album do
   its(:name) { should eq "Finally Woken" }
   its(:year) { should be 2004 }
   its(:type) { should be :single }
+  its(:browse) { should eq Hallon::AlbumBrowse.new(mock_album) }
 
   it { should be_available }
   it { should be_loaded }
