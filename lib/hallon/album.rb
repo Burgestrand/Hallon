@@ -71,10 +71,10 @@ module Hallon
 
     # Retrieve the album Artist.
     #
-    # @return [Artist]
+    # @return [Artist, nil]
     def artist
-      return if (ptr = Spotify.album_artist(@pointer)).null?
-      Hallon::Artist.new(ptr)
+      artist = Spotify.album_artist(@pointer)
+      Hallon::Artist.new(artist) unless artist.null?
     end
   end
 end
