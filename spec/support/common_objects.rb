@@ -24,6 +24,21 @@ RSpec::Core::ExampleGroup.instance_eval do
     track
   end
 
+  let(:mock_albumbrowse) do
+    albumbrowse = nil
+
+    FFI::MemoryPointer.new(:pointer, 2) do |copyrights|
+      FFI::MemoryPointer.new(:pointer, 2) do |tracks|
+        copyrights.write_array_of_pointer %w[Kim Elin].map { |x| FFI::MemoryPointer.from_string(x) }
+        tracks.write_array_of_pointer [mock_track, mock_track_two]
+        review = "This album is AWESOME"
+        albumbrowse = Spotify.mock_albumbrowse(:ok, mock_album, mock_artist, 2, copyrights, 2, tracks, review, nil, nil)
+      end
+    end
+
+    albumbrowse
+  end
+
   let(:mock_image_hex) { "3ad93423add99766e02d563605c6e76ed2b0e450" }
   let(:mock_image_id)  { ":\xD94#\xAD\xD9\x97f\xE0-V6\x05\xC6\xE7n\xD2\xB0\xE4P" }
   let(:null_pointer)   { FFI::Pointer.new(0) }
