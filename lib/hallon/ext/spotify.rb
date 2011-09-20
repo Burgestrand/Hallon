@@ -15,7 +15,7 @@ module Spotify
     #
     # @param [FFI::Pointer] ptr
     # @param [Symbol] type session, link, etc
-    # @param [Boolean[ add_ref increase reference count
+    # @param [Boolean] add_ref increase reference count
     # @return [FFI::AutoPointer]
     def initialize(ptr, type, add_ref = false)
       super ptr, releaser_for(@type = type)
