@@ -144,6 +144,25 @@ describe Hallon::Session do
     end
   end
 
+  describe "#friends" do
+    let(:session) { mock_session_object }
+
+    it "should be an enumerator" do
+      session.friends.should be_an Hallon::Enumerator
+    end
+
+    it "should be empty if not logged in" do
+      Spotify.should_not_receive(:session_num_friends)
+      session.should_receive(:logged_in?).and_return(false)
+      session.friends.size.should eq 0
+    end
+
+    it "should be an enumerator of friends" do
+      session.login 'Kim', 'pass'
+      session.friends[0].should eq Hallon::User.new(mock_user)
+    end
+  end
+
   describe "#cache_size" do
     it "should default to 0" do
       session.cache_size.should eq 0

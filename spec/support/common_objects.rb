@@ -66,6 +66,17 @@ RSpec::Core::ExampleGroup.instance_eval do
   let(:mock_image_hex) { "3ad93423add99766e02d563605c6e76ed2b0e450" }
   let(:mock_image_id)  { ":\xD94#\xAD\xD9\x97f\xE0-V6\x05\xC6\xE7n\xD2\xB0\xE4P".force_encoding("BINARY") }
   let(:null_pointer)   { FFI::Pointer.new(0) }
+
+  let(:mock_session_object) do
+    session = Hallon::Session.send(:allocate)
+    FFI::MemoryPointer.new(:pointer) do |friends|
+      friends.write_array_of_pointer [mock_user]
+      session.instance_eval do
+        @pointer = Spotify.mock_session(nil, 1, friends)
+      end
+    end
+    session
+  end
 end
 
 RSpec::Core::ExampleGroup.new.instance_eval do
