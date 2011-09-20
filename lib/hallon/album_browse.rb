@@ -1,11 +1,16 @@
 module Hallon
+  # AlbumBrowse objects are for retrieving additional data from
+  # an album that cannot otherwise be acquired. This includes
+  # tracks, reviews, copyright information.
+  #
+  # @see Album
   class AlbumBrowse < Base
     include Hallon::Observable
 
     # Creates an AlbumBrowse instance from an Album.
     #
     # @note Use {Album#browse} to browse an Album.
-    # @param [Album, FFI::Pointer] albumbrowse
+    # @param [Album, FFI::Pointer] album
     def initialize(album)
       session = Hallon::Session.instance
       album   = album.pointer if album.respond_to?(:pointer)
@@ -20,6 +25,7 @@ module Hallon
       Spotify::albumbrowse_is_loaded(@pointer)
     end
 
+    # @see Error
     # @return [Symbol] album error status
     def error
       Spotify::albumbrowse_error(@pointer)
