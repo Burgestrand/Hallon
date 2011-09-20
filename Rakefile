@@ -36,6 +36,11 @@ task 'spotify:coverage' do
 
   methods = Spotify.methods(false).map(&:to_s)
   covered = Set.new(methods)
+  covered -= [
+    'session_release',  # segfaults on libspotify <= 9
+    'session_userdata', # wont support this
+    'link_as_track',    # using link_as_track_and_offset instead
+  ]
 
   # Handlers for different AST nodes
   printer  = proc { |*args| p args }
