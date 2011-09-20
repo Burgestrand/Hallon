@@ -37,6 +37,7 @@ module Spotify
   attach_function :mock_album, :mocksp_album_create, [:string, :artist, :int, :image_id, :albumtype, :bool, :bool], :album
 
   attach_function :mock_albumbrowse, :mocksp_albumbrowse_create, [:error, :album, :artist, :int, :array, :int, :array, :string, :albumbrowse_complete_cb, :pointer], :albumbrowse
+  attach_function :mock_artistbrowse, :mocksp_artistbrowse_create, [:error, :artist, :int, :array, :int, :array, :int, :array, :int, :array, :string, :artistbrowse_complete_cb, :pointer], :artistbrowse
 
   $VERBOSE = old_verbose
 end

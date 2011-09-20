@@ -1,3 +1,4 @@
+# coding: utf-8
 RSpec::Core::ExampleGroup.instance_eval do
   let(:mock_artist) { Spotify.mock_artist("Jem", true) }
   let(:mock_artist_two) { Spotify.mock_artist("Maroon 5", true) }
@@ -39,8 +40,31 @@ RSpec::Core::ExampleGroup.instance_eval do
     albumbrowse
   end
 
+  let(:mock_artistbrowse) do
+    artistbrowse = nil
+
+    # Oh, ain’t this beautiful…?
+    FFI::MemoryPointer.new(:pointer, 2) do |portraits|
+      FFI::MemoryPointer.new(:pointer, 2) do |tracks|
+        FFI::MemoryPointer.new(:pointer, 2) do |albums|
+          FFI::MemoryPointer.new(:pointer, 2) do |similar_artists|
+            mock_image_pointer = FFI::MemoryPointer.from_string(mock_image_id)
+            portraits.write_array_of_pointer [mock_image_pointer, mock_image_pointer]
+            tracks.write_array_of_pointer [mock_track, mock_track_two]
+            albums.write_array_of_pointer [mock_album] # laziness
+            similar_artists.write_array_of_pointer [mock_artist, mock_artist_two]
+
+            artistbrowse = Spotify.mock_artistbrowse(:ok, mock_artist, 2, portraits, 2, tracks, 1, albums, 2, similar_artists, "grew up in DA BLOCK", nil, nil)
+          end
+        end
+      end
+    end
+
+    artistbrowse
+  end
+
   let(:mock_image_hex) { "3ad93423add99766e02d563605c6e76ed2b0e450" }
-  let(:mock_image_id)  { ":\xD94#\xAD\xD9\x97f\xE0-V6\x05\xC6\xE7n\xD2\xB0\xE4P" }
+  let(:mock_image_id)  { ":\xD94#\xAD\xD9\x97f\xE0-V6\x05\xC6\xE7n\xD2\xB0\xE4P".force_encoding("BINARY") }
   let(:null_pointer)   { FFI::Pointer.new(0) }
 end
 
