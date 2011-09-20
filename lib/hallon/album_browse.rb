@@ -36,7 +36,7 @@ module Hallon
     end
 
     # @see Error
-    # @return [Symbol] album error status
+    # @return [Symbol] album browser error status
     def error
       Spotify::albumbrowse_error(@pointer)
     end
