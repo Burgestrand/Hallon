@@ -3,11 +3,21 @@ module Hallon
   # an album that cannot otherwise be acquired. This includes
   # tracks, reviews, copyright information.
   #
+  # AlbumBrowse object triggers the `:load` callback on itself
+  # when it loads.
+  #
+  # @example
+  #   browse = album.browse # album is a Hallon::Album
+  #   browse.on(:load) do
+  #     puts "Album browser for #{browse.album.name} has been loaded!"
+  #   end
+  #   session.wait_for { browse.loaded? } # will eventually trigger above callback
+  #
   # @see Album
   class AlbumBrowse < Base
     include Hallon::Observable
 
-    # Creates an AlbumBrowse instance from an Album.
+    # Creates an AlbumBrowse instance from an Album or an Album pointer.
     #
     # @note Use {Album#browse} to browse an Album.
     # @param [Album, FFI::Pointer] album
