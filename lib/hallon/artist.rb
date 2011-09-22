@@ -45,5 +45,13 @@ module Hallon
         klass.new(portrait)
       end
     end
+
+    # Browse the Artist, giving you the ability to explore its’
+    # portraits, biography and more.
+    #
+    # @return [ArtistBrowse] an artist browsing object
+    def browse
+      ArtistBrowse.new(pointer)
+    end
   end
 end
