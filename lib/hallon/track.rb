@@ -118,10 +118,11 @@ module Hallon
 
     # All {Artist}s who performed this Track.
     #
-    # @note Track must be loaded, or all you’ll be getting is nil.
+    # @note Track must be loaded, or you’ll get zero artists.
     # @return [Hallon::Enumerator<Artist>]
     def artists
-      Hallon::Enumerator.new(Spotify::track_num_artists(@pointer)) do |i|
+      size = Spotify::track_num_artists(@pointer)
+      Hallon::Enumerator.new(size) do |i|
         artist = Spotify.track_artist(@pointer, i)
         Hallon::Artist.new(artist) unless artist.null?
       end
