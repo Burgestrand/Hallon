@@ -109,8 +109,8 @@ module Hallon
 
     # Artist who performed this Track.
     #
+    # @note There may be more than one artist, see {#artists} for retrieving them all!
     # @see #artists
-    # @note There may be more than one artist, see {artists} for retrieving them all!
     # @return [Hallon::Artist, nil]
     def artist
       artists.first
