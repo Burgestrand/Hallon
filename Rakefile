@@ -105,7 +105,12 @@ end
 
 desc "Remove generated files"
 task :clean do
-  sh 'git clean -fdx --exclude Gemfile.lock --exclude spec/support/config.rb'
+  print "Do you really want to delete all non-git tracked files? (y/n) [n]: "
+  if STDIN.gets.chomp == 'y'
+    sh 'git clean -fdx --exclude Gemfile.lock --exclude spec/support/config.rb'
+  else
+    puts "Whew. Close one!"
+  end
 end
 
 task :default => [:spec]
