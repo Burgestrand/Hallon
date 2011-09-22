@@ -63,6 +63,24 @@ RSpec::Core::ExampleGroup.instance_eval do
     artistbrowse
   end
 
+  let(:mock_toplistbrowse) do
+    toplistbrowse = nil
+
+    FFI::MemoryPointer.new(:pointer, 2) do |artists|
+      FFI::MemoryPointer.new(:pointer, 1) do |albums|
+        FFI::MemoryPointer.new(:pointer, 2) do |tracks|
+            artists.write_array_of_pointer [mock_artist, mock_artist_two]
+            albums.write_array_of_pointer [mock_album] # laziness
+            tracks.write_array_of_pointer [mock_track, mock_track_two]
+
+            toplistbrowse = Spotify.mock_toplistbrowse(:ok, 2, artists, 1, albums, 2, tracks)
+        end
+      end
+    end
+
+    toplistbrowse
+  end
+
   let(:mock_image_hex) { "3ad93423add99766e02d563605c6e76ed2b0e450" }
   let(:mock_image_id)  { ":\xD94#\xAD\xD9\x97f\xE0-V6\x05\xC6\xE7n\xD2\xB0\xE4P".force_encoding("BINARY") }
   let(:null_pointer)   { FFI::Pointer.new(0) }

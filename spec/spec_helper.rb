@@ -24,6 +24,14 @@ RSpec.configure do |config|
     appkey = valid_appkey ? 'appkey_good' : 'appkey_bad'
     Hallon::Session.send(:new, appkey, options)
   end
+
+  def instantiate(klass, *pointers)
+    pointers.map { |x| klass.new(x) }
+  end
+
+  def expect_session_instance(times = 1)
+    Hallon::Session.should_receive(:instance).exactly(times).and_return(session)
+  end
 end
 
 RSpec::Core::ExampleGroup.instance_eval do

@@ -18,6 +18,7 @@ require 'hallon/image'
 require 'hallon/track'
 require 'hallon/album'
 require 'hallon/artist'
+require 'hallon/toplist'
 
 require 'hallon/album_browse'
 require 'hallon/artist_browse'
