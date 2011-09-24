@@ -50,11 +50,10 @@ RSpec::Core::ExampleGroup.instance_eval do
 
   let(:mock_session_object) do
     session = Hallon::Session.send(:allocate)
-    FFI::MemoryPointer.new(:pointer) do |friends|
-      friends.write_array_of_pointer [mock_user]
-      session.instance_eval do
-        @pointer = Spotify.mock_session(nil, 1, friends)
-      end
+    friends = [mock_user] # try moving this into the block and run the tests :d
+    session.instance_eval do
+      friends = pointer_array_with(*friends)
+      @pointer = Spotify.mock_session(nil, friends.length, friends)
     end
     session
   end

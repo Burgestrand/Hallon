@@ -37,7 +37,11 @@ RSpec.configure do |config|
   def pointer_array_with(*args)
     ary = FFI::MemoryPointer.new(:pointer, args.size)
     ary.write_array_of_pointer args
-    ary.tap { |x| def x.length; size / type_size; end }
+    def ary.length
+      size / type_size
+    end
+
+    ary
   end
 end
 
