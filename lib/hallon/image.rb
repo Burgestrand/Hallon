@@ -19,7 +19,7 @@ module Hallon
     #
     # @param [String, Link, FFI::Pointer] link link or image id
     # @param [Hallon::Session] session
-    def initialize(link, session = Session.instance)
+    def initialize(link)
       if link.is_a?(String)
         link = to_id($1) if link =~ %r|image[:/]([a-fA-F0-9]{40})|
 

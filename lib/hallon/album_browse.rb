@@ -22,7 +22,6 @@ module Hallon
     # @note Use {Album#browse} to browse an Album.
     # @param [Album, FFI::Pointer] album
     def initialize(album)
-      session = Hallon::Session.instance
       album   = album.pointer if album.respond_to?(:pointer)
       @callback = proc { trigger(:load) }
 

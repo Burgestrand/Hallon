@@ -1,12 +1,11 @@
 # coding: utf-8
-describe Hallon::Image, :session => true do
-  describe "an image instance" do
-    let(:image) do
-      Hallon::Session.should_receive(:instance).and_return session
-      Hallon::Image.new(mock_image)
-    end
+describe Hallon::Image do
+  around(:each) { |test| mock_session(&test) }
 
+  describe "an image instance" do
     subject { image }
+
+    let(:image) { Hallon::Image.new(mock_image) }
 
     it { should be_loaded }
     its(:status) { should be :ok }
@@ -38,31 +37,29 @@ describe Hallon::Image, :session => true do
   end
 
   context "created from an url" do
-    subject { Hallon::Image.new("http://open.spotify.com/image/c78f091482e555bd2ffacfcd9cbdc0714b221663", session) }
+    subject { Hallon::Image.new("http://open.spotify.com/image/c78f091482e555bd2ffacfcd9cbdc0714b221663") }
     its(:id) { should eq "c78f091482e555bd2ffacfcd9cbdc0714b221663" }
   end
 
   context "created from an uri" do
-    subject { Hallon::Image.new("spotify:image:c78f091482e555bd2ffacfcd9cbdc0714b221663", session) }
+    subject { Hallon::Image.new("spotify:image:c78f091482e555bd2ffacfcd9cbdc0714b221663") }
     its(:id) { should eq "c78f091482e555bd2ffacfcd9cbdc0714b221663" }
   end
 
   context "created from an id" do
-    subject { Hallon::Image.new(mock_image_id, session) }
+    subject { Hallon::Image.new(mock_image_id) }
     its(:id) { should eq mock_image_hex }
   end
 
   context "created from a link" do
-    subject { Hallon::Image.new(Hallon::Link.new("spotify:image:c78f091482e555bd2ffacfcd9cbdc0714b221663"), session) }
+    subject { Hallon::Image.new(Hallon::Link.new("spotify:image:c78f091482e555bd2ffacfcd9cbdc0714b221663")) }
     its(:id) { should eq "c78f091482e555bd2ffacfcd9cbdc0714b221663" }
   end
 
   describe "callbacks" do
-    it "should trigger :load when loaded" do
-      pending "waiting for mockspotify event system"
-
+    it "should trigger :load when loaded", :pending => true do
       uri = "spotify:image:c78f091482e555bd2ffacfcd9cbdc0714b221663"
-      image = Hallon::Image.new(uri, session)
+      image = Hallon::Image.new(uri)
       image.should_not be_loaded
       image.should_receive(:trigger).with(:load).once
 

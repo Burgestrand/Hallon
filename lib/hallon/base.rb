@@ -16,5 +16,12 @@ module Hallon
     rescue NoMethodError
       super
     end
+
+    # The current Session instance.
+    #
+    # @return [Session]
+    def session
+      Session.instance
+    end
   end
 end

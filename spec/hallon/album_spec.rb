@@ -7,10 +7,10 @@ describe Hallon::Album do
   its(:type) { should be :single }
 
   its(:browse) do
-    Hallon::Session.should_receive(:instance).exactly(2).times.and_return(session)
-    Spotify.should_receive(:albumbrowse_create).exactly(2).times.and_return(mock_albumbrowse)
-
-    should eq Hallon::AlbumBrowse.new(mock_album)
+    mock_session do
+      Spotify.should_receive(:albumbrowse_create).exactly(2).times.and_return(mock_albumbrowse)
+      should eq Hallon::AlbumBrowse.new(mock_album)
+    end
   end
 
   it { should be_available }
@@ -28,8 +28,6 @@ describe Hallon::Album do
   end
 
   describe "cover" do
-    before { Hallon::Session.should_receive(:instance).and_return(session) }
-
     it "should be nil if there is no image" do
       Spotify.should_receive(:album_cover).and_return(null_pointer)
       subject.cover.should be_nil
@@ -40,7 +38,7 @@ describe Hallon::Album do
         ptr.write_string(mock_image_id)
 
         Spotify.should_receive(:album_cover).and_return(ptr)
-        subject.cover.id.should eq mock_image_hex
+        mock_session { subject.cover.id.should eq mock_image_hex }
       end
     end
   end

@@ -29,8 +29,9 @@ RSpec.configure do |config|
     pointers.map { |x| klass.new(x) }
   end
 
-  def expect_session_instance(times = 1)
-    Hallon::Session.should_receive(:instance).exactly(times).and_return(session)
+  def mock_session
+    Hallon::Session.should_receive(:instance).at_least(1).times.and_return(session)
+    yield
   end
 end
 

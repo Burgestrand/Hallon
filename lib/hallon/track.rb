@@ -132,7 +132,7 @@ module Hallon
     #
     # @note This’ll always return false unless the track is loaded.
     # @return [Boolean]
-    def available?(session = Session.instance)
+    def available?
       Spotify.track_is_available(session.pointer, @pointer)
     end
 
@@ -140,7 +140,7 @@ module Hallon
     #
     # @note This’ll always return false unless the track is loaded.
     # @return [Boolean]
-    def local?(session = Session.instance)
+    def local?
       Spotify.track_is_local(session.pointer, @pointer)
     end
 
@@ -148,7 +148,7 @@ module Hallon
     #
     # @note This’ll always return false unless the track is loaded.
     # @return [Boolean]
-    def autolinked?(session = Session.instance)
+    def autolinked?
       Spotify.track_is_autolinked(session.pointer, @pointer)
     end
 
@@ -156,7 +156,7 @@ module Hallon
     #
     # @note This’ll always return false unless the track is loaded.
     # @return [Boolean]
-    def starred?(session = Session.instance)
+    def starred?
       Spotify.track_is_starred(session.pointer, @pointer)
     end
 
@@ -166,7 +166,6 @@ module Hallon
     # @param [Boolean] starred
     # @return [Boolean]
     def starred=(starred)
-      session = Session.instance
       starred ? session.star(self) : session.unstar(self)
     end
   end

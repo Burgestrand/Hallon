@@ -22,7 +22,6 @@ module Hallon
       end
 
       @callback = proc { trigger(:load) }
-      session = Session.instance
       pointer = Spotify.toplistbrowse_create(session.pointer, type, region, user, @callback, nil)
       @pointer = Spotify::Pointer.new(pointer, :toplistbrowse, false)
     end

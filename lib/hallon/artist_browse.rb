@@ -20,7 +20,6 @@ module Hallon
     # @note Use {Artist#browse} to browse an Artist.
     # @param [Artist, FFI::Pointer] artist
     def initialize(artist)
-      session = Hallon::Session.instance
       artist  = artist.pointer if artist.respond_to?(:pointer)
       @callback = proc { trigger(:load) }
 

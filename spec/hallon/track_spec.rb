@@ -1,5 +1,5 @@
 # coding: utf-8
-describe Hallon::Track, :session => true do
+describe Hallon::Track do
   subject { Hallon::Track.new(mock_track) }
 
   it { should be_loaded }
@@ -15,24 +15,20 @@ describe Hallon::Track, :session => true do
   its('artists.to_a') { should eq [mock_artist, mock_artist_two].map{ |p| Hallon::Artist.new(p) } }
 
   describe "#starred=" do
-    it "should delegate to session to unstar" do
-      Hallon::Session.should_receive(:instance).and_return(session)
+    around { |test| mock_session(&test) }
 
+    it "should delegate to session to unstar" do
       session.should_receive(:unstar).with(subject)
       subject.starred = false
     end
 
 
     it "should delegate to session to star" do
-      Hallon::Session.should_receive(:instance).and_return(session)
-
       session.should_receive(:star).with(subject)
       subject.starred = true
     end
 
     it "should change starred status of track" do
-      Hallon::Session.should_receive(:instance).exactly(3).times.and_return(session)
-
       subject.should be_starred
       subject.starred = false
       subject.should_not be_starred
@@ -40,10 +36,8 @@ describe Hallon::Track, :session => true do
   end
 
   describe "session bound queries" do
-    subject do
-      Hallon::Session.should_receive(:instance).and_return session
-      Hallon::Track.new(mock_track)
-    end
+    subject { Hallon::Track.new(mock_track) }
+    around  { |test| mock_session(&test) }
 
     it { should be_available }
     it { should_not be_local }
