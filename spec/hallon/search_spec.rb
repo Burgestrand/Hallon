@@ -45,6 +45,13 @@ describe Hallon::Search do
       end
     end
 
+    it "should simply ignore invalid genres" do
+      mock_session do
+        Spotify.should_receive(:radio_search_create).and_return(mock_search)
+        expect { Hallon::Search.radio(1990..2010, :bogus, :hocum) }.to_not raise_error
+      end
+    end
+
     it { should be_loaded }
     its(:error) { should eq :ok }
     its('tracks.size') { should eq 2 }

@@ -18,7 +18,7 @@ module Hallon
     def self.radio(range, *genres)
       from_year, to_year = range.begin, range.end
       genres = genres.reduce(0) do |mask, genre|
-        mask | Spotify.enum_value(genre)
+        mask | (Spotify.enum_value(genre) || 0)
       end
 
       search = allocate
