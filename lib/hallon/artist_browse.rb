@@ -13,7 +13,7 @@ module Hallon
   #
   # @see Artist
   class ArtistBrowse < Base
-    include Hallon::Observable
+    include Observable
 
     # Creates an ArtistBrowse instance from an Artist or an Artist pointer.
     #

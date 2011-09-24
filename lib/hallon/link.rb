@@ -28,7 +28,7 @@ module Hallon
     # @raise [ArgumentError] link could not be parsed
     def initialize(uri)
       if (link = uri).respond_to? :to_str
-        link = Spotify::link_create_from_string(link.to_str)
+        link = Spotify.link_create_from_string(link.to_str)
       end
 
       @pointer = Spotify::Pointer.new(link, :link)
@@ -40,14 +40,14 @@ module Hallon
     #
     # @return [Symbol]
     def type
-      Spotify::link_type(@pointer)
+      Spotify.link_type(@pointer)
     end
 
     # Spotify URI length.
     #
     # @return [Fixnum]
     def length
-      Spotify::link_as_string(@pointer, nil, 0)
+      Spotify.link_as_string(@pointer, nil, 0)
     end
 
     # Get the Spotify URI this Link represents.
@@ -57,7 +57,7 @@ module Hallon
     # @return [String]
     def to_str(length = length)
       FFI::Buffer.alloc_out(length + 1) do |b|
-        Spotify::link_as_string(@pointer, b, b.size)
+        Spotify.link_as_string(@pointer, b, b.size)
         return b.get_string(0)
       end
     end

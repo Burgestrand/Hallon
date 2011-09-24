@@ -9,7 +9,7 @@ module Hallon
       #
       # @return [Hash<Symbol, Integer>]
       def table
-        Spotify::enum_type(:error).to_hash
+        Spotify.enum_type(:error).to_hash
       end
 
       # Given a number or a symbol, find both the symbol and the error
@@ -18,7 +18,7 @@ module Hallon
       # @param [Symbol, Fixnum] error
       # @return [[Fixnum, Symbol]] (error code, error symbol)
       def disambiguate(error)
-        @enum ||= Spotify::enum_type(:error)
+        @enum ||= Spotify.enum_type(:error)
 
         if error.is_a? Symbol
           error = @enum[symbol = error]
@@ -38,7 +38,7 @@ module Hallon
       # @param [Fixnum, Symbol]
       # @return [String]
       def explain(error)
-        Spotify::error_message disambiguate(error)[0]
+        Spotify.error_message disambiguate(error)[0]
       end
 
       # Raise an {Error} with the given errno, unless it is `nil`, `:timeout`, `0` or `:ok`.

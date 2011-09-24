@@ -33,7 +33,7 @@ module Hallon
   # Spotify API build.
   #
   # @see Spotify#api_build
-  API_BUILD = Spotify::build_id
+  API_BUILD = Spotify.build_id
 
   # A regex that matches all Spotify URIs
   #

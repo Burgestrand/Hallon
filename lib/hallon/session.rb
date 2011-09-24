@@ -31,7 +31,7 @@ module Hallon
     end
 
     # Session allows you to define your own callbacks.
-    include Hallon::Observable
+    include Observable
 
     # Initializes the Spotify session. If you need to access the
     # instance at a later time, you can use {instance}.
@@ -97,7 +97,7 @@ module Hallon
 
       # You pass a pointer to the session pointer to libspotify >:)
       FFI::MemoryPointer.new(:pointer) do |p|
-        Hallon::Error::maybe_raise Spotify::session_create(config, p)
+        Error::maybe_raise Spotify.session_create(config, p)
         @pointer = p.read_pointer
       end
     end
@@ -107,7 +107,7 @@ module Hallon
     # @return [Fixnum] minimum time until it should be called again
     def process_events
       FFI::MemoryPointer.new(:int) do |p|
-        Spotify::session_process_events(@pointer, p)
+        Spotify.session_process_events(@pointer, p)
         return p.read_int
       end
     end
@@ -150,23 +150,23 @@ module Hallon
     # @param [Boolean] remember_me have libspotify remember credentials for {#relogin}
     # @return [self]
     def login(username, password, remember_me = false)
-      tap { Spotify::session_login(@pointer, username, password, @remembered = remember_me) }
+      tap { Spotify.session_login(@pointer, username, password, @remembered = remember_me) }
     end
 
     # Login the remembered user (see {#login}).
     #
     # @raise [Hallon::Error] if no credentials are stored in libspotify
     def relogin
-      Hallon::Error.maybe_raise Spotify::session_relogin(@pointer)
+      Error.maybe_raise Spotify.session_relogin(@pointer)
     end
 
     # Username of the user stored in libspotify-remembered credentials.
     #
     # @return [String]
     def remembered_user
-      bufflen = Spotify::session_remembered_user(@pointer, nil, 0)
+      bufflen = Spotify.session_remembered_user(@pointer, nil, 0)
       FFI::Buffer.alloc_out(bufflen + 1) do |b|
-        Spotify::session_remembered_user(@pointer, b, b.size)
+        Spotify.session_remembered_user(@pointer, b, b.size)
         return b.get_string(0)
       end if bufflen > 0
     end
@@ -176,35 +176,35 @@ module Hallon
     # @note If no credentials are stored nothing’ll happen.
     # @return [self]
     def forget_me!
-      tap { Spotify::session_forget_me(@pointer) }
+      tap { Spotify.session_forget_me(@pointer) }
     end
 
     # Logs out of Spotify. Does nothing if not logged in.
     #
     # @return [self]
     def logout
-      tap { Spotify::session_logout(@pointer) if logged_in? }
+      tap { Spotify.session_logout(@pointer) if logged_in? }
     end
 
     # Retrieve the currently logged in {User}.
     #
     # @return [User]
     def user
-      User.new Spotify::session_user(@pointer)
+      User.new Spotify.session_user(@pointer)
     end
 
     # Retrieve the relation type between logged in {User} and `user`.
     #
     # @return [Symbol] :unknown, :none, :unidirectional or :bidirectional
     def relation_type?(user)
-      Spotify::user_relation_type(@pointer, user.pointer)
+      Spotify.user_relation_type(@pointer, user.pointer)
     end
 
     # Retrieve current connection status.
     #
     # @return [Symbol]
     def status
-      Spotify::session_connectionstate(@pointer)
+      Spotify.session_connectionstate(@pointer)
     end
 
     # Set session cache size in megabytes.
@@ -212,12 +212,12 @@ module Hallon
     # @param [Integer]
     # @return [Integer]
     def cache_size=(size)
-      Spotify::session_set_cache_size(@pointer, @cache_size = size)
+      Spotify.session_set_cache_size(@pointer, @cache_size = size)
     end
 
     # @return [String] Currently logged in users’ country.
     def country
-      coded = Spotify::session_user_country(@pointer)
+      coded = Spotify.session_user_country(@pointer)
       country = ((coded >> 8) & 0xFF).chr
       country << (coded & 0xFF).chr
     end
@@ -304,7 +304,7 @@ module Hallon
       def tracks_starred(tracks, starred)
         FFI::MemoryPointer.new(:pointer, tracks.size) do |ptr|
           ptr.write_array_of_pointer tracks.map(&:pointer)
-          Spotify::track_set_starred(pointer, ptr, tracks.size, starred)
+          Spotify.track_set_starred(pointer, ptr, tracks.size, starred)
         end
       end
   end

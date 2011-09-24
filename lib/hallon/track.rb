@@ -104,7 +104,7 @@ module Hallon
     # @return [Hallon::Album]
     def album
       album = Spotify.track_album(@pointer)
-      Hallon::Album.new(album) unless album.null?
+      Album.new(album) unless album.null?
     end
 
     # Artist who performed this Track.
@@ -121,10 +121,10 @@ module Hallon
     # @note Track must be loaded, or you’ll get zero artists.
     # @return [Hallon::Enumerator<Artist>]
     def artists
-      size = Spotify::track_num_artists(@pointer)
-      Hallon::Enumerator.new(size) do |i|
+      size = Spotify.track_num_artists(@pointer)
+      Enumerator.new(size) do |i|
         artist = Spotify.track_artist(@pointer, i)
-        Hallon::Artist.new(artist) unless artist.null?
+        Artist.new(artist) unless artist.null?
       end
     end
 

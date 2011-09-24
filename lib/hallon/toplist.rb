@@ -41,7 +41,7 @@ module Hallon
       size = Spotify.toplistbrowse_num_artists(@pointer)
       Enumerator.new(size) do |i|
         artist = Spotify.toplistbrowse_artist(@pointer, i)
-        Hallon::Artist.new(artist)
+        Artist.new(artist)
       end
     end
 
@@ -50,7 +50,7 @@ module Hallon
       size = Spotify.toplistbrowse_num_albums(@pointer)
       Enumerator.new(size) do |i|
         album = Spotify.toplistbrowse_album(@pointer, i)
-        Hallon::Artist.new(album)
+        Artist.new(album)
       end
     end
 
@@ -59,7 +59,7 @@ module Hallon
       size = Spotify.toplistbrowse_num_tracks(@pointer)
       Enumerator.new(size) do |i|
         track = Spotify.toplistbrowse_track(@pointer, i)
-        Hallon::Artist.new(track)
+        Artist.new(track)
       end
     end
 

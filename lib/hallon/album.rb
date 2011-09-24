@@ -66,7 +66,7 @@ module Hallon
     # @return [Image]
     def cover
       image_id = Spotify.album_cover(@pointer)
-      Hallon::Image.new(image_id.read_string(20)) unless image_id.null?
+      Image.new(image_id.read_string(20)) unless image_id.null?
     end
 
     # Retrieve the album Artist.
@@ -74,14 +74,14 @@ module Hallon
     # @return [Artist, nil]
     def artist
       artist = Spotify.album_artist(@pointer)
-      Hallon::Artist.new(artist) unless artist.null?
+      Artist.new(artist) unless artist.null?
     end
 
     # Retrieve an AlbumBrowse object for this Album.
     #
     # @return [AlbumBrowse]
     def browse
-      Hallon::AlbumBrowse.new(pointer)
+      AlbumBrowse.new(pointer)
     end
   end
 end
