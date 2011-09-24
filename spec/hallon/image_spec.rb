@@ -1,11 +1,8 @@
 # coding: utf-8
 describe Hallon::Image do
-  around(:each) { |test| mock_session(&test) }
-
   describe "an image instance" do
     subject { image }
-
-    let(:image) { Hallon::Image.new(mock_image) }
+    let(:image) { mock_session { Hallon::Image.new(mock_image) } }
 
     it { should be_loaded }
     its(:status) { should be :ok }
@@ -34,26 +31,45 @@ describe Hallon::Image do
         image.to_link.should eq Hallon::Link.new("spotify:image:#{image.id}")
       end
     end
+
+    describe "#==" do
+      it "should not fail given an object that does not respond to id" do
+        o = Object.new
+        def o.id
+          raise NoMethodError
+        end
+
+        image.should_not eq o
+      end
+    end
   end
 
-  context "created from an url" do
-    subject { Hallon::Image.new("http://open.spotify.com/image/c78f091482e555bd2ffacfcd9cbdc0714b221663") }
-    its(:id) { should eq "c78f091482e555bd2ffacfcd9cbdc0714b221663" }
-  end
+  describe "instantiation" do
+    subject do
+      mock_session do
+        Hallon::Image.new(image_uri)
+      end
+    end
 
-  context "created from an uri" do
-    subject { Hallon::Image.new("spotify:image:c78f091482e555bd2ffacfcd9cbdc0714b221663") }
-    its(:id) { should eq "c78f091482e555bd2ffacfcd9cbdc0714b221663" }
-  end
+    context "created from an url" do
+      let(:image_uri) { "http://open.spotify.com/image/c78f091482e555bd2ffacfcd9cbdc0714b221663" }
+      its(:id) { should eq "c78f091482e555bd2ffacfcd9cbdc0714b221663" }
+    end
 
-  context "created from an id" do
-    subject { Hallon::Image.new(mock_image_id) }
-    its(:id) { should eq mock_image_hex }
-  end
+    context "created from an uri" do
+      let(:image_uri) { "spotify:image:c78f091482e555bd2ffacfcd9cbdc0714b221663" }
+      its(:id) { should eq "c78f091482e555bd2ffacfcd9cbdc0714b221663" }
+    end
 
-  context "created from a link" do
-    subject { Hallon::Image.new(Hallon::Link.new("spotify:image:c78f091482e555bd2ffacfcd9cbdc0714b221663")) }
-    its(:id) { should eq "c78f091482e555bd2ffacfcd9cbdc0714b221663" }
+    context "created from an id" do
+      let(:image_uri) { mock_image_id }
+      its(:id) { should eq mock_image_hex }
+    end
+
+    context "created from a link" do
+      let(:image_uri) { Hallon::Link.new("spotify:image:c78f091482e555bd2ffacfcd9cbdc0714b221663") }
+      its(:id) { should eq "c78f091482e555bd2ffacfcd9cbdc0714b221663" }
+    end
   end
 
   describe "callbacks" do
