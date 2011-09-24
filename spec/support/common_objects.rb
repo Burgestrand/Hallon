@@ -28,42 +28,20 @@ RSpec::Core::ExampleGroup.instance_eval do
   let(:mock_artistbrowse) do
     artistbrowse = nil
 
-    # Oh, ain’t this beautiful…?
-    FFI::MemoryPointer.new(:pointer, 2) do |portraits|
-      FFI::MemoryPointer.new(:pointer, 2) do |tracks|
-        FFI::MemoryPointer.new(:pointer, 2) do |albums|
-          FFI::MemoryPointer.new(:pointer, 2) do |similar_artists|
-            mock_image_pointer = FFI::MemoryPointer.from_string(mock_image_id)
-            portraits.write_array_of_pointer [mock_image_pointer, mock_image_pointer]
-            tracks.write_array_of_pointer [mock_track, mock_track_two]
-            albums.write_array_of_pointer [mock_album] # laziness
-            similar_artists.write_array_of_pointer [mock_artist, mock_artist_two]
+    mock_image_pointer = FFI::MemoryPointer.from_string(mock_image_id)
+    similar_artists    = pointer_array_with(mock_artist, mock_artist_two)
+    portraits = pointer_array_with(mock_image_pointer, mock_image_pointer)
+    tracks    = pointer_array_with(mock_track, mock_track_two)
+    albums    = pointer_array_with(mock_album)
 
-            artistbrowse = Spotify.mock_artistbrowse(:ok, mock_artist, 2, portraits, 2, tracks, 1, albums, 2, similar_artists, "grew up in DA BLOCK", nil, nil)
-          end
-        end
-      end
-    end
-
-    artistbrowse
+    Spotify.mock_artistbrowse(:ok, mock_artist, portraits.length, portraits, tracks.length, tracks, albums.length, albums, similar_artists.length, similar_artists, "grew up in DA BLOCK", nil, nil)
   end
 
   let(:mock_toplistbrowse) do
-    toplistbrowse = nil
-
-    FFI::MemoryPointer.new(:pointer, 2) do |artists|
-      FFI::MemoryPointer.new(:pointer, 1) do |albums|
-        FFI::MemoryPointer.new(:pointer, 2) do |tracks|
-            artists.write_array_of_pointer [mock_artist, mock_artist_two]
-            albums.write_array_of_pointer [mock_album] # laziness
-            tracks.write_array_of_pointer [mock_track, mock_track_two]
-
-            toplistbrowse = Spotify.mock_toplistbrowse(:ok, 2, artists, 1, albums, 2, tracks)
-        end
-      end
-    end
-
-    toplistbrowse
+    artists = pointer_array_with(mock_artist, mock_artist_two)
+    albums  = pointer_array_with(mock_album)
+    tracks  = pointer_array_with(mock_track, mock_track_two)
+    Spotify.mock_toplistbrowse(:ok, artists.length, artists, albums.length, albums, tracks.length, tracks)
   end
 
   let(:mock_image_hex) { "3ad93423add99766e02d563605c6e76ed2b0e450" }
