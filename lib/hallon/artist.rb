@@ -9,6 +9,8 @@ module Hallon
   # we have for {Album}s.
   #
   # Both Albums and Tracks can have more than one artist.
+  #
+  # @see http://developer.spotify.com/en/libspotify/docs/group__artist.html
   class Artist < Base
     extend Linkable
 

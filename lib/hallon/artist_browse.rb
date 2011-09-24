@@ -12,6 +12,7 @@ module Hallon
   #   session.wait_for { browse.loaded? }
   #
   # @see Artist
+  # @see http://developer.spotify.com/en/libspotify/docs/group__artistbrowse.html
   class ArtistBrowse < Base
     include Observable
 

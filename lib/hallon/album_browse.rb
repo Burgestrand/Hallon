@@ -14,6 +14,7 @@ module Hallon
   #   session.wait_for { browse.loaded? } # will eventually trigger above callback
   #
   # @see Album
+  # @see http://developer.spotify.com/en/libspotify/docs/group__albumbrowse.html
   class AlbumBrowse < Base
     include Observable
 

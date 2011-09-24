@@ -1,4 +1,9 @@
 module Hallon
+  # Toplists are what they sound like. They’re collections of
+  # artists, albums or tracks popular in a certain area either
+  # by country, user or everywhere.
+  #
+  # @see http://developer.spotify.com/en/libspotify/docs/group__toplist.html
   class Toplist < Base
     include Observable
 
