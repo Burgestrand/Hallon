@@ -8,36 +8,21 @@ RSpec::Core::ExampleGroup.instance_eval do
   let(:mock_image)  { Spotify.mock_image(mock_image_id, :jpeg, File.size(fixture_image_path), File.read(fixture_image_path), :ok) }
 
   let(:mock_track) do
-    track = nil
-    FFI::MemoryPointer.new(:pointer, 2) do |ary|
-      ary.write_array_of_pointer [mock_artist, mock_artist_two]
-      track = Spotify.mock_track("They", ary.size / ary.type_size, ary, mock_album, 123_456, 42, 2, 7, 0, true, true, false, true, true)
-    end
-    track
+    artists = pointer_array_with(mock_artist, mock_artist_two)
+    Spotify.mock_track("They", artists.length, artists, mock_album, 123_456, 42, 2, 7, 0, true, true, false, true, true)
   end
 
   let(:mock_track_two) do
-    track = nil
-    FFI::MemoryPointer.new(:pointer, 1) do |ary|
-      ary.write_array_of_pointer [mock_artist]
-      track = Spotify.mock_track("Amazing", ary.size / ary.type_size, ary, mock_album, 123_456, 42, 2, 7, 0, true, true, false, true, true)
-    end
-    track
+    artists = pointer_array_with(mock_artist)
+    Spotify.mock_track("Amazing", artists.length, artists, mock_album, 123_456, 42, 2, 7, 0, true, true, false, true, true)
   end
 
   let(:mock_albumbrowse) do
-    albumbrowse = nil
-
-    FFI::MemoryPointer.new(:pointer, 2) do |copyrights|
-      FFI::MemoryPointer.new(:pointer, 2) do |tracks|
-        copyrights.write_array_of_pointer %w[Kim Elin].map { |x| FFI::MemoryPointer.from_string(x) }
-        tracks.write_array_of_pointer [mock_track, mock_track_two]
-        review = "This album is AWESOME"
-        albumbrowse = Spotify.mock_albumbrowse(:ok, mock_album, mock_artist, 2, copyrights, 2, tracks, review, nil, nil)
-      end
-    end
-
-    albumbrowse
+    copyrights = %w[Kim Elin].map { |x| FFI::MemoryPointer.from_string(x) }
+    copyrights = pointer_array_with(*copyrights)
+    tracks     = pointer_array_with(mock_track, mock_track_two)
+    review     = "This album is AWESOME"
+    Spotify.mock_albumbrowse(:ok, mock_album, mock_artist, 2, copyrights, 2, tracks, review, nil, nil)
   end
 
   let(:mock_artistbrowse) do

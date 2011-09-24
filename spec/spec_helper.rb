@@ -33,6 +33,12 @@ RSpec.configure do |config|
     Hallon::Session.should_receive(:instance).at_least(1).times.and_return(session)
     yield
   end
+
+  def pointer_array_with(*args)
+    ary = FFI::MemoryPointer.new(:pointer, args.size)
+    ary.write_array_of_pointer args
+    ary.tap { |x| def x.length; size / type_size; end }
+  end
 end
 
 RSpec::Core::ExampleGroup.instance_eval do
