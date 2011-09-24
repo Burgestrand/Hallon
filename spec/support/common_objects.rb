@@ -56,12 +56,34 @@ RSpec::Core::ExampleGroup.instance_eval do
   let(:mock_image_id)  { ":\xD94#\xAD\xD9\x97f\xE0-V6\x05\xC6\xE7n\xD2\xB0\xE4P".force_encoding("BINARY") }
   let(:null_pointer)   { FFI::Pointer.new(0) }
 
+  let(:mock_offline_sync_status) do
+    sync = Spotify::OfflineSyncStatus.new
+    mock_offline_sync_status_hash.each_pair do |key, value|
+      sync[key] = value
+    end
+    sync
+  end
+
+  let(:mock_offline_sync_status_hash) do
+    {
+      :queued_tracks => 1,
+      :queued_bytes  => 2,
+      :done_tracks   => 3,
+      :done_bytes    => 4,
+      :copied_tracks => 5,
+      :copied_bytes  => 6,
+      :error_tracks  => 8,
+      :syncing       => false,
+      :willnotcopy_tracks => 7
+    }
+  end
+
   let(:mock_session_object) do
     session = Hallon::Session.send(:allocate)
-    friends = [mock_user] # try moving this into the block and run the tests :d
+    friends = pointer_array_with(mock_user)
+    sstatus = mock_offline_sync_status
     session.instance_eval do
-      friends = pointer_array_with(*friends)
-      @pointer = Spotify.mock_session(nil, friends.length, friends)
+      @pointer = Spotify.mock_session(nil, :undefined, friends.length, friends, 60 * 60 * 24 * 30, sstatus, 7, 3)
     end
     session
   end

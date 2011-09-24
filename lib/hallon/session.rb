@@ -295,6 +295,51 @@ module Hallon
       Spotify.session_set_connection_type(@pointer, connection_type)
     end
 
+    # Remaining time left you can stay offline before needing to relogin.
+    #
+    # @return [Integer] offline time left in seconds
+    def offline_time_left
+      Spotify.offline_time_left(@pointer)
+    end
+
+    # Offline synchronization status.
+    #
+    # @return [Hash, nil] sync status, or nil if not applicable
+    # @see http://developer.spotify.com/en/libspotify/docs/structsp__offline__sync__status.html
+    def offline_sync_status
+      struct = Spotify::OfflineSyncStatus.new
+      if Spotify.offline_sync_get_status(@pointer, struct.pointer)
+        Hash[struct.members.zip(struct.values)]
+      end
+    end
+
+    # Number of playlists marked for offline sync.
+    #
+    # @return [Integer]
+    def offline_playlists_count
+      Spotify.offline_num_playlists(@pointer)
+    end
+
+    # Number of offline tracks left to sync for offline mode.
+    #
+    # @return [Integer]
+    def offline_tracks_to_sync
+      Spotify.offline_tracks_to_sync(@pointer)
+    end
+
+    # Set preferred offline bitrate.
+    #
+    # @example
+    #   session.offline_bitrate = :'96k', true
+    #
+    # @param [Symbol] bitrate
+    # @param [Boolean] resync (default: false)
+    # @see Player.bitrates
+    def offline_bitrate=(bitrate)
+      bitrate, resync = Array(bitrate)
+      Spotify.session_preferred_offline_bitrate(@pointer, bitrate, !! resync)
+    end
+
     # True if currently logged in.
     # @see #status
     def logged_in?

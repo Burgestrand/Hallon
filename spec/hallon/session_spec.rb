@@ -182,7 +182,7 @@ describe Hallon::Session do
     it { should include :wifi }
   end
 
-  describe "#connection_type" do
+  describe "#connection_type=" do
     it "should fail given an invalid connection type" do
       expect { session.connection_type = :bogus }.to raise_error(ArgumentError)
     end
@@ -200,7 +200,7 @@ describe Hallon::Session do
     it { should include :network }
   end
 
-  describe "#connection_rules" do
+  describe "#connection_rules=" do
     it "should not fail given an invalid rule" do
       expect { session.connection_rules = :lawly }.to_not raise_error
     end
@@ -212,6 +212,40 @@ describe Hallon::Session do
     it "should combine given rules and feed to libspotify" do
       Spotify.should_receive(:session_set_connection_rules).with(session.pointer, 5)
       session.connection_rules = :network, :allow_sync_over_mobile
+    end
+  end
+
+  describe "offline settings readers" do
+    subject { mock_session_object }
+
+    its(:offline_time_left) { should eq 60 * 60 * 24 * 30 } # a month!
+    its(:offline_sync_status) { should eq mock_offline_sync_status_hash }
+    its(:offline_playlists_count) { should eq 7 }
+    its(:offline_tracks_to_sync) { should eq 3 }
+
+    specify "offline_sync_status when given false as return from libspotify" do
+      Spotify.should_receive(:offline_sync_get_status).and_return(false)
+      subject.offline_sync_status.should eq nil
+    end
+  end
+
+  describe "#offline_bitrate=" do
+    it "should not resync unless explicitly told so" do
+      Spotify.should_receive(:session_preferred_offline_bitrate).with(session.pointer, :'96k', false)
+      session.offline_bitrate = :'96k'
+    end
+
+    it "should resync if asked to" do
+      Spotify.should_receive(:session_preferred_offline_bitrate).with(session.pointer, :'96k', true)
+      session.offline_bitrate = :'96k', true
+    end
+
+    it "should fail given an invalid value" do
+      expect { session.offline_bitrate = :hocum }.to raise_error(ArgumentError)
+    end
+
+    it "should succeed given a proper value" do
+      expect { session.offline_bitrate = :'96k' }.to_not raise_error
     end
   end
 
