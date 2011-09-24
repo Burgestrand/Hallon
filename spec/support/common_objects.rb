@@ -44,6 +44,14 @@ RSpec::Core::ExampleGroup.instance_eval do
     Spotify.mock_toplistbrowse(:ok, artists.length, artists, albums.length, albums, tracks.length, tracks)
   end
 
+  let(:mock_search) do
+    artists = pointer_array_with(mock_artist, mock_artist_two)
+    albums  = pointer_array_with(mock_album)
+    tracks  = pointer_array_with(mock_track, mock_track_two)
+
+    Spotify.mock_search(:ok, "my query", "another thing", 1337, tracks.length, tracks, 42, albums.length, albums, 81104, artists.length, artists, nil, nil)
+  end
+
   let(:mock_image_hex) { "3ad93423add99766e02d563605c6e76ed2b0e450" }
   let(:mock_image_id)  { ":\xD94#\xAD\xD9\x97f\xE0-V6\x05\xC6\xE7n\xD2\xB0\xE4P".force_encoding("BINARY") }
   let(:null_pointer)   { FFI::Pointer.new(0) }

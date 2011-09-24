@@ -23,6 +23,7 @@ require 'hallon/toplist'
 require 'hallon/album_browse'
 require 'hallon/artist_browse'
 require 'hallon/player'
+require 'hallon/search'
 
 # The Hallon module wraps around all Hallon objects to avoid polluting
 # the global namespace. To start using Hallon, you most likely want to
