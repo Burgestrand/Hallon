@@ -29,6 +29,11 @@ describe Hallon::Observable do
       subject.on(:a) { |event, *args| event }
       subject.trigger(:a).should eq nil
     end
+
+    it "should convert the event to a symbol" do
+      subject.on("a") { raise "hell" }
+      expect { subject.trigger(:a) }.to raise_error("hell")
+    end
   end
 
   describe "#trigger and #on" do

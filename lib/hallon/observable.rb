@@ -30,7 +30,7 @@ module Hallon
     def on(*events, &block)
       raise ArgumentError, "no block given" unless block
       wrap = events.length > 1
-      events.each do |event|
+      events.map(&:to_sym).each do |event|
         block = proc { |*args| yield(event, *args) } if wrap
         __handlers[event] = [] unless __handlers.has_key?(event)
         __handlers[event] << block
