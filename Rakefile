@@ -45,6 +45,7 @@ task 'spotify:coverage' do
     'albumbrowse_add_ref',   # albumbrowse creates its’ own pointer
     'link_add_ref',          # all creation of links has +1 ref
     'image_add_ref',         # all creation of image has +1 ref
+    'search_add_ref',        # search creates its’ own pointer
   ]
 
   covered -= ignored
