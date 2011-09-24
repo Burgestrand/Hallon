@@ -84,6 +84,16 @@ module Hallon
       end
     end
 
+    # True if the images both have the same ID, or if their
+    # pointers are the same.
+    #
+    # @see Base#==
+    def ==(other)
+      super or id(true) == other.id(true)
+    rescue NoMethodError, ArgumentError
+      false
+    end
+
     protected
       # @param [String]
       # @return [String]
