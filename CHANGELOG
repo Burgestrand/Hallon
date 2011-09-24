@@ -12,6 +12,7 @@ NEXT
 - Full Artist subsystem support
 - Full ArtistBrowse subsystem support
 - Full Toplist subsystem support
+- Full Search subsystem support
 - Work-in-progress Player
 - Add Session relogin support
 - Add Enumerator
