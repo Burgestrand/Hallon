@@ -54,8 +54,8 @@ task 'spotify:coverage' do
   pointer = handlers[Sexp.new(:colon2, [:const, :Spotify], :Pointer)] = Hash.new(printer)
   pointer[:new] = proc do |recv, meth, (_, ptr, name, release)|
     name = name.value
-    release &&= release.value == :false
-    ["#{name}_release", "#{name if !!release}_add_ref"]
+    release &&= release.value != :false
+    ["#{name}_release", "#{name if release}_add_ref"]
   end
 
   # DSL Methods
