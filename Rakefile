@@ -36,11 +36,18 @@ task 'spotify:coverage' do
 
   methods = Spotify.methods(false).map(&:to_s)
   covered = Set.new(methods)
-  covered -= [
+  ignored = [
     'session_release',  # segfaults on libspotify <= 9
     'session_userdata', # wont support this
     'link_as_track',    # using link_as_track_and_offset instead
+    'toplistbrowse_add_ref', # toplistbrowse creates its’ own pointer
+    'artistbrowse_add_ref',  # artistbrowse creates its’ own pointer
+    'albumbrowse_add_ref',   # albumbrowse creates its’ own pointer
+    'link_add_ref',          # all creation of links has +1 ref
+    'image_add_ref',         # all creation of image has +1 ref
   ]
+
+  covered -= ignored
 
   # Handlers for different AST nodes
   printer  = proc { |*args| p args }
@@ -80,6 +87,12 @@ task 'spotify:coverage' do
     end
     puts
   end
+
+  puts "Ignored:"
+  ignored.each_slice(3) do |slice|
+    puts "\t#{slice.join(', ')}"
+  end
+  puts
 
   puts "Coverage: %.02f%%" % (100 * (1 - covered.size.fdiv(methods.size)))
 end
