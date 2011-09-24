@@ -28,6 +28,29 @@ describe Hallon::Search do
     end
   end
 
+  describe ".genres" do
+    subject { Hallon::Search.genres }
+
+    it { should include :jazz }
+    it { should be_a Array }
+    it { should_not be_empty }
+  end
+
+  describe ".search" do
+    subject do
+      Spotify.should_receive(:radio_search_create).and_return(mock_search)
+
+      mock_session do
+        search = Hallon::Search.radio(1990..2010, :jazz, :punk)
+      end
+    end
+
+    it { should be_loaded }
+    its(:error) { should eq :ok }
+    its('tracks.size') { should eq 2 }
+    # ^ should be enough
+  end
+
   it { should be_a Hallon::Observable }
   it { should be_loaded }
   its(:error) { should eq :ok }

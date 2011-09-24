@@ -7,6 +7,30 @@ module Hallon
   class Search < Base
     include Observable
 
+    # @return [Array<Symbol>] a list of radio genres available for search
+    def self.genres
+      Spotify.enum_type(:radio_genre).symbols
+    end
+
+    # @param [Range<Integer>] range (from_year..to_year)
+    # @param [Symbol, …] genres
+    # @return [Search] radio search in given period and genres
+    def self.radio(range, *genres)
+      from_year, to_year = range.begin, range.end
+      genres = genres.reduce(0) do |mask, genre|
+        mask | Spotify.enum_value(genre)
+      end
+
+      search = allocate
+      search.instance_eval do
+        @callback = proc { search.trigger(:load) }
+        pointer   = Spotify.radio_search_create(session.pointer, from_year, to_year, genres, @callback, nil)
+        @pointer  = Spotify::Pointer.new(pointer, :search, false)
+
+        self
+      end
+    end
+
     # Construct a new search with given query.
     #
     # @param [String] query search query
