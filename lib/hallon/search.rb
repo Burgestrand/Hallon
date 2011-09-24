@@ -118,5 +118,11 @@ module Hallon
     def total_artists
       Spotify.search_total_artists(@pointer)
     end
+
+    # @return [Link] link for this search query
+    def to_link
+      pointer = Spotify.link_create_from_search(@pointer)
+      Link.new(pointer) unless pointer.null?
+    end
   end
 end

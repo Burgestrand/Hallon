@@ -68,4 +68,6 @@ describe Hallon::Search do
   its('artists.size')  { should eq 2 }
   its('artists.to_a')  { should eq instantiate(Hallon::Artist, mock_artist, mock_artist_two) }
   its('total_artists') { should eq 81104 }
+
+  its(:to_link) { should eq Hallon::Link.new("spotify:search:#{search.query}") }
 end
