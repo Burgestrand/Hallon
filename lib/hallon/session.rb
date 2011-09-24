@@ -55,6 +55,16 @@ module Hallon
       @__instance__ or raise "Session has not been initialized"
     end
 
+    # @return [Array<Symbol>] list of available connection types.
+    def self.connection_types
+      Spotify.enum_type(:connection_type).symbols
+    end
+
+    # @return [Array<Symbol>] list of available connection rules
+    def self.connection_rules
+      Spotify.enum_type(:connection_rules).symbols
+    end
+
     # Create a new Spotify session.
     #
     # @param [#to_s] appkey
@@ -263,6 +273,26 @@ module Hallon
         friend = Spotify.session_friend(@pointer, i)
         User.new(friend)
       end
+    end
+
+    # Set the connection rules for this session.
+    #
+    # @param [Symbol, …] connection_rules
+    # @see Session.connection_rules
+    def connection_rules=(connection_rules)
+      rules = Array(connection_rules).reduce(0) do |mask, rule|
+        mask | (Spotify.enum_value(rule) || 0)
+      end
+
+      Spotify.session_set_connection_rules(@pointer, rules)
+    end
+
+    # Set the connection type for this session.
+    #
+    # @param [Symbol] connection_type
+    # @see Session.connection_types
+    def connection_type=(connection_type)
+      Spotify.session_set_connection_type(@pointer, connection_type)
     end
 
     # True if currently logged in.

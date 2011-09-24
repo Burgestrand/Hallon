@@ -174,6 +174,47 @@ describe Hallon::Session do
     end
   end
 
+  describe ".connection_types" do
+    subject { Hallon::Session.connection_types }
+
+    it { should be_an Array }
+    it { should_not be_empty }
+    it { should include :wifi }
+  end
+
+  describe "#connection_type" do
+    it "should fail given an invalid connection type" do
+      expect { session.connection_type = :bogus }.to raise_error(ArgumentError)
+    end
+
+    it "should succeed given a correct connection type" do
+      expect { session.connection_type = :wifi }.to_not raise_error
+    end
+  end
+
+  describe ".connection_types" do
+    subject { Hallon::Session.connection_rules }
+
+    it { should be_an Array }
+    it { should_not be_empty }
+    it { should include :network }
+  end
+
+  describe "#connection_rules" do
+    it "should not fail given an invalid rule" do
+      expect { session.connection_rules = :lawly }.to_not raise_error
+    end
+
+    it "should succeed given correct connection thingy" do
+      expect { session.connection_rules = :allow_network, :allow_sync_over_mobile }.to_not raise_error
+    end
+
+    it "should combine given rules and feed to libspotify" do
+      Spotify.should_receive(:session_set_connection_rules).with(session.pointer, 5)
+      session.connection_rules = :network, :allow_sync_over_mobile
+    end
+  end
+
   context "when logged in", :logged_in => true do
     it "should be logged in" do
       session.should be_logged_in
