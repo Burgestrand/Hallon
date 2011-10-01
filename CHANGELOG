@@ -13,6 +13,8 @@ NEXT
 - Full ArtistBrowse subsystem support
 - Full Toplist subsystem support
 - Full Search subsystem support
+- Allow setting Session connection type/rules
+- Session offline query methods (offline_time_left et al)
 - Work-in-progress Player
 - Add Session relogin support
 - Add Enumerator
