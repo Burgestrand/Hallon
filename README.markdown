@@ -1,4 +1,4 @@
-[What is Hallon?][] [![Build Status][]](http://travis-ci.org/Burgestrand/Hallon) ([but that’s okay](https://github.com/Burgestrand/Hallon/issues/33))
+[What is Hallon?][] [![Build Status][]](http://travis-ci.org/Burgestrand/Hallon)
 ===============
 
 We rubyists have this awesome [spotify gem][] allowing us to use [libspotify][] from within Ruby, but it has a significant drawback: the `libspotify` API is very hard to use. Now, we can’t have that, so what do we do? We make Hallon!
