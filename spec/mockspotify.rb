@@ -25,6 +25,16 @@ module Spotify
   extend Mock
   require 'spotify'
 
+  module Mock
+    class PlaylistTrack < FFI::Struct
+      layout :track, :pointer,
+             :create_time, :int,
+             :creator, :pointer,
+             :message, :pointer,
+             :seen, Bool
+    end
+  end
+
   old_verbose, $VERBOSE = $VERBOSE, true
 
   attach_function :registry_find, [:string], :pointer
@@ -42,6 +52,11 @@ module Spotify
   attach_function :mock_toplistbrowse, :mocksp_toplistbrowse_create, [:error, :int, :array, :int, :array, :int, :array], :toplistbrowse
 
   attach_function :mock_search, :mocksp_search_create, [:error, :string, :string, :int, :int, :array, :int, :int, :array, :int, :int, :array, :search_complete_cb, :pointer], :search
+  attach_function :mock_subscribers, :mocksp_subscribers, [:int, :array], Spotify::Subscribers
+  attach_function :mock_playlist, :mocksp_playlist_create, [:string, :bool, :user, :bool, :string, :image_id, :bool, :uint, Spotify::Subscribers, :bool, :playlist_offline_status, :int, :int, :array], :playlist
+
+  # mocked accessors
+  attach_function :mocksp_playlist_get_autolink_tracks, [:playlist], :bool
 
   $VERBOSE = old_verbose
 end

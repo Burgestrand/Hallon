@@ -52,6 +52,38 @@ RSpec::Core::ExampleGroup.instance_eval do
     Spotify.mock_search(:ok, "my query", "another thing", 1337, tracks.length, tracks, 42, albums.length, albums, 81104, artists.length, artists, nil, nil)
   end
 
+  let(:mock_subscribers) do
+    people = %w[Kim Elin Ylva]
+    people.map! { |x| FFI::MemoryPointer.from_string(x) }
+
+    subscribers = FFI::MemoryPointer.new(:pointer, people.size)
+    subscribers.write_array_of_pointer people
+
+    Spotify.mock_subscribers(people.count, subscribers)
+  end
+
+  let(:mock_playlist) do
+    num_tracks = 2
+    tracks_ptr = FFI::MemoryPointer.new(Spotify::Mock::PlaylistTrack, num_tracks)
+    tracks = num_tracks.times.map do |i|
+      Spotify::Mock::PlaylistTrack.new(tracks_ptr + Spotify::Mock::PlaylistTrack.size * i)
+    end
+
+    tracks[0][:track] = mock_track
+    tracks[0][:create_time] = Time.parse("2009-11-04").to_i
+    tracks[0][:creator] = mock_user
+    tracks[0][:message] = FFI::MemoryPointer.from_string("message this, YO!")
+    tracks[0][:seen] = true
+
+    tracks[1][:track] = mock_track_two
+    tracks[1][:create_time] = Time.parse("2009-11-04").to_i
+    tracks[1][:creator] = mock_user
+    tracks[1][:message] = FFI::MemoryPointer.from_string("message this, YO!")
+    tracks[1][:seen] = true
+
+    Spotify.mock_playlist("Megaplaylist", true, mock_user, true, "Playlist description...?", mock_image_id, false, 1000, mock_subscribers, true, :no, 67, num_tracks, tracks_ptr)
+  end
+
   let(:mock_image_hex) { "3ad93423add99766e02d563605c6e76ed2b0e450" }
   let(:mock_image_id)  { ":\xD94#\xAD\xD9\x97f\xE0-V6\x05\xC6\xE7n\xD2\xB0\xE4P".force_encoding("BINARY") }
   let(:null_pointer)   { FFI::Pointer.new(0) }

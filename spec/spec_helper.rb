@@ -26,7 +26,7 @@ RSpec.configure do |config|
   end
 
   def instantiate(klass, *pointers)
-    pointers.map { |x| klass.new(x) }
+    pointers.map { |x| klass.new(*x) }
   end
 
   def mock_session
