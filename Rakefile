@@ -98,8 +98,15 @@ task 'spotify:coverage' do
   puts "Coverage: %.02f%%" % (100 * (1 - covered.size.fdiv(methods.size)))
 end
 
+desc "Download mockspotify submodule"
+task 'mock:fetch' do
+  unless File.exists?('./spec/mockspotify/libmockspotify/src/libmockspotify.h')
+    sh 'git submodule update --init'
+  end
+end
+
 desc "Compile mockspotify"
-task 'mock:compile' do
+task 'mock:compile' => 'mock:fetch' do
   Dir.chdir 'spec/mockspotify' do
     sh 'ruby extconf.rb'
     sh 'make'
