@@ -19,7 +19,7 @@ require 'hallon/track'
 require 'hallon/album'
 require 'hallon/artist'
 require 'hallon/toplist'
-
+require 'hallon/playlist'
 require 'hallon/album_browse'
 require 'hallon/artist_browse'
 require 'hallon/player'

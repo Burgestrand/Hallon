@@ -98,4 +98,21 @@ module Spotify
       self[:dont_save_metadata_for_playlists] = ! bool
     end
   end
+
+  # Extensions to SessionCallbacks, making it easier to define callbacks.
+  class PlaylistCallbacks < FFI::Struct
+    # Assigns the callbacks to call the given target; the callback
+    # procs are stored in the `storage` parameter. **Make sure the
+    # storage does not get garbage collected as long as these callbacks
+    # are needed!**
+    #
+    # @param [Object] target
+    # @param [#&#91;&#93;&#61;] storage
+    def initialize(target, storage)
+      members.each do |member|
+        callback = lambda { |ptr, *args| target.trigger(member, *args[0...-1]) }
+        self[member] = storage[member] = callback
+      end
+    end
+  end
 end
