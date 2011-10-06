@@ -29,14 +29,25 @@ describe Hallon::Linkable do
     it "should call the given block if necessary" do
       Spotify.should_not_receive(:link_as_search)
 
-      called = false
-      klass.from_link(:as_search) { called = true and pointer }
+      called  = false
+      pointer = double(:null? => false)
+      klass.from_link(:as_search) do
+        called = true
+        pointer
+      end
+
       expect { object.from_link 'spotify:search:whatever' }.to change { called }
     end
 
     it "should pass extra parameters to the defining block" do
       passed_args = nil
-      klass.from_link(:search) { |link, *args| passed_args = args and pointer }
+
+      pointer = double(:null? => false)
+      klass.from_link(:search) do |link, *args|
+        passed_args = args
+        pointer
+      end
+
       object.from_link("spotify:search:burgestrand", :cool, 5)
       passed_args.should eq [:cool, 5]
     end

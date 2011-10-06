@@ -36,7 +36,7 @@ module Hallon
 
       define_method(:from_link) do |link, *args|
         link = if link.is_a? FFI::Pointer then link else
-          block.call Link.new(link).pointer(type), *args
+          instance_exec(Link.new(link).pointer(type), *args, &block)
         end
 
         link.tap { raise Hallon::Error, "invalid link" if link.null? }
