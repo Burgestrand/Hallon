@@ -1,6 +1,7 @@
 module Hallon
-  # Playlists are either folders… or playlists. They contain
-  # Tracks… or Playlists!
+  # Playlists are playlists. They contain tracks and track information
+  # such as when tracks were added or by whom. They also contain some
+  # metadata such as their own name.
   #
   # @see http://developer.spotify.com/en/libspotify/docs/group__playlist.html
   class Playlist < Base
