@@ -4,6 +4,13 @@ describe Hallon::Playlist do
   let(:playlist) { Hallon::Playlist.new(mock_playlist) }
   subject { playlist }
 
+  describe ".new" do
+    it "should accept a playlist URI" do
+      playlist = mock_session { Hallon::Playlist.new("spotify:user:burgestrand:playlist:07AX9IY9Hqmj1RqltcG0fi") }
+      playlist.name.should eq "Megaplaylist"
+    end
+  end
+
   it { should be_loaded }
   it { should be_collaborative }
   it { should_not be_pending }

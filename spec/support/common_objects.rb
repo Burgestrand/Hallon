@@ -1,4 +1,6 @@
 # coding: utf-8
+require 'time'
+
 RSpec::Core::ExampleGroup.instance_eval do
   let(:mock_artist) { Spotify.mock_artist("Jem", true) }
   let(:mock_artist_two) { Spotify.mock_artist("Maroon 5", true) }
@@ -124,4 +126,5 @@ end
 RSpec::Core::ExampleGroup.new.instance_eval do
   Spotify.registry_add 'spotify:track:7N2Vc8u56VGA4KUrGbikC2', mock_track
   Spotify.registry_add 'spotify:user:burgestrand', mock_user
+  Spotify.registry_add 'spotify:user:burgestrand:playlist:07AX9IY9Hqmj1RqltcG0fi', mock_playlist
 end
