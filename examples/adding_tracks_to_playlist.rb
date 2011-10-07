@@ -67,6 +67,10 @@ end
 # client as well.
 #
 puts "Uploading playlist changes to Spotify back-end"
+
+# there’s a tiny bug in Playlist#pending? in libspotify that makes it 
+# return false after adding tracks to a playlist unless you first call
+# Session#process_events
 session.process_events
 session.wait_for { not playlist.pending? }
 
