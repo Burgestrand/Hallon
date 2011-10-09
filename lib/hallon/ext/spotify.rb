@@ -4,6 +4,21 @@
 #
 # @see https://github.com/Burgestrand/libspotify-ruby
 module Spotify
+  # Wraps the function `function` so that it always returns
+  # a Spotify::Pointer with correct refcount. Functions that
+  # contain the word `create` are assumed to start out with
+  # a refcount of `+1`.
+  #
+  # @param [#to_s] function
+  # @param [#to_s] return_type
+  # @raise [NoMethodError] if `function` is not defined
+  # @see Spotify::Pointer
+  def self.wrap_function(function, return_type)
+    define_singleton_method("#{function}!") do |*args|
+      pointer = public_send(function, *args)
+      Spotify::Pointer.new(pointer, return_type, function !~ /create/)
+    end
+  end
 
   # The Pointer is a kind of AutoPointer specially tailored for Spotify
   # objects, that releases the raw pointer on GC.
