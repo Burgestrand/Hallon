@@ -31,7 +31,7 @@ module Hallon
         link = from_link(link, session.pointer)
       end
 
-      @pointer = Spotify::Pointer.new link, :image
+      @pointer = Spotify::Pointer.new(link, :image, false)
 
       @callback = proc { trigger :load }
       Spotify.image_add_load_callback(@pointer, @callback, nil)

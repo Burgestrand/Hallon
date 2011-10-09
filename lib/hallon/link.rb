@@ -31,7 +31,7 @@ module Hallon
         link = Spotify.link_create_from_string(link.to_str)
       end
 
-      @pointer = Spotify::Pointer.new(link, :link)
+      @pointer = Spotify::Pointer.new(link, :link, false)
 
       raise ArgumentError, "#{uri} is not a valid Spotify link" if @pointer.null?
     end
