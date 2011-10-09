@@ -4,8 +4,6 @@
 #
 # @see https://github.com/Burgestrand/libspotify-ruby
 module Spotify
-  extend FFI::Library
-  ffi_lib ['libspotify', '/Library/Frameworks/libspotify.framework/libspotify']
 
   # The Pointer is a kind of AutoPointer specially tailored for Spotify
   # objects, that releases the raw pointer on GC.
