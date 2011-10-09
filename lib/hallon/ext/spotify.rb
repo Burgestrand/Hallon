@@ -20,6 +20,81 @@ module Spotify
     end
   end
 
+  # @macro [attach] wrap_function
+  #   Same as {Spotify}.`$1`, but wraps result in a {Spotify::Pointer}.
+  #
+  #   @method $1!
+  #   @return [Spotify::Pointer<$2>]
+  #   @see #$1
+  wrap_function :session_user, :user
+  wrap_function :session_playlistcontainer, :playlistcontainer
+  wrap_function :session_inbox_create, :playlist
+  wrap_function :session_starred_create, :playlist
+  wrap_function :session_starred_for_user_create, :playlist
+  wrap_function :session_publishedcontainer_for_user_create, :playlistcontainer
+  wrap_function :session_friend, :user
+
+  wrap_function :track_artist, :artist
+  wrap_function :track_album, :album
+  wrap_function :localtrack_create, :track
+
+  wrap_function :album_artist, :artist
+
+  wrap_function :albumbrowse_create, :albumbrowse
+  wrap_function :albumbrowse_album, :album
+  wrap_function :albumbrowse_artist, :artist
+  wrap_function :albumbrowse_track, :track
+
+  wrap_function :artistbrowse_create, :artistbrowse
+  wrap_function :artistbrowse_artist, :artist
+  wrap_function :artistbrowse_track, :track
+  wrap_function :artistbrowse_album, :album
+  wrap_function :artistbrowse_similar_artist, :artist
+
+  wrap_function :image_create, :image
+  wrap_function :image_create_from_link, :image
+
+  wrap_function :link_as_track, :track
+  wrap_function :link_as_track_and_offset, :track
+  wrap_function :link_as_album, :album
+  wrap_function :link_as_artist, :artist
+  wrap_function :link_as_user, :user
+
+  wrap_function :link_create_from_string, :link
+  wrap_function :link_create_from_track, :link
+  wrap_function :link_create_from_album, :link
+  wrap_function :link_create_from_artist, :link
+  wrap_function :link_create_from_search, :link
+  wrap_function :link_create_from_playlist, :link
+  wrap_function :link_create_from_artist_portrait, :link
+  wrap_function :link_create_from_artistbrowse_portrait, :link
+  wrap_function :link_create_from_album_cover, :link
+  wrap_function :link_create_from_image, :link
+  wrap_function :link_create_from_user, :link
+
+  wrap_function :search_create, :search
+  wrap_function :radio_search_create, :search
+  wrap_function :search_track, :track
+  wrap_function :search_album, :album
+  wrap_function :search_artist, :artist
+
+  wrap_function :playlist_track, :track
+  wrap_function :playlist_track_creator, :user
+  wrap_function :playlist_owner, :user
+  wrap_function :playlist_create, :playlist
+
+  wrap_function :playlistcontainer_playlist, :playlist
+  wrap_function :playlistcontainer_add_new_playlist, :playlist
+  wrap_function :playlistcontainer_add_playlist, :playlist
+  wrap_function :playlistcontainer_owner, :user
+
+  wrap_function :toplistbrowse_create, :toplistbrowse
+  wrap_function :toplistbrowse_artist, :artist
+  wrap_function :toplistbrowse_album, :album
+  wrap_function :toplistbrowse_track, :track
+
+  wrap_function :inbox_post_tracks, :inbox
+
   # The Pointer is a kind of AutoPointer specially tailored for Spotify
   # objects, that releases the raw pointer on GC.
   class Pointer < FFI::AutoPointer
