@@ -15,4 +15,14 @@ describe Spotify do
       subject.should be_null
     end
   end
+
+  describe "garbage collection" do
+    let(:my_pointer) { FFI::Pointer.new(1) }
+
+    it "should work" do
+      Spotify.should_receive(:garbage_release).exactly(5).times
+      5.times { Spotify::Pointer.new(my_pointer, :garbage, false) }
+      5.times { GC.start; sleep 0.05 }
+    end
+  end
 end

@@ -103,7 +103,7 @@ module Spotify
     # @param [Boolean] add_ref
     # @return [FFI::AutoPointer]
     def initialize(pointer, type, add_ref)
-      super pointer, releaser_for(type)
+      super pointer, self.class.releaser_for(type)
 
       unless pointer.null?
         Spotify.send(:"#{type}_add_ref", pointer)
@@ -115,7 +115,7 @@ module Spotify
     #
     # @param [Symbol]
     # @return [Proc]
-    def releaser_for(type)
+    def self.releaser_for(type)
       lambda do |pointer|
         unless pointer.null?
           $stdout.puts "Spotify::#{type}_release(#{pointer})" if $DEBUG
