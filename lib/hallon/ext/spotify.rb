@@ -104,7 +104,10 @@ module Spotify
     # @return [FFI::AutoPointer]
     def initialize(pointer, type, add_ref)
       super pointer, releaser_for(type)
-      Spotify.send(:"#{type}_add_ref", pointer) if add_ref
+
+      unless pointer.null?
+        Spotify.send(:"#{type}_add_ref", pointer)
+      end if add_ref
     end
 
     # Create a proc that will accept a pointer of a given type and
