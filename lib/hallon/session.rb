@@ -158,16 +158,50 @@ module Hallon
     # @param [String] username
     # @param [String] password
     # @param [Boolean] remember_me have libspotify remember credentials for {#relogin}
-    # @return [self]
+    # @return [Session]
+    # @see login!
     def login(username, password, remember_me = false)
-      tap { Spotify.session_login(@pointer, username, password, @remembered = remember_me) }
+      tap { Spotify.session_login(@pointer, username, password, remember_me) }
     end
 
     # Login the remembered user (see {#login}).
     #
     # @raise [Hallon::Error] if no credentials are stored in libspotify
+    # @see #relogin!
     def relogin
       Error.maybe_raise Spotify.session_relogin(@pointer)
+    end
+
+    # Log in to Spotify using the given credentials.
+    #
+    # @note This function will not return until you’ve either logged in successfully,
+    #       or until an error is raised.
+    # @param (see #login)
+    # @return [Session]
+    # @raise [Error] if failed to log in
+    # @see #login
+    def login!(username, password, remember_me = false)
+      login(username, password, remember_me)
+      tap { wait_until_logged_in }
+    end
+
+    # Log in the remembered user.
+    #
+    # @note This method will not return until you’ve either logged in successfully
+    #       or until an error is raised.
+    # @return [Session]
+    # @raise [Error] if failed to log in
+    # @see #relogin
+    def relogin!
+      tap { relogin; wait_until_logged_in }
+    end
+
+    # Log out the current user.
+    #
+    # @note This method will not return until you’ve logged out successfully.
+    # @return [Session]
+    def logout!
+      tap { logout; wait_for(:logged_out) { logged_out? } }
     end
 
     # Username of the user stored in libspotify-remembered credentials.
@@ -380,6 +414,22 @@ module Hallon
         FFI::MemoryPointer.new(:pointer, tracks.size) do |ptr|
           ptr.write_array_of_pointer tracks.map(&:pointer)
           Spotify.track_set_starred(pointer, ptr, tracks.size, starred)
+        end
+      end
+
+      # Waits until we’re either logged in or a failure occurs.
+      #
+      # @note You must call {#login} or {#relogin} before you call this method, or
+      #       it will hang forever!
+      # @see login!
+      # @see relogin!
+      def wait_until_logged_in
+        # if the user does not have premium, libspotify will still fire logged_in as :ok,
+        # but a few moments later it fires connection_error; waiting for both and checking
+        # for errors on both hopefully circumvents this!
+        wait_for(:logged_in, :connection_error) do |_, error|
+          Error.maybe_raise(error)
+          session.logged_in?
         end
       end
   end
