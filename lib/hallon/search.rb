@@ -121,8 +121,8 @@ module Hallon
 
     # @return [Link] link for this search query
     def to_link
-      pointer = Spotify.link_create_from_search(@pointer)
-      Link.new(pointer) unless pointer.null?
+      link = Spotify.link_create_from_search!(pointer)
+      Link.new(link) unless link.null?
     end
   end
 end

@@ -17,7 +17,7 @@ module Hallon
     #   @param  [String, Hallon::Link, FFI::Pointer] link
     #   @return [FFI::Pointer]
     from_link :profile do |link|
-      Spotify.link_as_user(link)
+      Spotify.link_as_user!(link)
     end
 
     # @macro [attach] to_link
@@ -32,7 +32,7 @@ module Hallon
     #
     # @param [String, Link, FFI::Pointer] link
     def initialize(link)
-      @pointer = Spotify::Pointer.new from_link(link), :user, true
+      @pointer = to_pointer(link, :user)
     end
 
     # @return [Boolean] true if the user is loaded

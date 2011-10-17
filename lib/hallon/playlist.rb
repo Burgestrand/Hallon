@@ -29,7 +29,7 @@ module Hallon
 
       # @return [User, nil] person who added track at {#index} to this playlist
       def creator
-        creator = Spotify.playlist_track_creator(playlist, index)
+        creator = Spotify.playlist_track_creator!(playlist, index)
         User.new(creator) unless creator.null?
       end
 
@@ -150,7 +150,7 @@ module Hallon
 
     # @return [User, nil]
     def owner
-      user = Spotify.playlist_owner(pointer)
+      user = Spotify.playlist_owner!(pointer)
       User.new(user) unless user.null?
     end
 

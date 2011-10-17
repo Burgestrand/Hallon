@@ -98,16 +98,23 @@ module Spotify
   # The Pointer is a kind of AutoPointer specially tailored for Spotify
   # objects, that releases the raw pointer on GC.
   class Pointer < FFI::AutoPointer
+    attr_reader :type
+
     # @param [FFI::Pointer] pointer
     # @param [#to_s] type session, link, etc
     # @param [Boolean] add_ref
     # @return [FFI::AutoPointer]
     def initialize(pointer, type, add_ref)
-      super pointer, self.class.releaser_for(type)
+      super pointer, self.class.releaser_for(@type = type)
 
       unless pointer.null?
         Spotify.send(:"#{type}_add_ref", pointer)
       end if add_ref
+    end
+
+    # @return [String] representation of the spotify pointer
+    def to_s
+      "<#{self.class} address=#{address} type=#{type}>"
     end
 
     # Create a proc that will accept a pointer of a given type and
@@ -121,6 +128,19 @@ module Spotify
           $stdout.puts "Spotify::#{type}_release(#{pointer})" if $DEBUG
           Spotify.send(:"#{type}_release", pointer)
         end
+      end
+    end
+
+    # @param [Object] pointer
+    # @param [Symbol] type (optional, no type checking is done if not given)
+    # @return [Boolean] true if object is a spotify pointer and of correct type
+    def self.typechecks?(object, type = nil)
+      if ! object.is_a?(Spotify::Pointer)
+        false
+      elsif type
+        object.type == type
+      else
+        true
       end
     end
   end

@@ -41,7 +41,7 @@ module Hallon
     # @param [Boolean] as_image true if you want it as an Image
     # @return [Image, Link, nil] artist portrait, or the link to it, or nil
     def portrait(as_image = true)
-      portrait = Spotify.link_create_from_artist_portrait(@pointer)
+      portrait = Spotify.link_create_from_artist_portrait!(pointer)
       unless portrait.null?
         klass = as_image ? Image : Link
         klass.new(portrait)

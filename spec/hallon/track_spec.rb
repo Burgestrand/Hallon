@@ -58,16 +58,17 @@ describe Hallon::Track do
 
   describe "to_link" do
     before(:each) { Hallon::Link.stub(:new) }
+    let(:mock_link) { FFI::Pointer.new(1) }
 
     it "should pass the current offset by default" do
-      Spotify.should_receive(:link_create_from_track).with(subject.pointer, 10_000)
+      Spotify.should_receive(:link_create_from_track).with(subject.pointer, 10_000).and_return(mock_link)
       subject.should_receive(:offset).and_return(10)
 
       subject.to_link
     end
 
     it "should accept offset as parameter" do
-      Spotify.should_receive(:link_create_from_track).with(subject.pointer, 1_337_000)
+      Spotify.should_receive(:link_create_from_track).with(subject.pointer, 1337_000).and_return(mock_link)
       subject.should_not_receive(:offset)
 
       subject.to_link(1337)

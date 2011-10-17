@@ -2,35 +2,27 @@ describe Hallon::Link do
   subject { Hallon::Link.new("spotify:user:burgestrand") }
 
   context "class methods" do
-    subject { described_class }
-
     describe "::new" do
       it "should raise an ArgumentError on an invalid link" do
-        expect { subject.new("omgwtfbbq") }.to raise_error(ArgumentError, /omgwtfbbq/)
+        expect { Hallon::Link.new("omgwtfbbq") }.to raise_error(ArgumentError, /omgwtfbbq/)
       end
 
       it "should not raise error on valid links" do
-        expect { subject.new("spotify:user:burgestrand") }.to_not raise_error
+        expect { Hallon::Link.new("spotify:user:burgestrand") }.to_not raise_error
       end
 
       it "should accept an FFI pointer" do
-        expect { subject.new FFI::Pointer.new(0) }.to raise_error(ArgumentError, /is not a valid Spotify link/)
-      end
-
-      it "should not initialize when given a Link" do
-        link = subject.new('spotify:user:burgestrand')
-        link.should_not_receive :to_str
-        subject.new link
+        expect { Hallon::Link.new(Spotify::Pointer.new(null_pointer, :link, false)) }.to raise_error(ArgumentError, /is not a valid spotify link/)
       end
     end
 
     describe "::valid?" do
       it "should be true for a valid link" do
-        subject.valid?("spotify:user:burgestrand").should be_true
+        Hallon::Link.valid?("spotify:user:burgestrand").should be_true
       end
 
       it "should be false for an invalid link" do
-        subject.valid?("omgwtfbbq").should be_false
+        Hallon::Link.valid?("omgwtfbbq").should be_false
       end
     end
   end
@@ -84,7 +76,7 @@ describe Hallon::Link do
     end
 
     it "should compare underlying pointers if #to_str is unavailable" do
-      object = Hallon::Link.new(FFI::Pointer.new(subject.pointer))
+      object = Hallon::Link.new(subject.pointer)
 
       def object.respond_to?(o)
         return false if o == :to_str

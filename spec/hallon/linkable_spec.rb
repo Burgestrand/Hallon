@@ -51,10 +51,5 @@ describe Hallon::Linkable do
       object.from_link("spotify:search:burgestrand", :cool, 5)
       passed_args.should eq [:cool, 5]
     end
-
-    it "should fail, given a null pointer" do
-      klass.from_link(:as_search)
-      expect { object.from_link FFI::Pointer.new(0) }.to raise_error(Hallon::Error)
-    end
   end
 end

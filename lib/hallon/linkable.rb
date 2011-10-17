@@ -35,11 +35,15 @@ module Hallon
       type    = as_object.to_s[/^(as_)?([^_]+)/, 2].to_sym
 
       define_method(:from_link) do |link, *args|
-        link = if link.is_a? FFI::Pointer then link else
-          instance_exec(Link.new(link).pointer(type), *args, &block)
-        end
+        if link.is_a?(FFI::Pointer) and not link.is_a?(Spotify::Pointer)
+          link
+        else
+          unless Spotify::Pointer.typechecks?(link, :link)
+            link = Link.new(link).pointer(type)
+          end
 
-        link.tap { raise Hallon::Error, "invalid link" if link.null? }
+          instance_exec(link, *args, &block)
+        end
       end
     end
 
@@ -52,7 +56,7 @@ module Hallon
     # @return [Link]
     def to_link(cmethod)
       define_method(:to_link) do |*args|
-        link = Spotify.__send__(:"link_create_#{cmethod}", @pointer, *args)
+        link = Spotify.__send__(:"link_create_#{cmethod}!", pointer, *args)
         Link.new(link)
       end
     end

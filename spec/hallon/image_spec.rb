@@ -2,7 +2,7 @@
 describe Hallon::Image do
   describe "an image instance" do
     subject { image }
-    let(:image) { mock_session { Hallon::Image.new(mock_image) } }
+    let(:image) { Hallon::Image.new(mock_image) }
 
     it { should be_loaded }
     its(:status) { should be :ok }
@@ -46,9 +46,7 @@ describe Hallon::Image do
 
   describe "instantiation" do
     subject do
-      mock_session do
-        Hallon::Image.new(image_uri)
-      end
+      mock_session { Hallon::Image.new(image_uri) }
     end
 
     context "created from an url" do

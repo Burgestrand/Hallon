@@ -234,7 +234,7 @@ module Hallon
     #
     # @return [User]
     def user
-      User.new Spotify.session_user(@pointer)
+      User.new Spotify.session_user!(pointer)
     end
 
     # Retrieve the relation type between logged in {User} and `user`.
@@ -298,13 +298,13 @@ module Hallon
     def friends
       size = if logged_in?
         # segfaults unless logged in
-        Spotify.session_num_friends(@pointer)
+        Spotify.session_num_friends(pointer)
       else
         0
       end
 
       Enumerator.new(size) do |i|
-        friend = Spotify.session_friend(@pointer, i)
+        friend = Spotify.session_friend!(pointer, i)
         User.new(friend)
       end
     end

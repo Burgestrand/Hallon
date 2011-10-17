@@ -17,26 +17,15 @@ module Hallon
       not link.null?
     end
 
-    # Overloaded to short-circuit when given a Link.
-    #
-    # @return [Hallon::Link]
-    def self.new(uri)
-      uri.is_a?(Link) ? uri : super
-    end
-
     # Parse the given Spotify URI into a Link.
     #
     # @note Unless you have a {Session} initialized, this will segfault!
     # @param [#to_str] uri
     # @raise [ArgumentError] link could not be parsed
     def initialize(uri)
-      if (link = uri).respond_to? :to_str
-        link = Spotify.link_create_from_string(link.to_str)
+      @pointer = to_pointer(uri, :link) do
+        Spotify.link_create_from_string!(uri.to_str)
       end
-
-      @pointer = Spotify::Pointer.new(link, :link, false)
-
-      raise ArgumentError, "#{uri} is not a valid Spotify link" if @pointer.null?
     end
 
     # Link type as a symbol.

@@ -6,8 +6,8 @@ module Hallon
   class Image < Base
     extend Linkable
 
-    from_link :as_image do |link, session|
-      Spotify.image_create_from_link(session, link)
+    from_link :as_image do |link|
+      Spotify.image_create_from_link!(session.pointer, link)
     end
 
     to_link :from_image
@@ -17,21 +17,18 @@ module Hallon
 
     # Create a new instance of an Image.
     #
-    # @param [String, Link, FFI::Pointer] link link or image id
+    # @param [String, Link, Spotify::Pointer] link link or image id
     # @param [Hallon::Session] session
     def initialize(link)
-      if link.is_a?(String)
-        link = to_id($1) if link =~ %r|image[:/]([a-fA-F0-9]{40})|
-
-        FFI::MemoryPointer.new(:char, 20) do |ptr|
-          ptr.write_bytes link
-          link = Spotify.image_create(session.pointer, ptr)
-        end
-      else
-        link = from_link(link, session.pointer)
+      if link.respond_to?(:=~) and link =~ %r|image[:/]([a-fA-F0-9]{40})\z|
+        link = to_id($1)
       end
 
-      @pointer = Spotify::Pointer.new(link, :image, false)
+      @pointer = to_pointer(link, :image) do
+        ptr = FFI::MemoryPointer.new(:char, 20)
+        ptr.write_bytes(link)
+        Spotify.image_create!(session.pointer, ptr)
+      end
 
       @callback = proc { trigger :load }
       Spotify.image_add_load_callback(@pointer, @callback, nil)
