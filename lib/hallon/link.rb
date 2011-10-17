@@ -6,12 +6,15 @@ module Hallon
   class Link < Base
     # True if the given Spotify URI is valid (parsable by libspotify).
     #
-    # @param (see Hallon::Link#initialize)
+    # @param [#to_s] spotify_uri
     # @return [Boolean]
     def self.valid?(spotify_uri)
-      !! new(spotify_uri)
-    rescue ArgumentError
-      false
+      if spotify_uri.is_a?(Link)
+        return true
+      end
+
+      link = Spotify.link_create_from_string!(spotify_uri.to_s)
+      not link.null?
     end
 
     # Overloaded to short-circuit when given a Link.
