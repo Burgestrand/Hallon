@@ -12,9 +12,9 @@ module Hallon
     # @macro [attach] from_link
     #   Given a Link, get its’ underlying pointer.
     #
-    #   @method to_link
+    #   @method from_link
     #   @scope  instance
-    #   @param  [String, Hallon::Link, FFI::Pointer] link
+    #   @param  [String, Hallon::Link, Spotify::Pointer] link
     #   @return [FFI::Pointer]
     from_link :profile do |link|
       Spotify.link_as_user!(link)
