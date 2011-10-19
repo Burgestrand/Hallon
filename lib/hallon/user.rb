@@ -30,7 +30,7 @@ module Hallon
 
     # Construct a new instance of User.
     #
-    # @param [String, Link, FFI::Pointer] link
+    # @param [String, Link, Spotify::Pointer] link
     def initialize(link)
       @pointer = to_pointer(link, :user)
     end
