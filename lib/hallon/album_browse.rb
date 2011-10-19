@@ -70,7 +70,7 @@ module Hallon
     def tracks
       size = Spotify.albumbrowse_num_tracks(@pointer)
       Enumerator.new(size) do |i|
-        pointer = Spotify.albumbrowse_track(@pointer, i)
+        pointer = Spotify.albumbrowse_track!(@pointer, i)
         Track.new(pointer) unless pointer.null?
       end
     end

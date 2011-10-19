@@ -81,7 +81,7 @@ module Hallon
     def tracks
       size = Spotify.search_num_tracks(@pointer)
       Enumerator.new(size) do |i|
-        track = Spotify.search_track(@pointer, i)
+        track = Spotify.search_track!(@pointer, i)
         Track.new(track) unless track.null?
       end
     end

@@ -16,7 +16,7 @@ module Hallon
       attr_reader :playlist
 
       def initialize(playlist, index)
-        super(Spotify.playlist_track(playlist, index))
+        super(Spotify.playlist_track!(playlist, index))
 
         @playlist = playlist
         @index    = index

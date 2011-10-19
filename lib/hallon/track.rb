@@ -31,7 +31,7 @@ module Hallon
     # @param [String, Link, FFI::Pointer] link
     def initialize(link)
       FFI::MemoryPointer.new(:int) do |ptr|
-        @pointer = Spotify::Pointer.new from_link(link, ptr), :track, true
+        @pointer = to_pointer(link, :track, ptr)
         @offset  = Rational(ptr.read_int, 1000)
       end
     end
@@ -44,7 +44,7 @@ module Hallon
     # @param [Integer] length
     # @return [Track]
     def self.local(title, artist, album = nil, length = nil)
-      track = Spotify.localtrack_create(artist, title, album || "", length || -1)
+      track = Spotify.localtrack_create!(artist, title, album || "", length || -1)
       new(track)
     end
 

@@ -31,7 +31,7 @@ module Hallon
     #
     # @see Link#pointer
     def from_link(as_object, &block)
-      block ||= Spotify.method(:"link_#{as_object}")
+      block ||= Spotify.method(:"link_#{as_object}!")
       type    = as_object.to_s[/^(as_)?([^_]+)/, 2].to_sym
 
       define_method(:from_link) do |link, *args|
