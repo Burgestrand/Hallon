@@ -1,7 +1,13 @@
 shared_examples_for "a Linkable object" do
   describe "instantiation" do
+    let(:spotify_pointer) do
+      ptr_type    = spotify_uri[/spotify:([^:]+):/, 1]
+      ffi_pointer = Spotify.registry_find(spotify_uri)
+      Spotify::Pointer.new(ffi_pointer, ptr_type, false)
+    end
+
     it "should work with a string URI" do
-      expect { described_class.new(valid_string_uri) }.to_not raise_error
+      expect { described_class.new(spotify_uri) }.to_not raise_error
     end
 
     it "should fail with an invalid spotify pointer" do
@@ -9,7 +15,11 @@ shared_examples_for "a Linkable object" do
     end
 
     it "should work with a Link object" do
-      expect { described_class.new(Hallon::Link.new(valid_string_uri)) }.to_not raise_error
+      expect { described_class.new(Hallon::Link.new(spotify_uri)) }.to_not raise_error
+    end
+
+    it "should work with a spotify pointer" do
+      expect { described_class.new(spotify_pointer) }.to_not raise_error
     end
 
     it "should work with a custom object" do
@@ -19,10 +29,10 @@ shared_examples_for "a Linkable object" do
   end
 
   describe "#to_link" do
-    subject { described_class.new(valid_string_uri) }
+    subject { described_class.new(spotify_uri) }
 
     it "should return a valid link" do
-      subject.to_link.should eq Hallon::Link.new(valid_string_uri)
+      subject.to_link.should eq Hallon::Link.new(spotify_uri)
     end
   end
 end

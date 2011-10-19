@@ -105,7 +105,7 @@ module Spotify
     # @param [Boolean] add_ref
     # @return [FFI::AutoPointer]
     def initialize(pointer, type, add_ref)
-      super pointer, self.class.releaser_for(@type = type)
+      super pointer, self.class.releaser_for(@type = type.to_s)
 
       unless pointer.null?
         Spotify.send(:"#{type}_add_ref", pointer)
@@ -138,7 +138,7 @@ module Spotify
       if ! object.is_a?(Spotify::Pointer)
         false
       elsif type
-        object.type == type
+        object.type == type.to_s
       else
         true
       end
