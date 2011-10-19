@@ -120,6 +120,13 @@ describe Hallon::Session do
     end
   end
 
+  describe "#user" do
+    it "should return the logged in user" do
+      session.login 'Kim', 'pass'
+      session.user.name.should eq 'Kim'
+    end
+  end
+
   describe "#country" do
     it "should retrieve the current sessions’ country as a string" do
       session.country.should eq 'SE'
