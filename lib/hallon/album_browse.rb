@@ -54,7 +54,7 @@ module Hallon
 
     # @return [Album] album this object is browsing
     def album
-      pointer = Spotify.albumbrowse_album(@pointer)
+      pointer = Spotify.albumbrowse_album!(@pointer)
       Album.new(pointer) unless pointer.null?
     end
 

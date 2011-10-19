@@ -72,7 +72,7 @@ module Hallon
     def albums
       size = Spotify.artistbrowse_num_albums(@pointer)
       Enumerator.new(size) do |i|
-        album = Spotify.artistbrowse_album(@pointer, i)
+        album = Spotify.artistbrowse_album!(@pointer, i)
         Album.new(album)
       end
     end

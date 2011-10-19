@@ -21,9 +21,9 @@ module Hallon
 
     # Construct an Album from a link.
     #
-    # @param [String, Link, FFI::Pointer] link
+    # @param [String, Link, Spotify::Pointer] link
     def initialize(link)
-      @pointer = Spotify::Pointer.new from_link(link), :album, true
+      @pointer = to_pointer(link, :album)
     end
 
     # Name of album.

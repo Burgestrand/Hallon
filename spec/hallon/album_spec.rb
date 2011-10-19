@@ -1,5 +1,9 @@
 # coding: utf-8
 describe Hallon::Album do
+  it_should_behave_like "a Linkable object" do
+    let(:spotify_uri) { "spotify:album:1xvnWMz2PNFf7mXOSRuLws" }
+  end
+
   subject { Hallon::Album.new(mock_album) }
 
   its(:name) { should eq "Finally Woken" }

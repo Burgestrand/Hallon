@@ -95,7 +95,7 @@ module Hallon
     def albums
       size  = Spotify.search_num_albums(@pointer)
       Enumerator.new(size) do |i|
-        album = Spotify.search_album(@pointer, i)
+        album = Spotify.search_album!(@pointer, i)
         Album.new(album) unless album.null?
       end
     end

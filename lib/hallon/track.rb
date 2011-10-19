@@ -103,7 +103,7 @@ module Hallon
     # @note This’ll be `nil` unless the track is loaded.
     # @return [Hallon::Album]
     def album
-      album = Spotify.track_album(@pointer)
+      album = Spotify.track_album!(@pointer)
       Album.new(album) unless album.null?
     end
 
