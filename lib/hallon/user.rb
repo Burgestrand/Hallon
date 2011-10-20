@@ -30,9 +30,17 @@ module Hallon
 
     # Construct a new instance of User.
     #
+    # @example
+    #   Hallon::User.new("burgestrand")
+    #
+    # @note You can also instantiate User with a canonical username
     # @param [String, Link, Spotify::Pointer] link
     def initialize(link)
-      @pointer = to_pointer(link, :user)
+      @pointer = to_pointer(link, :user) do
+        if link.is_a?(String) and link !~ /\Aspotify:user:/
+          to_pointer("spotify:user:#{link}", :user)
+        end
+      end
     end
 
     # @return [Boolean] true if the user is loaded

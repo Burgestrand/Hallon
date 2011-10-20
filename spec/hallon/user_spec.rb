@@ -2,6 +2,7 @@
 describe Hallon::User do
   it_should_behave_like "a Linkable object" do
     let(:spotify_uri) { "spotify:user:burgestrand" }
+    let(:custom_object) { "burgestrand" }
   end
 
   describe "an instance", :logged_in => true do
