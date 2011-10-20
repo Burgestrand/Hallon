@@ -1,15 +1,20 @@
 require 'time'
 
 describe Hallon::Playlist do
-  let(:playlist) { Hallon::Playlist.new(mock_playlist) }
-  subject { playlist }
-
-  describe ".new" do
-    it "should accept a playlist URI" do
-      playlist = mock_session { Hallon::Playlist.new("spotify:user:burgestrand:playlist:07AX9IY9Hqmj1RqltcG0fi") }
-      playlist.name.should eq "Megaplaylist"
+  it_should_behave_like "a Linkable object" do
+    let(:spotify_uri) { "spotify:user:burgestrand:playlist:07AX9IY9Hqmj1RqltcG0fi" }
+    let(:described_class) do
+      real_session = session
+      Hallon::Playlist.dup.tap do |klass|
+        klass.class_eval do
+          define_method(:session) { real_session }
+        end
+      end
     end
   end
+
+  let(:playlist) { Hallon::Playlist.new(mock_playlist) }
+  subject { playlist }
 
   it { should be_loaded }
   it { should be_collaborative }

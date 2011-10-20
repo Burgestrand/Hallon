@@ -52,7 +52,7 @@ module Hallon
     end
 
     from_link :playlist do |pointer|
-      Spotify.playlist_create(session.pointer, pointer)
+      Spotify.playlist_create!(session.pointer, pointer)
     end
 
     to_link :from_playlist
@@ -62,7 +62,7 @@ module Hallon
     # @param [String, Link, FFI::Pointer] link
     def initialize(link)
       callbacks = Spotify::PlaylistCallbacks.new(self, @sp_callbacks = {})
-      @pointer = Spotify::Pointer.new(from_link(link), :playlist, false)
+      @pointer = to_pointer(link, :playlist)
       Spotify.playlist_add_callbacks(pointer, callbacks, nil)
     end
 

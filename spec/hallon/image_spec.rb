@@ -6,12 +6,13 @@ describe Hallon::Image do
     let(:spotify_uri) { "spotify:image:#{mock_image_hex}" }
     let(:custom_object) { mock_image_hex }
 
-    around do |test|
-      old_session = Hallon::Image.instance_method(:session)
-      Hallon::Image.class_eval do
-        define_method(:session) { OpenStruct.new(:pointer => nil) }
-        test.call
-        define_method(:session, old_session)
+
+    let(:described_class) do
+      real_session = session
+      Hallon::Image.dup.tap do |klass|
+        klass.class_eval do
+          define_method(:session) { real_session }
+        end
       end
     end
   end
