@@ -47,7 +47,7 @@ module Hallon
         end
 
         if pointer.nil? or pointer.null?
-          raise ArgumentError, "“#{resource}” is not a valid spotify #{type} URI or pointer"
+          raise ArgumentError, "#{resource.inspect} is not a valid spotify #{type} URI or pointer"
         elsif not Spotify::Pointer.typechecks?(pointer, type)
           raise TypeError, "“#{resource}” is of type #{resource.type}, #{type} expected"
         else
