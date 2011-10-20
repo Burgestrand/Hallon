@@ -73,7 +73,7 @@ module Hallon
     #
     # @return [Artist, nil]
     def artist
-      artist = Spotify.album_artist(@pointer)
+      artist = Spotify.album_artist!(pointer)
       Artist.new(artist) unless artist.null?
     end
 

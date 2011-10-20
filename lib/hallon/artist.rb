@@ -21,7 +21,7 @@ module Hallon
     #
     # @param [String, Link, FFI::Pointer] link
     def initialize(link)
-      @pointer = Spotify::Pointer.new from_link(link), :artist, true
+      @pointer = to_pointer(link, :artist)
     end
 
     # Retrieve Artist name. Empty string if Artist is not loaded.

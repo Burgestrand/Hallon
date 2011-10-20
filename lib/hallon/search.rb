@@ -82,7 +82,7 @@ module Hallon
       size = Spotify.search_num_tracks(@pointer)
       Enumerator.new(size) do |i|
         track = Spotify.search_track!(@pointer, i)
-        Track.new(track) unless track.null?
+        Track.new(track)
       end
     end
 
@@ -96,7 +96,7 @@ module Hallon
       size  = Spotify.search_num_albums(@pointer)
       Enumerator.new(size) do |i|
         album = Spotify.search_album!(@pointer, i)
-        Album.new(album) unless album.null?
+        Album.new(album)
       end
     end
 
@@ -107,10 +107,10 @@ module Hallon
 
     # @return [Enumerator<Artist>] enumerate over all artists in the search result
     def artists
-      size = Spotify.search_num_artists(@pointer)
+      size = Spotify.search_num_artists(pointer)
       Enumerator.new(size) do |i|
-        artist = Spotify.search_artist(@pointer, i)
-        Artist.new(artist) unless artist.null?
+        artist = Spotify.search_artist!(pointer, i)
+        Artist.new(artist)
       end
     end
 

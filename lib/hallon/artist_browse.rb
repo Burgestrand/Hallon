@@ -41,7 +41,7 @@ module Hallon
 
     # @return [Artist, nil] artist this browser is browsing
     def artist
-      artist = Spotify.artistbrowse_artist(@pointer)
+      artist = Spotify.artistbrowse_artist!(pointer)
       Artist.new(artist) unless artist.null?
     end
 
@@ -79,9 +79,9 @@ module Hallon
 
     # @return [Enumartor<Artist>] similar artists to this artist
     def similar_artists
-      size = Spotify.artistbrowse_num_similar_artists(@pointer)
+      size = Spotify.artistbrowse_num_similar_artists(pointer)
       Enumerator.new(size) do |i|
-        artist = Spotify.artistbrowse_similar_artist(@pointer, i)
+        artist = Spotify.artistbrowse_similar_artist!(pointer, i)
         Artist.new(artist)
       end
     end

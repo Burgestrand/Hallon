@@ -121,10 +121,10 @@ module Hallon
     # @note Track must be loaded, or you’ll get zero artists.
     # @return [Hallon::Enumerator<Artist>]
     def artists
-      size = Spotify.track_num_artists(@pointer)
+      size = Spotify.track_num_artists(pointer)
       Enumerator.new(size) do |i|
-        artist = Spotify.track_artist(@pointer, i)
-        Artist.new(artist) unless artist.null?
+        artist = Spotify.track_artist!(pointer, i)
+        Artist.new(artist)
       end
     end
 
