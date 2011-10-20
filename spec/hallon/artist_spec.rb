@@ -16,7 +16,7 @@ describe Hallon::Artist do
   end
 
   describe "#portrait" do
-    let(:link) { Hallon::Link.new("spotify:image:c78f091482e555bd2ffacfcd9cbdc0714b221663") }
+    let(:link) { Hallon::Link.new("spotify:image:3ad93423add99766e02d563605c6e76ed2b0e450") }
     let(:link_pointer) { FFI::Pointer.new(link.pointer.address) }
     let(:link_spotify_pointer) { Spotify::Pointer.new(link_pointer, :link, false) }
 

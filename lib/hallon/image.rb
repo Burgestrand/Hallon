@@ -20,7 +20,7 @@ module Hallon
     # @param [String, Link, Spotify::Pointer] link link or image id
     # @param [Hallon::Session] session
     def initialize(link)
-      if link.respond_to?(:=~) and link =~ %r|image[:/]([a-fA-F0-9]{40})\z|
+      if link.respond_to?(:=~) and link =~ %r~(?:image[:/]|\A)([a-fA-F0-9]{40})\z~
         link = to_id($1)
       end
 

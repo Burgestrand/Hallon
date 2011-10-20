@@ -124,6 +124,7 @@ RSpec::Core::ExampleGroup.instance_eval do
 end
 
 RSpec::Core::ExampleGroup.new.instance_eval do
+  Spotify.registry_add "spotify:image:3ad93423add99766e02d563605c6e76ed2b0e450", mock_image
   Spotify.registry_add 'spotify:artist:3bftcFwl4vqRNNORRsqm1G', mock_artist
   Spotify.registry_add 'spotify:album:1xvnWMz2PNFf7mXOSRuLws', mock_album
   Spotify.registry_add 'spotify:track:7N2Vc8u56VGA4KUrGbikC2', mock_track

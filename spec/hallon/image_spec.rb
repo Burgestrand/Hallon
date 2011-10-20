@@ -1,5 +1,21 @@
 # coding: utf-8
+require 'ostruct'
+
 describe Hallon::Image do
+  it_should_behave_like "a Linkable object" do
+    let(:spotify_uri) { "spotify:image:#{mock_image_hex}" }
+    let(:custom_object) { mock_image_hex }
+
+    around do |test|
+      old_session = Hallon::Image.instance_method(:session)
+      Hallon::Image.class_eval do
+        define_method(:session) { OpenStruct.new(:pointer => nil) }
+        test.call
+        define_method(:session, old_session)
+      end
+    end
+  end
+
   describe "an image instance" do
     subject { image }
     let(:image) { Hallon::Image.new(mock_image) }
@@ -41,32 +57,6 @@ describe Hallon::Image do
 
         image.should_not eq o
       end
-    end
-  end
-
-  describe "instantiation" do
-    subject do
-      mock_session { Hallon::Image.new(image_uri) }
-    end
-
-    context "created from an url" do
-      let(:image_uri) { "http://open.spotify.com/image/c78f091482e555bd2ffacfcd9cbdc0714b221663" }
-      its(:id) { should eq "c78f091482e555bd2ffacfcd9cbdc0714b221663" }
-    end
-
-    context "created from an uri" do
-      let(:image_uri) { "spotify:image:c78f091482e555bd2ffacfcd9cbdc0714b221663" }
-      its(:id) { should eq "c78f091482e555bd2ffacfcd9cbdc0714b221663" }
-    end
-
-    context "created from an id" do
-      let(:image_uri) { mock_image_id }
-      its(:id) { should eq mock_image_hex }
-    end
-
-    context "created from a link" do
-      let(:image_uri) { Hallon::Link.new("spotify:image:c78f091482e555bd2ffacfcd9cbdc0714b221663") }
-      its(:id) { should eq "c78f091482e555bd2ffacfcd9cbdc0714b221663" }
     end
   end
 

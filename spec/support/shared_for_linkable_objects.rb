@@ -1,3 +1,4 @@
+# coding: utf-8
 shared_examples_for "a Linkable object" do
   describe "instantiation" do
     let(:spotify_pointer) do
