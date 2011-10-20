@@ -52,19 +52,19 @@ module Hallon
 
     # @return [Enumerator<Album>]
     def albums
-      size = Spotify.toplistbrowse_num_albums(@pointer)
+      size = Spotify.toplistbrowse_num_albums(pointer)
       Enumerator.new(size) do |i|
-        album = Spotify.toplistbrowse_album(@pointer, i)
-        Artist.new(album)
+        album = Spotify.toplistbrowse_album!(pointer, i)
+        Album.new(album)
       end
     end
 
     # @return [Enumerator<Track>]
     def tracks
-      size = Spotify.toplistbrowse_num_tracks(@pointer)
+      size = Spotify.toplistbrowse_num_tracks(pointer)
       Enumerator.new(size) do |i|
-        track = Spotify.toplistbrowse_track(@pointer, i)
-        Artist.new(track)
+        track = Spotify.toplistbrowse_track!(pointer, i)
+        Track.new(track)
       end
     end
 
