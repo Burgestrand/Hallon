@@ -13,6 +13,7 @@ module Hallon
     # Overriden to use default parameter.
     # @see #to_link
     alias_method :_to_link, :to_link
+
     # Create a Link to the current track and offset in seconds.
     #
     # @param [Float] offset offset into track in seconds

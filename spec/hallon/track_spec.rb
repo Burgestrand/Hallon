@@ -1,5 +1,9 @@
 # coding: utf-8
 describe Hallon::Track do
+  it_should_behave_like "a Linkable object" do
+    let(:spotify_uri) { "spotify:track:7N2Vc8u56VGA4KUrGbikC2#01:00" }
+  end
+
   subject { Hallon::Track.new(mock_track) }
 
   it { should be_loaded }
@@ -21,7 +25,6 @@ describe Hallon::Track do
       session.should_receive(:unstar).with(subject)
       subject.starred = false
     end
-
 
     it "should delegate to session to star" do
       session.should_receive(:star).with(subject)

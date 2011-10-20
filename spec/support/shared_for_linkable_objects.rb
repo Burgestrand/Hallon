@@ -4,7 +4,7 @@ shared_examples_for "a Linkable object" do
     let(:spotify_pointer) do
       ptr_type    = Hallon::Link.new(spotify_uri).type
       ptr_type    = :user if ptr_type == :profile
-      ffi_pointer = Spotify.registry_find(spotify_uri)
+      ffi_pointer = Spotify.registry_find(spotify_uri[/[^#]+/]) # up to pound sign for track#offset
       Spotify::Pointer.new(ffi_pointer, ptr_type, false)
     end
 
