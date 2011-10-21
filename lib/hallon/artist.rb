@@ -28,14 +28,14 @@ module Hallon
     #
     # @return [String]
     def name
-      Spotify.artist_name(@pointer)
+      Spotify.artist_name(pointer)
     end
 
     # True if the Artist is loaded.
     #
     # @return [Boolean]
     def loaded?
-      Spotify.artist_is_loaded(@pointer)
+      Spotify.artist_is_loaded(pointer)
     end
 
     # @param [Boolean] as_image true if you want it as an Image

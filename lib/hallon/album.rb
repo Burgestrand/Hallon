@@ -30,42 +30,42 @@ module Hallon
     #
     # @return [String]
     def name
-      Spotify.album_name(@pointer)
+      Spotify.album_name(pointer)
     end
 
     # Release year of album.
     #
     # @return [Integer]
     def year
-      Spotify.album_year(@pointer)
+      Spotify.album_year(pointer)
     end
 
     # Retrieve album type.
     #
     # @return [Symbol] one of {Album.types}
     def type
-      Spotify.album_type(@pointer)
+      Spotify.album_type(pointer)
     end
 
     # True if the album is available from the current session.
     #
     # @return [Boolean]
     def available?
-      Spotify.album_is_available(@pointer)
+      Spotify.album_is_available(pointer)
     end
 
     # True if album has been loaded.
     #
     # @return [Boolean]
     def loaded?
-      Spotify.album_is_loaded(@pointer)
+      Spotify.album_is_loaded(pointer)
     end
 
     # Retrieve album cover art.
     #
     # @return [Image]
     def cover
-      image_id = Spotify.album_cover(@pointer)
+      image_id = Spotify.album_cover(pointer)
       Image.new(image_id.read_string(20)) unless image_id.null?
     end
 

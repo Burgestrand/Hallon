@@ -31,35 +31,35 @@ module Hallon
       end
 
       @callback = proc { trigger :load }
-      Spotify.image_add_load_callback(@pointer, @callback, nil)
+      Spotify.image_add_load_callback(pointer, @callback, nil)
 
-      # TODO: remove load_callback when @pointer is released
+      # TODO: remove load_callback when pointer is released
       # NOTE: on(:load) will trigger while load callback is still executing,
       #       and removing the load callback from within the load callback
       #       does not make libspotify happy, and thus segfaults D:
       #
-      # on(:load) { Spotify::image_remove_load_callback(@pointer, @callback, nil) }
+      # on(:load) { Spotify::image_remove_load_callback(pointer, @callback, nil) }
     end
 
     # True if the image has been loaded.
     #
     # @return [Boolean]
     def loaded?
-      Spotify.image_is_loaded(@pointer)
+      Spotify.image_is_loaded(pointer)
     end
 
     # Retrieve the current error status.
     #
     # @return [Symbol] error
     def status
-      Spotify.image_error(@pointer)
+      Spotify.image_error(pointer)
     end
 
     # Retrieve image format.
     #
     # @return [Symbol] `:jpeg` or `:unknown`
     def format
-      Spotify.image_format(@pointer)
+      Spotify.image_format(pointer)
     end
 
     # Retrieve image ID as a string.
@@ -67,7 +67,7 @@ module Hallon
     # @param [Boolean] raw true if you want the image id as a hexadecimal string
     # @return [String]
     def id(raw = false)
-      id = Spotify.image_image_id(@pointer).read_string(20)
+      id = Spotify.image_image_id(pointer).read_string(20)
       raw ? id : to_hex(id)
     end
 
@@ -76,7 +76,7 @@ module Hallon
     # @return [String]
     def data
       FFI::MemoryPointer.new(:size_t) do |size|
-        data = Spotify.image_data(@pointer, size)
+        data = Spotify.image_data(pointer, size)
         return data.read_bytes(size.read_size_t)
       end
     end

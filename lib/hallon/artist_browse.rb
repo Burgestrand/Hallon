@@ -35,13 +35,13 @@ module Hallon
 
     # @return [Boolean] true if the album browser is loaded
     def loaded?
-      Spotify.artistbrowse_is_loaded(@pointer)
+      Spotify.artistbrowse_is_loaded(pointer)
     end
 
     # @see Error
     # @return [Symbol] artist browser error status
     def error
-      Spotify.artistbrowse_error(@pointer)
+      Spotify.artistbrowse_error(pointer)
     end
 
     # @return [Artist, nil] artist this browser is browsing
@@ -52,32 +52,32 @@ module Hallon
 
     # @return [String] artist biography
     def biography
-      Spotify.artistbrowse_biography(@pointer)
+      Spotify.artistbrowse_biography(pointer)
     end
 
     # @return [Enumerator<Image>] artist portraits
     def portraits
-      size = Spotify.artistbrowse_num_portraits(@pointer)
+      size = Spotify.artistbrowse_num_portraits(pointer)
       Enumerator.new(size) do |i|
-        id = Spotify.artistbrowse_portrait(@pointer, i).read_string(20)
+        id = Spotify.artistbrowse_portrait(pointer, i).read_string(20)
         Image.new(id)
       end
     end
 
     # @return [Enumerator<Track>] artist authored tracks
     def tracks
-      size = Spotify.artistbrowse_num_tracks(@pointer)
+      size = Spotify.artistbrowse_num_tracks(pointer)
       Enumerator.new(size) do |i|
-        track = Spotify.artistbrowse_track!(@pointer, i)
+        track = Spotify.artistbrowse_track!(pointer, i)
         Track.new(track)
       end
     end
 
     # @return [Enumerator<Album>] artist authored albums
     def albums
-      size = Spotify.artistbrowse_num_albums(@pointer)
+      size = Spotify.artistbrowse_num_albums(pointer)
       Enumerator.new(size) do |i|
-        album = Spotify.artistbrowse_album!(@pointer, i)
+        album = Spotify.artistbrowse_album!(pointer, i)
         Album.new(album)
       end
     end

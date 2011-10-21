@@ -117,7 +117,7 @@ module Hallon
     # @return [Fixnum] minimum time until it should be called again
     def process_events
       FFI::MemoryPointer.new(:int) do |p|
-        Spotify.session_process_events(@pointer, p)
+        Spotify.session_process_events(pointer, p)
         return p.read_int
       end
     end
@@ -161,7 +161,7 @@ module Hallon
     # @return [Session]
     # @see login!
     def login(username, password, remember_me = false)
-      tap { Spotify.session_login(@pointer, username, password, remember_me) }
+      tap { Spotify.session_login(pointer, username, password, remember_me) }
     end
 
     # Login the remembered user (see {#login}).
@@ -169,7 +169,7 @@ module Hallon
     # @raise [Hallon::Error] if no credentials are stored in libspotify
     # @see #relogin!
     def relogin
-      Error.maybe_raise Spotify.session_relogin(@pointer)
+      Error.maybe_raise Spotify.session_relogin(pointer)
     end
 
     # Log in to Spotify using the given credentials.
@@ -208,9 +208,9 @@ module Hallon
     #
     # @return [String]
     def remembered_user
-      bufflen = Spotify.session_remembered_user(@pointer, nil, 0)
+      bufflen = Spotify.session_remembered_user(pointer, nil, 0)
       FFI::Buffer.alloc_out(bufflen + 1) do |b|
-        Spotify.session_remembered_user(@pointer, b, b.size)
+        Spotify.session_remembered_user(pointer, b, b.size)
         return b.get_string(0)
       end if bufflen > 0
     end
@@ -220,14 +220,14 @@ module Hallon
     # @note If no credentials are stored nothing’ll happen.
     # @return [self]
     def forget_me!
-      tap { Spotify.session_forget_me(@pointer) }
+      tap { Spotify.session_forget_me(pointer) }
     end
 
     # Logs out of Spotify. Does nothing if not logged in.
     #
     # @return [self]
     def logout
-      tap { Spotify.session_logout(@pointer) if logged_in? }
+      tap { Spotify.session_logout(pointer) if logged_in? }
     end
 
     # Retrieve the currently logged in {User}.
@@ -241,14 +241,14 @@ module Hallon
     #
     # @return [Symbol] :unknown, :none, :unidirectional or :bidirectional
     def relation_type?(user)
-      Spotify.user_relation_type(@pointer, user.pointer)
+      Spotify.user_relation_type(pointer, user.pointer)
     end
 
     # Retrieve current connection status.
     #
     # @return [Symbol]
     def status
-      Spotify.session_connectionstate(@pointer)
+      Spotify.session_connectionstate(pointer)
     end
 
     # Set session cache size in megabytes.
@@ -256,12 +256,12 @@ module Hallon
     # @param [Integer]
     # @return [Integer]
     def cache_size=(size)
-      Spotify.session_set_cache_size(@pointer, @cache_size = size)
+      Spotify.session_set_cache_size(pointer, @cache_size = size)
     end
 
     # @return [String] Currently logged in users’ country.
     def country
-      coded = Spotify.session_user_country(@pointer)
+      coded = Spotify.session_user_country(pointer)
       country = ((coded >> 8) & 0xFF).chr
       country << (coded & 0xFF).chr
     end
@@ -318,7 +318,7 @@ module Hallon
         mask | (Spotify.enum_value(rule) || 0)
       end
 
-      Spotify.session_set_connection_rules(@pointer, rules)
+      Spotify.session_set_connection_rules(pointer, rules)
     end
 
     # Set the connection type for this session.
@@ -326,14 +326,14 @@ module Hallon
     # @param [Symbol] connection_type
     # @see Session.connection_types
     def connection_type=(connection_type)
-      Spotify.session_set_connection_type(@pointer, connection_type)
+      Spotify.session_set_connection_type(pointer, connection_type)
     end
 
     # Remaining time left you can stay offline before needing to relogin.
     #
     # @return [Integer] offline time left in seconds
     def offline_time_left
-      Spotify.offline_time_left(@pointer)
+      Spotify.offline_time_left(pointer)
     end
 
     # Offline synchronization status.
@@ -342,7 +342,7 @@ module Hallon
     # @see http://developer.spotify.com/en/libspotify/docs/structsp__offline__sync__status.html
     def offline_sync_status
       struct = Spotify::OfflineSyncStatus.new
-      if Spotify.offline_sync_get_status(@pointer, struct.pointer)
+      if Spotify.offline_sync_get_status(pointer, struct.pointer)
         Hash[struct.members.zip(struct.values)]
       end
     end
@@ -351,14 +351,14 @@ module Hallon
     #
     # @return [Integer]
     def offline_playlists_count
-      Spotify.offline_num_playlists(@pointer)
+      Spotify.offline_num_playlists(pointer)
     end
 
     # Number of offline tracks left to sync for offline mode.
     #
     # @return [Integer]
     def offline_tracks_to_sync
-      Spotify.offline_tracks_to_sync(@pointer)
+      Spotify.offline_tracks_to_sync(pointer)
     end
 
     # Set preferred offline bitrate.
@@ -371,7 +371,7 @@ module Hallon
     # @see Player.bitrates
     def offline_bitrate=(bitrate)
       bitrate, resync = Array(bitrate)
-      Spotify.session_preferred_offline_bitrate(@pointer, bitrate, !! resync)
+      Spotify.session_preferred_offline_bitrate(pointer, bitrate, !! resync)
     end
 
     # True if currently logged in.

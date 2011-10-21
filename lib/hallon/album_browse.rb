@@ -37,18 +37,18 @@ module Hallon
 
     # @return [Boolean] true if the album is loaded
     def loaded?
-      Spotify.albumbrowse_is_loaded(@pointer)
+      Spotify.albumbrowse_is_loaded(pointer)
     end
 
     # @see Error
     # @return [Symbol] album browser error status
     def error
-      Spotify.albumbrowse_error(@pointer)
+      Spotify.albumbrowse_error(pointer)
     end
 
     # @return [String] album review
     def review
-      Spotify.albumbrowse_review(@pointer)
+      Spotify.albumbrowse_review(pointer)
     end
 
     # @return [Artist, nil] artist performing this album
@@ -59,24 +59,24 @@ module Hallon
 
     # @return [Album, nil] album this object is browsing
     def album
-      pointer = Spotify.albumbrowse_album!(@pointer)
-      Album.new(pointer) unless pointer.null?
+      album = Spotify.albumbrowse_album!(pointer)
+      Album.new(album) unless album.null?
     end
 
     # @return [Enumerator<String>] list of copyright notices
     def copyrights
-      size = Spotify.albumbrowse_num_copyrights(@pointer)
+      size = Spotify.albumbrowse_num_copyrights(pointer)
       Enumerator.new(size) do |i|
-        Spotify.albumbrowse_copyright(@pointer, i)
+        Spotify.albumbrowse_copyright(pointer, i)
       end
     end
 
     # @return [Enumerator<Track>] list of tracks
     def tracks
-      size = Spotify.albumbrowse_num_tracks(@pointer)
+      size = Spotify.albumbrowse_num_tracks(pointer)
       Enumerator.new(size) do |i|
-        pointer = Spotify.albumbrowse_track!(@pointer, i)
-        Track.new(pointer) unless pointer.null?
+        track = Spotify.albumbrowse_track!(pointer, i)
+        Track.new(track) unless track.null?
       end
     end
   end

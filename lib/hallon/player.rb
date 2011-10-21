@@ -9,6 +9,9 @@ module Hallon
   class Player
     include Observable
 
+    # @return [Spotify::Pointer<Session>] session pointer
+    attr_reader :pointer
+
     # @return [Array<Symbol>] a list of available playback bitrates.
     def self.bitrates
       Spotify.enum_type(:bitrate).symbols.sort_by do |sym|
@@ -74,7 +77,7 @@ module Hallon
     # @param [Symbol] bitrate one of :96k, :160k, :320k
     # @return [Symbol]
     def bitrate=(bitrate)
-      Spotify.session_preferred_bitrate(@pointer, bitrate)
+      Spotify.session_preferred_bitrate(pointer, bitrate)
     end
 
     # Loads a Track for playing.
@@ -83,7 +86,7 @@ module Hallon
     # @return [Player]
     # @raise [Error] if the track could not be loaded
     def load(track)
-      error = Spotify.session_player_load(@pointer, track.pointer)
+      error = Spotify.session_player_load(pointer, track.pointer)
       tap { Error.maybe_raise(error) }
     end
 
@@ -93,7 +96,7 @@ module Hallon
     # @param [Track] track
     # @return [Player]
     def prefetch(track)
-      error = Spotify.session_player_prefetch(@pointer, track.pointer)
+      error = Spotify.session_player_prefetch(pointer, track.pointer)
       tap { Error.maybe_raise(error) }
     end
 
@@ -102,21 +105,21 @@ module Hallon
     # @return [Player]
     def play(track = nil)
       load(track) unless track.nil?
-      tap { Spotify.session_player_play(@pointer, true) }
+      tap { Spotify.session_player_play(pointer, true) }
     end
 
     # Pause playback of a Track.
     #
     # @return [Player]
     def pause
-      tap { Spotify.session_player_play(@pointer, false) }
+      tap { Spotify.session_player_play(pointer, false) }
     end
 
     # Stop playing current track and unload it.
     #
     # @return [Player]
     def stop
-      tap { Spotify.session_player_unload(@pointer) }
+      tap { Spotify.session_player_unload(pointer) }
     end
 
     # Seek to the desired position of the currently loaded Track.
@@ -124,7 +127,7 @@ module Hallon
     # @param [Numeric] seconds offset position in seconds
     # @return [Player]
     def seek(seconds)
-      tap { Spotify.session_player_seek(@pointer, seconds * 1000) }
+      tap { Spotify.session_player_seek(pointer, seconds * 1000) }
     end
   end
 end

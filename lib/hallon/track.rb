@@ -52,7 +52,7 @@ module Hallon
     # @note This’ll be an empty string unless the track is loaded.
     # @return [String]
     def name
-      Spotify.track_name(@pointer)
+      Spotify.track_name(pointer)
     end
 
     # Duration of the track in seconds.
@@ -60,7 +60,7 @@ module Hallon
     # @note This’ll be `0` unless the track is loaded.
     # @return [Rational]
     def duration
-      Rational(Spotify.track_duration(@pointer), 1000)
+      Rational(Spotify.track_duration(pointer), 1000)
     end
 
     # Track popularity, between 0 and 1.
@@ -68,35 +68,35 @@ module Hallon
     # @note This’ll be `0` unless the track is loaded.
     # @return [Rational]
     def popularity
-      Rational(Spotify.track_popularity(@pointer), 100)
+      Rational(Spotify.track_popularity(pointer), 100)
     end
 
     # Disc number this track appears in.
     #
     # @note This function is a bit special. See libspotify docs for details.
     def disc
-      Spotify.track_disc(@pointer)
+      Spotify.track_disc(pointer)
     end
 
     # Position of track on its’ disc.
     #
     # @note This function is a bit special. See libspotify docs for details.
     def index
-      Spotify.track_index(@pointer)
+      Spotify.track_index(pointer)
     end
 
     # Retrieve track error status.
     #
     # @return [Symbol]
     def status
-      Spotify.track_error(@pointer)
+      Spotify.track_error(pointer)
     end
 
     # True if the track is loaded
     #
     # @return [Boolean]
     def loaded?
-      Spotify.track_is_loaded(@pointer)
+      Spotify.track_is_loaded(pointer)
     end
 
     # Album this track belongs to.
@@ -104,7 +104,7 @@ module Hallon
     # @note This’ll be `nil` unless the track is loaded.
     # @return [Hallon::Album]
     def album
-      album = Spotify.track_album!(@pointer)
+      album = Spotify.track_album!(pointer)
       Album.new(album) unless album.null?
     end
 
@@ -134,7 +134,7 @@ module Hallon
     # @note This’ll always return false unless the track is loaded.
     # @return [Boolean]
     def available?
-      Spotify.track_is_available(session.pointer, @pointer)
+      Spotify.track_is_available(session.pointer, pointer)
     end
 
     # True if the Track is a local track.
@@ -142,7 +142,7 @@ module Hallon
     # @note This’ll always return false unless the track is loaded.
     # @return [Boolean]
     def local?
-      Spotify.track_is_local(session.pointer, @pointer)
+      Spotify.track_is_local(session.pointer, pointer)
     end
 
     # True if the Track is autolinked.
@@ -150,7 +150,7 @@ module Hallon
     # @note This’ll always return false unless the track is loaded.
     # @return [Boolean]
     def autolinked?
-      Spotify.track_is_autolinked(session.pointer, @pointer)
+      Spotify.track_is_autolinked(session.pointer, pointer)
     end
 
     # True if the track is starred.
@@ -158,7 +158,7 @@ module Hallon
     # @note This’ll always return false unless the track is loaded.
     # @return [Boolean]
     def starred?
-      Spotify.track_is_starred(session.pointer, @pointer)
+      Spotify.track_is_starred(session.pointer, pointer)
     end
 
     # Set {#starred?} status of current track.

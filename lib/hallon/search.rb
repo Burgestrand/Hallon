@@ -56,50 +56,50 @@ module Hallon
 
     # @return [Boolean] true if the search has been fully loaded
     def loaded?
-      Spotify.search_is_loaded(@pointer)
+      Spotify.search_is_loaded(pointer)
     end
 
     # @return [Symbol] error status
     def error
-      Spotify.search_error(@pointer)
+      Spotify.search_error(pointer)
     end
 
     # @return [String] search query this search was created with
     def query
-      Spotify.search_query(@pointer)
+      Spotify.search_query(pointer)
     end
 
     # @return [String] “did you mean?” suggestion for current search
     def did_you_mean
-      Spotify.search_did_you_mean(@pointer)
+      Spotify.search_did_you_mean(pointer)
     end
 
     # @return [Enumerator<Track>] enumerate over all tracks in the search result
     def tracks
-      size = Spotify.search_num_tracks(@pointer)
+      size = Spotify.search_num_tracks(pointer)
       Enumerator.new(size) do |i|
-        track = Spotify.search_track!(@pointer, i)
+        track = Spotify.search_track!(pointer, i)
         Track.new(track)
       end
     end
 
     # @return [Integer] total tracks available for this search query
     def total_tracks
-      Spotify.search_total_tracks(@pointer)
+      Spotify.search_total_tracks(pointer)
     end
 
     # @return [Enumerator<Album>] enumerate over all albums in the search result
     def albums
-      size  = Spotify.search_num_albums(@pointer)
+      size  = Spotify.search_num_albums(pointer)
       Enumerator.new(size) do |i|
-        album = Spotify.search_album!(@pointer, i)
+        album = Spotify.search_album!(pointer, i)
         Album.new(album)
       end
     end
 
     # @return [Integer] total tracks available for this search query
     def total_albums
-      Spotify.search_total_albums(@pointer)
+      Spotify.search_total_albums(pointer)
     end
 
     # @return [Enumerator<Artist>] enumerate over all artists in the search result
@@ -113,7 +113,7 @@ module Hallon
 
     # @return [Integer] total tracks available for this search query
     def total_artists
-      Spotify.search_total_artists(@pointer)
+      Spotify.search_total_artists(pointer)
     end
 
     # @return [Link] link for this search query

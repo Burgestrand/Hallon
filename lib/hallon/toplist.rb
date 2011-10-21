@@ -32,12 +32,12 @@ module Hallon
 
     # @return [Boolean] true if the toplist is loaded
     def loaded?
-      Spotify.toplistbrowse_is_loaded(@pointer)
+      Spotify.toplistbrowse_is_loaded(pointer)
     end
 
     # @return [Symbol] toplist error status
     def error
-      Spotify.toplistbrowse_error(@pointer)
+      Spotify.toplistbrowse_error(pointer)
     end
 
     # @return [Enumerator<Artist>]

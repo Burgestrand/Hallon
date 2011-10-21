@@ -45,7 +45,7 @@ module Hallon
 
     # @return [Boolean] true if the user is loaded
     def loaded?
-      Spotify.user_is_loaded(@pointer)
+      Spotify.user_is_loaded(pointer)
     end
 
     # Retrieve the name of the current user.
@@ -56,11 +56,11 @@ module Hallon
     def name(type = :canonical)
       case type
       when :display
-        Spotify.user_display_name(@pointer)
+        Spotify.user_display_name(pointer)
       when :full
-        Spotify.user_full_name(@pointer)
+        Spotify.user_full_name(pointer)
       when :canonical
-        Spotify.user_canonical_name(@pointer)
+        Spotify.user_canonical_name(pointer)
       else
         raise ArgumentError, "expected type to be :display, :full or :canonical, but was #{type}"
       end.to_s
@@ -70,7 +70,7 @@ module Hallon
     #
     # @return [String]
     def picture
-      Spotify.user_picture(@pointer).to_s
+      Spotify.user_picture(pointer).to_s
     end
   end
 end
