@@ -27,8 +27,7 @@ module Hallon
       end
 
       @callback = proc { trigger(:load) }
-      pointer = Spotify.toplistbrowse_create(session.pointer, type, region, user, @callback, nil)
-      @pointer = Spotify::Pointer.new(pointer, :toplistbrowse, false)
+      @pointer  = Spotify.toplistbrowse_create!(session.pointer, type, region, user, @callback, nil)
     end
 
     # @return [Boolean] true if the toplist is loaded
