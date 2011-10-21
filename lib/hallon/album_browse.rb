@@ -21,13 +21,18 @@ module Hallon
     # Creates an AlbumBrowse instance from an Album or an Album pointer.
     #
     # @note Use {Album#browse} to browse an Album.
-    # @param [Album, FFI::Pointer] album
+    # @param [Album, Spotify::Pointer] album
     def initialize(album)
-      album   = album.pointer if album.respond_to?(:pointer)
-      @callback = proc { trigger(:load) }
+      pointer = album
+      pointer = pointer.pointer if pointer.respond_to?(:pointer)
 
-      albumbrowse = Spotify.albumbrowse_create(session.pointer, album, @callback, nil)
-      @pointer    = Spotify::Pointer.new(albumbrowse, :albumbrowse, false)
+      unless Spotify::Pointer.typechecks?(pointer, :album)
+        given = pointer.respond_to?(:type) ? pointer.type : pointer.inspect
+        raise TypeError, "expected album pointer, was given #{given}"
+      end
+
+      @callback = proc { trigger(:load) }
+      @pointer  = Spotify.albumbrowse_create!(session.pointer, pointer, @callback, nil)
     end
 
     # @return [Boolean] true if the album is loaded

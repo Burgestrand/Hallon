@@ -15,6 +15,6 @@ describe Hallon::AlbumBrowse do
   its('copyrights.size') { should eq 2 }
   its('copyrights.to_a') { should eq %w[Kim Elin] }
   its('tracks.size') { should eq 2 }
-  its('tracks.to_a') { should eq [mock_track, mock_track_two].map{ |p| Hallon::Track.new(p) } }
+  its('tracks.to_a') { should eq instantiate(Hallon::Track, mock_track, mock_track_two) }
   its(:review) { should eq "This album is AWESOME" }
 end
