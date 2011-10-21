@@ -24,8 +24,11 @@ end
 
 desc "Process the Hallon codebase, finding out which Spotify methods are being used"
 task 'spotify:coverage' do
+  $:.unshift File.expand_path('../lib', __FILE__)
+
   require 'set'
   require 'spotify'
+  require 'hallon/ext/spotify'
 
   begin
     require 'ruby_parser'
@@ -35,17 +38,14 @@ task 'spotify:coverage' do
   end
 
   methods = Spotify.methods(false).map(&:to_s)
+  auto_gc = Set.new(methods.grep(/!\z/))
   covered = Set.new(methods)
+  warning = []
   ignored = [
     'session_release',  # segfaults on libspotify <= 9
     'session_userdata', # wont support this
     'link_as_track',    # using link_as_track_and_offset instead
-    'toplistbrowse_add_ref', # toplistbrowse creates its’ own pointer
-    'artistbrowse_add_ref',  # artistbrowse creates its’ own pointer
-    'albumbrowse_add_ref',   # albumbrowse creates its’ own pointer
-    'link_add_ref',          # all creation of links has +1 ref
-    'image_add_ref',         # all creation of image has +1 ref
-    'search_add_ref',        # search creates its’ own pointer
+    'wrap_function',    # not a spotify function
   ]
 
   covered -= ignored
@@ -56,10 +56,17 @@ task 'spotify:coverage' do
   handlers = Hash.new(Hash.new(silencer))
 
   # Direct calls
-  handlers[Sexp.new(:const, :Spotify)] = Hash.new(proc { |_, meth, _| meth })
+  handlers[Sexp.new(:const, :Spotify)] = Hash.new(proc do |_, meth, _|
+    if auto_gc.include?("#{meth}!")
+      warning << meth
+    end
+
+    [meth, meth.to_s.sub(/!\z/, '')]
+  end)
 
   # Spotify Pointer
   pointer = handlers[Sexp.new(:colon2, [:const, :Spotify], :Pointer)] = Hash.new(printer)
+  pointer[:typechecks?] = silencer
   pointer[:new] = proc do |recv, meth, (_, ptr, name, release)|
     name = name.value
     release &&= release.value != :false
@@ -91,7 +98,13 @@ task 'spotify:coverage' do
 
   puts "Ignored:"
   ignored.each_slice(3) do |slice|
-    puts "\t#{slice.join(', ')}"
+    puts "  #{slice.join(', ')}"
+  end
+  puts
+
+  puts "Warnings (use auto-gc methods instead!):"
+  warning.each do |method|
+    puts "  #{method}"
   end
   puts
 
