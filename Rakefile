@@ -28,7 +28,6 @@ task 'spotify:coverage' do
 
   require 'set'
   require 'spotify'
-  require 'hallon/ext/spotify'
 
   begin
     require 'ruby_parser'
@@ -36,6 +35,25 @@ task 'spotify:coverage' do
     puts "You need ruby_parser for the spotify:coverage rake task"
     abort
   end
+
+  # Wrapped functions return pointers that are auto-GC’d by Ruby,
+  # so we ignore add_ref and release for these methods; but since
+  # we don’t know their type by mere name, we must resort to this
+  # hack to do it automatically (because we can).
+  class << Spotify
+    def lookup_return_value(name)
+      @function_to_return_type[name.to_s]
+    end
+
+    def define_singleton_method(name, &block)
+      return_type = block.binding.eval("return_type")
+      @function_to_return_type ||= {}
+      @function_to_return_type[name.to_s] = return_type
+
+      super
+    end
+  end
+  require 'hallon/ext/spotify'
 
   methods = Spotify.methods(false).map(&:to_s)
   auto_gc = Set.new(methods.grep(/!\z/))
@@ -45,7 +63,10 @@ task 'spotify:coverage' do
     'session_release',  # segfaults on libspotify <= 9
     'session_userdata', # wont support this
     'link_as_track',    # using link_as_track_and_offset instead
+    'link_as_track!',   # using link_as_track_and_offset! instead
     'wrap_function',    # not a spotify function
+    'lookup_return_value', # custom method
+    'define_singleton_method', # overloaded by us
   ]
 
   covered -= ignored
@@ -61,23 +82,26 @@ task 'spotify:coverage' do
       warning << meth
     end
 
-    [meth, meth.to_s.sub(/!\z/, '')]
-  end)
+    result = [meth]
 
-  # Spotify Pointer
-  pointer = handlers[Sexp.new(:colon2, [:const, :Spotify], :Pointer)] = Hash.new(printer)
-  pointer[:typechecks?] = silencer
-  pointer[:new] = proc do |recv, meth, (_, ptr, name, release)|
-    name = name.value
-    release &&= release.value != :false
-    ["#{name}_release", "#{name if release}_add_ref"]
-  end
+    # if it’s auto-GC’d, we can also account for _release and _add_ref
+    if meth =~ /(.+)!\z/
+      return_type = Spotify.lookup_return_value(meth)
+
+      result << $1
+      result << "#{return_type}_release"
+      result << "#{return_type}_add_ref"
+    end
+
+    result
+  end)
 
   # DSL Methods
   no_receiver = handlers[nil] = Hash.new(silencer)
   no_receiver[:from_link] = no_receiver[:to_link] = proc do |recv, meth, (_, name)|
     prefix = meth == :to_link ? "link_create" : "link"
-    "%s_%s" % [prefix, name.value]
+    method = "%s_%s" % [prefix, name.value]
+    [method, "#{method}!"]
   end
 
   FileList['lib/**/*.rb'].each do |file|
@@ -102,11 +126,13 @@ task 'spotify:coverage' do
   end
   puts
 
-  puts "Warnings (use auto-gc methods instead!):"
-  warning.each do |method|
-    puts "  #{method}"
+  unless warning.empty?
+    puts "Warnings (use auto-gc methods instead!):"
+    warning.each do |method|
+      puts "  #{method}"
+    end
+    puts
   end
-  puts
 
   puts "Coverage: %.02f%%" % (100 * (1 - covered.size.fdiv(methods.size)))
 end
