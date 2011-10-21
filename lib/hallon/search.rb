@@ -21,13 +21,11 @@ module Hallon
         mask | (Spotify.enum_value(genre) || 0)
       end
 
-      search = allocate
-      search.instance_eval do
-        @callback = proc { search.trigger(:load) }
-        pointer   = Spotify.radio_search_create(session.pointer, from_year, to_year, genres, @callback, nil)
-        @pointer  = Spotify::Pointer.new(pointer, :search, false)
-
-        self
+      allocate.tap do |search|
+        search.instance_eval do
+          @callback = proc { search.trigger(:load) }
+          @pointer  = Spotify.radio_search_create!(session.pointer, from_year, to_year, genres, @callback, nil)
+        end
       end
     end
 
@@ -53,8 +51,7 @@ module Hallon
       }.merge(options)
 
       @callback = proc { trigger(:load) }
-      pointer   = Spotify.search_create(session.pointer, query, o[:tracks_offset].to_i, o[:tracks].to_i, o[:albums_offset].to_i, o[:albums].to_i, o[:artists_offset].to_i, o[:artists].to_i, @callback, nil)
-      @pointer  = Spotify::Pointer.new(pointer, :search, false)
+      @pointer  = Spotify.search_create!(session.pointer, query, o[:tracks_offset].to_i, o[:tracks].to_i, o[:albums_offset].to_i, o[:albums].to_i, o[:artists_offset].to_i, o[:artists].to_i, @callback, nil)
     end
 
     # @return [Boolean] true if the search has been fully loaded

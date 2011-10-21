@@ -59,9 +59,9 @@ module Spotify
   attach_function :mock_artistbrowse, :mocksp_artistbrowse_create, [:error, :artist, :int, :array, :int, :array, :int, :array, :int, :array, :string, :artistbrowse_complete_cb, :pointer], :artistbrowse
   attach_function :mock_toplistbrowse, :mocksp_toplistbrowse_create, [:error, :int, :array, :int, :array, :int, :array], :toplistbrowse
 
+  attach_mock_function :mock_playlist, :mocksp_playlist_create, [:string, :bool, :user, :bool, :string, :image_id, :bool, :uint, Spotify::Subscribers, :bool, :playlist_offline_status, :int, :int, :array], :playlist
   attach_function :mock_search, :mocksp_search_create, [:error, :string, :string, :int, :int, :array, :int, :int, :array, :int, :int, :array, :search_complete_cb, :pointer], :search
   attach_function :mock_subscribers, :mocksp_subscribers, [:int, :array], Spotify::Subscribers
-  attach_mock_function :mock_playlist, :mocksp_playlist_create, [:string, :bool, :user, :bool, :string, :image_id, :bool, :uint, Spotify::Subscribers, :bool, :playlist_offline_status, :int, :int, :array], :playlist
 
   # mocked accessors
   attach_function :mocksp_playlist_get_autolink_tracks, [:playlist], :bool
