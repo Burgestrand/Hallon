@@ -62,21 +62,18 @@ while username = prompt("Enter a Spotify username: ")
     puts "Listing #{num_playlists} playlists."
 
     num_playlists.times do |i|
-      playlist = Spotify::playlistcontainer_playlist(container, i)
-      session.wait_for { Spotify::playlist_is_loaded(playlist) }
+      playlist = Spotify::playlistcontainer_playlist!(container, i)
+      playlist = Hallon::Playlist.new(playlist)
+      session.wait_for { playlist.loaded? }
 
       puts
-      puts Spotify::playlist_name(playlist) << ": "
+      puts playlist.name << ": "
 
-      num_tracks = Spotify::playlist_num_tracks(playlist)
-      num_tracks.times do |j|
-        # Here we go back into Hallon API, passing the raw pointer
-        # to Hallon::Track.new; this means all of Hallon::Track API
-        # is supported on “track” here!
-        track = Hallon::Track.new(Spotify::playlist_track(playlist, j))
+      num_tracks = playlist.tracks.size
+      playlist.tracks.each_with_index do |track, i|
         session.wait_for { track.loaded? }
 
-        puts "\t (#{j+1}/#{num_tracks}) #{track.name}"
+        puts "\t (#{i+1}/#{num_tracks}) #{track.name}"
       end
     end
   rescue Interrupt
