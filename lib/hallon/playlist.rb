@@ -162,7 +162,7 @@ module Hallon
     # @return [Image, nil]
     def image
       buffer = FFI::Buffer.alloc_out(20)
-      if has_image = Spotify.playlist_get_image(pointer, buffer)
+      if Spotify.playlist_get_image(pointer, buffer)
         Image.new buffer.read_bytes(20)
       end
     end

@@ -34,13 +34,10 @@ describe Hallon::Search do
     it { should_not be_empty }
   end
 
-  describe ".search" do
+  describe ".radio" do
     subject do
       Spotify.should_receive(:radio_search_create).and_return(mock_search)
-
-      mock_session do
-        search = Hallon::Search.radio(1990..2010, :jazz, :punk)
-      end
+      mock_session { Hallon::Search.radio(1990..2010, :jazz, :punk) }
     end
 
     it "should simply ignore invalid genres" do

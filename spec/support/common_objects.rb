@@ -28,8 +28,6 @@ RSpec::Core::ExampleGroup.instance_eval do
   end
 
   let(:mock_artistbrowse) do
-    artistbrowse = nil
-
     mock_image_pointer = FFI::MemoryPointer.from_string(mock_image_id)
     similar_artists    = pointer_array_with(mock_artist, mock_artist_two)
     portraits = pointer_array_with(mock_image_pointer, mock_image_pointer)

@@ -19,7 +19,6 @@ describe Hallon::Enumerator do
 
   describe "#each" do
     it "should call the containing block" do
-      calls = []
       enum = Hallon::Enumerator.new(4) { |i| item.get(i) }
       enum.each_with_index { |x, i| x.should eq alphabet[i] }
     end
