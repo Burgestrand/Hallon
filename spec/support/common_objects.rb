@@ -119,6 +119,10 @@ RSpec::Core::ExampleGroup.instance_eval do
     end
     session
   end
+
+  let(:mock_image_link) do
+    Spotify.link_create_from_string("spotify:image:3ad93423add99766e02d563605c6e76ed2b0e450")
+  end
 end
 
 RSpec::Core::ExampleGroup.new.instance_eval do

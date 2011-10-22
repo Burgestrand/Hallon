@@ -63,10 +63,16 @@ module Hallon
 
     # Retrieve album cover art.
     #
-    # @return [Image]
-    def cover
-      image_id = Spotify.album_cover(pointer)
-      Image.new(image_id.read_string(20)) unless image_id.null?
+    # @param [Boolean] as_image true if you want it as an Image
+    # @return [Image, Link, nil] album cover, or the link to it, or nil
+    def cover(as_image = true)
+      if as_image
+        image_id = Spotify.album_cover(pointer)
+        Image.new(image_id.read_string(20)) unless image_id.null?
+      else
+        link = Spotify.link_create_from_album_cover!(pointer)
+        Link.new(link)
+      end
     end
 
     # Retrieve the album Artist.
