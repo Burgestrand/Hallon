@@ -55,12 +55,18 @@ module Hallon
       Spotify.artistbrowse_biography(pointer)
     end
 
-    # @return [Enumerator<Image>] artist portraits
-    def portraits
+    # @param [Boolean] as_image true if you want an enumerator of Images (false for Links)
+    # @return [Enumerator<Image>, Enumerator<Link>] artist portraits
+    def portraits(as_image = true)
       size = Spotify.artistbrowse_num_portraits(pointer)
       Enumerator.new(size) do |i|
-        id = Spotify.artistbrowse_portrait(pointer, i).read_string(20)
-        Image.new(id)
+        if as_image
+          id = Spotify.artistbrowse_portrait(pointer, i).read_string(20)
+          Image.new(id)
+        else
+          link = Spotify.link_create_from_artistbrowse_portrait!(pointer, i)
+          Link.new(link)
+        end
       end
     end
 

@@ -19,6 +19,16 @@ describe Hallon::ArtistBrowse do
     subject.map{ |img| img.id(true) }.should eq [mock_image_id, mock_image_id]
   end
 
+  specify 'portraits(false)' do
+    links = []
+    links << mock_image_link
+    links << mock_image_link_two
+
+    Spotify.should_receive(:link_create_from_artistbrowse_portrait!).and_return(*links)
+
+    subject.portraits(false).to_a.should eq instantiate(Hallon::Link, mock_image_link, mock_image_link_two)
+  end
+
   its('tracks.size') { should eq 2 }
   its('tracks.to_a') { should eq [mock_track, mock_track_two].map{ |p| Hallon::Track.new(p) } }
   its('albums.size') { should eq 1 }

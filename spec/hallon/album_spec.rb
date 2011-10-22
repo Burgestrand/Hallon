@@ -47,7 +47,7 @@ describe Hallon::Album do
     end
 
     it "should be a link if requested" do
-      Spotify.should_receive(:link_create_from_album_cover).and_return(mock_image_link)
+      Spotify.should_receive(:link_create_from_album_cover!).and_return(mock_image_link)
       subject.cover(false).to_str.should eq "spotify:image:3ad93423add99766e02d563605c6e76ed2b0e450"
     end
   end
