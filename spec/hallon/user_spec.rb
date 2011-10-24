@@ -57,6 +57,7 @@ describe Hallon::User do
       end
 
       it "should return nil on failure" do
+        Spotify.should_receive(:inbox_post_tracks).and_return(null_pointer)
         mock_session { user.post([]).should be_nil }
       end
     end
