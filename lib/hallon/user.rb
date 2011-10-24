@@ -7,6 +7,29 @@ module Hallon
   #
   # @see http://developer.spotify.com/en/libspotify/docs/group__user.html
   class User < Base
+    # A Post is created upon sending tracks (with an optional message) to a user.
+    #
+    # @see http://developer.spotify.com/en/libspotify/docs/group__inbox.html
+    class Post < Base
+      include Observable
+
+      # @param [Spotify::Pointer<inbox>]
+      def initialize(username, message, tracks, &block)
+        @callback = proc { trigger(:load) }
+
+        FFI::MemoryPointer.new(:pointer, tracks.length) do |ary|
+          ary.write_array_of_pointer tracks.map(&:pointer)
+          @pointer = Spotify.inbox_post_tracks!(session.pointer, username, ary, tracks.length, message, @callback, nil)
+        end
+      end
+
+      # @see Error.explain
+      # @return [Symbol] error status of inbox post
+      def error
+        Spotify.inbox_error(pointer)
+      end
+    end
+
     extend Linkable
 
     # @macro [attach] from_link
@@ -71,6 +94,22 @@ module Hallon
     # @return [String]
     def picture
       Spotify.user_picture(pointer).to_s
+    end
+
+    # Send tracks to this users’ inbox, with an optional message.
+    #
+    # @overload post(message, tracks)
+    #   @param [#to_s] message
+    #   @param [Array<Track>] tracks
+    #
+    # @overload post(tracks)
+    #   @param [Array<Track>] tracks
+    #
+    # @return [Post, nil]
+    def post(message = nil, tracks)
+      message &&= message.encode('UTF-8')
+      post = Post.new(name, message, tracks)
+      post unless post.pointer.null?
     end
   end
 end

@@ -37,5 +37,28 @@ describe Hallon::User do
         user.picture.should eq "https://secure.gravatar.com/avatar/b67b73b5b1fd84119ec788b1c3df02ad"
       end
     end
+
+    describe "#post" do
+      let(:post) { mock_session { user.post(tracks) } }
+      let(:tracks) { instantiate(Hallon::Track, mock_track, mock_track_two) }
+
+      it "should have an error status" do
+        post.error.should eq :ok
+      end
+
+      it "should post to the correct user" do
+        Spotify.should_receive(:inbox_post_tracks).with(any_args, user.name, any_args, any_args, any_args, any_args, any_args).and_return(null_pointer)
+        mock_session { user.post(tracks) }
+      end
+
+      it "should use given message if available" do
+        Spotify.should_receive(:inbox_post_tracks).with(any_args, any_args, any_args, any_args, "Hello there", any_args, any_args).and_return(null_pointer)
+        mock_session { user.post("Hello there", tracks) }
+      end
+
+      it "should return nil on failure" do
+        mock_session { user.post([]).should be_nil }
+      end
+    end
   end
 end
