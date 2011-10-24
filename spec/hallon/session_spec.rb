@@ -125,6 +125,10 @@ describe Hallon::Session do
       session.login 'Kim', 'pass'
       session.user.name.should eq 'Kim'
     end
+
+    it "should return nil if not logged in" do
+      session.user.should be_nil
+    end
   end
 
   describe "#country" do

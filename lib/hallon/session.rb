@@ -234,7 +234,8 @@ module Hallon
     #
     # @return [User]
     def user
-      User.new Spotify.session_user!(pointer)
+      user = Spotify.session_user!(pointer)
+      User.new(user) unless user.null?
     end
 
     # Retrieve the relation type between logged in {User} and `user`.
