@@ -14,6 +14,7 @@ end
 
 desc "Run the full test suite and generate a coverage report"
 task 'spec:cov' => ['clean', 'spec'] do
+  require 'bundler/setup'
   require 'cover_me'
   require './spec/support/cover_me'
 
@@ -23,7 +24,7 @@ end
 
 desc "Process the Hallon codebase, finding out which Spotify methods are being used"
 task 'spotify:coverage' do
-  $:.unshift File.expand_path('../lib', __FILE__)
+  require 'bundler/setup'
 
   require 'set'
   require 'spotify'
@@ -103,11 +104,16 @@ task 'spotify:coverage' do
     [method, "#{method}!"]
   end
 
+  fails = {}
   FileList['lib/**/*.rb'].each do |file|
-    ast   = RubyParser.new.parse File.read(file)
-    ast.each_of_type(:call) do |_, recv, meth, args, *rest|
-      name = handlers[recv][meth].call(recv, meth, args)
-      covered.subtract Array(name).map(&:to_s)
+    begin
+      ast   = RubyParser.new.parse File.read(file)
+      ast.each_of_type(:call) do |_, recv, meth, args, *rest|
+        name = handlers[recv][meth].call(recv, meth, args)
+        covered.subtract Array(name).map(&:to_s)
+      end
+    rescue => e
+      fails[file] = e.message.strip + " (#{e.class.name})"
     end
   end
 
@@ -124,6 +130,14 @@ task 'spotify:coverage' do
     puts "  #{slice.join(', ')}"
   end
   puts
+
+  unless fails.empty?
+    puts "Failures:"
+    fails.each_pair do |file, fail|
+      puts "  #{file}: #{fail}"
+    end
+    puts
+  end
 
   unless warning.empty?
     puts "Warnings (use auto-gc methods instead!):"
