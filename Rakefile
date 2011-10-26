@@ -9,7 +9,6 @@ YARD::Rake::YardocTask.new
 
 require 'rspec/core/rake_task'
 RSpec::Core::RakeTask.new('spec') do |task|
-  task.skip_bundler = true
   task.ruby_opts = '-W2'
 end
 
