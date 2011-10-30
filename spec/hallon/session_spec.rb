@@ -260,6 +260,23 @@ describe Hallon::Session do
     end
   end
 
+
+  describe "#starred" do
+    let(:starred) { mock_session { Hallon::Playlist.new("spotify:user:burgestrand:starred") } }
+
+    it "should return the sessions (current users) starred playlist" do
+      session.login 'burgestrand', 'pass'
+
+      session.should be_logged_in
+      session.starred.should eq starred
+    end
+
+    it "should return nil if not logged in" do
+      session.should_not be_logged_in
+      session.starred.should be_nil
+    end
+  end
+
   context "when logged in", :logged_in => true do
     it "should be logged in" do
       session.should be_logged_in

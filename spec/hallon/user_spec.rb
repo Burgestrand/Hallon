@@ -5,7 +5,7 @@ describe Hallon::User do
     let(:custom_object) { "burgestrand" }
   end
 
-  describe "an instance", :logged_in => true do
+  describe "an instance" do
     let(:user) { Hallon::User.new(mock_user) }
 
     describe "#to_link" do
@@ -66,11 +66,13 @@ describe Hallon::User do
       let(:starred) { Hallon::Playlist.new("spotify:user:%s:starred" % user.name) }
 
       it "should return the users’ starred playlist" do
+        session.login 'Kim', 'pass'
+        session.should be_logged_in
         mock_session { user.starred.should eq starred }
       end
 
       it "should return nil if not logged in" do
-        Spotify.should_receive(:session_starred_for_user_create).and_return(null_pointer)
+        session.should_not be_logged_in
         mock_session { user.starred.should be_nil }
       end
     end

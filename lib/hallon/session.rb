@@ -375,6 +375,15 @@ module Hallon
       Spotify.session_preferred_offline_bitrate(pointer, bitrate, !! resync)
     end
 
+    # Retrieve the currently logged in users’ starred playlist.
+    #
+    # @note Returns nil when no user is logged in.
+    # @return [Playlist, nil]
+    def starred
+      playlist = Spotify.session_starred_create!(pointer)
+      Playlist.new(playlist) unless playlist.null?
+    end
+
     # True if currently logged in.
     # @see #status
     def logged_in?
