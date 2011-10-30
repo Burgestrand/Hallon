@@ -210,8 +210,23 @@ module Hallon
 
     # @return [Enumerable<Playlist::Track>] a list of playlist tracks
     def tracks
-      Enumerator.new(size) do |i|
-        Playlist::Track.new(pointer, i)
+      Enumerator.new(size) { |i| Playlist::Track.new(pointer, i) }
+    end
+
+    # Add a list of tracks to the playlist starting at given position.
+    #
+    # @param [Track, Array<Track>] tracks
+    # @param [Integer] index starting index to add tracks from (between 0..size)
+    # @return [Playlist]
+    # @raise [Hallon::Error] if the operation failed
+    def insert(tracks, index = size)
+      tracks = Array(tracks).map(&:pointer)
+      tracks_ary = FFI::MemoryPointer.new(:pointer, tracks.size)
+      tracks_ary.write_array_of_pointer(tracks)
+
+      tap do
+        error = Spotify.playlist_add_tracks(pointer, tracks_ary, tracks.size, index, session.pointer)
+        Error.maybe_raise(error)
       end
     end
   end

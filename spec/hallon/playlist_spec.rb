@@ -51,6 +51,27 @@ describe Hallon::Playlist do
     end
   end
 
+  describe "#insert" do
+    let(:tracks) { instantiate(Hallon::Track, mock_track, mock_track_two) }
+
+    it "should add the given tracks to the playlist at correct index" do
+      old_tracks = playlist.tracks.to_a
+      new_tracks = old_tracks.insert(1, *tracks)
+      mock_session { playlist.insert(tracks, 1) }
+
+      playlist.tracks.to_a.should eq new_tracks
+    end
+
+    it "should default to adding tracks at the end" do
+      mock_session { playlist.insert(tracks) }
+      playlist.tracks[2, 2].should eq tracks
+    end
+
+    it "should raise an error if the operation cannot be completed" do
+      expect { mock_session { playlist.insert(nil, -1) } }.to raise_error(Hallon::Error)
+    end
+  end
+
   describe "#name=" do
     it "should set the new playlist name" do
       playlist.name.should eq "Megaplaylist"
