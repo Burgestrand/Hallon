@@ -18,6 +18,13 @@ module Hallon
       super
     end
 
+    # Default string representation of self.
+    def to_s
+      name    = self.class.name
+      address = pointer.address.to_s(16)
+      "<#{name} address=0x#{address}>"
+    end
+
     private
       # The current Session instance.
       #
