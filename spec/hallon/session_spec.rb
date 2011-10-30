@@ -277,15 +277,11 @@ describe Hallon::Session do
     end
   end
 
-  context "when logged in", :logged_in => true do
-    it "should be logged in" do
-      session.should be_logged_in
-    end
+  describe "#relation_type?" do
+    let(:user) { Hallon::User.new(mock_user) }
 
-    describe "#relation_type?" do
-      it "should retrieve the relation between the current user and given user" do
-        session.relation_type?(session.user).should eq :none
-      end
+    it "should retrieve the relation between the current user and given user" do
+      session.relation_type?(user).should eq :none
     end
   end
 end
