@@ -83,7 +83,7 @@ module Hallon
     # @return [FFI::Pointer]
     # @raise ArgumentError if `type` is given and does not match link {#type}
     def pointer(expected_type = nil)
-      unless type == expected_type
+      unless type == expected_type or (expected_type == :playlist and type == :starred)
         raise ArgumentError, "expected #{expected_type} link, but it is of type #{type}"
       end if expected_type
       super()
