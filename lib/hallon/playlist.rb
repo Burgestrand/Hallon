@@ -202,9 +202,14 @@ module Hallon
       Spotify.playlist_set_autolink_tracks(pointer, !! autolink_tracks)
     end
 
+    # @note Will be 0 unless {#loaded?}.
+    # @return [Integer] number of tracks in playlist
+    def size
+      Spotify.playlist_num_tracks(pointer)
+    end
+
     # @return [Enumerable<Playlist::Track>] a list of playlist tracks
     def tracks
-      size = Spotify.playlist_num_tracks(pointer)
       Enumerator.new(size) do |i|
         Playlist::Track.new(pointer, i)
       end

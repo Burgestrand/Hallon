@@ -29,6 +29,7 @@ describe Hallon::Playlist do
   its(:subscribers) { should eq %w[Kim Elin Ylva] }
   its(:total_subscribers) { should eq 1000 }
   its(:sync_progress) { mock_session { should eq 67 } }
+  its(:size) { should eq 2 }
 
   its('tracks.size') { should eq 2 }
   its('tracks.to_a') { should eq instantiate(Hallon::Playlist::Track, [mock_playlist, 0], [mock_playlist, 1]) }
