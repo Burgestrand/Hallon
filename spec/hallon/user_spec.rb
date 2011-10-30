@@ -61,5 +61,18 @@ describe Hallon::User do
         mock_session { user.post([]).should be_nil }
       end
     end
+
+    describe "#starred" do
+      let(:starred) { Hallon::Playlist.new("spotify:user:%s:starred" % user.name) }
+
+      it "should return the users’ starred playlist" do
+        mock_session { user.starred.should eq starred }
+      end
+
+      it "should return nil if not logged in" do
+        Spotify.should_receive(:session_starred_for_user_create).and_return(null_pointer)
+        mock_session { user.starred.should be_nil }
+      end
+    end
   end
 end

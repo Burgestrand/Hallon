@@ -96,6 +96,15 @@ module Hallon
       Spotify.user_picture(pointer).to_s
     end
 
+    # Retrieve the users’ starred playlist.
+    #
+    # @note Returns nil unless {User#loaded?}
+    # @return [Playlist, nil]
+    def starred
+      playlist = Spotify.session_starred_for_user_create!(session.pointer, name)
+      Playlist.new(playlist) unless playlist.null?
+    end
+
     # Send tracks to this users’ inbox, with an optional message.
     #
     # @overload post(message, tracks)
