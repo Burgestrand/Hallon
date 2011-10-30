@@ -114,8 +114,9 @@ RSpec::Core::ExampleGroup.instance_eval do
     session = Hallon::Session.send(:allocate)
     friends = pointer_array_with(mock_user)
     sstatus = mock_offline_sync_status
+    inbox   = mock_playlist
     session.instance_eval do
-      @pointer = Spotify.mock_session(nil, :undefined, friends.length, friends, 60 * 60 * 24 * 30, sstatus, 7, 3)
+      @pointer = Spotify.mock_session(nil, :undefined, friends.length, friends, 60 * 60 * 24 * 30, sstatus, 7, 3, inbox)
     end
     session
   end

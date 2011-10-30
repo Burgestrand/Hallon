@@ -48,7 +48,7 @@ module Spotify
   attach_function :registry_find, [:string], :pointer
   attach_function :registry_add, [:string, :pointer], :void
 
-  attach_function :mock_session, :mocksp_session_create, [:pointer, :connectionstate, :int, :array, :int, Spotify::OfflineSyncStatus, :int, :int], :session
+  attach_function :mock_session, :mocksp_session_create, [:pointer, :connectionstate, :int, :array, :int, Spotify::OfflineSyncStatus, :int, :int, :playlist], :session
   attach_mock_function :mock_user, :mocksp_user_create, [:string, :string, :string, :string, :relation_type, :bool], :user
   attach_mock_function :mock_track, :mocksp_track_create, [:string, :int, :array, :album, :int, :int, :int, :int, :error, :bool, :bool, :bool, :bool, :bool], :track
   attach_mock_function :mock_image, :mocksp_image_create, [:image_id, :imageformat, :size_t, :buffer_in, :error], :image

@@ -384,6 +384,15 @@ module Hallon
       Playlist.new(playlist) unless playlist.null?
     end
 
+    # Retrieve the currently logged in users’ inbox playlist.
+    #
+    # @note Returns nil when no user is logged in.
+    # @return [Playlist, nil]
+    def inbox
+      playlist = Spotify.session_inbox_create!(pointer)
+      Playlist.new(playlist) unless playlist.null?
+    end
+
     # True if currently logged in.
     # @see #status
     def logged_in?

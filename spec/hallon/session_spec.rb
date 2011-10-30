@@ -277,6 +277,23 @@ describe Hallon::Session do
     end
   end
 
+  describe "#inbox" do
+    let(:inbox) { Hallon::Playlist.new(mock_playlist) }
+    let(:session) { mock_session_object }
+
+    it "should return the sessions inbox" do
+      session.login 'burgestrand', 'pass'
+
+      session.should be_logged_in
+      session.inbox.should eq inbox
+    end
+
+    it "should return nil if not logged in" do
+      session.should_not be_logged_in
+      session.inbox.should be_nil
+    end
+  end
+
   describe "#relation_type?" do
     let(:user) { Hallon::User.new(mock_user) }
 
