@@ -229,5 +229,20 @@ module Hallon
         Error.maybe_raise(error)
       end
     end
+
+    # Remove tracks at given indices.
+    #
+    # @param [Integer, ...] indices
+    # @return [Playlist]
+    # @raise [Error] if the operation failed
+    def remove(*indices)
+      indices_ary = FFI::MemoryPointer.new(:int, indices.size)
+      indices_ary.write_array_of_int(indices)
+
+      tap do
+        error = Spotify.playlist_remove_tracks(pointer, indices_ary, indices.size)
+        Error.maybe_raise(error)
+      end
+    end
   end
 end

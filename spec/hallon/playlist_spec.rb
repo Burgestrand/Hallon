@@ -72,6 +72,26 @@ describe Hallon::Playlist do
     end
   end
 
+  describe "#remove" do
+    let(:tracks) { instantiate(Hallon::Track, mock_track, mock_track_two) }
+
+    before do
+      mock_session { playlist.insert(tracks) }
+    end
+
+    it "should remove the tracks at the given indices" do
+      old_tracks = playlist.tracks.to_a
+      new_tracks = [old_tracks[0], old_tracks[2]]
+
+      playlist.remove(1, 3)
+      playlist.tracks.to_a.should eq new_tracks
+    end
+
+    it "should raise an error if the operation cannot be completed" do
+      expect { playlist.remove(-1) }.to raise_error(Hallon::Error)
+    end
+  end
+
   describe "#name=" do
     it "should set the new playlist name" do
       playlist.name.should eq "Megaplaylist"
