@@ -29,10 +29,10 @@ describe Hallon::Playlist do
   its(:subscribers) { should eq %w[Kim Elin Ylva] }
   its(:total_subscribers) { should eq 1000 }
   its(:sync_progress) { mock_session { should eq 67 } }
-  its(:size) { should eq 2 }
+  its(:size) { should eq 4 }
 
-  its('tracks.size') { should eq 2 }
-  its('tracks.to_a') { should eq instantiate(Hallon::Playlist::Track, [mock_playlist, 0], [mock_playlist, 1]) }
+  its('tracks.size') { should eq 4 }
+  its('tracks.to_a') { should eq instantiate(Hallon::Playlist::Track, [mock_playlist, 0], [mock_playlist, 1], [mock_playlist, 2], [mock_playlist, 3]) }
   describe "tracks#[]" do
     subject { playlist.tracks[0] }
 
@@ -57,7 +57,7 @@ describe Hallon::Playlist do
     it "should add the given tracks to the playlist at correct index" do
       old_tracks = playlist.tracks.to_a
       new_tracks = old_tracks.insert(1, *tracks)
-      mock_session { playlist.insert(tracks, 1) }
+      mock_session { playlist.insert(1, tracks) }
 
       playlist.tracks.to_a.should eq new_tracks
     end
@@ -68,17 +68,11 @@ describe Hallon::Playlist do
     end
 
     it "should raise an error if the operation cannot be completed" do
-      expect { mock_session { playlist.insert(nil, -1) } }.to raise_error(Hallon::Error)
+      expect { mock_session { playlist.insert(-1, nil) } }.to raise_error(Hallon::Error)
     end
   end
 
   describe "#remove" do
-    let(:tracks) { instantiate(Hallon::Track, mock_track, mock_track_two) }
-
-    before do
-      mock_session { playlist.insert(tracks) }
-    end
-
     it "should remove the tracks at the given indices" do
       old_tracks = playlist.tracks.to_a
       new_tracks = [old_tracks[0], old_tracks[2]]

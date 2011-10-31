@@ -215,11 +215,11 @@ module Hallon
 
     # Add a list of tracks to the playlist starting at given position.
     #
+    # @param [Integer] index starting index to add tracks from (between 0..{#size})
     # @param [Track, Array<Track>] tracks
-    # @param [Integer] index starting index to add tracks from (between 0..size)
     # @return [Playlist]
     # @raise [Hallon::Error] if the operation failed
-    def insert(tracks, index = size)
+    def insert(index = size, tracks)
       tracks = Array(tracks).map(&:pointer)
       tracks_ary = FFI::MemoryPointer.new(:pointer, tracks.size)
       tracks_ary.write_array_of_pointer(tracks)
