@@ -32,7 +32,6 @@ module Spotify
   wrap_function :session_starred_create, :playlist
   wrap_function :session_starred_for_user_create, :playlist
   wrap_function :session_publishedcontainer_for_user_create, :playlistcontainer
-  wrap_function :session_friend, :user
 
   wrap_function :track_artist, :artist
   wrap_function :track_album, :album
