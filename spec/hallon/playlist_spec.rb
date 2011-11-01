@@ -86,6 +86,20 @@ describe Hallon::Playlist do
     end
   end
 
+  describe "#move" do
+    it "should move the tracks at the given indices to their new location" do
+      old_tracks = playlist.tracks.to_a
+      new_tracks = [old_tracks[1], old_tracks[0], old_tracks[3], old_tracks[2]]
+
+      playlist.move(2, [0, 3])
+      playlist.tracks.to_a.should eq new_tracks
+    end
+
+    it "should raise an error if the operation cannot be completed" do
+      expect { playlist.move(-1, [-1]) }.to raise_error(Hallon::Error)
+    end
+  end
+
   describe "#name=" do
     it "should set the new playlist name" do
       playlist.name.should eq "Megaplaylist"

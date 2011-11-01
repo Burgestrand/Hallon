@@ -244,5 +244,22 @@ module Hallon
         Error.maybe_raise(error)
       end
     end
+
+    # Move tracks at given indices to given index.
+    #
+    # @param [Integer] destination index to move tracks to
+    # @param [Integer, Array<Integer>] indices
+    # @return [Playlist]
+    # @raise [Error] if the operation failed
+    def move(destination, indices)
+      indices     = Array(indices)
+      indices_ary = FFI::MemoryPointer.new(:int, indices.size)
+      indices_ary.write_array_of_int(indices)
+
+      tap do
+        error = Spotify.playlist_reorder_tracks(pointer, indices_ary, indices.size, destination)
+        Error.maybe_raise(error)
+      end
+    end
   end
 end
