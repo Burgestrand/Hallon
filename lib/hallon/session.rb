@@ -114,7 +114,7 @@ module Hallon
 
     # Process pending Spotify events (might fire callbacks).
     #
-    # @return [Fixnum] minimum time until it should be called again
+    # @return [Fixnum] time (in milliseconds) until it should be called again
     def process_events
       FFI::MemoryPointer.new(:int) do |p|
         Spotify.session_process_events(pointer, p)
