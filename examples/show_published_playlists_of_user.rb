@@ -50,7 +50,7 @@ while username = prompt("Enter a Spotify username: ")
     username  = nil if username.empty?
 
     puts "Fetching container for #{username || "current user"}..."
-    container = Spotify::session_publishedcontainer_for_user_create(session.pointer, username)
+    container = Spotify::session_publishedcontainer_for_user_create!(session.pointer, username)
     if container.null?
       puts "Failed (unknown reason)."
       next
@@ -78,7 +78,5 @@ while username = prompt("Enter a Spotify username: ")
     end
   rescue Interrupt
     # do nothing, continue with loop
-  ensure
-    Spotify::playlistcontainer_release(container) unless container.nil?
   end
 end
