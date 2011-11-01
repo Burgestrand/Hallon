@@ -42,14 +42,10 @@ playlist.insert(position, tracks)
 # Spotify back-end. Once they have, we’ll see the tracks in our desktop
 # client as well.
 #
-puts "Uploading playlist changes to Spotify back-end"
+puts "Uploading playlist changes to Spotify back-end!"
 
-# there’s a tiny bug (?) in Playlist#pending? in libspotify that makes it
-# return false after adding tracks to a playlist unless you first wait
-# for it to become pending
-session.wait_for { playlist.pending? }
-
-# after that, we can wait for it to become not pending!
-session.wait_for { not playlist.pending? }
+done = false
+playlist.on(:playlist_update_in_progress) { |x| done = x }
+session.wait_for { done }
 
 puts "We’re done!"
