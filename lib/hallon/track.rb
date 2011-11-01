@@ -129,12 +129,17 @@ module Hallon
       end
     end
 
-    # True if the Track is available.
-    #
     # @note This’ll always return false unless the track is loaded.
-    # @return [Boolean]
+    # @return [Boolean] true if {#availability} is available.
     def available?
-      Spotify.track_is_available(session.pointer, pointer)
+      availability == :available
+    end
+
+    # Track availability.
+    #
+    # @return [Symbol] :unavailable, :available, :not_streamable, :banned_by_artist
+    def availability
+      Spotify.track_get_availability(session.pointer, pointer)
     end
 
     # True if the Track is a local track.

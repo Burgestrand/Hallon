@@ -8,6 +8,12 @@ describe Hallon::User do
   describe "an instance" do
     let(:user) { Hallon::User.new(mock_user) }
 
+    describe "#loaded?" do
+      it "should return true as the user is loaded" do
+        user.should be_loaded
+      end
+    end
+
     describe "#to_link" do
       it "should return a Link for this user" do
         user.to_link.should eq "spotify:user:burgestrand"
@@ -15,26 +21,14 @@ describe Hallon::User do
     end
 
     describe "#name" do
-      it "should be able to get the display name" do
-        user.name(:display).should eq "Burgestrand"
-      end
-
-      it "should be able to get the full name" do
-        user.name(:full).should eq "Kim Burgestrand"
-      end
-
-      it "should get the canonical name when unspecified" do
+      it "should be the canonical name" do
         user.name.should eq "burgestrand"
-      end
-
-      it "should fail on invalid name types" do
-        expect { user.name(:i_am_invalid) }.to raise_error
       end
     end
 
-    describe "#picture" do
-      it "should retrieve the user picture" do
-        user.picture.should eq "https://secure.gravatar.com/avatar/b67b73b5b1fd84119ec788b1c3df02ad"
+    describe "#display_name" do
+      it "should be the users’ display name" do
+        user.display_name.should eq "Burgestrand"
       end
     end
 

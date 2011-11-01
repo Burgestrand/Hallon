@@ -6,17 +6,17 @@ RSpec::Core::ExampleGroup.instance_eval do
   let(:mock_artist_two) { Spotify.mock_artist("Maroon 5", true) }
 
   let(:mock_album)  { Spotify.mock_album("Finally Woken", mock_artist, 2004, "DEADBEEFDEADBEEFDEAD", :single, true, true) }
-  let(:mock_user)   { Spotify.mock_user("burgestrand", "Burgestrand", "Kim Burgestrand", "https://secure.gravatar.com/avatar/b67b73b5b1fd84119ec788b1c3df02ad", :none, true) }
+  let(:mock_user)   { Spotify.mock_user("burgestrand", "Burgestrand", true) }
   let(:mock_image)  { Spotify.mock_image(mock_image_id, :jpeg, File.size(fixture_image_path), File.read(fixture_image_path), :ok) }
 
   let(:mock_track) do
     artists = pointer_array_with(mock_artist, mock_artist_two)
-    Spotify.mock_track("They", artists.length, artists, mock_album, 123_456, 42, 2, 7, 0, true, true, false, true, true)
+    Spotify.mock_track("They", artists.length, artists, mock_album, 123_456, 42, 2, 7, 0, true, :available, false, true, true)
   end
 
   let(:mock_track_two) do
     artists = pointer_array_with(mock_artist)
-    Spotify.mock_track("Amazing", artists.length, artists, mock_album, 123_456, 42, 2, 7, 0, true, true, false, true, true)
+    Spotify.mock_track("Amazing", artists.length, artists, mock_album, 123_456, 42, 2, 7, 0, true, :available, false, true, true)
   end
 
   let(:mock_albumbrowse) do
@@ -34,7 +34,7 @@ RSpec::Core::ExampleGroup.instance_eval do
     tracks    = pointer_array_with(mock_track, mock_track_two)
     albums    = pointer_array_with(mock_album)
 
-    Spotify.mock_artistbrowse(:ok, mock_artist, portraits.length, portraits, tracks.length, tracks, albums.length, albums, similar_artists.length, similar_artists, "grew up in DA BLOCK", nil, nil)
+    Spotify.mock_artistbrowse(:ok, mock_artist, portraits.length, portraits, tracks.length, tracks, albums.length, albums, similar_artists.length, similar_artists, "grew up in DA BLOCK", :full, nil, nil)
   end
 
   let(:mock_toplistbrowse) do
@@ -124,11 +124,10 @@ RSpec::Core::ExampleGroup.instance_eval do
 
   let(:mock_session_object) do
     session = Hallon::Session.send(:allocate)
-    friends = pointer_array_with(mock_user)
     sstatus = mock_offline_sync_status
     inbox   = mock_playlist
     session.instance_eval do
-      @pointer = Spotify.mock_session(nil, :undefined, friends.length, friends, 60 * 60 * 24 * 30, sstatus, 7, 3, inbox)
+      @pointer = Spotify.mock_session(nil, :undefined, 60 * 60 * 24 * 30, sstatus, 7, 3, inbox)
     end
     session
   end

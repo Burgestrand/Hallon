@@ -46,6 +46,8 @@ describe Hallon::Track do
     it { should_not be_local }
     it { should be_autolinked }
     it { should be_starred }
+
+    its(:availability) { should eq :available }
   end
 
   describe "album" do

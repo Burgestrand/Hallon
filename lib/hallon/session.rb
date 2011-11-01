@@ -238,13 +238,6 @@ module Hallon
       User.new(user) unless user.null?
     end
 
-    # Retrieve the relation type between logged in {User} and `user`.
-    #
-    # @return [Symbol] :unknown, :none, :unidirectional or :bidirectional
-    def relation_type?(user)
-      Spotify.user_relation_type(pointer, user.pointer)
-    end
-
     # Retrieve current connection status.
     #
     # @return [Symbol]
@@ -289,25 +282,6 @@ module Hallon
     # @return [Session]
     def unstar(*tracks)
       tap { tracks_starred(tracks, false) }
-    end
-
-    # @note This will be 0 if not logged in.
-    # @note As of current writing, I am unsure if there’s a good way to find out
-    #       when this enumerator will be populated. No callbacks or other status
-    #       field can tell you when the current sessions’ friends are available.
-    # @return [Enumerator<User>] friends of currently logged in user
-    def friends
-      size = if logged_in?
-        # segfaults unless logged in
-        Spotify.session_num_friends(pointer)
-      else
-        0
-      end
-
-      Enumerator.new(size) do |i|
-        friend = Spotify.session_friend!(pointer, i)
-        User.new(friend)
-      end
     end
 
     # Set the connection rules for this session.

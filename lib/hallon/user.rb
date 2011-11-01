@@ -71,29 +71,19 @@ module Hallon
       Spotify.user_is_loaded(pointer)
     end
 
-    # Retrieve the name of the current user.
+    # Retrieve the canonical name of the User.
     #
-    # @note Unless the user is {User#loaded?} only the canonical name is accessible
-    # @param [Symbol] type one of :canonical, :display, :full
     # @return [String]
-    def name(type = :canonical)
-      case type
-      when :display
-        Spotify.user_display_name(pointer)
-      when :full
-        Spotify.user_full_name(pointer)
-      when :canonical
-        Spotify.user_canonical_name(pointer)
-      else
-        raise ArgumentError, "expected type to be :display, :full or :canonical, but was #{type}"
-      end.to_s
+    def name
+      Spotify.user_canonical_name(pointer)
     end
 
-    # Retrieve the URL to the users’ profile picture.
+    # Retrieve the dispaly name of the User.
     #
+    # @note Unless {#loaded?} is true, this will return the same thing as {#name}.
     # @return [String]
-    def picture
-      Spotify.user_picture(pointer).to_s
+    def display_name
+      Spotify.user_display_name(pointer)
     end
 
     # Retrieve the users’ starred playlist.
