@@ -64,13 +64,15 @@ describe Hallon::Session do
         else
           session.trigger(:bogus, :bogus)
         end
+
+        0
       end
 
       session.process_events_on(:bogus) { |e| e == :bogus }.should be_true
     end
 
     it "should time out if waiting for events too long" do
-      session.should_receive(:process_events).once # and do nothing
+      session.should_receive(:process_events).once.and_return(1) # and do nothing
       session.wait_for(:ever) { |x| x }.should eq :timeout
     end
 
