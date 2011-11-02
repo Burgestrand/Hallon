@@ -38,16 +38,10 @@ describe Hallon::Album do
     end
 
     it "should be an image if it exists" do
-      FFI::MemoryPointer.new(:string, 20) do |ptr|
-        ptr.write_string(mock_image_id)
-
-        Spotify.should_receive(:album_cover).and_return(ptr)
-        mock_session { subject.cover.id.should eq mock_image_hex }
-      end
+      mock_session { subject.cover.id.should eq mock_image_hex }
     end
 
     it "should be a link if requested" do
-      Spotify.should_receive(:link_create_from_album_cover!).and_return(mock_image_link)
       subject.cover(false).to_str.should eq "spotify:image:3ad93423add99766e02d563605c6e76ed2b0e450"
     end
   end

@@ -5,7 +5,7 @@ RSpec::Core::ExampleGroup.instance_eval do
   let(:mock_artist) { Spotify.mock_artist("Jem", true) }
   let(:mock_artist_two) { Spotify.mock_artist("Maroon 5", true) }
 
-  let(:mock_album)  { Spotify.mock_album("Finally Woken", mock_artist, 2004, "DEADBEEFDEADBEEFDEAD", :single, true, true) }
+  let(:mock_album)  { Spotify.mock_album("Finally Woken", mock_artist, 2004, mock_image_id, :single, true, true) }
   let(:mock_user)   { Spotify.mock_user("burgestrand", "Burgestrand", true) }
   let(:mock_image)  { Spotify.mock_image(mock_image_id, :jpeg, File.size(fixture_image_path), File.read(fixture_image_path), :ok) }
 
