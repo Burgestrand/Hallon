@@ -16,21 +16,22 @@ describe Hallon::Artist do
   end
 
   describe "#portrait" do
-    let(:link) { Hallon::Link.new("spotify:image:3ad93423add99766e02d563605c6e76ed2b0e450") }
-    let(:link_pointer) { FFI::Pointer.new(link.pointer.address) }
-    let(:link_spotify_pointer) { Spotify::Pointer.new(link_pointer, :link, false) }
+    let(:link) { Hallon::Link.new(mock_image_uri) }
 
     specify "as an image" do
-      Spotify.should_receive(:link_create_from_artist_portrait).with(subject.pointer).and_return(link_pointer)
       Hallon::Session.should_receive(:instance).twice.and_return(session)
 
-      subject.portrait.should eq Hallon::Image.new(link_spotify_pointer)
+      subject.portrait.should eq Hallon::Image.new(mock_image_id)
     end
 
     specify "as a link" do
-      Spotify.should_receive(:link_create_from_artist_portrait).with(subject.pointer).and_return(link_pointer)
+      subject.portrait(false).should eq Hallon::Link.new(mock_image_uri)
+    end
 
-      subject.portrait(false).should eq link
+    it "should be nil if an image is not available" do
+      Spotify.should_receive(:artist_portrait).and_return(null_pointer)
+
+      subject.portrait.should be_nil
     end
   end
 end
