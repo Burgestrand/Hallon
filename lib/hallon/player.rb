@@ -129,5 +129,15 @@ module Hallon
     def seek(seconds)
       tap { Spotify.session_player_seek(pointer, seconds * 1000) }
     end
+
+    # @return [Boolean] true if libspotify is set to normalize audio volume.
+    def volume_normalization
+      Spotify.session_get_volume_normalization(pointer)
+    end
+
+    # @param [Boolean] normalize_volume true if libspotify should normalize audio volume.
+    def volume_normalization=(normalize_volume)
+      Spotify.session_set_volume_normalization(pointer, !! normalize_volume)
+    end
   end
 end
