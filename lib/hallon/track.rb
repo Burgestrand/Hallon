@@ -99,6 +99,21 @@ module Hallon
       Spotify.track_is_loaded(pointer)
     end
 
+    # @note Track does not have to be loaded for this to return a useful value.
+    #
+    # @note Placeholder tracks are not really tracks, but merely containers
+    # for other objects to allow storing them in playlists such as the inbox.
+    #
+    # @return [Boolean] true if the track is a placeholder.
+    def placeholder?
+      Spotify.track_is_placeholder(pointer)
+    end
+
+    # @return [Symbol] track offline status.
+    def offline_status
+      Spotify.track_offline_get_status(pointer)
+    end
+
     # Album this track belongs to.
     #
     # @note This’ll be `nil` unless the track is loaded.

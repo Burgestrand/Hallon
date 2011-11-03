@@ -11,12 +11,12 @@ RSpec::Core::ExampleGroup.instance_eval do
 
   let(:mock_track) do
     artists = pointer_array_with(mock_artist, mock_artist_two)
-    Spotify.mock_track("They", artists.length, artists, mock_album, 123_456, 42, 2, 7, 0, true, :available, false, true, true, false)
+    Spotify.mock_track("They", artists.length, artists, mock_album, 123_456, 42, 2, 7, 0, true, :available, :done, false, true, true, false)
   end
 
   let(:mock_track_two) do
     artists = pointer_array_with(mock_artist)
-    Spotify.mock_track("Amazing", artists.length, artists, mock_album, 123_456, 42, 2, 7, 0, true, :available, false, true, true, true)
+    Spotify.mock_track("Amazing", artists.length, artists, mock_album, 123_456, 42, 2, 7, 0, true, :available, :no, false, true, true, true)
   end
 
   let(:mock_albumbrowse) do

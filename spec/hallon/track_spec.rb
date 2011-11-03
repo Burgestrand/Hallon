@@ -80,6 +80,21 @@ describe Hallon::Track do
     end
   end
 
+  describe "#placeholder?" do
+    let(:yes) { Hallon::Track.new(mock_track_two) }
+
+    it "should return the placeholder status of the track" do
+      yes.should be_placeholder
+      subject.should_not be_placeholder
+    end
+  end
+
+  describe "#offline_status" do
+    it "should return the tracks’ offline status" do
+      subject.offline_status.should eq :done
+    end
+  end
+
   describe "offset" do
     let(:without_offset) { 'spotify:track:7N2Vc8u56VGA4KUrGbikC2' }
     let(:with_offset)    { without_offset + '#1:00' }
