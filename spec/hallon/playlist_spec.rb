@@ -26,7 +26,6 @@ describe Hallon::Playlist do
   its(:owner) { should eq Hallon::User.new(mock_user) }
   its(:description) { should eq "Playlist description...?" }
   its(:image) { mock_session { should eq Hallon::Image.new(mock_image_id) } }
-  its(:subscribers) { should eq %w[Kim Elin Ylva] }
   its(:total_subscribers) { should eq 1000 }
   its(:sync_progress) { mock_session { should eq 67 } }
   its(:size) { should eq 4 }
@@ -48,6 +47,17 @@ describe Hallon::Playlist do
         track.seen = false
         track.should_not be_seen
       end
+    end
+  end
+
+  describe "#subscribers" do
+    it "should return an array of names for the subscribers" do
+      subject.subscribers.should eq %w[Kim Elin Ylva]
+    end
+
+    it "should return an empty array when there are no subscribers" do
+      Spotify.should_receive(:playlist_subscribers).and_return(mock_empty_subscribers)
+      subject.subscribers.should eq []
     end
   end
 

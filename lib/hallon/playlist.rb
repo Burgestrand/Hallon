@@ -174,7 +174,11 @@ module Hallon
       ptr    = Spotify.playlist_subscribers(pointer)
       struct = Spotify::Subscribers.new(ptr)
 
-      struct[:subscribers].map(&:read_string)
+      if struct[:count].zero?
+        []
+      else
+        struct[:subscribers].map(&:read_string)
+      end
     ensure
       Spotify.playlist_subscribers_free(ptr)
     end

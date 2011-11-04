@@ -62,6 +62,10 @@ RSpec::Core::ExampleGroup.instance_eval do
     Spotify.mock_subscribers(people.count, subscribers)
   end
 
+  let(:mock_empty_subscribers) do
+    Spotify.mock_subscribers(0, nil)
+  end
+
   let(:mock_playlist) do
     num_tracks = 4
     tracks_ptr = FFI::MemoryPointer.new(Spotify::Mock::PlaylistTrack, num_tracks)
