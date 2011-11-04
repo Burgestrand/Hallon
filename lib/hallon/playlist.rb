@@ -11,7 +11,7 @@ module Hallon
     # Playlist::Track is an object that is similar to tracks in many
     # ways, but it also has a reference to the playlist that created
     # it and the index it is placed on.
-    class Track < Track
+    class Track < Hallon::Track
       attr_reader :index
       attr_reader :playlist
 
