@@ -47,7 +47,7 @@ You can only keep one session with Spotify alive at a time in the same process, 
 I have been doing my best at hiding the complexity in `libspotify`, but it’s still a work in progress. Despite my efforts, you’ll need to be familiar with concurrent programming to use Hallon properly.
 
 ### When forking, you need to be extra careful
-If you fork, you need to instantiate the session in the process you plan to use Hallon in. You want to use Hallon in the parent? Create the session in the parent. You want to use it in the child? Create the session in the child!
+If you fork, you need to instantiate the session in the process you plan to use Hallon in. You want to use Hallon in the parent? Create the session in the parent. You want to use it in the child? Create the session in the child! This is a limitation of libspotify itself.
 
 Versioning policy
 -----------------
