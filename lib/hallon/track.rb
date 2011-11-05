@@ -105,8 +105,26 @@ module Hallon
     # for other objects to allow storing them in playlists such as the inbox.
     #
     # @return [Boolean] true if the track is a placeholder.
+    # @see unwrap
     def placeholder?
       Spotify.track_is_placeholder(pointer)
+    end
+
+    # Unwraps a {#placeholder?} Track into its’ real object.
+    #
+    # @see placeholder?
+    # @return [Track, Artist, Album, Playlist]
+    def unwrap
+      return self unless placeholder?
+
+      case (link = to_link).type
+      when :playlist
+        Playlist.new(link)
+      when :album
+        Album.new(link)
+      when :artist
+        Artist.new(link)
+      end
     end
 
     # @return [Symbol] track offline status.
