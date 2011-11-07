@@ -144,6 +144,11 @@ RSpec::Core::ExampleGroup.instance_eval do
   let(:mock_image_link_two) do
     Spotify.link_create_from_string!("spotify:image:ce9da340323614dc95ae96b68843b1c726dc5c8a")
   end
+
+  let(:mock_container) do
+    owner = Spotify.registry_find("spotify:user:burgestrand")
+    Spotify.mock_playlistcontainer(owner, true)
+  end
 end
 
 RSpec::Core::ExampleGroup.new.instance_eval do
