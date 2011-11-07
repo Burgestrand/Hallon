@@ -131,7 +131,7 @@ module Hallon
     end
 
     # @return [Boolean] true if libspotify is set to normalize audio volume.
-    def volume_normalization
+    def volume_normalization?
       Spotify.session_get_volume_normalization(pointer)
     end
 

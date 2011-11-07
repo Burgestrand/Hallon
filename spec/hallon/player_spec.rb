@@ -73,9 +73,9 @@ describe Hallon::Player do
 
   describe "#volume_normalization" do
     it "should be settable and gettable" do
-      player.volume_normalization.should be_false
+      player.volume_normalization?.should be_false
       player.volume_normalization = true
-      player.volume_normalization.should be_true
+      player.volume_normalization?.should be_true
     end
   end
 end
