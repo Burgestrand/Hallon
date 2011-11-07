@@ -47,6 +47,18 @@ describe Hallon::Session do
     its([:cache_playlist_metadata]) { should == true }
   end
 
+  describe "#container" do
+    it "should return the sessions’ playlist container" do
+      session.login 'burgestrand', 'pass'
+      session.container.should be_a Hallon::PlaylistContainer
+      session.container.owner.should eq session.user
+    end
+
+    it "should return nil if not logged in" do
+      session.container.should be_nil
+    end
+  end
+
   describe "#process_events" do
     it "should return the timeout" do
       session.process_events.should be_a Fixnum

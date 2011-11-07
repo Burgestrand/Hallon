@@ -9,7 +9,7 @@ module Hallon
     #
     # @param [Spotify::Pointer] pointer
     def initialize(pointer)
-      @pointer = pointer
+      @pointer = to_pointer(pointer, :playlistcontainer)
     end
 
     # @return [Boolean] true if the container is loaded

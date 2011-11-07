@@ -112,6 +112,15 @@ module Hallon
       end
     end
 
+    # PlaylistContainer for the currently logged in session.
+    #
+    # @note returns nil if the session is not logged in.
+    # @return [PlaylistContainer, nil]
+    def container
+      container = Spotify.session_playlistcontainer!(pointer)
+      PlaylistContainer.new(container) unless container.null?
+    end
+
     # Process pending Spotify events (might fire callbacks).
     #
     # @return [Fixnum] time (in milliseconds) until it should be called again
