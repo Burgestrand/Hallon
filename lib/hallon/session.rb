@@ -71,7 +71,9 @@ module Hallon
     # @param [Hash] options
     # @option options [String] :user_agent ("Hallon") User-Agent to use (length < 256)
     # @option options [String] :settings_path ("tmp") where to save settings and user-specific cache
-    # @option options [String] :cache_path ("") where to save cache files (set to "" to disable)
+    # @option options [String] :cache_path ("") where to save cache files ("" to disable)
+    # @option options [String] :tracefile (nil) path to libspotify API tracefile (nil to disable)
+    # @option options [String] :device_id (nil) device ID for offline synchronization (nil to disable)
     # @option options [Bool]   :load_playlists (true) load playlists into RAM on startup
     # @option options [Bool]   :compress_playlists (true) compress local copies of playlists
     # @option options [Bool]   :cache_playlist_metadata (true) cache metadata for playlists locally
@@ -86,7 +88,9 @@ module Hallon
         :cache_path => "",
         :load_playlists => true,
         :compress_playlists => true,
-        :cache_playlist_metadata => true
+        :cache_playlist_metadata => true,
+        :device_id => nil,
+        :tracefile => nil,
       }.merge(options)
 
       if @options[:user_agent].bytesize > 255

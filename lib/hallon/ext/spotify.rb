@@ -146,12 +146,13 @@ module Spotify
 
   # Extensions to SessionConfig, allowing more sensible configuration names.
   SessionConfig.class_eval do
-    [:cache_location, :settings_location, :user_agent].each do |field|
+    [:cache_location, :settings_location, :user_agent, :device_id, :tracefile].each do |field|
       method = field.to_s.gsub('location', 'path')
 
       define_method(:"#{method}") { self[field].read_string }
       define_method(:"#{method}=") do |string|
-        self[field] = FFI::MemoryPointer.from_string(string)
+        string &&= FFI::MemoryPointer.from_string(string)
+        self[field] = string
       end
     end
 
