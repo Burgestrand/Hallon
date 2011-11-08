@@ -37,18 +37,21 @@ module Hallon
     # instance at a later time, you can use {instance}.
     #
     # @see Session.instance
-    # @see Session#initialize
     #
     # @param (see Session#initialize)
+    # @option (see Session#initialize)
+    # @yield (see Session#initialize)
+    # @raise (see Session#initialize)
+    # @see (see Session#initialize)
     # @return [Session]
-    def Session.initialize(*args, &block)
+    def Session.initialize(appkey, options = {}, &block)
       raise "Session has already been initialized" if @__instance__
       @__instance__ = new(*args, &block)
     end
 
     # Returns the previously initialized Session.
     #
-    # @see Session.instance
+    # @see Session.initialize
     #
     # @return [Session]
     def Session.instance
@@ -69,15 +72,15 @@ module Hallon
     #
     # @param [#to_s] appkey
     # @param [Hash] options
-    # @option options [String] :user_agent ("Hallon") User-Agent to use (length < 256)
+    # @option options [String] :user_agent ("Hallon") User-Agent to use (length < `256`)
     # @option options [String] :settings_path ("tmp") where to save settings and user-specific cache
-    # @option options [String] :cache_path ("") where to save cache files ("" to disable)
-    # @option options [String] :tracefile (nil) path to libspotify API tracefile (nil to disable)
-    # @option options [String] :device_id (nil) device ID for offline synchronization (nil to disable)
+    # @option options [String] :cache_path ("") where to save cache files (`""` to disable)
+    # @option options [String] :tracefile (nil) path to libspotify API tracefile (`nil` to disable)
+    # @option options [String] :device_id (nil) device ID for offline synchronization (`nil` to disable)
     # @option options [Bool]   :load_playlists (true) load playlists into RAM on startup
     # @option options [Bool]   :compress_playlists (true) compress local copies of playlists
     # @option options [Bool]   :cache_playlist_metadata (true) cache metadata for playlists locally
-    # @yield allows you to define handlers for events (see {Hallon::Base#on})
+    # @yield allows you to define handlers for events (see {Observable#on})
     # @raise [ArgumentError] if `options[:user_agent]` is more than 256 characters long
     # @raise [Hallon::Error] if `sp_session_create` fails
     # @see http://developer.spotify.com/en/libspotify/docs/structsp__session__config.html
@@ -98,7 +101,7 @@ module Hallon
       end
 
       # Set configuration, as well as callbacks
-      config  = Spotify::SessionConfig.new
+      config = Spotify::SessionConfig.new
       config[:api_version]   = Hallon::API_VERSION
       config.application_key = appkey
       @options.each { |(key, value)| config.send(:"#{key}=", value) }
