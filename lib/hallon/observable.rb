@@ -26,7 +26,6 @@ module Hallon
     #       of the event that called it
     # @param [#to_sym] event name of event to handle
     # @yield (*args) event handler block
-    # @see #initialize
     def on(*events, &block)
       raise ArgumentError, "no block given" unless block
       wrap = events.length > 1
