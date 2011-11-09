@@ -37,5 +37,18 @@ describe Spotify::Mock do
     it "should return nil for entries not in the registry" do
       Spotify.registry_find("i_do_not_exist").should be_null
     end
+
+    it "should be cleanable" do
+      pointer = FFI::MemoryPointer.new(:uint)
+
+      Spotify.registry_add("i_exist", pointer)
+      Spotify.registry_find("i_exist").should_not be_null
+
+      Spotify.registry_clean
+      Spotify.registry_find("i_exist").should be_null
+
+      Spotify.registry_add("i_exist", pointer)
+      Spotify.registry_find("i_exist").should_not be_null
+    end
   end
 end

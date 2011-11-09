@@ -1,7 +1,6 @@
 describe Hallon::Search do
   subject { search }
   let(:search) do
-    Spotify.should_receive(:search_create).and_return(mock_search)
     mock_session { Hallon::Search.new("my query") }
   end
 

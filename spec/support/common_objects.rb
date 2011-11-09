@@ -151,12 +151,19 @@ RSpec::Core::ExampleGroup.instance_eval do
   end
 end
 
-RSpec::Core::ExampleGroup.new.instance_eval do
-  Spotify.registry_add mock_image_uri, mock_image
-  Spotify.registry_add 'spotify:artist:3bftcFwl4vqRNNORRsqm1G', mock_artist
-  Spotify.registry_add 'spotify:album:1xvnWMz2PNFf7mXOSRuLws', mock_album
-  Spotify.registry_add 'spotify:track:7N2Vc8u56VGA4KUrGbikC2', mock_track
-  Spotify.registry_add 'spotify:user:burgestrand', mock_user
-  Spotify.registry_add 'spotify:user:burgestrand:playlist:07AX9IY9Hqmj1RqltcG0fi', mock_playlist
-  Spotify.registry_add 'spotify:user:burgestrand:starred', mock_playlist
+RSpec.configure do |config|
+  config.before do
+    Spotify.registry_add mock_image_uri, mock_image
+    Spotify.registry_add 'spotify:search:my query', mock_search
+    Spotify.registry_add 'spotify:artist:3bftcFwl4vqRNNORRsqm1G', mock_artist
+    Spotify.registry_add 'spotify:album:1xvnWMz2PNFf7mXOSRuLws', mock_album
+    Spotify.registry_add 'spotify:track:7N2Vc8u56VGA4KUrGbikC2', mock_track
+    Spotify.registry_add 'spotify:user:burgestrand', mock_user
+    Spotify.registry_add 'spotify:user:burgestrand:playlist:07AX9IY9Hqmj1RqltcG0fi', mock_playlist
+    Spotify.registry_add 'spotify:user:burgestrand:starred', mock_playlist
+  end
+
+  config.after do
+    Spotify.registry_clean
+  end
 end
