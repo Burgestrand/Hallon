@@ -25,9 +25,8 @@ shared_examples_for "a Linkable object" do
     end
 
     it "should work with a custom object" do
-      pending("does not support custom object instantiation", :unless => defined?(custom_object))
       expect { described_class.new(custom_object) }.to_not raise_error
-    end
+    end if defined?(custom_object)
   end
 
   describe "#to_link" do

@@ -38,7 +38,6 @@ describe Hallon::Image do
       end
 
       it "should have a binary encoding" do
-        pending "ruby 1.8 does not support String#encoding" unless subject.respond_to?(:encoding)
         subject.encoding.name.should eq 'ASCII-8BIT'
       end
     end
@@ -58,17 +57,6 @@ describe Hallon::Image do
 
         image.should_not eq o
       end
-    end
-  end
-
-  describe "callbacks" do
-    it "should trigger :load when loaded", :pending => true do
-      uri = "spotify:image:c78f091482e555bd2ffacfcd9cbdc0714b221663"
-      image = Hallon::Image.new(uri)
-      image.should_not be_loaded
-      image.should_receive(:trigger).with(:load).once
-
-      session.process_events_on { image.loaded? }
     end
   end
 end

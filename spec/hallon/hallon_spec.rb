@@ -1,3 +1,4 @@
+# coding: utf-8
 describe Hallon do
   describe "VERSION" do
     specify { Hallon::VERSION.should be_a String }
@@ -16,5 +17,23 @@ describe Hallon do
     example_uris.keys.each do |uri|
       it { should match uri }
     end
+  end
+
+  describe "object callbacks" do
+    pending <<-REASON
+
+      Once callbacks are implemented in libmockspotify, we should also
+      test them on the following objects:
+
+      - Session
+      - Image
+      - AlbumBrowse
+      - ArtistBrowse
+      - Search
+      - Playlist
+      - PlaylistContainer
+      - Toplist
+      - Inbox
+    REASON
   end
 end
