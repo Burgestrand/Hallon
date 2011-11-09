@@ -46,7 +46,7 @@ module Hallon
     # @return [Session]
     def Session.initialize(appkey, options = {}, &block)
       raise "Session has already been initialized" if @__instance__
-      @__instance__ = new(*args, &block)
+      @__instance__ = new(appkey, options, &block)
     end
 
     # Returns the previously initialized Session.

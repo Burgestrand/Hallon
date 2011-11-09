@@ -16,6 +16,10 @@ describe Hallon::Session do
         Hallon.initialize
       }.to raise_error
     end
+
+    it "should succeed if everything is right" do
+      expect { Hallon::Session.initialize('appkey_good') }.to_not raise_error
+    end
   end
 
   describe ".new" do
