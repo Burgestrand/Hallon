@@ -178,31 +178,23 @@ describe Hallon::Playlist do
     end
 
     specify "#available_offline?" do
-      mock_session do
-        Spotify.should_receive(:playlist_get_offline_status).and_return symbol_for(1)
-        should be_available_offline
-      end
+      Spotify.should_receive(:playlist_get_offline_status).and_return symbol_for(1)
+      mock_session { should be_available_offline }
     end
 
     specify "#syncing?" do
-      mock_session do
-        Spotify.should_receive(:playlist_get_offline_status).and_return symbol_for(2)
-        should be_syncing
-      end
+      Spotify.should_receive(:playlist_get_offline_status).and_return symbol_for(2)
+      mock_session { should be_syncing }
     end
 
     specify "#waiting?" do
-      mock_session do
-        Spotify.should_receive(:playlist_get_offline_status).and_return symbol_for(3)
-        should be_waiting
-      end
+      Spotify.should_receive(:playlist_get_offline_status).and_return symbol_for(3)
+      mock_session { should be_waiting }
     end
 
     specify "#offline_mode?" do
-      mock_session do
-        Spotify.should_receive(:playlist_get_offline_status).and_return symbol_for(0)
-        should_not be_offline_mode
-      end
+      Spotify.should_receive(:playlist_get_offline_status).and_return symbol_for(0)
+      mock_session { should_not be_offline_mode }
     end
   end
 end
