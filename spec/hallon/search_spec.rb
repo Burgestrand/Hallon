@@ -24,6 +24,11 @@ describe Hallon::Search do
 
       mock_session { Hallon::Search.new("my query", my_params) }
     end
+
+    it "should raise an error if the search failed" do
+      Spotify.should_receive(:search_create).and_return(null_pointer)
+      expect { mock_session { Hallon::Search.new("omgwtfbbq") } }.to raise_error /search (.*?) failed/
+    end
   end
 
   describe ".genres" do
@@ -36,13 +41,18 @@ describe Hallon::Search do
 
   describe ".radio" do
     subject do
-      Spotify.registry_add('spotify:radio:00002200:1990-2010', mock_search)
+      Spotify.registry_add 'spotify:radio:00002200:1990-2010', mock_search
       mock_session { Hallon::Search.radio(1990..2010, :jazz, :punk) }
     end
 
     it "should raise an error on invalid genres" do
       Spotify.should_not_receive(:radio_search_create)
       expect { Hallon::Search.radio(1990..2010, :bogus, :jazz) }.to raise_error(ArgumentError, /bogus/)
+    end
+
+    it "should raise an error if the search failed" do
+      Spotify.should_receive(:radio_search_create).and_return(null_pointer)
+      expect { mock_session { Hallon::Search.radio(1990..1990) } }.to raise_error /search failed/
     end
 
     it { should be_loaded }

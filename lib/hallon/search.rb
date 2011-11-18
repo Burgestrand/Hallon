@@ -12,6 +12,18 @@ module Hallon
       Spotify.enum_type(:radio_genre).symbols
     end
 
+    # @return [Hash] default search parameters
+    def self.defaults
+      @defaults ||= {
+        :tracks  => 25,
+        :albums  => 25,
+        :artists => 25,
+        :tracks_offset  => 0,
+        :albums_offset  => 0,
+        :artists_offset => 0
+      }
+    end
+
     # @param [Range<Integer>] range (from_year..to_year)
     # @param [Symbol, …] genres
     # @return [Search] radio search in given period and genres
@@ -21,12 +33,15 @@ module Hallon
         mask | Spotify.enum_value!(genre, "genre")
       end
 
-      allocate.tap do |search|
-        search.instance_eval do
-          @callback = proc { search.trigger(:load) }
-          @pointer  = Spotify.radio_search_create!(session.pointer, from_year, to_year, genres, @callback, nil)
-        end
+      search = allocate
+      search.instance_eval do
+        @callback = proc { search.trigger(:load) }
+        @pointer   = Spotify.radio_search_create!(session.pointer, from_year, to_year, genres, @callback, nil)
+
+        raise FFI::NullPointerError, "radio search failed" if @pointer.null?
       end
+
+      search
     end
 
     # Construct a new search with given query.
@@ -41,17 +56,11 @@ module Hallon
     # @option options [#to_i] :artists_offset (0) offset of artists in search result
     # @see http://developer.spotify.com/en/libspotify/docs/group__search.html#gacf0b5e902e27d46ef8b1f40e332766df
     def initialize(query, options = {})
-      o = {
-        :tracks  => 25,
-        :albums  => 25,
-        :artists => 25,
-        :tracks_offset  => 0,
-        :albums_offset  => 0,
-        :artists_offset => 0
-      }.merge(options)
-
+      o = Search.defaults.merge(options)
       @callback = proc { trigger(:load) }
-      @pointer  = Spotify.search_create!(session.pointer, query, o[:tracks_offset].to_i, o[:tracks].to_i, o[:albums_offset].to_i, o[:albums].to_i, o[:artists_offset].to_i, o[:artists].to_i, @callback, nil)
+      @pointer = Spotify.search_create!(session.pointer, query, o[:tracks_offset].to_i, o[:tracks].to_i, o[:albums_offset].to_i, o[:albums].to_i, o[:artists_offset].to_i, o[:artists].to_i, @callback, nil)
+
+      raise FFI::NullPointerError, "search for “#{query}” failed" if @pointer.null?
     end
 
     # @return [Boolean] true if the search has been fully loaded
