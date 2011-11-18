@@ -211,12 +211,12 @@ describe Hallon::Session do
   end
 
   describe "#connection_rules=" do
-    it "should not fail given an invalid rule" do
-      expect { session.connection_rules = :lawly }.to_not raise_error
+    it "should fail given an invalid rule" do
+      expect { session.connection_rules = :lawly }.to raise_error
     end
 
     it "should succeed given correct connection thingy" do
-      expect { session.connection_rules = :allow_network, :allow_sync_over_mobile }.to_not raise_error
+      expect { session.connection_rules = :network, :allow_sync_over_mobile }.to_not raise_error
     end
 
     it "should combine given rules and feed to libspotify" do

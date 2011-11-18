@@ -306,7 +306,7 @@ module Hallon
     # @see Session.connection_rules
     def connection_rules=(connection_rules)
       rules = Array(connection_rules).reduce(0) do |mask, rule|
-        mask | (Spotify.enum_value(rule) || 0)
+        mask | Spotify.enum_value!(rule, "connection rule")
       end
 
       Spotify.session_set_connection_rules(pointer, rules)
