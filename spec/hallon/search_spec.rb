@@ -40,9 +40,9 @@ describe Hallon::Search do
       mock_session { Hallon::Search.radio(1990..2010, :jazz, :punk) }
     end
 
-    it "should simply ignore invalid genres" do
-      Spotify.should_receive(:radio_search_create).with(any_args, 1990, 2010, 0, any_args).and_return(mock_search)
-      expect { mock_session { Hallon::Search.radio(1990..2010, :bogus, :hocum) } }.to_not raise_error
+    it "should raise an error on invalid genres" do
+      Spotify.should_not_receive(:radio_search_create)
+      expect { Hallon::Search.radio(1990..2010, :bogus, :jazz) }.to raise_error(ArgumentError, /bogus/)
     end
 
     it { should be_loaded }

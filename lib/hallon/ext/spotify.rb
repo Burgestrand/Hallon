@@ -4,6 +4,15 @@
 #
 # @see https://github.com/Burgestrand/libspotify-ruby
 module Spotify
+  # Fetches the associated value of an enum from a given symbol.
+  #
+  # @param [Symbol] symbol
+  # @param [#to_s] type
+  # @raise ArgumentError on failure
+  def self.enum_value!(symbol, type)
+    enum_value(symbol) or raise ArgumentError, "invalid #{type}: #{symbol}"
+  end
+
   # Wraps the function `function` so that it always returns
   # a Spotify::Pointer with correct refcount. Functions that
   # contain the word `create` are assumed to start out with
