@@ -4,7 +4,8 @@ describe Hallon::Track do
     let(:spotify_uri) { "spotify:track:7N2Vc8u56VGA4KUrGbikC2#01:00" }
   end
 
-  subject { Hallon::Track.new(mock_track) }
+  let(:track) { Hallon::Track.new(mock_track) }
+  subject { track }
 
   it { should be_loaded }
   its(:name)   { should eq "They" }
@@ -22,19 +23,19 @@ describe Hallon::Track do
     around { |test| mock_session(&test) }
 
     it "should delegate to session to unstar" do
-      session.should_receive(:unstar).with(subject)
-      subject.starred = false
+      session.should_receive(:unstar).with(track)
+      track.starred = false
     end
 
     it "should delegate to session to star" do
-      session.should_receive(:star).with(subject)
-      subject.starred = true
+      session.should_receive(:star).with(track)
+      track.starred = true
     end
 
     it "should change starred status of track" do
-      subject.should be_starred
-      subject.starred = false
-      subject.should_not be_starred
+      track.should be_starred
+      track.starred = false
+      track.should_not be_starred
     end
   end
 
@@ -52,31 +53,24 @@ describe Hallon::Track do
 
   describe "album" do
     it "should be an album when there is one" do
-      subject.album.should eq Hallon::Album.new(mock_album)
+      track.album.should eq Hallon::Album.new(mock_album)
     end
 
     it "should be nil when there isn’t one" do
-      Spotify.should_receive(:track_album).and_return(FFI::Pointer.new(0))
-      subject.album.should be_nil
+      Spotify.should_receive(:track_album).and_return(null_pointer)
+      track.album.should be_nil
     end
   end
 
   describe "to_link" do
-    before(:each) { Hallon::Link.stub(:new) }
-    let(:mock_link) { FFI::Pointer.new(1) }
-
     it "should pass the current offset by default" do
-      Spotify.should_receive(:link_create_from_track).with(subject.pointer, 10_000).and_return(mock_link)
-      subject.should_receive(:offset).and_return(10)
-
-      subject.to_link
+      track.should_receive(:offset).and_return(10)
+      track.to_link.to_str.should match /#00:10/
     end
 
     it "should accept offset as parameter" do
-      Spotify.should_receive(:link_create_from_track).with(subject.pointer, 1337_000).and_return(mock_link)
-      subject.should_not_receive(:offset)
-
-      subject.to_link(1337)
+      track.should_not_receive(:offset)
+      track.to_link(1337).to_str.should match /#22:17/
     end
   end
 
@@ -85,7 +79,7 @@ describe Hallon::Track do
 
     it "should return the placeholder status of the track" do
       yes.should be_placeholder
-      subject.should_not be_placeholder
+      track.should_not be_placeholder
     end
   end
 
@@ -113,7 +107,7 @@ describe Hallon::Track do
 
   describe "#offline_status" do
     it "should return the tracks’ offline status" do
-      subject.offline_status.should eq :done
+      track.offline_status.should eq :done
     end
   end
 
