@@ -21,7 +21,7 @@ module Hallon
         user   = region
         region = :user
       when NilClass
-        region = :anywhere
+        region = :everywhere
       when Symbol
         region = to_country(region)
       end

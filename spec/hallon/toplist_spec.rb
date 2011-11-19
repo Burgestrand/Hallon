@@ -1,9 +1,7 @@
 describe Hallon::Toplist do
   subject do
-    mock_session do
-      Spotify.should_receive(:toplistbrowse_create).and_return(mock_toplistbrowse)
-      Hallon::Toplist.new(:artists)
-    end
+    Spotify.registry_add 'spotify:toplist:artists:everywhere', mock_toplistbrowse
+    mock_session { Hallon::Toplist.new(:artists) }
   end
 
   it { should be_a Hallon::Observable }
@@ -20,21 +18,20 @@ describe Hallon::Toplist do
   its('tracks.to_a') { should eq instantiate(Hallon::Track, mock_track, mock_track_two) }
 
   describe ".new" do
-    around { |test| mock_session(&test) }
-
     it "should fail given an invalid type" do
-      expect { Hallon::Toplist.new(:invalid_type) }.to raise_error(ArgumentError, /invalid enum value/)
+      expect { mock_session { Hallon::Toplist.new(:invalid_type) } }.to raise_error(ArgumentError, /invalid enum value/)
     end
 
     it "should pass the username given a string to libspotify" do
-      Spotify.should_receive(:toplistbrowse_create).with(anything, anything, :user, "Kim", anything, nil).and_return(null_pointer)
-      Hallon::Toplist.new(:artists, "Kim")
+      Spotify.registry_add 'spotify:toplist:user:Kim', mock_toplistbrowse
+      mock_session { Hallon::Toplist.new(:tracks, "Kim").should be_loaded }
     end
 
     it "should pass the correct region to libspotify" do
-      sweden = 21317
-      Spotify.should_receive(:toplistbrowse_create).with(anything, anything, sweden, anything, anything, nil).and_return(null_pointer)
-      Hallon::Toplist.new(:artists, :se)
+      Spotify.registry_add 'spotify:toplist:tracks:SE', mock_toplistbrowse
+      mock_session { Hallon::Toplist.new(:tracks, :se).should be_loaded }
     end
+
+    it "should raise an error if the toplist browsing failed"
   end
 end

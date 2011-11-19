@@ -25,6 +25,15 @@ describe Spotify::Mock do
     end
   end
 
+  describe "unregion" do
+    it "should convert an integer to the correct region" do
+      Spotify.attach_function :unregion, [ :int ], :string
+
+      sweden = 21317
+      Spotify.unregion(sweden).should eq "SE"
+    end
+  end
+
   describe "the registry" do
     it "should find previously added entries" do
       Spotify.registry_add("i_exist", FFI::Pointer.new(1))
