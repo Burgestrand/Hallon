@@ -31,7 +31,5 @@ describe Hallon::Toplist do
       Spotify.registry_add 'spotify:toplist:tracks:SE', mock_toplistbrowse
       mock_session { Hallon::Toplist.new(:tracks, :se).should be_loaded }
     end
-
-    it "should raise an error if the toplist browsing failed"
   end
 end
