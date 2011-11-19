@@ -36,4 +36,11 @@ describe Hallon::ArtistBrowse do
   its('similar_artists.size') { should eq 2 }
   its('similar_artists.to_a') { should eq [mock_artist, mock_artist_two].map{ |p| Hallon::Artist.new(p) } }
   its(:biography) { should eq 'grew up in DA BLOCK' }
+
+  describe '.types' do
+    subject { Hallon::ArtistBrowse.types }
+
+    it { should be_an Array }
+    it { should include :full }
+  end
 end

@@ -16,6 +16,11 @@ module Hallon
   class ArtistBrowse < Base
     include Observable
 
+    # @return [Array<Symbol>] artist browsing types for use in {#initialize}
+    def self.types
+      Spotify.enum_type(:artistbrowse_type).symbols
+    end
+
     # Creates an ArtistBrowse instance from an Artist or an Artist pointer.
     #
     # @note Use {Artist#browse} to browse an Artist.
