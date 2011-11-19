@@ -25,7 +25,8 @@ module Hallon
     #
     # @note Use {Artist#browse} to browse an Artist.
     # @param [Artist, Spotify::Pointer] artist
-    def initialize(artist)
+    # @param [Symbol] type (see {.types})
+    def initialize(artist, type = :full)
       pointer = artist
       pointer = pointer.pointer if pointer.respond_to?(:pointer)
 
@@ -35,7 +36,7 @@ module Hallon
       end
 
       @callback = proc { trigger(:load) }
-      @pointer  = Spotify.artistbrowse_create!(session.pointer, pointer, @callback, nil)
+      @pointer  = Spotify.artistbrowse_create!(session.pointer, pointer, type, @callback, nil)
     end
 
     # @return [Boolean] true if the album browser is loaded

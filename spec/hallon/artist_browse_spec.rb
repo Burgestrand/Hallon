@@ -1,12 +1,11 @@
 # coding: utf-8
 describe Hallon::ArtistBrowse do
-  subject do
-    mock_session do
-      artist = Hallon::Artist.new(mock_artist)
-      Spotify.should_receive(:artistbrowse_create).and_return(mock_artistbrowse)
-      Hallon::ArtistBrowse.new(artist)
-    end
+  let(:browse) do
+    artist = Hallon::Artist.new(mock_artist)
+    mock_session { Hallon::ArtistBrowse.new(artist) }
   end
+
+  subject { browse }
 
   it { should be_loaded }
   its(:error)  { should eq :ok }
@@ -14,19 +13,11 @@ describe Hallon::ArtistBrowse do
 
   its('portraits.size') { should eq 2 }
   its('portraits.to_a') do
-    Hallon::Session.should_receive(:instance).exactly(2).times.and_return(session)
-
-    subject.map{ |img| img.id(true) }.should eq [mock_image_id, mock_image_id]
+    mock_session(2) { subject.map{ |img| img.id(true) }.should eq [mock_image_id, mock_image_id] }
   end
 
   specify 'portraits(false)' do
-    links = []
-    links << mock_image_link
-    links << mock_image_link_two
-
-    Spotify.should_receive(:link_create_from_artistbrowse_portrait!).and_return(*links)
-
-    subject.portraits(false).to_a.should eq instantiate(Hallon::Link, mock_image_link, mock_image_link_two)
+    browse.portraits(false)[0].should eq Hallon::Link.new(mock_image_link)
   end
 
   its('tracks.size') { should eq 2 }
