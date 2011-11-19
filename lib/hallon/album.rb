@@ -36,7 +36,7 @@ module Hallon
     # Release year of album.
     #
     # @return [Integer]
-    def year
+    def release_year
       Spotify.album_year(pointer)
     end
 

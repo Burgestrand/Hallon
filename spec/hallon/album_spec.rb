@@ -8,7 +8,7 @@ describe Hallon::Album do
   subject { album }
 
   its(:name) { should eq "Finally Woken" }
-  its(:year) { should be 2004 }
+  its(:release_year) { should be 2004 }
   its(:type) { should be :single }
   its(:browse) do
     mock_session { should eq Hallon::AlbumBrowse.new(album) }
