@@ -9,10 +9,7 @@ describe Hallon::Artist do
   it { should be_loaded }
   its(:name) { should eq "Jem" }
   its(:browse) do
-    Hallon::Session.should_receive(:instance).exactly(2).times.and_return(session)
-    Spotify.should_receive(:artistbrowse_create).exactly(2).times.and_return(mock_artistbrowse)
-
-    should eq Hallon::ArtistBrowse.new(mock_artist)
+    mock_session(2) { should eq Hallon::ArtistBrowse.new(mock_artist) }
   end
 
   describe "#portrait" do
