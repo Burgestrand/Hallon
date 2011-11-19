@@ -154,6 +154,7 @@ end
 RSpec.configure do |config|
   config.before do
     Spotify.registry_add mock_image_uri, mock_image
+    Spotify.registry_add 'spotify:albumbrowse:1xvnWMz2PNFf7mXOSRuLws', mock_albumbrowse
     Spotify.registry_add 'spotify:artistbrowse:3bftcFwl4vqRNNORRsqm1G', mock_artistbrowse
     Spotify.registry_add 'spotify:artist:3bftcFwl4vqRNNORRsqm1G', mock_artist
     Spotify.registry_add 'spotify:album:1xvnWMz2PNFf7mXOSRuLws', mock_album
