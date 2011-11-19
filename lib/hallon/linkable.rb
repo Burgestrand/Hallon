@@ -3,33 +3,63 @@ module Hallon
   # Methods shared between objects that can be created from Spotify URIs,
   # or can be turned into Spotify URIs.
   #
-  # @note Linkable is not part of Hallons’ public API.
+  # @note Linkable is part of Hallons’ private API. You probably do not
+  #       not need to care about these methods.
+  #
   # @private
   module Linkable
-    # Defines `#from_link`, used in converting a link to a pointer.
+    # Defines `#from_link`, used in converting a link to a pointer. You
+    # can either pass it a `method_name`, or a `type` and a block.
     #
-    # @overload from_link(type)
-    #   Convert from a link using said method.
+    # @overload from_link(method_name)
+    #   Define `#from_link` simply by giving the name of the method,
+    #   minus the `link_` prefix.
     #
     #   @example
-    #     from_link :as_album # => Spotify.link_as_album(pointer, *args)
+    #     class Album
+    #       extend Linkable
     #
-    #   @param [Symbol] as_object link conversion method, formatted `as_type`
+    #       from_link :as_album # => Spotify.link_as_album(pointer, *args)
+    #       # ^ is roughly equivalent to:
+    #       def from_link(link, *args)
+    #         unless Spotify::Pointer.typechecks?(link, :link)
+    #           link = Link.new(link).pointer(:album)
+    #         end
+    #
+    #         Spotify.link_as_album!(link)
+    #       end
+    #     end
+    #
+    #   @param [Symbol] method_name
     #
     # @overload from_link(type) { |*args| … }
-    #   Use the given block to convert the link.
+    #   Define `#from_link` to use the given block to convert an object
+    #   from a link. The link is converted to a pointer and typechecked
+    #   to be of the same type as `type` before given to the block.
     #
     #   @example
-    #     from_link :profile do |pointer|
-    #       Spotify.link_as_user(pointer)
+    #     class User
+    #       extend Linkable
+    #
+    #       from_link :profile do |pointer|
+    #         Spotify.link_as_user!(pointer)
+    #       end
+    #       # ^ is roughly equivalent to:
+    #       def from_link(link, *args)
+    #         unless Spotify::Pointer.typechecks?(link, :link)
+    #           link = Link.new(link).pointer(:profile)
+    #         end
+    #
+    #         Spotify.link_as_user!(link)
+    #       end
     #     end
     #
     #   @param [#to_s] type link type
     #   @yield [link, *args] called when conversion is needed from Link pointer
-    #   @yieldparam [Hallon::Link] link
+    #   @yieldparam [Spotify::Pointer] link
     #   @yieldparam *args any extra arguments given to `#from_link`
     #
-    # @see Link#pointer
+    # @note Private API. You probably do not need to care about this method.
     def from_link(as_object, &block)
       block ||= Spotify.method(:"link_#{as_object}!")
       type    = as_object.to_s[/^(as_)?([^_]+)/, 2].to_sym
@@ -47,13 +77,24 @@ module Hallon
       end
     end
 
-    # Defines `#to_link` method, which converts the the current object to a {Link}
+    # Defines `#to_link` method, used in converting the object to a {Link}.
     #
     # @example
-    #   to_link :from_artist # => Spotify.link_create_from_artist
+    #   class Artist
+    #     extend Linkable
     #
-    # @param [Symbol] cmethod object kind
+    #     to_link :from_artist
+    #     # ^ is the same as:
+    #     def to_link(*args)
+    #       link = Spotify.link_create_from_artist!(pointer, *args)
+    #       Link.new(link)
+    #     end
+    #   end
+    #
+    # @param [Symbol] cmethod name of the C method, say `from_artist` in `Spotify.link_create_from_artist`.
     # @return [Link]
+    #
+    # @note Private API. You probably do not need to care about this method.
     def to_link(cmethod)
       define_method(:to_link) do |*args|
         link = Spotify.__send__(:"link_create_#{cmethod}!", pointer, *args)

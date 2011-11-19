@@ -32,24 +32,25 @@ module Hallon
 
     extend Linkable
 
-    # @macro [attach] from_link
-    #   Given a Link, get its’ underlying pointer.
-    #
-    #   @method from_link
-    #   @scope  instance
-    #   @param  [String, Hallon::Link, Spotify::Pointer] link
-    #   @return [FFI::Pointer]
-    from_link :profile do |link|
-      Spotify.link_as_user!(link)
-    end
-
     # @macro [attach] to_link
-    #   Create a Link to the current object.
+    #   Create a {Link} to the current object.
     #
     #   @method to_link
     #   @scope  instance
     #   @return [Hallon::Link]
     to_link :from_user
+
+    # @macro [attach] from_link
+    #   Given a Link, convert it to an object pointer.
+    #
+    #   @method from_link
+    #   @scope  instance
+    #   @visibility private
+    #   @param  [String, Hallon::Link, Spotify::Pointer] link
+    #   @return [Spotify::Pointer]
+    from_link :profile do |link|
+      Spotify.link_as_user!(link)
+    end
 
     # Construct a new instance of User.
     #

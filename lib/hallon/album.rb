@@ -1,70 +1,85 @@
+# coding: utf-8
 module Hallon
   # Albums are non-detailed metadata about actual music albums.
   #
   # To retrieve copyrights, album review and tracks you need to browse
-  # the album, which is not currently supported by Hallon. You can retrieve
-  # the {#pointer} use the raw Spotify API on it, however.
+  # the album. You do this by calling {Album#browse} to retrieve an
+  # {AlbumBrowse} instance.
   #
-  # @note All metadata methods require the album to be {Album#loaded?}
+  # It does still allow you to query some metadata information, such as
+  # its’ {#name}, {#release_year}, {#type}, {#artist}, {#cover}…
+  #
+  # @note Pretty much all methods require the album to be {Album#loaded?}
+  #       to return meaningful results.
   #
   # @see http://developer.spotify.com/en/libspotify/docs/group__album.html
   class Album < Base
-    # An array of different kinds of albums. Singles, compilations etc.
+    # @example
+    #
+    #   Hallon::Album.types # => [:album, :single, :compilation, :unknown]
+    #
+    # @return [Array<Symbol>] an array of different kinds of albums (compilations, singles, …)
     def self.types
       Spotify.enum_type(:albumtype).symbols
     end
 
     extend Linkable
 
-    from_link :as_album
     to_link   :from_album
+    from_link :as_album
 
     # Construct an Album from a link.
+    #
+    # @example from a spotify URI
+    #
+    #   album = Hallon::Album.new("spotify:album:6TECAywzyJGh0kwxfeBgGc")
+    #
+    # @example from a link
+    #
+    #   link = Hallon::Link.new("spotify:album:6TECAywzyJGh0kwxfeBgGc")
+    #   album = Hallon::Album.new(link)
     #
     # @param [String, Link, Spotify::Pointer] link
     def initialize(link)
       @pointer = to_pointer(link, :album)
     end
 
-    # Name of album.
-    #
-    # @return [String]
+    # @return [String] name of the album.
     def name
       Spotify.album_name(pointer)
     end
 
-    # Release year of album.
-    #
-    # @return [Integer]
+    # @return [Integer] release year of the album.
     def release_year
       Spotify.album_year(pointer)
     end
 
-    # Retrieve album type.
-    #
-    # @return [Symbol] one of {Album.types}
+    # @see Album.types
+    # @return [Symbol] album type.
     def type
       Spotify.album_type(pointer)
     end
 
-    # True if the album is available from the current session.
-    #
-    # @return [Boolean]
+    # @return [Boolean] true if the album is available.
     def available?
       Spotify.album_is_available(pointer)
     end
 
-    # True if album has been loaded.
-    #
-    # @return [Boolean]
+    # @return [Boolean] true if the album is loaded.
     def loaded?
       Spotify.album_is_loaded(pointer)
     end
 
-    # Retrieve album cover art.
+    # @return [Artist, nil] album artist.
+    def artist
+      artist = Spotify.album_artist!(pointer)
+      Artist.new(artist) unless artist.null?
+    end
+
+    # Retrieves album cover art as an {Image} or a {Link}.
     #
-    # @param [Boolean] as_image true if you want it as an Image
-    # @return [Image, Link, nil] album cover, or the link to it, or nil
+    # @param [Boolean] as_image true if you want it as an {Image}.
+    # @return [Image, Link, nil] album cover, the link to it, or nil.
     def cover(as_image = true)
       if as_image
         image_id = Spotify.album_cover(pointer)
@@ -75,15 +90,7 @@ module Hallon
       end
     end
 
-    # Retrieve the album Artist.
-    #
-    # @return [Artist, nil]
-    def artist
-      artist = Spotify.album_artist!(pointer)
-      Artist.new(artist) unless artist.null?
-    end
-
-    # Retrieve an AlbumBrowse object for this Album.
+    # Browse the {Album} by creating an {AlbumBrowse} instance from it.
     #
     # @return [AlbumBrowse]
     def browse
