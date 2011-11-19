@@ -67,6 +67,8 @@ task 'spotify:coverage' do
     'wrap_function',    # not a spotify function
     'lookup_return_value', # custom method
     'define_singleton_method', # overloaded by us
+    'image_remove_load_callback', # cleared when Image is GCd
+    'playlist_remove_callbacks', # cleared when Playlist is GCd
   ]
 
   covered -= ignored
