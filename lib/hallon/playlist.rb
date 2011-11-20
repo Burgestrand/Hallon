@@ -143,7 +143,7 @@ module Hallon
 
       unless name =~ /[^ ]/u
         raise ArgumentError, "name must not consist of only spaces"
-      end
+      end unless name.empty?
 
       Error.maybe_raise(Spotify.playlist_rename(pointer, name))
     end

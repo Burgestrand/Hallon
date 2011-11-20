@@ -117,12 +117,12 @@ describe Hallon::Playlist do
       playlist.name.should eq "Monoplaylist"
     end
 
-    it "should not fail given an empty name", :pending => "not sure" do
-      expect { playlist.name = "" }.to_not raise_error
+    it "should fail given an empty name" do
+      expect { playlist.name = "" }.to raise_error(Hallon::Error)
     end
 
     it "should fail given a name of only spaces" do
-      expect { playlist.name = " " * 255 }.to raise_error(ArgumentError)
+      expect { playlist.name = " " }.to raise_error(ArgumentError)
     end
 
     it "should fail given a too long name" do
