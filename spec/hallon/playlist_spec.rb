@@ -39,14 +39,18 @@ describe Hallon::Playlist do
     its(:create_time) { should eq Time.parse("2009-11-04") }
     its(:creator)     { should eq Hallon::User.new(mock_user) }
     its(:message)     { should eq "message this, YO!" }
+  end
 
-    describe "seen" do
-      it "should be settable" do
-        track = playlist.tracks[0]
-        track.should be_seen
-        track.seen = false
-        track.should_not be_seen
-      end
+  describe "#seen" do
+    it "should set the seen status of the track at the given index" do
+      track = playlist.tracks[0]
+      track.should be_seen
+
+      track = playlist.seen(0, false)
+      track.should_not be_seen
+
+      track = playlist.seen(0, true)
+      track.should be_seen
     end
   end
 

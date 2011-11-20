@@ -9,46 +9,50 @@ module Hallon
     include Observable
     extend Linkable
 
-    # Playlist::Track is an object that is similar to tracks in many
-    # ways, but it also has a reference to the playlist that created
-    # it and the index it is placed on.
+    # Playlist::Track is a {Track} with additional information attached to it,
+    # that is specific to the playlist it was created from. The returned track
+    # is a snapshot of the information, so even if the underlying track moves,
+    # this Playlist::Track will still contain the same information.
+    #
+    # There is no way to refresh the information. You’ll have to retrieve the
+    # track again.
     class Track < Hallon::Track
-      attr_reader :index
-      attr_reader :playlist
-
       def initialize(playlist, index)
         super Spotify.playlist_track!(playlist, index)
 
-        @playlist = playlist
-        @index    = index
+        @index       = index
+        @create_time = Time.at Spotify.playlist_track_create_time(playlist, index)
+        @message     = Spotify.playlist_track_message(playlist, index)
+        @seen        = Spotify.playlist_track_seen(playlist, index)
+        @creator     = begin
+          creator = Spotify.playlist_track_creator!(playlist, index)
+          User.new(creator) unless creator.null?
+        end
       end
 
-      # @return [Time] time when track at {#index} was added to playlist
+      # @note this value never changes, even if the original track is moved/removed
+      # @return [Integer] index this track was created with.
+      attr_reader :index
+
+      # @return [Time] time when track at {#index} was added to playlist.
       def create_time
-        Time.at Spotify.playlist_track_create_time(playlist, index)
+        @create_time
       end
 
-      # @return [User, nil] person who added track at {#index} to this playlist
+      # @return [User, nil] person who added track at {#index} to this playlist.
       def creator
-        creator = Spotify.playlist_track_creator!(playlist, index)
-        User.new(creator) unless creator.null?
+        @creator
       end
 
-      # @return [String] message attached to this track at {#index}
+      # @return [String] message attached to this track at {#index}.
       def message
-        Spotify.playlist_track_message(playlist, index)
+        @message
       end
 
-      # @return [Boolean] true if track at {#index} has been seen
+      # @see Playlist#seen
+      # @return [Boolean] true if track at {#index} has been seen.
       def seen?
-        Spotify.playlist_track_seen(playlist, index)
-      end
-
-      # @raise [Error] if index is out of range
-      # @param [Boolean] set seen status of track at {#index}
-      def seen=(seen)
-        error = Spotify.playlist_track_set_seen(playlist, index, !! seen)
-        Error.maybe_raise(error)
+        @seen
       end
     end
 
@@ -184,7 +188,7 @@ module Hallon
       Spotify.playlist_subscribers_free(ptr)
     end
 
-    # @return [Integer] total number of subscribers
+    # @return [Integer] total number of subscribers.
     def total_subscribers
       Spotify.playlist_num_subscribers(pointer)
     end
@@ -213,9 +217,26 @@ module Hallon
       Spotify.playlist_num_tracks(pointer)
     end
 
-    # @return [Enumerable<Playlist::Track>] a list of playlist tracks
+    # @example retrieve track at index 3
+    #   track = playlist.tracks[3]
+    #   puts track.name
+    #
+    # @return [Enumerable<Playlist::Track>] a list of playlist tracks.
     def tracks
       Enumerator.new(size) { |i| Playlist::Track.new(pointer, i) }
+    end
+
+    # Set seen status of the Playlist::Track at the given index.
+    #
+    # @see #tracks
+    # @raise [Error] if the operation could not be completed
+    # @param [Integer] index
+    # @param [Boolean] seen true if the track is now seen
+    # @return [Playlist::Track] track at the given index
+    def seen(index, seen)
+      error = Spotify.playlist_track_set_seen(pointer, index, !! seen)
+      Error.maybe_raise(error)
+      tracks[index]
     end
 
     # Add a list of tracks to the playlist starting at given position.
