@@ -7,6 +7,8 @@ module Hallon
   #
   # @see http://developer.spotify.com/en/libspotify/docs/group__user.html
   class User < Base
+    extend Linkable
+
     # A Post is created upon sending tracks (with an optional message) to a user.
     #
     # @see http://developer.spotify.com/en/libspotify/docs/group__inbox.html
@@ -30,32 +32,19 @@ module Hallon
       end
     end
 
-    extend Linkable
-
-    # @macro [attach] to_link
-    #   Create a {Link} to the current object.
-    #
-    #   @method to_link
-    #   @scope  instance
-    #   @return [Hallon::Link]
-    to_link :from_user
-
-    # @macro [attach] from_link
-    #   Given a Link, convert it to an object pointer.
-    #
-    #   @method from_link
-    #   @scope  instance
-    #   @visibility private
-    #   @param  [String, Hallon::Link, Spotify::Pointer] link
-    #   @return [Spotify::Pointer]
     from_link :profile do |link|
       Spotify.link_as_user!(link)
     end
 
+    to_link :from_user
+
     # Construct a new instance of User.
     #
-    # @example
+    # @example from a canonical username
     #   Hallon::User.new("burgestrand")
+    #
+    # @example from a spotify URI
+    #   Hallon::User.new("spotify:user:burgestrand")
     #
     # @note You can also instantiate User with a canonical username
     # @param [String, Link, Spotify::Pointer] link

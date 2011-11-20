@@ -26,6 +26,7 @@ module Hallon
     extend Linkable
 
     to_link   :from_album
+
     from_link :as_album
 
     # Construct an Album from a link.

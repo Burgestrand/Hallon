@@ -1,12 +1,11 @@
+# coding: utf-8
 module Hallon
   # Artists in Hallon are the people behind the songs. Methods
   # are defined for retrieving their names and loaded status.
   #
-  # To retrieve more information about an artist, you can browse
+  # To retrieve more information about an artist, you can {#browse}
   # it. This will give access to more detailed data such as bio,
-  # portraits and more. Hallon does not support this as of yet,
-  # but you can use the underlying Spotify API for this, just like
-  # we have for {Album}s.
+  # portraits and more.
   #
   # Both Albums and Tracks can have more than one artist.
   #

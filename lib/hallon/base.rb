@@ -26,6 +26,26 @@ module Hallon
     end
 
     private
+      # @macro [attach] to_link
+      #   @method to_link
+      #   @scope  instance
+      #   @return [Hallon::Link] {Link} for the current object.
+      def self.to_link(cmethod)
+        # this is here to work around a YARD limitation, see
+        # {Linkable} for the actual source
+      end
+
+      # @macro [attach] from_link
+      #   @method from_link
+      #   @scope  instance
+      #   @visibility private
+      #   @param  [String, Hallon::Link, Spotify::Pointer] link
+      #   @return [Spotify::Pointer] pointer representation of given link.
+      def self.from_link(as_object, &block)
+        # this is here to work around a YARD limitation, see
+        # {Linkable} for the actual source
+      end
+
       # The current Session instance.
       #
       # @return [Session]
