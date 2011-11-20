@@ -13,23 +13,24 @@ describe Hallon::Linkable do
   before(:each) { Spotify.stub(:link_as_search!) }
 
   it "should define the #from_link method" do
-    object.should_not respond_to :from_link
+    object.respond_to?(:from_link, true).should be_false
 
     klass.instance_eval do
       from_link(:as_search)
     end
 
-    object.should respond_to :from_link
+    object.respond_to?(:from_link, true).should be_true
   end
 
   describe "#from_link" do
     it "should call the appropriate Spotify function" do
       Spotify.should_receive(:link_as_search!).and_return(pointer)
+
       klass.instance_eval do
         from_link(:as_search)
       end
 
-      object.from_link 'spotify:search:moo'
+      object.send(:from_link, 'spotify:search:moo')
     end
 
     it "should call the given block if necessary" do
@@ -45,7 +46,7 @@ describe Hallon::Linkable do
         end
       end
 
-      expect { object.from_link 'spotify:search:whatever' }.to change { called }
+      expect { object.send(:from_link, 'spotify:search:whatever') }.to change { called }
     end
 
     it "should pass extra parameters to the defining block" do
@@ -60,7 +61,7 @@ describe Hallon::Linkable do
         end
       end
 
-      object.from_link("spotify:search:burgestrand", :cool, 5)
+      object.send(:from_link, "spotify:search:burgestrand", :cool, 5)
       passed_args.should eq [:cool, 5]
     end
   end

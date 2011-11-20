@@ -75,6 +75,8 @@ module Hallon
           instance_exec(link, *args, &block)
         end
       end
+
+      private :from_link
     end
 
     # Defines `#to_link` method, used in converting the object to a {Link}.

@@ -84,7 +84,7 @@ module Hallon
 
       # @return [Boolean] true if the object can convert links to pointers
       def is_linkable?
-        respond_to?(:from_link)
+        respond_to?(:from_link, true)
       end
   end
 end
