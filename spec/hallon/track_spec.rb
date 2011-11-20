@@ -122,6 +122,10 @@ describe Hallon::Track do
     specify "without offset" do
       Hallon::Track.new(without_offset).offset.should eq 0
     end
+
+    specify "when instantiated from a pointer" do
+      Hallon::Track.new(mock_track).offset.should eq 0
+    end
   end
 
   describe "a local track" do
