@@ -27,7 +27,7 @@ module Hallon
 
       # @see Error.explain
       # @return [Symbol] error status of inbox post
-      def error
+      def status
         Spotify.inbox_error(pointer)
       end
     end

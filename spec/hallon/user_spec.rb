@@ -37,7 +37,7 @@ describe Hallon::User do
       let(:tracks) { instantiate(Hallon::Track, mock_track, mock_track_two) }
 
       it "should have an error status" do
-        post.error.should eq :ok
+        post.status.should eq :ok
       end
 
       it "should post to the correct user" do

@@ -68,8 +68,9 @@ module Hallon
       Spotify.search_is_loaded(pointer)
     end
 
-    # @return [Symbol] error status
-    def error
+    # @see Error.explain
+    # @return [Symbol] search error status.
+    def status
       Spotify.search_error(pointer)
     end
 

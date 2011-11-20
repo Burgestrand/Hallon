@@ -56,14 +56,14 @@ describe Hallon::Search do
     end
 
     it { should be_loaded }
-    its(:error) { should eq :ok }
+    its(:status) { should eq :ok }
     its('tracks.size') { should eq 2 }
     # ^ should be enough
   end
 
   it { should be_a Hallon::Observable }
   it { should be_loaded }
-  its(:error) { should eq :ok }
+  its(:status) { should eq :ok }
   its(:query) { should eq "my query" }
   its(:did_you_mean) { should eq "another thing" }
 

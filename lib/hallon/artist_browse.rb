@@ -44,9 +44,9 @@ module Hallon
       Spotify.artistbrowse_is_loaded(pointer)
     end
 
-    # @see Error
-    # @return [Symbol] artist browser error status
-    def error
+    # @see Error.explain
+    # @return [Symbol] artist browser error status.
+    def status
       Spotify.artistbrowse_error(pointer)
     end
 

@@ -35,8 +35,9 @@ module Hallon
       Spotify.toplistbrowse_is_loaded(pointer)
     end
 
-    # @return [Symbol] toplist error status
-    def error
+    # @see Error.explain
+    # @return [Symbol] toplist error status.
+    def status
       Spotify.toplistbrowse_error(pointer)
     end
 

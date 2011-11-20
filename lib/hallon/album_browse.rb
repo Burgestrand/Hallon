@@ -40,9 +40,9 @@ module Hallon
       Spotify.albumbrowse_is_loaded(pointer)
     end
 
-    # @see Error
-    # @return [Symbol] album browser error status
-    def error
+    # @see Error.explain
+    # @return [Symbol] album browser error status.
+    def status
       Spotify.albumbrowse_error(pointer)
     end
 

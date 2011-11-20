@@ -6,7 +6,7 @@ describe Hallon::Toplist do
 
   it { should be_a Hallon::Observable }
   it { should be_loaded }
-  its(:error) { should eq :ok }
+  its(:status) { should eq :ok }
 
   its('artists.size') { should eq 2 }
   its('artists.to_a') { should eq instantiate(Hallon::Artist, mock_artist, mock_artist_two) }

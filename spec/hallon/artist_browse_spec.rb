@@ -8,7 +8,7 @@ describe Hallon::ArtistBrowse do
   subject { browse }
 
   it { should be_loaded }
-  its(:error)  { should eq :ok }
+  its(:status) { should eq :ok }
   its(:artist) { should eq Hallon::Artist.new(mock_artist) }
 
   its('portraits.size') { should eq 2 }

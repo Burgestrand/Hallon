@@ -5,7 +5,7 @@ describe Hallon::AlbumBrowse do
   end
 
   it { should be_loaded }
-  its(:error)  { should eq :ok }
+  its(:status) { should eq :ok }
   its(:album)  { should eq Hallon::Album.new(mock_album) }
   its(:artist) { should eq Hallon::Artist.new(mock_artist) }
   its('copyrights.size') { should eq 2 }
