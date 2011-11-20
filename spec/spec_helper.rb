@@ -16,6 +16,10 @@ Thread.abort_on_exception = true
 RSpec.configure do |config|
   config.treat_symbols_as_metadata_keys_with_true_values = true
 
+  config.before do
+    Hallon::Session.stub(:instance?).and_return(true)
+  end
+
   def fixture_image_path
     File.expand_path('../fixtures/pink_cover.jpg', __FILE__)
   end

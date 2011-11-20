@@ -14,6 +14,12 @@ describe Hallon::Link do
       it "should accept an FFI pointer" do
         expect { Hallon::Link.new(Spotify::Pointer.new(null_pointer, :link, false)) }.to raise_error(ArgumentError, /is not a valid spotify link/)
       end
+
+      it "should raise an error when no session instance is about" do
+        # this is due to a bug in libspotify, it will segfault otherwise
+        Hallon::Session.stub(:instance?).and_return(false)
+        expect { Hallon::Link.new("spotify:user:burgestrand") }.to raise_error /session/i
+      end
     end
 
     describe "::valid?" do

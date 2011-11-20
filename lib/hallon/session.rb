@@ -58,6 +58,11 @@ module Hallon
       @__instance__ or raise "Session has not been initialized"
     end
 
+    # @return [Boolean] true if a Session instance exists.
+    def Session.instance?
+      !! @__instance__
+    end
+
     # @return [Array<Symbol>] list of available connection types.
     def self.connection_types
       Spotify.enum_type(:connection_type).symbols

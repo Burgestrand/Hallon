@@ -19,10 +19,15 @@ module Hallon
 
     # Parse the given Spotify URI into a Link.
     #
-    # @note Unless you have a {Session} initialized, this will segfault!
+    # @note You must initialize a Session before you call this method.
     # @param [#to_str] uri
     # @raise [ArgumentError] link could not be parsed
     def initialize(uri)
+      # if no session instance exists, libspotify segfaults, so assert that we have one
+      unless Session.instance?
+        raise "Link.new requires an existing Session instance"
+      end
+
       @pointer = to_pointer(uri, :link) do
         Spotify.link_create_from_string!(uri.to_str)
       end
