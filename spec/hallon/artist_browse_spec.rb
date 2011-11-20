@@ -28,6 +28,17 @@ describe Hallon::ArtistBrowse do
   its('similar_artists.to_a') { should eq [mock_artist, mock_artist_two].map{ |p| Hallon::Artist.new(p) } }
   its(:biography) { should eq 'grew up in DA BLOCK' }
 
+  describe "#request_duration" do
+    it "should return the request duration in seconds" do
+      browse.request_duration.should eq 2.751
+    end
+
+    it "should be nil if the request was fetched from local cache" do
+      Spotify.should_receive(:artistbrowse_backend_request_duration).and_return(-1)
+      browse.request_duration.should be_nil
+    end
+  end
+
   describe '.types' do
     subject { Hallon::ArtistBrowse.types }
 

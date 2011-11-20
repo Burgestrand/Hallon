@@ -65,12 +65,12 @@ describe Hallon::Track do
   describe "to_link" do
     it "should pass the current offset by default" do
       track.should_receive(:offset).and_return(10)
-      track.to_link.to_str.should match /#00:10/
+      track.to_link.to_str.should match(/#00:10/)
     end
 
     it "should accept offset as parameter" do
       track.should_not_receive(:offset)
-      track.to_link(1337).to_str.should match /#22:17/
+      track.to_link(1337).to_str.should match(/#22:17/)
     end
   end
 

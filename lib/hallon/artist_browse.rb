@@ -52,6 +52,14 @@ module Hallon
       Spotify.artistbrowse_biography(pointer)
     end
 
+    # @note If the object is not loaded, the result is undefined.
+    # @note Returns nil if the request was served from the local libspotify cache.
+    # @return [Rational, nil] time it took for the albumbrowse request to complete (in seconds).
+    def request_duration
+      duration = Spotify.artistbrowse_backend_request_duration(pointer)
+      Rational(duration, 1000) if duration > 0
+    end
+
     # Retrieve artist portraits as an {Image} or a {Link}.
     #
     # @param [Boolean] as_image true if you want an enumerator of Images (false for Links)

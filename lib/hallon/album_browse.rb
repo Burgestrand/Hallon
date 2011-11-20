@@ -54,6 +54,14 @@ module Hallon
       Album.new(album) unless album.null?
     end
 
+    # @note If the object is not loaded, the result is undefined.
+    # @note Returns nil if the request was served from the local libspotify cache.
+    # @return [Rational, nil] time it took for the albumbrowse request to complete (in seconds).
+    def request_duration
+      duration = Spotify.albumbrowse_backend_request_duration(pointer)
+      Rational(duration, 1000) if duration > 0
+    end
+
     # @return [Enumerator<String>] list of copyright notices.
     def copyrights
       size = Spotify.albumbrowse_num_copyrights(pointer)

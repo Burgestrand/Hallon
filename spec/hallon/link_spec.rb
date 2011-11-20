@@ -18,7 +18,7 @@ describe Hallon::Link do
       it "should raise an error when no session instance is about" do
         # this is due to a bug in libspotify, it will segfault otherwise
         Hallon::Session.stub(:instance?).and_return(false)
-        expect { Hallon::Link.new("spotify:user:burgestrand") }.to raise_error /session/i
+        expect { Hallon::Link.new("spotify:user:burgestrand") }.to raise_error(/session/i)
       end
     end
 

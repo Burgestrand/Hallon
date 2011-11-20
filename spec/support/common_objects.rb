@@ -24,7 +24,7 @@ RSpec::Core::ExampleGroup.instance_eval do
     copyrights = pointer_array_with(*copyrights)
     tracks     = pointer_array_with(mock_track, mock_track_two)
     review     = "This album is AWESOME"
-    Spotify.mock_albumbrowse(:ok, mock_album, mock_artist, 2, copyrights, 2, tracks, review, nil, nil)
+    Spotify.mock_albumbrowse(:ok, 2751, mock_album, mock_artist, 2, copyrights, 2, tracks, review, nil, nil)
   end
 
   let(:mock_artistbrowse) do
@@ -34,14 +34,14 @@ RSpec::Core::ExampleGroup.instance_eval do
     tracks    = pointer_array_with(mock_track, mock_track_two)
     albums    = pointer_array_with(mock_album)
 
-    Spotify.mock_artistbrowse(:ok, mock_artist, portraits.length, portraits, tracks.length, tracks, albums.length, albums, similar_artists.length, similar_artists, "grew up in DA BLOCK", :full, nil, nil)
+    Spotify.mock_artistbrowse(:ok, 2751, mock_artist, portraits.length, portraits, tracks.length, tracks, albums.length, albums, similar_artists.length, similar_artists, "grew up in DA BLOCK", :full, nil, nil)
   end
 
   let(:mock_toplistbrowse) do
     artists = pointer_array_with(mock_artist, mock_artist_two)
     albums  = pointer_array_with(mock_album)
     tracks  = pointer_array_with(mock_track, mock_track_two)
-    Spotify.mock_toplistbrowse(:ok, artists.length, artists, albums.length, albums, tracks.length, tracks)
+    Spotify.mock_toplistbrowse(:ok, 2751, artists.length, artists, albums.length, albums, tracks.length, tracks)
   end
 
   let(:mock_search) do

@@ -78,6 +78,14 @@ module Hallon
       end
     end
 
+    # @note If the object is not loaded, the result is undefined.
+    # @note Returns nil if the request was served from the local libspotify cache.
+    # @return [Rational, nil] time it took for the toplistbrowse request to complete (in seconds).
+    def request_duration
+      duration = Spotify.toplistbrowse_backend_request_duration(pointer)
+      Rational(duration, 1000) if duration > 0
+    end
+
     private
       # Convert a given two-character region to a Spotify
       # compliant region (encoded in a 16bit integer).

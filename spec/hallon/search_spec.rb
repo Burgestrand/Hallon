@@ -27,7 +27,7 @@ describe Hallon::Search do
 
     it "should raise an error if the search failed" do
       Spotify.should_receive(:search_create).and_return(null_pointer)
-      expect { mock_session { Hallon::Search.new("omgwtfbbq") } }.to raise_error /search (.*?) failed/
+      expect { mock_session { Hallon::Search.new("omgwtfbbq") } }.to raise_error(/search (.*?) failed/)
     end
   end
 
@@ -52,7 +52,7 @@ describe Hallon::Search do
 
     it "should raise an error if the search failed" do
       Spotify.should_receive(:radio_search_create).and_return(null_pointer)
-      expect { mock_session { Hallon::Search.radio(1990..1990) } }.to raise_error /search failed/
+      expect { mock_session { Hallon::Search.radio(1990..1990) } }.to raise_error(/search failed/)
     end
 
     it { should be_loaded }
