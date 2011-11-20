@@ -17,6 +17,12 @@ module Hallon
 
     # Create a new instance of an Image.
     #
+    # @example from a link
+    #   image = Hallon::Image.new("spotify:image:3ad93423add99766e02d563605c6e76ed2b0e450")
+    #
+    # @example from an image id
+    #   image = Hallon::Image.new("3ad93423add99766e02d563605c6e76ed2b0e450")
+    #
     # @param [String, Link, Spotify::Pointer] link link or image id
     # @param [Hallon::Session] session
     def initialize(link)
@@ -32,48 +38,32 @@ module Hallon
 
       @callback = proc { trigger :load }
       Spotify.image_add_load_callback(pointer, @callback, nil)
-
-      # TODO: remove load_callback when pointer is released
-      # NOTE: on(:load) will trigger while load callback is still executing,
-      #       and removing the load callback from within the load callback
-      #       does not make libspotify happy, and thus segfaults D:
-      #
-      # on(:load) { Spotify::image_remove_load_callback(pointer, @callback, nil) }
     end
 
-    # True if the image has been loaded.
-    #
-    # @return [Boolean]
+    # @return [Boolean] true if the image is loaded.
     def loaded?
       Spotify.image_is_loaded(pointer)
     end
 
-    # Retrieve the current error status.
-    #
-    # @return [Symbol] error
+    # @see Error.explain
+    # @return [Symbol] image error status.
     def status
       Spotify.image_error(pointer)
     end
 
-    # Retrieve image format.
-    #
-    # @return [Symbol] `:jpeg` or `:unknown`
+    # @return [Symbol] image format, one of `:jpeg` or `:unknown`
     def format
       Spotify.image_format(pointer)
     end
 
-    # Retrieve image ID as a string.
-    #
     # @param [Boolean] raw true if you want the image id as a hexadecimal string
-    # @return [String]
+    # @return [String] image ID as a string.
     def id(raw = false)
       id = Spotify.image_image_id(pointer).read_string(20)
       raw ? id : to_hex(id)
     end
 
-    # Raw image data as a binary encoded string.
-    #
-    # @return [String]
+    # @return [String] raw image data as a binary encoded string.
     def data
       FFI::MemoryPointer.new(:size_t) do |size|
         data = Spotify.image_data(pointer, size)
@@ -81,10 +71,9 @@ module Hallon
       end
     end
 
-    # True if the images both have the same ID, or if their
-    # pointers are the same.
-    #
     # @see Base#==
+    # @param [Object] other
+    # @return [Boolean] true if the images are the same object or have the same ID.
     def ==(other)
       super or id(true) == other.id(true)
     rescue NoMethodError, ArgumentError

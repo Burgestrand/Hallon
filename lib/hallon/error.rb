@@ -35,6 +35,9 @@ module Hallon
 
       # Explain a Spotify error with a string message.
       #
+      # @example
+      #   Hallon::Error.explain(:ok) # => "No error"
+      #
       # @param [Fixnum, Symbol]
       # @return [String]
       def explain(error)

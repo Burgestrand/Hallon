@@ -91,9 +91,9 @@ module Hallon
       end
     end
 
-    # Browse the {Album} by creating an {AlbumBrowse} instance from it.
+    # Browse the Album by creating an {AlbumBrowse} instance from it.
     #
-    # @return [AlbumBrowse]
+    # @return [AlbumBrowse] an album browsing object
     def browse
       AlbumBrowse.new(pointer)
     end

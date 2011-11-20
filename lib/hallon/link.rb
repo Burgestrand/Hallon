@@ -33,25 +33,19 @@ module Hallon
       end
     end
 
-    # Link type as a symbol.
-    #
-    # @return [Symbol]
+    # @return [Symbol] link type as a symbol (e.g. `:playlist`).
     def type
       Spotify.link_type(pointer)
     end
 
-    # Spotify URI length.
-    #
-    # @return [Fixnum]
+    # @return [Fixnum] spotify URI length.
     def length
       Spotify.link_as_string(pointer, nil, 0)
     end
 
-    # Get the Spotify URI this Link represents.
-    #
     # @see #length
     # @param [Fixnum] length truncate to this size
-    # @return [String]
+    # @return [String] spotify URI representation of this Link.
     def to_str(length = length)
       FFI::Buffer.alloc_out(length + 1) do |b|
         Spotify.link_as_string(pointer, b, b.size)
@@ -59,33 +53,25 @@ module Hallon
       end
     end
 
-    # Retrieve the full Spotify HTTP URL for this Link.
-    #
-    # @return [String]
+    # @return [String] full Spotify HTTP URL.
     def to_url
       "http://open.spotify.com/%s" % to_str[8..-1].gsub(':', '/')
     end
 
-    # True if this link equals `other.to_str`
-    #
-    # @param [#to_str] other
-    # @return [Boolean]
+    # @param [Object] other
+    # @return [Boolean] true if this link equals `other.to_str`.
     def ==(other)
       return super unless other.respond_to?(:to_str)
       to_str == other.to_str
     end
 
-    # String representation of the given Link.
-    #
-    # @return [String]
+    # @return [String] string representation of the Link.
     def to_s
       "<#{self.class.name} #{to_str}>"
     end
 
-    # Retrieve the underlying pointer. Used by {Linkable}.
-    #
     # @param [Symbol] expected_type if given, makes sure the link is of this type
-    # @return [FFI::Pointer]
+    # @return [Spotify::Pointer] the underlying Spotify::Pointer.
     # @raise ArgumentError if `type` is given and does not match link {#type}
     def pointer(expected_type = nil)
       unless type == expected_type or (expected_type == :playlist and type == :starred)

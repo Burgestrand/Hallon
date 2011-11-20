@@ -63,7 +63,7 @@ module Hallon
       raise FFI::NullPointerError, "search for “#{query}” failed" if @pointer.null?
     end
 
-    # @return [Boolean] true if the search has been fully loaded
+    # @return [Boolean] true if the search has been fully loaded.
     def loaded?
       Spotify.search_is_loaded(pointer)
     end
@@ -74,17 +74,17 @@ module Hallon
       Spotify.search_error(pointer)
     end
 
-    # @return [String] search query this search was created with
+    # @return [String] search query this search was created with.
     def query
       Spotify.search_query(pointer)
     end
 
-    # @return [String] “did you mean?” suggestion for current search
+    # @return [String] “did you mean?” suggestion for current search.
     def did_you_mean
       Spotify.search_did_you_mean(pointer)
     end
 
-    # @return [Enumerator<Track>] enumerate over all tracks in the search result
+    # @return [Enumerator<Track>] list of all tracks in the search result.
     def tracks
       size = Spotify.search_num_tracks(pointer)
       Enumerator.new(size) do |i|
@@ -93,12 +93,12 @@ module Hallon
       end
     end
 
-    # @return [Integer] total tracks available for this search query
+    # @return [Integer] total tracks available for this search query.
     def total_tracks
       Spotify.search_total_tracks(pointer)
     end
 
-    # @return [Enumerator<Album>] enumerate over all albums in the search result
+    # @return [Enumerator<Album>] list of all albums in the search result.
     def albums
       size  = Spotify.search_num_albums(pointer)
       Enumerator.new(size) do |i|
@@ -107,12 +107,12 @@ module Hallon
       end
     end
 
-    # @return [Integer] total tracks available for this search query
+    # @return [Integer] total tracks available for this search query.
     def total_albums
       Spotify.search_total_albums(pointer)
     end
 
-    # @return [Enumerator<Artist>] enumerate over all artists in the search result
+    # @return [Enumerator<Artist>] list of all artists in the search result.
     def artists
       size = Spotify.search_num_artists(pointer)
       Enumerator.new(size) do |i|
@@ -121,12 +121,12 @@ module Hallon
       end
     end
 
-    # @return [Integer] total tracks available for this search query
+    # @return [Integer] total tracks available for this search query.
     def total_artists
       Spotify.search_total_artists(pointer)
     end
 
-    # @return [Link] link for this search query
+    # @return [Link] link for this search query.
     def to_link
       link = Spotify.link_create_from_search!(pointer)
       Link.new(link) unless link.null?

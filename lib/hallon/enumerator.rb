@@ -1,3 +1,4 @@
+# coding: utf-8
 module Hallon
   # Hallon::Enumerator is like a lazy Array.
   #

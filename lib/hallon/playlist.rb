@@ -1,3 +1,4 @@
+# coding: utf-8
 module Hallon
   # Playlists are playlists. They contain tracks and track information
   # such as when tracks were added or by whom. They also contain some
@@ -16,7 +17,7 @@ module Hallon
       attr_reader :playlist
 
       def initialize(playlist, index)
-        super(Spotify.playlist_track!(playlist, index))
+        super Spotify.playlist_track!(playlist, index)
 
         @playlist = playlist
         @index    = index

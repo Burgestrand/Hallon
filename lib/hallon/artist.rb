@@ -16,29 +16,36 @@ module Hallon
     from_link :as_artist
     to_link   :from_artist
 
-    # Construct an artist given a link.
+    # Construct an Artist from a link.
+    #
+    # @example from a spotify URI
+    #
+    #   artist = Hallon::Artist.new("spotify:artist:6uSKeCyQEhvPC2NODgiqFE")
+    #
+    # @example from a link
+    #
+    #   link = Hallon::Link.new("spotify:artist:6uSKeCyQEhvPC2NODgiqFE")
+    #   artist = Hallon::Artist.new(link)
     #
     # @param [String, Link, FFI::Pointer] link
     def initialize(link)
       @pointer = to_pointer(link, :artist)
     end
 
-    # Retrieve Artist name. Empty string if Artist is not loaded.
-    #
-    # @return [String]
+    # @return [String] name of the artist.
     def name
       Spotify.artist_name(pointer)
     end
 
-    # True if the Artist is loaded.
-    #
-    # @return [Boolean]
+    # @return [Boolean] true if the artist is loaded.
     def loaded?
       Spotify.artist_is_loaded(pointer)
     end
 
+    # Retrieve artist portrait as an {Image} or a {Link}.
+    #
     # @param [Boolean] as_image true if you want it as an Image
-    # @return [Image, Link, nil] artist portrait, or the link to it, or nil
+    # @return [Image, Link, nil] artist portrait, the link to it, or nil.
     def portrait(as_image = true)
       if as_image
         portrait = Spotify.artist_portrait(pointer)

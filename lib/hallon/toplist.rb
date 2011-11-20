@@ -1,3 +1,4 @@
+# coding: utf-8
 module Hallon
   # Toplists are what they sound like. They’re collections of
   # artists, albums or tracks popular in a certain area either
@@ -12,6 +13,15 @@ module Hallon
     # @overload initialize(type, username)
     # @overload initialize(type, country)
     # @overload initialize(type)
+    #
+    # @example with a given username
+    #   toplist = Hallon::Toplist.new(:artists, "burgestrand")
+    #
+    # @example with a given country
+    #   toplist = Hallon::Toplist.new(:tracks, :se)
+    #
+    # @example everywhere
+    #   toplist = Hallon::Toplist.new(:albums)
     #
     # @param [Symbol] type one of :artists, :albums or :tracks
     # @param [String, Symbol, nil] region username, 2-letter country code or nil
@@ -30,7 +40,7 @@ module Hallon
       @pointer  = Spotify.toplistbrowse_create!(session.pointer, type, region, user, @callback, nil)
     end
 
-    # @return [Boolean] true if the toplist is loaded
+    # @return [Boolean] true if the toplist is loaded.
     def loaded?
       Spotify.toplistbrowse_is_loaded(pointer)
     end
@@ -41,7 +51,7 @@ module Hallon
       Spotify.toplistbrowse_error(pointer)
     end
 
-    # @return [Enumerator<Artist>]
+    # @return [Enumerator<Artist>] a list of artists.
     def artists
       size = Spotify.toplistbrowse_num_artists(pointer)
       Enumerator.new(size) do |i|
@@ -50,7 +60,7 @@ module Hallon
       end
     end
 
-    # @return [Enumerator<Album>]
+    # @return [Enumerator<Album>] a list of albums.
     def albums
       size = Spotify.toplistbrowse_num_albums(pointer)
       Enumerator.new(size) do |i|
@@ -59,7 +69,7 @@ module Hallon
       end
     end
 
-    # @return [Enumerator<Track>]
+    # @return [Enumerator<Track>] a list of tracks.
     def tracks
       size = Spotify.toplistbrowse_num_tracks(pointer)
       Enumerator.new(size) do |i|

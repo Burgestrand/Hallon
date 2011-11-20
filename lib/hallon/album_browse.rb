@@ -1,17 +1,8 @@
+# coding: utf-8
 module Hallon
   # AlbumBrowse objects are for retrieving additional data from
   # an album that cannot otherwise be acquired. This includes
   # tracks, reviews, copyright information.
-  #
-  # AlbumBrowse object triggers the `:load` callback on itself
-  # when it loads.
-  #
-  # @example
-  #   browse = album.browse # album is a Hallon::Album
-  #   browse.on(:load) do
-  #     puts "Album browser for #{browse.album.name} has been loaded!"
-  #   end
-  #   session.wait_for { browse.loaded? } # will eventually trigger above callback
   #
   # @see Album
   # @see http://developer.spotify.com/en/libspotify/docs/group__albumbrowse.html
@@ -20,7 +11,7 @@ module Hallon
 
     # Creates an AlbumBrowse instance from an Album or an Album pointer.
     #
-    # @note Use {Album#browse} to browse an Album.
+    # @note Also {Album#browse} to browse an Album.
     # @param [Album, Spotify::Pointer] album
     def initialize(album)
       pointer = album
@@ -35,7 +26,7 @@ module Hallon
       @pointer  = Spotify.albumbrowse_create!(session.pointer, pointer, @callback, nil)
     end
 
-    # @return [Boolean] true if the album is loaded
+    # @return [Boolean] true if the album browser is loaded.
     def loaded?
       Spotify.albumbrowse_is_loaded(pointer)
     end
@@ -46,24 +37,24 @@ module Hallon
       Spotify.albumbrowse_error(pointer)
     end
 
-    # @return [String] album review
+    # @return [String] album review.
     def review
       Spotify.albumbrowse_review(pointer)
     end
 
-    # @return [Artist, nil] artist performing this album
+    # @return [Artist, nil] artist performing this album.
     def artist
       artist = Spotify.albumbrowse_artist!(pointer)
       Artist.new(artist) unless artist.null?
     end
 
-    # @return [Album, nil] album this object is browsing
+    # @return [Album, nil] album this object is browsing.
     def album
       album = Spotify.albumbrowse_album!(pointer)
       Album.new(album) unless album.null?
     end
 
-    # @return [Enumerator<String>] list of copyright notices
+    # @return [Enumerator<String>] list of copyright notices.
     def copyrights
       size = Spotify.albumbrowse_num_copyrights(pointer)
       Enumerator.new(size) do |i|
@@ -71,7 +62,7 @@ module Hallon
       end
     end
 
-    # @return [Enumerator<Track>] list of tracks
+    # @return [Enumerator<Track>] list of tracks.
     def tracks
       size = Spotify.albumbrowse_num_tracks(pointer)
       Enumerator.new(size) do |i|

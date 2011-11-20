@@ -1,3 +1,4 @@
+# coding: utf-8
 module Hallon
   # A wrapper around Session for playing, stopping and otherwise
   # controlling the playback features of libspotify.

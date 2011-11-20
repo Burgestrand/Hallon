@@ -68,7 +68,7 @@ module Hallon
       Spotify.enum_type(:connection_type).symbols
     end
 
-    # @return [Array<Symbol>] list of available connection rules
+    # @return [Array<Symbol>] list of available connection rules.
     def self.connection_rules
       Spotify.enum_type(:connection_rules).symbols
     end
@@ -225,9 +225,7 @@ module Hallon
       tap { logout; wait_for(:logged_out) { logged_out? } }
     end
 
-    # Username of the user stored in libspotify-remembered credentials.
-    #
-    # @return [String]
+    # @return [String] username of the user stored in libspotify-remembered credentials.
     def remembered_user
       bufflen = Spotify.session_remembered_user(pointer, nil, 0)
       FFI::Buffer.alloc_out(bufflen + 1) do |b|
@@ -251,17 +249,13 @@ module Hallon
       tap { Spotify.session_logout(pointer) if logged_in? }
     end
 
-    # Retrieve the currently logged in {User}.
-    #
-    # @return [User]
+    # @return [User] the User currently logged in.
     def user
       user = Spotify.session_user!(pointer)
       User.new(user) unless user.null?
     end
 
-    # Retrieve current connection status.
-    #
-    # @return [Symbol]
+    # @return [Symbol] current connection status.
     def status
       Spotify.session_connectionstate(pointer)
     end
@@ -274,7 +268,7 @@ module Hallon
       Spotify.session_set_cache_size(pointer, @cache_size = size)
     end
 
-    # @return [String] Currently logged in users’ country.
+    # @return [String] currently logged in users’ country.
     def country
       coded = Spotify.session_user_country(pointer)
       country = ((coded >> 8) & 0xFF).chr
@@ -343,16 +337,12 @@ module Hallon
       end
     end
 
-    # Number of playlists marked for offline sync.
-    #
-    # @return [Integer]
+    # @return [Integer] number of playlists marked for offline sync.
     def offline_playlists_count
       Spotify.offline_num_playlists(pointer)
     end
 
-    # Number of offline tracks left to sync for offline mode.
-    #
-    # @return [Integer]
+    # @return [Integer] number of offline tracks left to sync for offline mode.
     def offline_tracks_to_sync
       Spotify.offline_tracks_to_sync(pointer)
     end
@@ -370,51 +360,45 @@ module Hallon
       Spotify.session_preferred_offline_bitrate(pointer, bitrate, !! resync)
     end
 
-    # Retrieve the currently logged in users’ starred playlist.
-    #
     # @note Returns nil when no user is logged in.
-    # @return [Playlist, nil]
+    # @return [Playlist, nil] currently logged in user’s starred playlist.
     def starred
       playlist = Spotify.session_starred_create!(pointer)
       Playlist.new(playlist) unless playlist.null?
     end
 
-    # Retrieve the currently logged in users’ inbox playlist.
-    #
     # @note Returns nil when no user is logged in.
-    # @return [Playlist, nil]
+    # @return [Playlist, nil] currently logged in user’s inbox playlist.
     def inbox
       playlist = Spotify.session_inbox_create!(pointer)
       Playlist.new(playlist) unless playlist.null?
     end
 
-    # True if currently logged in.
     # @see #status
+    # @return [Boolean] true if logged in.
     def logged_in?
       status == :logged_in
     end
 
-    # True if logged out.
     # @see #status
+    # @return [Boolean] true if logged out.
     def logged_out?
       status == :logged_out
     end
 
-    # True if session has been disconnected.
     # @see #status
+    # @return [Boolean] true if session has been disconnected.
     def disconnected?
       status == :disconnected
     end
 
-    # True if offline.
     # @see #status
+    # @return [Boolean] true if offline.
     def offline?
       status == :offline
     end
 
-    # String representation of the Session.
-    #
-    # @return [String]
+    # @return [String] string representation of the Session.
     def to_s
       "<#{self.class.name}:0x#{object_id.to_s(16)} status=#{status} @options=#{options.inspect}>"
     end
