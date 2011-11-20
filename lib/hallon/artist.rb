@@ -52,9 +52,10 @@ module Hallon
     # Browse the Artist, giving you the ability to explore its’
     # portraits, biography and more.
     #
+    # @param [Symbol] type browsing type (see {ArtistBrowse.types})
     # @return [ArtistBrowse] an artist browsing object
-    def browse
-      ArtistBrowse.new(pointer)
+    def browse(type = :full)
+      ArtistBrowse.new(pointer, type)
     end
   end
 end

@@ -4,12 +4,26 @@ describe Hallon::Artist do
     let(:spotify_uri) { "spotify:artist:3bftcFwl4vqRNNORRsqm1G" }
   end
 
-  subject { Hallon::Artist.new(mock_artist) }
+  let(:artist) { Hallon::Artist.new(mock_artist) }
+  subject { artist }
 
   it { should be_loaded }
   its(:name) { should eq "Jem" }
-  its(:browse) do
-    mock_session(2) { should eq Hallon::ArtistBrowse.new(mock_artist) }
+
+  describe "#browse" do
+    it "should return an artist browsing object" do
+      mock_session(2) { subject.browse.should eq Hallon::ArtistBrowse.new(mock_artist) }
+    end
+
+    it "should default to full browsing" do
+      Hallon::ArtistBrowse.should_receive(:new).with(artist.pointer, :full)
+      artist.browse
+    end
+
+    it "should pass the browsing type along when creating the artist browsing object" do
+      Hallon::ArtistBrowse.should_receive(:new).with(artist.pointer, :no_tracks)
+      artist.browse(:no_tracks)
+    end
   end
 
   describe "#portrait" do
