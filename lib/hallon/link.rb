@@ -53,6 +53,8 @@ module Hallon
       end
     end
 
+    alias_method :to_uri, :to_str
+
     # @return [String] full Spotify HTTP URL.
     def to_url
       "http://open.spotify.com/%s" % to_str[8..-1].gsub(':', '/')
@@ -61,8 +63,9 @@ module Hallon
     # @param [Object] other
     # @return [Boolean] true if this link equals `other.to_str`.
     def ==(other)
-      return super unless other.respond_to?(:to_str)
       to_str == other.to_str
+    rescue NoMethodError
+      super
     end
 
     # @return [String] string representation of the Link.
