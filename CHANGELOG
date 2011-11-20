@@ -4,24 +4,45 @@ Hallon’s Changelog
 v0.9.0
 ------------------
 - Upgraded to libspotify *v10*
-- Added Playlist subsystem support
+- Improve documentation consistency
+- Link.new now raises an error if there’s no session
+- Minimal PlaylistContainer support (more to come next version)
+
+[ Added ]
+- Playlist subsystem support
+- Toplist#request_duration
+- AlbumBrowse#request_duration
+- ArtistBrowse#request_duration
+- ArtistBrowse.types
 - Player#volume_normalization(?|=)
 - Session.new accepting device_id/tracefile options
 - Session#login!/relogin!/logout! convenience methods
 - Session#starred: starred playlist for currently logged in user
 - Session#inbox: inbox for currently logged in user
+- Session.instance?
 - Image.new(image_id_in_hex) support
+- Link#to_uri
 - User.new(canonical_username)
 - User#post: posting tracks to other users’ inboxes
 - User#starred: starred playlist of a given user
 - Track#placeholder?
 - Track#offline_status
 - Track#unwrap
+- type parameter to Artist#browse
 
 [ Fixed ]
 - Moved from using FFI::Pointers to Spotify::Pointers
 - Spotify::Pointer garbage collection
 - Link#valid? using exceptions for flow control
+- Session#connection_rules= now raises an error when given invalid rule
+- Search.radio now raises an error when given invalid genres
+
+[ Changed ]
+- Playlist::Track#seen= removed in favor of Playlist#seen(index, yesno)
+- Object#error -> Object#status (AlbumBrowse, ArtistBrowse, Search, Toplist, User)
+- Album#year renamed to Album#release_year
+- Linkable.from_link/to_link and resulting #from_link are now private
+
 
 v0.8.0
 ------------------
