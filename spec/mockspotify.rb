@@ -31,7 +31,7 @@ module Spotify
              :create_time, :int,
              :creator, :pointer,
              :message, :pointer,
-             :seen, Bool
+             :seen, :bool
     end
   end
 
