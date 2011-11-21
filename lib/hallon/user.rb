@@ -56,33 +56,34 @@ module Hallon
       end
     end
 
-    # @return [Boolean] true if the user is loaded
+    # @return [Boolean] true if the user is loaded.
     def loaded?
       Spotify.user_is_loaded(pointer)
     end
 
-    # Retrieve the canonical name of the User.
-    #
-    # @return [String]
+    # @return [String] canonical name of the User.
     def name
       Spotify.user_canonical_name(pointer)
     end
 
-    # Retrieve the dispaly name of the User.
-    #
     # @note Unless {#loaded?} is true, this will return the same thing as {#name}.
-    # @return [String]
+    # @return [String] display name of the User.
     def display_name
       Spotify.user_display_name(pointer)
     end
 
-    # Retrieve the users’ starred playlist.
-    #
     # @note Returns nil unless {User#loaded?}
-    # @return [Playlist, nil]
+    # @return [Playlist, nil] starred playlist of the User.
     def starred
       playlist = Spotify.session_starred_for_user_create!(session.pointer, name)
       Playlist.new(playlist) unless playlist.null?
+    end
+
+    # @note Returns nil unless {#loaded?}
+    # @return [PlaylistContainer, nil] published playlists of the User.
+    def published
+      container = Spotify.session_publishedcontainer_for_user_create!(session.pointer, name)
+      PlaylistContainer.new(container) unless container.null?
     end
 
     # Send tracks to this users’ inbox, with an optional message.

@@ -70,5 +70,20 @@ describe Hallon::User do
         mock_session { user.starred.should be_nil }
       end
     end
+
+    describe "#published" do
+      let(:published) { Hallon::PlaylistContainer.new(mock_container) }
+
+      it "should return the playlist container of the user" do
+        Spotify.registry_add("spotify:container:%s" % user.name, mock_container)
+
+        session.login('burgestrand', '')
+        mock_session { user.published.should eq published }
+      end
+
+      it "should return nil if not logged in" do
+        mock_session { user.published.should be_nil }
+      end
+    end
   end
 end
