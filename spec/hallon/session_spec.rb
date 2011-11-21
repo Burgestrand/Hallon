@@ -54,8 +54,7 @@ describe Hallon::Session do
   describe "#container" do
     it "should return the sessions’ playlist container" do
       session.login 'burgestrand', 'pass'
-      session.container.should be_a Hallon::PlaylistContainer
-      session.container.owner.should eq session.user
+      session.container.should eq Hallon::PlaylistContainer.new(mock_container)
     end
 
     it "should return nil if not logged in" do

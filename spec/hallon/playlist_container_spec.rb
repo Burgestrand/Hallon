@@ -6,6 +6,7 @@ describe Hallon::PlaylistContainer do
 
   it { should be_loaded }
   its(:owner) { should eq Hallon::User.new("burgestrand") }
+  its(:size) { should eq 0 }
 
   describe "#add" do
     it "should create a new Playlist at the end of the playlist"

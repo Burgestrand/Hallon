@@ -13,15 +13,20 @@ module Hallon
       @pointer = to_pointer(pointer, :playlistcontainer)
     end
 
-    # @return [Boolean] true if the container is loaded
+    # @return [Boolean] true if the container is loaded.
     def loaded?
       Spotify.playlistcontainer_is_loaded(pointer)
     end
 
-    # @return [User, nil] owner of the container (nil if unknown or no owner)
+    # @return [User, nil] owner of the container (nil if unknown or no owner).
     def owner
       owner = Spotify.playlistcontainer_owner!(pointer)
       User.new(owner) unless owner.null?
+    end
+
+    # @return [Integer] number of playlists and folders in this container.
+    def size
+      Spotify.playlistcontainer_num_playlists(pointer)
     end
   end
 end

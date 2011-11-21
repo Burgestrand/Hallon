@@ -61,7 +61,7 @@ module Spotify
   attach_function :mock_toplistbrowse, :mocksp_toplistbrowse_create, [:error, :int, :int, :array, :int, :array, :int, :array], :toplistbrowse
 
   attach_mock_function :mock_playlist, :mocksp_playlist_create, [:string, :bool, :user, :bool, :string, :image_id, :bool, :uint, Spotify::Subscribers, :bool, :playlist_offline_status, :int, :int, :array], :playlist
-  attach_mock_function :mock_playlistcontainer, :mocksp_playlistcontainer_create, [:user, :bool], :playlistcontainer
+  attach_mock_function :mock_playlistcontainer, :mocksp_playlistcontainer_create, [:user, :bool, :int, :array, PlaylistContainerCallbacks, :userdata], :playlistcontainer
   attach_function :mock_search, :mocksp_search_create, [:error, :string, :string, :int, :int, :array, :int, :int, :array, :int, :int, :array, :search_complete_cb, :pointer], :search
   attach_function :mock_subscribers, :mocksp_subscribers, [:int, :array], Spotify::Subscribers
 
