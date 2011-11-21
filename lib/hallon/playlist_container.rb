@@ -28,5 +28,21 @@ module Hallon
     def size
       Spotify.playlistcontainer_num_playlists(pointer)
     end
+
+    # @return [Enumerator<Playlist, Folder, nil>] an enumerator of folders and playlists.
+    def contents
+      Enumerator.new(size) do |i|
+        type = Spotify.playlistcontainer_playlist_type(pointer, i)
+
+        case type
+        when :playlist
+          playlist = Spotify.playlistcontainer_playlist!(pointer, i)
+          Playlist.new(playlist)
+        when :start_folder
+        when :end_folder
+        else # :unknown
+        end
+      end
+    end
   end
 end

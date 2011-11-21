@@ -26,12 +26,23 @@ module Spotify
   require 'spotify'
 
   module Mock
+    def self.find_type(*args, &block)
+      Spotify.find_type(*args, &block)
+    end
+
     class PlaylistTrack < FFI::Struct
-      layout :track, :pointer,
+      layout :track, :track,
              :create_time, :int,
-             :creator, :pointer,
+             :creator, :user,
              :message, :pointer,
              :seen, :bool
+    end
+
+    class PlaylistContainerItem < FFI::Struct
+      layout :playlist, :playlist,
+             :type, :playlist_type,
+             :folder_name, :pointer,
+             :folder_id, :uint64
     end
   end
 

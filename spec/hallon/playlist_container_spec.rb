@@ -6,7 +6,7 @@ describe Hallon::PlaylistContainer do
 
   it { should be_loaded }
   its(:owner) { should eq Hallon::User.new("burgestrand") }
-  its(:size) { should eq 0 }
+  its(:size) { should eq 1 }
 
   describe "#add" do
     it "should create a new Playlist at the end of the playlist"
@@ -51,12 +51,10 @@ describe Hallon::PlaylistContainer do
     # (8) Playlist #8
     #
     it "should be a collection of folders and playlists"
-  end
 
-  describe "PlaylistContainer Playlists", :pending do
-    subject { container.contents[1] }
-
-    its(:name) { should be "Awesome playlist" }
+    it "should support retrieving playlists" do
+      container.contents[0].should eq Hallon::Playlist.new(mock_playlist)
+    end
   end
 
   describe Hallon::PlaylistContainer::Folder, :pending do
