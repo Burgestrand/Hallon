@@ -9,7 +9,36 @@ describe Hallon::PlaylistContainer do
   its(:size) { should eq 1 }
 
   describe "#add" do
-    it "should create a new Playlist at the end of the playlist"
+    context "given a string" do
+      it "should create a new Playlist at the end of the playlist" do
+        expect do
+          playlist = container.add("Bogus")
+
+          playlist.name.should eq "Bogus"
+          container.contents[-1].should eq playlist
+        end.to change{ container.size }.by(1)
+      end
+    end
+
+    it "should add the given Playlist to the end of the container" do
+      expect do
+        playlist = container.add Hallon::Playlist.new(mock_playlist)
+        container.contents[-1].should eq Hallon::Playlist.new(mock_playlist)
+      end.to change{ container.size }.by(1)
+    end
+
+    it "should add the given Playlist Link to the end of the container" do
+      expect do
+        playlist = container.add Hallon::Link.new("spotify:user:burgestrand:playlist:07AX9IY9Hqmj1RqltcG0fi")
+        container.contents[-1].should eq Hallon::Playlist.new(mock_playlist)
+      end.to change{ container.size }.by(1)
+    end
+
+    it "should return nil when failing to add the item" do
+      Spotify.should_receive(:playlistcontainer_add_playlist).and_return(null_pointer)
+      playlist = container.add Hallon::Link.new("spotify:user:burgestrand")
+      playlist.should be_nil
+    end
   end
 
   describe "#insert" do
