@@ -18,14 +18,16 @@ module Hallon
     # track again.
     class Track < Hallon::Track
       def initialize(playlist, index)
-        super Spotify.playlist_track!(playlist, index)
-
+        @playlist    = playlist
         @index       = index
-        @create_time = Time.at Spotify.playlist_track_create_time(playlist, index)
-        @message     = Spotify.playlist_track_message(playlist, index)
-        @seen        = Spotify.playlist_track_seen(playlist, index)
+
+        super Spotify.playlist_track!((pointer = playlist.pointer), index)
+
+        @create_time = Time.at Spotify.playlist_track_create_time(pointer, index)
+        @message     = Spotify.playlist_track_message(pointer, index)
+        @seen        = Spotify.playlist_track_seen(pointer, index)
         @creator     = begin
-          creator = Spotify.playlist_track_creator!(playlist, index)
+          creator = Spotify.playlist_track_creator!(pointer, index)
           User.new(creator) unless creator.null?
         end
       end
@@ -34,25 +36,41 @@ module Hallon
       # @return [Integer] index this track was created with.
       attr_reader :index
 
+      # @return [Playlist] playlist this track was created from.
+      attr_reader :playlist
+
       # @return [Time] time when track at {#index} was added to playlist.
-      def create_time
-        @create_time
-      end
+      attr_reader :create_time
 
       # @return [User, nil] person who added track at {#index} to this playlist.
-      def creator
-        @creator
-      end
+      attr_reader :creator
 
       # @return [String] message attached to this track at {#index}.
-      def message
-        @message
-      end
+      attr_reader :message
 
       # @see Playlist#seen
       # @return [Boolean] true if track at {#index} has been seen.
       def seen?
         @seen
+      end
+
+      # Set seen status of the Playlist::Track at the given index.
+      #
+      # @note Word of warning; this method will update the value you get from {#seen?}!
+      # @raise [IndexError] if the underlying track has moved
+      # @raise [Error] if the operation could not be completed
+      #
+      # @param [Integer] index
+      # @param [Boolean] seen true if the track is now seen
+      # @return [Playlist::Track] track at the given index
+      def seen=(seen)
+        unless Spotify.playlist_track(playlist.pointer, index) == pointer
+          raise IndexError, "track has moved from #{index}"
+        end
+
+        error = Spotify.playlist_track_set_seen(playlist.pointer, index, !! seen)
+        Error.maybe_raise(error)
+        @seen = Spotify.playlist_track_seen(playlist.pointer, index)
       end
     end
 
@@ -223,20 +241,7 @@ module Hallon
     #
     # @return [Enumerable<Playlist::Track>] a list of playlist tracks.
     def tracks
-      Enumerator.new(size) { |i| Playlist::Track.new(pointer, i) }
-    end
-
-    # Set seen status of the Playlist::Track at the given index.
-    #
-    # @see #tracks
-    # @raise [Error] if the operation could not be completed
-    # @param [Integer] index
-    # @param [Boolean] seen true if the track is now seen
-    # @return [Playlist::Track] track at the given index
-    def seen(index, seen)
-      error = Spotify.playlist_track_set_seen(pointer, index, !! seen)
-      Error.maybe_raise(error)
-      tracks[index]
+      Enumerator.new(size) { |i| Playlist::Track.new(self, i) }
     end
 
     # Add a list of tracks to the playlist starting at given position.

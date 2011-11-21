@@ -31,26 +31,29 @@ describe Hallon::Playlist do
   its(:size) { should eq 4 }
 
   its('tracks.size') { should eq 4 }
-  its('tracks.to_a') { should eq instantiate(Hallon::Playlist::Track, [mock_playlist, 0], [mock_playlist, 1], [mock_playlist, 2], [mock_playlist, 3]) }
+  its('tracks.to_a') { should eq instantiate(Hallon::Playlist::Track, [playlist, 0], [playlist, 1], [playlist, 2], [playlist, 3]) }
   describe "tracks#[]" do
+    let(:track) { subject }
     subject { playlist.tracks[0] }
 
     it { should be_seen }
     its(:create_time) { should eq Time.parse("2009-11-04") }
     its(:creator)     { should eq Hallon::User.new(mock_user) }
     its(:message)     { should eq "message this, YO!" }
-  end
 
-  describe "#seen" do
-    it "should set the seen status of the track at the given index" do
-      track = playlist.tracks[0]
-      track.should be_seen
+    describe "#seen=" do
+      it "should raise an error if the track has moved" do
+        track.should be_seen
+        track.playlist.move(1, 0)
+        expect { track.seen = false }.to raise_error(IndexError)
+        track.should be_seen
+      end
 
-      track = playlist.seen(0, false)
-      track.should_not be_seen
-
-      track = playlist.seen(0, true)
-      track.should be_seen
+      it "should update the value of #seen?" do
+        track.should be_seen
+        track.seen = false
+        track.should_not be_seen
+      end
     end
   end
 
