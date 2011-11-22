@@ -1,6 +1,22 @@
 Hallon’s Changelog
 ==================
 
+v0.9.1
+------------------
+[ Added ]
+- PlaylistContainer#size
+- User#published
+- PlaylistContainer#contents (only for playlists)
+- PlaylistContainer#add (existing playlist, new playlist)
+
+[ Changed ]
+- Playlist#seen now moved to Playlist::Track#seen=
+
+[ Fixed ]
+- Album#cover null pointer issue (https://github.com/Burgestrand/Hallon/issues/53)
+- Various possible null pointer bugs
+
+
 v0.9.0
 ------------------
 - Upgraded to libspotify *v10*
