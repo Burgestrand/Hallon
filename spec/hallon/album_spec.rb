@@ -32,6 +32,9 @@ describe Hallon::Album do
     it "should be nil if there is no image" do
       Spotify.should_receive(:album_cover).and_return(null_pointer)
       album.cover.should be_nil
+
+      Spotify.should_receive(:link_create_from_album_cover).and_return(null_pointer)
+      album.cover(false).should be_nil
     end
 
     it "should be an image if it exists" do

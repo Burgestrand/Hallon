@@ -83,11 +83,11 @@ module Hallon
     # @return [Image, Link, nil] album cover, the link to it, or nil.
     def cover(as_image = true)
       if as_image
-        image_id = Spotify.album_cover(pointer)
-        Image.new(image_id.read_string(20)) unless image_id.null?
+        cover = Spotify.album_cover(pointer)
+        Image.new cover.read_string(20) unless cover.null?
       else
-        link = Spotify.link_create_from_album_cover!(pointer)
-        Link.new(link)
+        cover = Spotify.link_create_from_album_cover!(pointer)
+        Link.new cover unless cover.null?
       end
     end
 
