@@ -17,17 +17,16 @@ module Hallon
     # There is no way to refresh the information. You’ll have to retrieve the
     # track again.
     class Track < Hallon::Track
-      def initialize(playlist, index)
-        @playlist    = playlist
+      def initialize(pointer, playlist, index)
+        super(pointer)
+
         @index       = index
-
-        super Spotify.playlist_track!((pointer = playlist.pointer), index)
-
-        @create_time = Time.at Spotify.playlist_track_create_time(pointer, index)
-        @message     = Spotify.playlist_track_message(pointer, index)
-        @seen        = Spotify.playlist_track_seen(pointer, index)
+        @playlist    = playlist
+        @create_time = Time.at Spotify.playlist_track_create_time(playlist.pointer, index)
+        @message     = Spotify.playlist_track_message(playlist.pointer, index)
+        @seen        = Spotify.playlist_track_seen(playlist.pointer, index)
         @creator     = begin
-          creator = Spotify.playlist_track_creator!(pointer, index)
+          creator = Spotify.playlist_track_creator!(playlist.pointer, index)
           User.new(creator) unless creator.null?
         end
       end
@@ -244,7 +243,10 @@ module Hallon
     #
     # @return [Enumerable<Playlist::Track>] a list of playlist tracks.
     def tracks
-      Enumerator.new(size) { |i| Playlist::Track.new(self, i) }
+      Enumerator.new(size) do |index|
+        track = Spotify.playlist_track!(pointer, index)
+        Playlist::Track.new(track, self, index) unless track.null?
+      end
     end
 
     # Add a list of tracks to the playlist starting at given position.

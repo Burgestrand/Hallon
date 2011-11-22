@@ -31,7 +31,8 @@ describe Hallon::Playlist do
   its(:size) { should eq 4 }
 
   its('tracks.size') { should eq 4 }
-  its('tracks.to_a') { should eq instantiate(Hallon::Playlist::Track, [playlist, 0], [playlist, 1], [playlist, 2], [playlist, 3]) }
+  its('tracks.to_a') { should eq instantiate(Hallon::Playlist::Track, *(0...4).map { |index| [Spotify.playlist_track!(playlist.pointer, index), playlist, index] }) }
+
   describe "tracks#[]" do
     let(:track) { subject }
     subject { playlist.tracks[0] }
