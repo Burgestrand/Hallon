@@ -43,7 +43,7 @@ describe Hallon::PlaylistContainer do
 
   describe "#insert" do
     it "should add the given Playlist to the given index"
-    it "should add the given Folder to the given index", :pending => true
+    it "should add the given Folder to the given index"
   end
 
   describe "#remove" do

@@ -49,10 +49,10 @@ module Hallon
     def portrait(as_image = true)
       if as_image
         portrait = Spotify.artist_portrait(pointer)
-        Image.new(portrait.read_bytes(20)) unless portrait.null?
+        Image.new portrait.read_bytes(20) unless portrait.null?
       else
         portrait = Spotify.link_create_from_artist_portrait!(pointer)
-        Link.new(portrait) unless portrait.null?
+        Link.new portrait unless portrait.null?
       end
     end
 

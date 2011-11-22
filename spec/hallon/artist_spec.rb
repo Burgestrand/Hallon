@@ -30,19 +30,19 @@ describe Hallon::Artist do
     let(:link) { Hallon::Link.new(mock_image_uri) }
 
     specify "as an image" do
-      Hallon::Session.should_receive(:instance).twice.and_return(session)
-
-      subject.portrait.should eq Hallon::Image.new(mock_image_id)
+      mock_session(2) { artist.portrait.should eq Hallon::Image.new(mock_image_id) }
     end
 
     specify "as a link" do
-      subject.portrait(false).should eq Hallon::Link.new(mock_image_uri)
+      artist.portrait(false).should eq Hallon::Link.new(mock_image_uri)
     end
 
     it "should be nil if an image is not available" do
       Spotify.should_receive(:artist_portrait).and_return(null_pointer)
+      artist.portrait.should be_nil
 
-      subject.portrait.should be_nil
+      Spotify.should_receive(:link_create_from_artist_portrait).and_return(null_pointer)
+      artist.portrait(false).should be_nil
     end
   end
 end

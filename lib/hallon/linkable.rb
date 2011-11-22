@@ -65,15 +65,11 @@ module Hallon
       type    = as_object.to_s[/^(as_)?([^_]+)/, 2].to_sym
 
       define_method(:from_link) do |link, *args|
-        if link.is_a?(FFI::Pointer) and not link.is_a?(Spotify::Pointer)
-          link
-        else
-          unless Spotify::Pointer.typechecks?(link, :link)
-            link = Link.new(link).pointer(type)
-          end
-
-          instance_exec(link, *args, &block)
+        unless Spotify::Pointer.typechecks?(link, :link)
+          link = Link.new(link).pointer(type)
         end
+
+        instance_exec(link, *args, &block)
       end
 
       private :from_link

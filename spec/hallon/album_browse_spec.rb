@@ -1,6 +1,10 @@
 # coding: utf-8
 describe Hallon::AlbumBrowse do
-  let(:browse) { mock_session { Hallon::AlbumBrowse.new(mock_album) } }
+  let(:browse) do
+    album = Hallon::Album.new(mock_album)
+    mock_session { Hallon::AlbumBrowse.new(album) }
+  end
+
   subject { browse }
 
   it { should be_loaded }
