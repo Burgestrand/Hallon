@@ -1,5 +1,12 @@
 # coding: utf-8
 describe Hallon::ArtistBrowse do
+  describe ".new" do
+    it "should raise an error if the browse request failed" do
+      Spotify.should_receive(:artistbrowse_create).and_return(null_pointer)
+      expect { mock_session { Hallon::ArtistBrowse.new(mock_artist) } }.to raise_error(FFI::NullPointerError)
+    end
+  end
+
   let(:browse) do
     artist = Hallon::Artist.new(mock_artist)
     mock_session { Hallon::ArtistBrowse.new(artist) }

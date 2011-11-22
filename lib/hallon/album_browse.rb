@@ -24,6 +24,8 @@ module Hallon
 
       @callback = proc { trigger(:load) }
       @pointer  = Spotify.albumbrowse_create!(session.pointer, pointer, @callback, nil)
+
+      raise FFI::NullPointerError, "album browsing failed" if @pointer.null?
     end
 
     # @return [Boolean] true if the album browser is loaded.
