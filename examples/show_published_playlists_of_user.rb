@@ -43,37 +43,25 @@ session.login!(ENV['HALLON_USERNAME'], ENV['HALLON_PASSWORD'])
 
 puts "Successfully logged in!"
 
-# Hallon does not have support for the below operations, so we resort
-# to using the raw Spotify gem and FFI for now.
 while username = prompt("Enter a Spotify username: ")
   begin
-    username  = nil if username.empty?
+    puts "Fetching container for #{username}..."
+    published = Hallon::User.new(username).published
+    session.wait_for { published.loaded? }
 
-    puts "Fetching container for #{username || "current user"}..."
-    container = Spotify::session_publishedcontainer_for_user_create!(session.pointer, username)
-    if container.null?
-      puts "Failed (unknown reason)."
-      next
-    end
+    puts "Listing #{published.size} playlists."
+    published.contents.each do |playlist|
+      next if playlist.nil? # folder or somesuch
 
-    session.wait_for { Spotify::playlistcontainer_is_loaded(container) }
-
-    num_playlists = Spotify::playlistcontainer_num_playlists(container)
-    puts "Listing #{num_playlists} playlists."
-
-    num_playlists.times do |i|
-      playlist = Spotify::playlistcontainer_playlist!(container, i)
-      playlist = Hallon::Playlist.new(playlist)
       session.wait_for { playlist.loaded? }
 
       puts
       puts playlist.name << ": "
 
-      num_tracks = playlist.tracks.size
       playlist.tracks.each_with_index do |track, i|
         session.wait_for { track.loaded? }
 
-        puts "\t (#{i+1}/#{num_tracks}) #{track.name}"
+        puts "\t (#{i+1}/#{playlist.size}) #{track.name}"
       end
     end
   rescue Interrupt

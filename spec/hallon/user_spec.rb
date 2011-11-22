@@ -82,6 +82,7 @@ describe Hallon::User do
       end
 
       it "should return nil if not logged in" do
+        Spotify.should_receive(:session_publishedcontainer_for_user_create).and_return(null_pointer)
         mock_session { user.published.should be_nil }
       end
     end
