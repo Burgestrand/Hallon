@@ -75,7 +75,7 @@ module Hallon
       size = Spotify.albumbrowse_num_tracks(pointer)
       Enumerator.new(size) do |i|
         track = Spotify.albumbrowse_track!(pointer, i)
-        Track.new(track) unless track.null?
+        Track.new(track)
       end
     end
   end
