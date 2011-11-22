@@ -90,11 +90,11 @@ module Hallon
     #   end
     #
     # @param [Symbol] cmethod name of the C method, say `from_artist` in `Spotify.link_create_from_artist`.
-    # @return [Link]
+    # @return [Link, nil]
     def to_link(cmethod)
       define_method(:to_link) do |*args|
         link = Spotify.__send__(:"link_create_#{cmethod}!", pointer, *args)
-        Link.new(link)
+        Link.new(link) unless link.null?
       end
     end
 

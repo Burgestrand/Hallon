@@ -22,6 +22,19 @@ describe Hallon::Linkable do
     object.respond_to?(:from_link, true).should be_true
   end
 
+  describe "#to_link" do
+    it "should return nil if link creation failed" do
+      Spotify.should_receive(:link_create_from_user).and_return(null_pointer)
+
+      klass.instance_eval do
+        to_link(:from_user)
+        attr_reader :pointer
+      end
+
+      object.to_link.should be_nil
+    end
+  end
+
   describe "#from_link" do
     it "should call the appropriate Spotify function" do
       Spotify.should_receive(:link_as_search!).and_return(pointer)
