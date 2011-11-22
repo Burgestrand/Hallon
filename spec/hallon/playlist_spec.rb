@@ -66,6 +66,11 @@ describe Hallon::Playlist do
       Spotify.should_receive(:playlist_subscribers).and_return(mock_empty_subscribers)
       subject.subscribers.should eq []
     end
+
+    it "should return nil when subscriber fetching failed" do
+      Spotify.should_receive(:playlist_subscribers).and_return(null_pointer)
+      playlist.subscribers.should be_nil
+    end
   end
 
   describe "#insert" do
