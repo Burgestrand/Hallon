@@ -69,6 +69,7 @@ task 'spotify:coverage' do
     'define_singleton_method', # overloaded by us
     'image_remove_load_callback', # cleared when Image is GCd
     'playlist_remove_callbacks', # cleared when Playlist is GCd
+    'playlistcontainer_remove_callbacks', # cleared when Playlist is GCd
   ]
 
   covered -= ignored
