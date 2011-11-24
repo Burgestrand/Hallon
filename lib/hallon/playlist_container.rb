@@ -70,5 +70,11 @@ module Hallon
 
       Playlist.new(playlist) unless playlist.null?
     end
+
+    # playlistcontainer_playlist_folder_name
+    # playlistcontainer_playlist_folder_id
+    # playlistcontainer_remove_playlist
+    # playlistcontainer_move_playlist
+    # playlistcontainer_add_folder
   end
 end
