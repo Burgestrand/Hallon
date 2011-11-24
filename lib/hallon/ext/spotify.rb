@@ -199,8 +199,9 @@ module Spotify
     end
   end
 
-  # Extensions to SessionCallbacks, making it easier to define callbacks.
-  SessionCallbacks.class_eval do
+  # Makes it easier binding callbacks safely to callback structs.
+  # When including this class you *must* define `proc_for(member)`!
+  module CallbackStruct
     # Assigns the callbacks to call the given target; the callback
     # procs are stored in the `storage` parameter. **Make sure the
     # storage does not get garbage collected as long as these callbacks
@@ -208,27 +209,42 @@ module Spotify
     #
     # @param [Object] target
     # @param [#&#91;&#93;&#61;] storage
-    def initialize(target, storage)
-      members.each do |member|
-        callback = lambda { |ptr, *args| target.trigger(member, *args) }
-        self[member] = storage[member] = callback
+    def create(target, storage)
+      new.tap do |struct|
+        members.each do |member|
+          struct[member] = storage[member] = proc_for(target, member)
+        end
       end
     end
   end
 
-  PlaylistCallbacks.class_eval do
-    # Assigns the callbacks to call the given target; the callback
-    # procs are stored in the `storage` parameter. **Make sure the
-    # storage does not get garbage collected as long as these callbacks
-    # are needed!**
-    #
-    # @param [Object] target
-    # @param [#&#91;&#93;&#61;] storage
-    def initialize(target, storage)
-      members.each do |member|
-        callback = lambda { |ptr, *args| target.trigger(member, *args[0...-1]) }
-        self[member] = storage[member] = callback
+  class << SessionCallbacks
+    include CallbackStruct
+
+    private
+      # @see CallbackStruct
+      def proc_for(target, member)
+        lambda { |pointer, *args| target.trigger(member, *args) }
       end
-    end
+  end
+
+  class << PlaylistCallbacks
+    include CallbackStruct
+
+    private
+      # @see CallbackStruct
+      def proc_for(target, member)
+        lambda { |pointer, *args, userdata| target.trigger(member, *args) }
+      end
+  end
+
+  class << PlaylistContainerCallbacks
+    include CallbackStruct
+
+    private
+      # @see CallbackStruct
+      def proc_for(target, member)
+        lambda { |pointer, *args, userdata| target.trigger(member, *args) }
+      end
   end
 end
