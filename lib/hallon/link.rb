@@ -28,6 +28,11 @@ module Hallon
         raise "Link.new requires an existing Session instance"
       end
 
+      # we support any #to_link’able object
+      if uri.respond_to?(:to_link)
+        uri = uri.to_link.pointer
+      end
+
       @pointer = to_pointer(uri, :link) do
         Spotify.link_create_from_string!(uri.to_str)
       end

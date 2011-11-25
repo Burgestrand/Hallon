@@ -20,6 +20,15 @@ describe Hallon::Link do
         Hallon::Session.stub(:instance?).and_return(false)
         expect { Hallon::Link.new("spotify:user:burgestrand") }.to raise_error(/session/i)
       end
+
+      it "should accept any object that supplies a #to_link method" do
+        link = Hallon::Link.new("spotify:user:burgestrand")
+
+        to_linkable = double
+        to_linkable.should_receive(:to_link).and_return(link)
+
+        Hallon::Link.new(to_linkable).should eq link
+      end
     end
 
     describe "::valid?" do
