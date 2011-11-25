@@ -9,8 +9,8 @@ describe Hallon::PlaylistContainer do
   its(:size) { should eq 1 }
 
   describe "#add" do
-    context "given a string" do
-      it "should create a new Playlist at the end of the playlist" do
+    context "given a string that’s not a valid spotify playlist uri" do
+      it "should create a new playlist at the end of the container" do
         expect do
           playlist = container.add("Bogus")
 
@@ -20,18 +20,45 @@ describe Hallon::PlaylistContainer do
       end
     end
 
-    it "should add the given Playlist to the end of the container" do
-      expect do
-        playlist = container.add Hallon::Playlist.new(mock_playlist)
-        container.contents[-1].should eq Hallon::Playlist.new(mock_playlist)
-      end.to change{ container.size }.by(1)
+    context "given a string that’s a valid spotify playlist uri" do
+      it "should add the existing Playlist at the end of the container" do
+        playlist_uri = "spotify:user:burgestrand:playlist:07AX9IY9Hqmj1RqltcG0fi"
+        playlist = mock_session { Hallon::Playlist.new(playlist_uri) }
+
+        expect do
+          new_playlist = container.add(playlist_uri)
+
+          new_playlist.should eq playlist
+          container.contents[-1].should eq playlist
+        end.to change{ container.size }.by(1)
+      end
+
+      it "should create a new playlist at the end of the container if forced to" do
+        playlist_uri = "spotify:user:burgestrand:playlist:07AX9IY9Hqmj1RqltcG0fi"
+
+        expect do
+          new_playlist = container.add(playlist_uri, :force_create)
+
+          new_playlist.name.should eq playlist_uri
+          container.contents[-1].should eq new_playlist
+        end.to change{ container.size }.by(1)
+      end
     end
 
-    it "should add the given Playlist Link to the end of the container" do
-      expect do
-        playlist = container.add Hallon::Link.new("spotify:user:burgestrand:playlist:07AX9IY9Hqmj1RqltcG0fi")
-        container.contents[-1].should eq Hallon::Playlist.new(mock_playlist)
-      end.to change{ container.size }.by(1)
+    context "given an existing playlist" do
+      it "should add it to the container if it’s a playlist" do
+        expect do
+          playlist = container.add Hallon::Playlist.new(mock_playlist)
+          container.contents[-1].should eq Hallon::Playlist.new(mock_playlist)
+        end.to change{ container.size }.by(1)
+      end
+
+      it "should add it to the container if it’s a link" do
+        expect do
+          playlist = container.add Hallon::Link.new("spotify:user:burgestrand:playlist:07AX9IY9Hqmj1RqltcG0fi")
+          container.contents[-1].should eq Hallon::Playlist.new(mock_playlist)
+        end.to change{ container.size }.by(1)
+      end
     end
 
     it "should return nil when failing to add the item" do

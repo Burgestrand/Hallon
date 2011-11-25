@@ -48,23 +48,35 @@ module Hallon
       end
     end
 
-    # @overload add(name)
-    #   Create a new playlist at the end of the container with the given name.
+    # Add the given playlist to the end of the container.
     #
-    #   @param [String] name
-    #   @return [Playlist, nil] the new playlist, or nil if the operation failed
+    # If the given `name` is a valid spotify playlist URI, Hallon will add
+    # the existing playlist to the container. To always create a new playlist,
+    # set `force_create` to true.
     #
-    # @overload add(playlist)
-    #   Add the given playlist to the end of the container.
+    # @example create a new playlist
+    #   container.add "New playlist"
     #
-    #   @param [Playlist, Link, #to_link] playlist
-    #   @return [Playlist, nil] the added playlist, or nil if the operation failed
-    def add(name_or_playlist)
-      playlist = if name_or_playlist.is_a?(String)
-        Spotify.playlistcontainer_add_new_playlist!(pointer, name_or_playlist)
+    # @example create a new playlist even if it’s a valid playlist URI
+    #   container.add "spotify:user:burgestrand:playlist:07AX9IY9Hqmj1RqltcG0fi", force: true
+    #
+    # @example add existing playlist
+    #   playlist = container.add "spotify:user:burgestrand:playlist:07AX9IY9Hqmj1RqltcG0fi"
+    #
+    #   playlist = Hallon::Playlist.new("spotify:user:burgestrand:playlist:07AX9IY9Hqmj1RqltcG0fi")
+    #   container.add playlist
+    #
+    #   link = Hallon::Link.new("spotify:user:burgestrand:playlist:07AX9IY9Hqmj1RqltcG0fi")
+    #   playlist = container.add link
+    #
+    # @param [String, Playlist, Link] playlist
+    # @param [Boolean] force_create force creation of a new playlist
+    # @return [Playlist, nil] the added playlist, or nil if the operation failed
+    def add(name, force_create = false)
+      playlist = if name.is_a?(String) and not Link.valid?(name) or force_create
+        Spotify.playlistcontainer_add_new_playlist!(pointer, name)
       else
-        link = name_or_playlist
-        link = link.to_link unless link.is_a?(Link)
+        link = Link.new(name)
         Spotify.playlistcontainer_add_playlist!(pointer, link.pointer)
       end
 
