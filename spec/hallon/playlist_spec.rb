@@ -56,6 +56,14 @@ describe Hallon::Playlist do
         track.should_not be_seen
       end
     end
+
+    describe "#moved?" do
+      it "should be true if the track has moved" do
+        track.should_not be_moved
+        track.playlist.move(1, 0)
+        track.should be_moved
+      end
+    end
   end
 
   describe "#subscribers" do

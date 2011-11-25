@@ -63,13 +63,18 @@ module Hallon
       # @param [Boolean] seen true if the track is now seen
       # @return [Playlist::Track] track at the given index
       def seen=(seen)
-        unless Spotify.playlist_track(playlist.pointer, index) == pointer
+        if moved?
           raise IndexError, "track has moved from #{index}"
         end
 
         error = Spotify.playlist_track_set_seen(playlist.pointer, index, !! seen)
         Error.maybe_raise(error)
         @seen = Spotify.playlist_track_seen(playlist.pointer, index)
+      end
+
+      # @return [Boolean] true if the track has not yet moved.
+      def moved?
+        Spotify.playlist_track(playlist.pointer, index) != pointer
       end
     end
 
