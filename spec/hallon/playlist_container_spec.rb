@@ -82,9 +82,25 @@ describe Hallon::PlaylistContainer do
   end
 
   describe "#remove" do
-    it "should remove the playlist at the given index"
-    it "should remove the matching :folder_end if removing a folder"
-    it "should raise an error if the index is out of range"
+    it "should remove the playlist at the given index" do
+      expect { container.remove(0) }.to change { container.size }.by -1
+    end
+
+    it "should remove the matching :end_folder if removing a :start_folder" do
+      container.contents.map(&:class).should eq [Hallon::Playlist, Hallon::PlaylistContainer::Folder, Hallon::PlaylistContainer::Folder]
+      expect { container.remove(1) }.to change { container.size }.by -2
+      container.contents.map(&:class).should eq [Hallon::Playlist]
+    end
+
+    it "should remove the matching :start_folder if removing a :end_folder" do
+      container.contents.map(&:class).should eq [Hallon::Playlist, Hallon::PlaylistContainer::Folder, Hallon::PlaylistContainer::Folder]
+      expect { container.remove(2) }.to change { container.size }.by -2
+      container.contents.map(&:class).should eq [Hallon::Playlist]
+    end
+
+    it "should raise an error if the index is out of range" do
+      expect { container.remove(-1) }.to raise_error(Hallon::Error)
+    end
   end
 
   describe "#contents" do

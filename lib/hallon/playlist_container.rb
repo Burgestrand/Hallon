@@ -81,9 +81,7 @@ module Hallon
     # @return [Enumerator<Playlist, Folder, nil>] an enumerator of folders and playlists.
     def contents
       Enumerator.new(size) do |i|
-        type = Spotify.playlistcontainer_playlist_type(pointer, i)
-
-        case type
+        case playlist_type(i)
         when :playlist
           playlist = Spotify.playlistcontainer_playlist!(pointer, i)
           Playlist.new(playlist)
@@ -140,6 +138,28 @@ module Hallon
       contents[-1]
     end
 
+    # Remove a playlist or a folder (but not its’ contents).
+    #
+    # @note When removing a folder, both its’ start and end is removed.
+    # @param [Integer] index
+    # @return [PlaylistContainer]
+    # @raise [Error] if the index is out of range
+    def remove(index)
+      remove = proc { |idx| Spotify.playlistcontainer_remove_playlist(pointer, idx) }
+
+      error = case playlist_type(index)
+      when :start_folder, :end_folder
+        indices = folder_range(index)
+
+        Error.maybe_raise(remove[indices.begin])
+        remove[indices.end - 1] # ^ everything moves down one step
+      else
+        remove[index]
+      end
+
+      tap { Error.maybe_raise(error) }
+    end
+
     protected
       # Given an index, find out the starting point and ending point
       # of the folder at that index.
@@ -148,7 +168,7 @@ module Hallon
       # @return [Range] begin..end
       def folder_range(index)
         id      = folder_id(index)
-        type    = Spotify.playlistcontainer_playlist_type(pointer, index)
+        type    = playlist_type(index)
         same_id = proc { |idx| folder_id(idx) == id }
 
         case type
@@ -163,6 +183,11 @@ module Hallon
         if beginning and ending and beginning != ending
           beginning..ending
         end
+      end
+
+      # @return [Symbol] playlist type
+      def playlist_type(index)
+        Spotify.playlistcontainer_playlist_type(pointer, index)
       end
 
       # @return [Integer] folder ID of folder at `index`.
