@@ -154,7 +154,15 @@ describe Hallon::PlaylistContainer do
     its(:end)   { should be 2 }
 
     describe "#moved?" do
-      it "should return true if the folder has moved"
+      it "should return true if the folder has moved" do
+        folder = container.contents[1]
+
+        folder.should_not be_moved
+        container.move(folder.begin, 0).id.should eq folder.id
+        folder.should be_moved
+        container.move(0, 2).id.should eq folder.id
+        folder.should_not be_moved
+      end
     end
 
     describe "#contents" do

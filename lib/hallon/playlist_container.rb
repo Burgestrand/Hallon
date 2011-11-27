@@ -48,6 +48,12 @@ module Hallon
           public_send(attr) == other.public_send(attr)
         end if other.is_a?(Folder)
       end
+
+      # @return [Boolean] true if the folder has moved.
+      def moved?
+        Spotify.playlistcontainer_playlist_folder_id(container.pointer, @begin) != id or
+        Spotify.playlistcontainer_playlist_folder_id(container.pointer, @end) != id
+      end
     end
 
     include Observable
