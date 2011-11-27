@@ -74,6 +74,8 @@ module Hallon
 
       # @return [Boolean] true if the track has not yet moved.
       def moved?
+        # using non-GC version deliberately; no need to keep a reference to
+        # this pointer once we’re done here anyway
         Spotify.playlist_track(playlist.pointer, index) != pointer
       end
     end

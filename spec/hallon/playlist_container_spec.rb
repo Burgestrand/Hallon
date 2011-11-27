@@ -119,6 +119,10 @@ describe Hallon::PlaylistContainer do
     its(:id)   { should be 1337 }
     its(:name) { should be "Awesome folder" }
 
+    describe "#moved?" do
+      it "should return true if the folder has moved"
+    end
+
     describe "#contents" do
       it "should be a collection of folders and playlists"
     end

@@ -1,5 +1,10 @@
 # coding: utf-8
 module Hallon
+  # PlaylistContainers are the objects that hold playlists. Each User
+  # in libspotify has a container for its’ starred and published playlists,
+  # and every logged in user has its’ own container.
+  #
+  # @see http://developer.spotify.com/en/libspotify/docs/group__playlist.html
   class PlaylistContainer < Base
     class Folder
     end
