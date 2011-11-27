@@ -160,6 +160,28 @@ module Hallon
       tap { Error.maybe_raise(error) }
     end
 
+    # Move a playlist or a folder.
+    #
+    # @note If moving a folder, only that end of the folder is moved. The folder
+    #       size will change!
+    #
+    # @param [Integer] from
+    # @param [Integer] to
+    # @param [Boolean] dry_run don’t really move anything (useful to check if it can be moved)
+    # @return [Playlist, Folder] the entity that was moved
+    # @raise [Error] if the operation failed
+    def move(from, to, dry_run = false)
+      error = Spotify.playlistcontainer_move_playlist(pointer, from, to, !! dry_run)
+
+      if dry_run
+        error, symbol = Error.disambiguate(error)
+        symbol == :ok
+      else
+        Error.maybe_raise(error)
+        contents[from > to ? to : to - 1]
+      end
+    end
+
     protected
       # Given an index, find out the starting point and ending point
       # of the folder at that index.

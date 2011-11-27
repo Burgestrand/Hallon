@@ -103,32 +103,33 @@ describe Hallon::PlaylistContainer do
     end
   end
 
-  describe "#contents" do
-    #
-    # (0) playlist: Hello
-    # (1) start_folder: Hi
-    # (2) playlist: inside Hi
-    # (3) start_folder: Ho
-    # (4) playlist: inside HiHo
-    # (5) end_folder
-    # (6) playlist: inside Hi2
-    # (7) end_folder
-    # (8) playlist: World
-    #
-    # … should become:
-    #
-    # (0) Playlist #1
-    # (1) Folder #1…#7
-    # (2) Playlist #2
-    # (3) Folder #3…#5
-    # (4) Playlist #4
-    # (5) Folder #3…#5
-    # (6) Playlist #6
-    # (7) Folder #1…#7
-    # (8) Playlist #8
-    #
-    it "should be a collection of folders and playlists"
+  describe "#move" do
+    it "should move the playlist from the old index to the new index" do
+      playlist = container.contents[0]
 
+      container.contents.map(&:class).should eq [Hallon::Playlist, Hallon::PlaylistContainer::Folder, Hallon::PlaylistContainer::Folder]
+      container.move(0, 2).should eq playlist
+      container.contents.map(&:class).should eq [Hallon::PlaylistContainer::Folder, Hallon::Playlist, Hallon::PlaylistContainer::Folder]
+      container.move(1, 0).should eq playlist
+      container.contents.map(&:class).should eq [Hallon::Playlist, Hallon::PlaylistContainer::Folder, Hallon::PlaylistContainer::Folder]
+    end
+
+    it "should not do anything if it’s a dry-run operation" do
+      container.contents.map(&:class).should eq [Hallon::Playlist, Hallon::PlaylistContainer::Folder, Hallon::PlaylistContainer::Folder]
+      container.move(0, 2, :dry_run).should be_true
+      container.contents.map(&:class).should eq [Hallon::Playlist, Hallon::PlaylistContainer::Folder, Hallon::PlaylistContainer::Folder]
+    end
+
+    it "should not raise an error for an invalid operation when dry_run is active" do
+      container.move(0, -1, :dry_run).should be_false
+    end
+
+    it "should raise an error if the operation failed" do
+      expect { container.move(0, -1) }.to raise_error(Hallon::Error)
+    end
+  end
+
+  describe "#contents" do
     it "should support retrieving playlists" do
       container.contents[0].should eq Hallon::Playlist.new(mock_playlist)
     end
