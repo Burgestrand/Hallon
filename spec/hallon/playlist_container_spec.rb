@@ -6,7 +6,7 @@ describe Hallon::PlaylistContainer do
 
   it { should be_loaded }
   its(:owner) { should eq Hallon::User.new("burgestrand") }
-  its(:size) { should eq 1 }
+  its(:size) { should eq 3 }
 
   describe "#add" do
     context "given a string that’s not a valid spotify playlist uri" do
@@ -68,18 +68,23 @@ describe Hallon::PlaylistContainer do
     end
   end
 
-  describe "#insert" do
-    it "should add the given Playlist to the given index"
-    it "should add the given Folder to the given index"
+  describe "#add_folder" do
+    it "should add a folder at the end of the container with the given name" do
+      size   = container.size
+      folder = container.add_folder "Bonkers"
+
+      folder.name.should eq "Bonkers"
+      folder.begin.should be size
+      folder.end.should be (size + 1)
+
+      container.contents[-1].should eq folder
+    end
   end
 
   describe "#remove" do
     it "should remove the playlist at the given index"
     it "should remove the matching :folder_end if removing a folder"
-  end
-
-  describe "#move" do
-    it "should move the entity at the given index"
+    it "should raise an error if the index is out of range"
   end
 
   describe "#contents" do
@@ -111,13 +116,25 @@ describe Hallon::PlaylistContainer do
     it "should support retrieving playlists" do
       container.contents[0].should eq Hallon::Playlist.new(mock_playlist)
     end
+
+    it "should support retrieving folders from their start" do
+      folder = Hallon::PlaylistContainer::Folder.new(container, 1..2)
+      container.contents[1].should eq folder
+    end
+
+    it "should support retrieving folders from their end" do
+      folder = Hallon::PlaylistContainer::Folder.new(container, 1..2)
+      container.contents[2].should eq folder
+    end
   end
 
-  describe Hallon::PlaylistContainer::Folder, :pending do
+  describe Hallon::PlaylistContainer::Folder do
     subject { container.contents[1] }
 
-    its(:id)   { should be 1337 }
-    its(:name) { should be "Awesome folder" }
+    its(:id)    { should be 1337 }
+    its(:name)  { should eq "Boogie" }
+    its(:begin) { should be 1 }
+    its(:end)   { should be 2 }
 
     describe "#moved?" do
       it "should return true if the folder has moved"
@@ -128,7 +145,8 @@ describe Hallon::PlaylistContainer do
     end
 
     describe "#rename" do
-      it "should rename the playlist container"
+      it "should rename the folder"
+      it "should have a new folder id"
     end
   end
 end

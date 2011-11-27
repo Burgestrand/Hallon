@@ -6,7 +6,48 @@ module Hallon
   #
   # @see http://developer.spotify.com/en/libspotify/docs/group__playlist.html
   class PlaylistContainer < Base
+    # Folders are parts of playlist containers in that they surround playlists
+    # with a beginning marker and an ending marker. The playlists between these
+    # markers are considered "inside the playlist".
     class Folder
+      # @return [PlaylistContainer] playlistcontainer this folder was created from.
+      attr_reader :container
+
+      # @return [Integer] index this folder starts at in the container.
+      attr_reader :begin
+
+      # @return [Integer] index this folder ends at in the container.
+      attr_reader :end
+
+      # @return [Integer]
+      attr_reader :id
+
+      # @return [String]
+      attr_reader :name
+
+      # @param [PlaylistContainer] container
+      # @param [Range] indices
+      def initialize(container, indices)
+        @container = container
+        @begin     = indices.begin
+        @end       = indices.end
+
+        @id   = Spotify.playlistcontainer_playlist_folder_id(container.pointer, @begin)
+        FFI::Buffer.alloc_out(256) do |buffer|
+          error = Spotify.playlistcontainer_playlist_folder_name(container.pointer, @begin, buffer, buffer.size)
+          Error.maybe_raise(error) # should not fail, but just to be safe!
+
+          @name = buffer.get_string(0)
+        end
+      end
+
+      # @param [Folder] other
+      # @return [Boolean] true if the two folders are the same (same indices, same id).
+      def ==(other)
+        !! [:id, :container, :begin, :end].all? do |attr|
+          public_send(attr) == other.public_send(attr)
+        end if other.is_a?(Folder)
+      end
     end
 
     include Observable
@@ -46,8 +87,8 @@ module Hallon
         when :playlist
           playlist = Spotify.playlistcontainer_playlist!(pointer, i)
           Playlist.new(playlist)
-        when :start_folder
-        when :end_folder
+        when :start_folder, :end_folder
+          Folder.new(self, folder_range(i))
         else # :unknown
         end
       end
@@ -78,8 +119,8 @@ module Hallon
     # @param [Boolean] force_create force creation of a new playlist
     # @return [Playlist, nil] the added playlist, or nil if the operation failed
     def add(name, force_create = false)
-      playlist = if name.is_a?(String) and not Link.valid?(name) or force_create
-        Spotify.playlistcontainer_add_new_playlist!(pointer, name)
+      playlist = if force_create or not Link.valid?(name) and name.is_a?(String)
+        Spotify.playlistcontainer_add_new_playlist!(pointer, name.to_s)
       else
         link = Link.new(name)
         Spotify.playlistcontainer_add_playlist!(pointer, link.pointer)
@@ -88,10 +129,49 @@ module Hallon
       Playlist.new(playlist) unless playlist.null?
     end
 
-    # playlistcontainer_playlist_folder_name
-    # playlistcontainer_playlist_folder_id
+    # Create a new folder with the given name at the end of the container.
+    #
+    # @param [String] name
+    # @return [Folder]
+    # @raise [Error] if the operation failed
+    def add_folder(name)
+      error = Spotify.playlistcontainer_add_folder(pointer, size, name.to_s)
+      Error.maybe_raise(error)
+      contents[-1]
+    end
+
+    protected
+      # Given an index, find out the starting point and ending point
+      # of the folder at that index.
+      #
+      # @param [Integer] index
+      # @return [Range] begin..end
+      def folder_range(index)
+        id      = folder_id(index)
+        type    = Spotify.playlistcontainer_playlist_type(pointer, index)
+        same_id = proc { |idx| folder_id(idx) == id }
+
+        case type
+        when :start_folder
+          beginning = index
+          ending    = (index + 1).upto(size - 1).find(&same_id)
+        when :end_folder
+          ending    = index
+          beginning = (index - 1).downto(0).find(&same_id)
+        end
+
+        if beginning and ending and beginning != ending
+          beginning..ending
+        end
+      end
+
+      # @return [Integer] folder ID of folder at `index`.
+      def folder_id(index)
+        Spotify.playlistcontainer_playlist_folder_id(pointer, index)
+      end
+
     # playlistcontainer_remove_playlist
     # playlistcontainer_move_playlist
-    # playlistcontainer_add_folder
+    # playlistcontainer_add_folder (#insert)
   end
 end
