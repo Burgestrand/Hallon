@@ -48,14 +48,14 @@ describe Hallon::PlaylistContainer do
     context "given an existing playlist" do
       it "should add it to the container if it’s a playlist" do
         expect do
-          playlist = container.add Hallon::Playlist.new(mock_playlist)
+          container.add Hallon::Playlist.new(mock_playlist)
           container.contents[-1].should eq Hallon::Playlist.new(mock_playlist)
         end.to change{ container.size }.by(1)
       end
 
       it "should add it to the container if it’s a link" do
         expect do
-          playlist = container.add Hallon::Link.new("spotify:user:burgestrand:playlist:07AX9IY9Hqmj1RqltcG0fi")
+          container.add Hallon::Link.new("spotify:user:burgestrand:playlist:07AX9IY9Hqmj1RqltcG0fi")
           container.contents[-1].should eq Hallon::Playlist.new(mock_playlist)
         end.to change{ container.size }.by(1)
       end
@@ -75,7 +75,7 @@ describe Hallon::PlaylistContainer do
 
       folder.name.should eq "Bonkers"
       folder.begin.should be size
-      folder.end.should be (size + 1)
+      folder.end.should be(size + 1)
 
       container.contents[-1].should eq folder
     end
@@ -83,18 +83,18 @@ describe Hallon::PlaylistContainer do
 
   describe "#remove" do
     it "should remove the playlist at the given index" do
-      expect { container.remove(0) }.to change { container.size }.by -1
+      expect { container.remove(0) }.to change { container.size }.by(-1)
     end
 
     it "should remove the matching :end_folder if removing a :start_folder" do
       container.contents.map(&:class).should eq [Hallon::Playlist, Hallon::PlaylistContainer::Folder, Hallon::PlaylistContainer::Folder]
-      expect { container.remove(1) }.to change { container.size }.by -2
+      expect { container.remove(1) }.to change { container.size }.by(-2)
       container.contents.map(&:class).should eq [Hallon::Playlist]
     end
 
     it "should remove the matching :start_folder if removing a :end_folder" do
       container.contents.map(&:class).should eq [Hallon::Playlist, Hallon::PlaylistContainer::Folder, Hallon::PlaylistContainer::Folder]
-      expect { container.remove(2) }.to change { container.size }.by -2
+      expect { container.remove(2) }.to change { container.size }.by(-2)
       container.contents.map(&:class).should eq [Hallon::Playlist]
     end
 
