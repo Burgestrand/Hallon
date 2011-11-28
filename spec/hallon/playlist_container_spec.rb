@@ -181,9 +181,33 @@ describe Hallon::PlaylistContainer do
       it "should be a collection of folders and playlists"
     end
 
-    describe "#name=" do
-      it "should rename the folder"
-      it "should have a new folder id"
+    describe "#rename" do
+      it "should not touch the original folder data (but it should remove it)" do
+        container.contents.should include(folder)
+
+        folder.rename("Hiphip")
+
+        folder.id.should eq 1337
+        folder.name.should eq "Boogie"
+        folder.begin.should be 1
+        folder.end.should be 2
+
+        container.contents.should_not include(folder)
+      end
+
+      it "should return a new folder with the new data" do
+        new_folder = folder.rename("Hiphip")
+
+        new_folder.id.should_not eq 1337
+        new_folder.name.should eq "Hiphip"
+        new_folder.begin.should be 1
+        new_folder.end.should be 2
+      end
+
+      it "should raise an error if the folder has moved" do
+        container.move(folder.begin, 0)
+        expect { folder.rename "Boogelyboogely" }.to raise_error(IndexError)
+      end
     end
   end
 end

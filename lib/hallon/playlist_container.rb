@@ -25,6 +25,21 @@ module Hallon
       # @return [String]
       attr_reader :name
 
+      # Rename the folder.
+      #
+      # @note libspotify has no actual folder rename; what happens is that
+      #       the folder is removed and then re-created at the same position.
+      # @param [#to_s] new_name
+      # @return [Folder] the new folder
+      def rename(new_name)
+        raise IndexError, "playlist has moved from #{@begin}..#{@end}" if moved?
+
+        insert_at = @begin
+        container.remove(@begin)
+        container.insert_folder(insert_at, new_name)
+        container.move(insert_at + 1, @end)
+      end
+
       # @param [PlaylistContainer] container
       # @param [Range] indices
       def initialize(container, indices)
