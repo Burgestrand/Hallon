@@ -138,10 +138,20 @@ module Hallon
     # @param [String] name
     # @return [Folder]
     # @raise [Error] if the operation failed
+    # @see #insert_folder
     def add_folder(name)
-      error = Spotify.playlistcontainer_add_folder(pointer, size, name.to_s)
+      insert_folder(size, name)
+    end
+
+    # Create a new folder with the given name at the specified index.
+    #
+    # @param [Integer] index
+    # @param [String] name
+    # @raise [Error] if the operation failed
+    def insert_folder(index, name)
+      error = Spotify.playlistcontainer_add_folder(pointer, index, name.to_s)
       Error.maybe_raise(error)
-      contents[-1]
+      contents[index]
     end
 
     # Remove a playlist or a folder (but not its’ contents).

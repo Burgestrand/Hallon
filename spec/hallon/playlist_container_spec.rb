@@ -81,6 +81,19 @@ describe Hallon::PlaylistContainer do
     end
   end
 
+  describe "#insert_folder" do
+    it "should add a folder at the specified index" do
+      folder = container.insert_folder(2, "Mipmip")
+
+      folder.name.should eq "Mipmip"
+      folder.begin.should be 2
+      folder.end.should be 3
+
+      container.contents[2].should eq folder
+      container.contents[3].should eq folder
+    end
+  end
+
   describe "#remove" do
     it "should remove the playlist at the given index" do
       expect { container.remove(0) }.to change { container.size }.by(-1)
@@ -147,6 +160,7 @@ describe Hallon::PlaylistContainer do
 
   describe Hallon::PlaylistContainer::Folder do
     subject { container.contents[1] }
+    let(:folder) { subject }
 
     its(:id)    { should be 1337 }
     its(:name)  { should eq "Boogie" }
@@ -155,8 +169,6 @@ describe Hallon::PlaylistContainer do
 
     describe "#moved?" do
       it "should return true if the folder has moved" do
-        folder = container.contents[1]
-
         folder.should_not be_moved
         container.move(folder.begin, 0).id.should eq folder.id
         folder.should be_moved
@@ -169,7 +181,7 @@ describe Hallon::PlaylistContainer do
       it "should be a collection of folders and playlists"
     end
 
-    describe "#rename" do
+    describe "#name=" do
       it "should rename the folder"
       it "should have a new folder id"
     end
