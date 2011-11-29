@@ -5,7 +5,7 @@ require 'hallon/version'
 
 Gem::Specification.new do |gem|
   gem.name     = "hallon"
-  gem.summary  = %Q{Delicious Ruby bindings to the official Spotify API}
+  gem.summary  = %Q{Hallon allows you to write Ruby applications utilizing the official Spotify C API.}
   gem.homepage = "http://github.com/Burgestrand/Hallon"
   gem.authors  = ["Kim Burgestrand"]
   gem.email    = 'kim@burgestrand.se'
