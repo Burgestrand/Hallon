@@ -3,17 +3,17 @@
 
 We rubyists have this awesome [spotify gem][] allowing us to use [libspotify][] from within Ruby, but it has a significant drawback: the `libspotify` API is very hard to use. Now, we can’t have that, so what do we do? We make Hallon!
 
-Hallon is Swedish for “Raspberry”, and has been written to satisfy my needs for API simplicity. It provides you with a wrapper around the spotify gem, making the experience of using `libspotify` from Ruby much more enjoyable.
+Hallon is Swedish for “[Raspberry][]”, and has been written to satisfy my needs for API simplicity. Hallon is written on top of [Spotify for Ruby][], but with the goal of making the experience of using `libspotify` from Ruby much more enjoyable.
 
 Hallon would not have been possible if not for these people:
 
 - Per Reimers, cracking synchronization bugs with me in the deep night (4 AM) and correcting me when I didn’t know better
-- [Spotify][], providing a service worth attention (and my money!)
-- [Linus Oleander][], spawning the need for Hallon by having me in the [radiofy.se](http://radiofy.se) project
+- Spotify, providing a service worth attention (and my money!)
+- Linus Oleander, originally inspiring me to write Hallon (for the radiofy.se project)
 
 Also, these people are worthy of mention simply for their contribution:
 
-- [Jesper Särnesjö][], unknowingly providing me a starting point with [Greenstripes][]
+- Jesper Särnesjö, unknowingly providing me a starting point with [Greenstripes][]
 - Emil “@mrevilme” Palm, for his patience in helping me debug Hallon deadlock issues
 
 Code samples can be found under `examples/` directory.
@@ -59,11 +59,10 @@ License
 -------
 Hallon is licensed under a 2-clause (Simplified) BSD license. More information can be found in the `LICENSE.txt` file.
 
-[spotify gem]:     https://rubygems.org/gems/spotify
-[libspotify]:      http://developer.spotify.com/en/libspotify/overview/
-[Greenstripes]:    http://github.com/sarnesjo/greenstripes
-[Jesper Särnesjö]: http://jesper.sarnesjo.org/
-[Linus Oleander]:  https://github.com/oleander
-[Spotify]:         http://spotify.com/
-[What is Hallon?]: http://burgestrand.se/articles/hallon-delicious-ruby-bindings-to-libspotify.html
-[Build Status]:    https://secure.travis-ci.org/Burgestrand/Hallon.png
+[Raspberry]:        http://images.google.com/search?q=raspberry&tbm=isch
+[Spotify for Ruby]: https://github.com/Burgestrand/libspotify-ruby
+[spotify gem]:      https://rubygems.org/gems/spotify
+[libspotify]:       http://developer.spotify.com/en/libspotify/overview/
+[Greenstripes]:     http://github.com/sarnesjo/greenstripes
+[What is Hallon?]:  http://burgestrand.se/articles/hallon-delicious-ruby-bindings-to-libspotify.html
+[Build Status]:     https://secure.travis-ci.org/Burgestrand/Hallon.png
