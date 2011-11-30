@@ -3,5 +3,5 @@ module Hallon
   # Current release version of Hallon
   #
   # @see http://semver.org/
-  VERSION = [0, 9, 1].join('.')
+  VERSION = [0, 10, 1].join('.')
 end

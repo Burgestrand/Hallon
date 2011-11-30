@@ -1,6 +1,22 @@
 Hallon’s Changelog
 ==================
 
+v10.0.0
+------------------
+[ Added ]
+- Add PlaylistContainer::Folder#rename
+- Add PlaylistContainer#insert_folder
+- Add PlaylistContainer#move (do see #57)
+- Add PlaylistContainer#remove
+- Add ability to retrieve PlaylistContainer folders
+- Make PlaylistContainer#add accept a spotify playlist URI
+- Link.new now supports any #to_link’able object
+- Playlist::Track#moved?
+- PlaylistContainer callback support (to be changed, see #56)
+
+[ Fixed ]
+- A lot of random deadlocks (updated spotify gem dependency)
+
 v0.9.1
 ------------------
 [ Added ]
