@@ -13,7 +13,7 @@ shared_examples_for "a Linkable object" do
     end
 
     it "should fail with an invalid spotify pointer" do
-      expect { described_class.new("i_am_invalid_uri") }.to raise_error(ArgumentError, /not a valid spotify \w+ URI or pointer/)
+      expect { described_class.new("i_am_invalid_uri") }.to raise_error(ArgumentError, /could not be converted to a spotify \w+ pointer/)
     end
 
     it "should work with a Link object" do

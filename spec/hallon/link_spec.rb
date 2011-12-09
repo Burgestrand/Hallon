@@ -11,8 +11,8 @@ describe Hallon::Link do
         expect { Hallon::Link.new("spotify:user:burgestrand") }.to_not raise_error
       end
 
-      it "should accept an FFI pointer" do
-        expect { Hallon::Link.new(Spotify::Pointer.new(null_pointer, :link, false)) }.to raise_error(ArgumentError, /is not a valid spotify link/)
+      it "should raise an error given a null pointer" do
+        expect { Hallon::Link.new(Spotify::Pointer.new(null_pointer, :link, false)) }.to raise_error(ArgumentError)
       end
 
       it "should raise an error when no session instance is about" do
