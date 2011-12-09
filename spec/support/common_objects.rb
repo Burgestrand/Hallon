@@ -104,6 +104,7 @@ RSpec::Core::ExampleGroup.instance_eval do
   let(:mock_image_hex) { "3ad93423add99766e02d563605c6e76ed2b0e450" }
   let(:mock_image_id)  { ":\xD94#\xAD\xD9\x97f\xE0-V6\x05\xC6\xE7n\xD2\xB0\xE4P".force_encoding("BINARY") }
   let(:null_pointer)   { FFI::Pointer.new(0) }
+  let(:a_pointer)      { FFI::Pointer.new(1) }
 
   let(:mock_offline_sync_status) do
     sync = Spotify::OfflineSyncStatus.new
