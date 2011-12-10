@@ -91,7 +91,7 @@ module Hallon
     # @return [User, nil] owner of the container (nil if unknown or no owner).
     def owner
       owner = Spotify.playlistcontainer_owner!(pointer)
-      User.new(owner) unless owner.null?
+      User.from(owner)
     end
 
     # @return [Integer] number of playlists and folders in this container.
@@ -145,7 +145,7 @@ module Hallon
         Spotify.playlistcontainer_add_playlist!(pointer, link.pointer)
       end
 
-      Playlist.new(playlist) unless playlist.null?
+      Playlist.from(playlist)
     end
 
     # Create a new folder with the given name at the end of the container.

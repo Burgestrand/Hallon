@@ -47,13 +47,13 @@ module Hallon
     # @return [Artist, nil] artist performing this album.
     def artist
       artist = Spotify.albumbrowse_artist!(pointer)
-      Artist.new(artist) unless artist.null?
+      Artist.from(artist)
     end
 
     # @return [Album, nil] album this object is browsing.
     def album
       album = Spotify.albumbrowse_album!(pointer)
-      Album.new(album) unless album.null?
+      Album.from(album)
     end
 
     # @note If the object is not loaded, the result is undefined.

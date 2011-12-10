@@ -132,7 +132,7 @@ module Hallon
     # @return [Hallon::Album] album this track belongs to.
     def album
       album = Spotify.track_album!(pointer)
-      Album.new(album) unless album.null?
+      Album.from(album)
     end
 
     # @note There may be more than one artist, see {#artists} for retrieving them all!

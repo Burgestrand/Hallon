@@ -74,7 +74,7 @@ module Hallon
     # @return [Artist, nil] album artist.
     def artist
       artist = Spotify.album_artist!(pointer)
-      Artist.new(artist) unless artist.null?
+      Artist.from(artist)
     end
 
     # Retrieves album cover art as an {Image} or a {Link}.
@@ -87,7 +87,7 @@ module Hallon
         Image.new cover.read_string(20) unless cover.null?
       else
         cover = Spotify.link_create_from_album_cover!(pointer)
-        Link.new cover unless cover.null?
+        Link.from(cover)
       end
     end
 

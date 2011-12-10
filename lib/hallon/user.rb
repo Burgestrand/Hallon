@@ -76,14 +76,14 @@ module Hallon
     # @return [Playlist, nil] starred playlist of the User.
     def starred
       playlist = Spotify.session_starred_for_user_create!(session.pointer, name)
-      Playlist.new(playlist) unless playlist.null?
+      Playlist.from(playlist)
     end
 
     # @note Returns nil unless {#loaded?}
     # @return [PlaylistContainer, nil] published playlists of the User.
     def published
       container = Spotify.session_publishedcontainer_for_user_create!(session.pointer, name)
-      PlaylistContainer.new(container) unless container.null?
+      PlaylistContainer.from(container)
     end
 
     # Send tracks to this users’ inbox, with an optional message.

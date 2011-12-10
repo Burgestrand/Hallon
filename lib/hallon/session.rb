@@ -130,7 +130,7 @@ module Hallon
     # @return [PlaylistContainer, nil]
     def container
       container = Spotify.session_playlistcontainer!(pointer)
-      PlaylistContainer.new(container) unless container.null?
+      PlaylistContainer.from(container)
     end
 
     # Process pending Spotify events (might fire callbacks).
@@ -252,7 +252,7 @@ module Hallon
     # @return [User] the User currently logged in.
     def user
       user = Spotify.session_user!(pointer)
-      User.new(user) unless user.null?
+      User.from(user)
     end
 
     # @return [Symbol] current connection status.
@@ -364,14 +364,14 @@ module Hallon
     # @return [Playlist, nil] currently logged in user’s starred playlist.
     def starred
       playlist = Spotify.session_starred_create!(pointer)
-      Playlist.new(playlist) unless playlist.null?
+      Playlist.from(playlist)
     end
 
     # @note Returns nil when no user is logged in.
     # @return [Playlist, nil] currently logged in user’s inbox playlist.
     def inbox
       playlist = Spotify.session_inbox_create!(pointer)
-      Playlist.new(playlist) unless playlist.null?
+      Playlist.from(playlist)
     end
 
     # @see #status

@@ -27,7 +27,7 @@ module Hallon
         @seen        = Spotify.playlist_track_seen(playlist.pointer, index)
         @creator     = begin
           creator = Spotify.playlist_track_creator!(playlist.pointer, index)
-          User.new(creator) unless creator.null?
+          User.from(creator)
         end
       end
 
@@ -181,7 +181,7 @@ module Hallon
     # @return [User, nil]
     def owner
       user = Spotify.playlist_owner!(pointer)
-      User.new(user) unless user.null?
+      User.from(user)
     end
 
     # @return [String]
@@ -253,7 +253,7 @@ module Hallon
     def tracks
       Enumerator.new(size) do |index|
         track = Spotify.playlist_track!(pointer, index)
-        Playlist::Track.new(track, self, index) unless track.null?
+        Playlist::Track.from(track, self, index)
       end
     end
 

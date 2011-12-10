@@ -46,7 +46,7 @@ module Hallon
     # @return [Artist, nil] artist this browser is browsing.
     def artist
       artist = Spotify.artistbrowse_artist!(pointer)
-      Artist.new(artist) unless artist.null?
+      Artist.from(artist)
     end
 
     # @return [String] artist biography.

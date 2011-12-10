@@ -5,8 +5,8 @@ module Hallon
   class Base
     # @param [#null?] pointer
     # @return [self, nil] a new instance of self, unless given pointer is #null?
-    def self.from(pointer)
-      new(pointer) unless pointer.null?
+    def self.from(pointer, *args, &block)
+      new(pointer, *args, &block) unless pointer.null?
     end
 
     # Underlying FFI pointer.

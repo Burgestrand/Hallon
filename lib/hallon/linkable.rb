@@ -94,7 +94,7 @@ module Hallon
     def to_link(cmethod)
       define_method(:to_link) do |*args|
         link = Spotify.__send__(:"link_create_#{cmethod}!", pointer, *args)
-        Link.new(link) unless link.null?
+        Link.from(link)
       end
     end
 
