@@ -60,6 +60,7 @@ task 'spotify:coverage' do
   covered = Set.new(methods)
   warning = []
   ignored = [
+    'attach_function',  # spotify overloads this
     'session_release',  # segfaults on libspotify <= 9
     'session_userdata', # wont support this
     'link_as_track',    # using link_as_track_and_offset instead
@@ -82,7 +83,7 @@ task 'spotify:coverage' do
   # Direct calls
   handlers[Sexp.new(:const, :Spotify)] = Hash.new(proc do |_, meth, _|
     if auto_gc.include?("#{meth}!")
-      warning << meth
+      warning << [$file, meth]
     end
 
     result = [meth]
@@ -102,6 +103,7 @@ task 'spotify:coverage' do
   # DSL Methods
   no_receiver = handlers[nil] = Hash.new(silencer)
   no_receiver[:from_link] = no_receiver[:to_link] = proc do |recv, meth, (_, name)|
+    next unless name.respond_to?(:value)
     prefix = meth == :to_link ? "link_create" : "link"
     method = "%s_%s" % [prefix, name.value]
     [method, "#{method}!"]
@@ -110,7 +112,8 @@ task 'spotify:coverage' do
   fails = {}
   FileList['lib/**/*.rb'].each do |file|
     begin
-      ast   = RubyParser.new.parse File.read(file)
+      $file = file
+      ast = Ruby19Parser.new.parse File.read(file)
       ast.each_of_type(:call) do |_, recv, meth, args, *rest|
         name = handlers[recv][meth].call(recv, meth, args)
         covered.subtract Array(name).map(&:to_s)
@@ -144,8 +147,8 @@ task 'spotify:coverage' do
 
   unless warning.empty?
     puts "Warnings (use auto-gc methods instead!):"
-    warning.each do |method|
-      puts "  #{method}"
+    warning.each do |file, method|
+      puts "  #{file}: #{method}"
     end
     puts
   end
