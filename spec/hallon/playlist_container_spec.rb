@@ -121,24 +121,24 @@ describe Hallon::PlaylistContainer do
       playlist = container.contents[0]
 
       container.contents.map(&:class).should eq [Hallon::Playlist, Hallon::PlaylistContainer::Folder, Hallon::PlaylistContainer::Folder]
-      container.move(0, 2).should eq playlist
+      container.move(0, 1).should eq playlist
       container.contents.map(&:class).should eq [Hallon::PlaylistContainer::Folder, Hallon::Playlist, Hallon::PlaylistContainer::Folder]
       container.move(1, 0).should eq playlist
       container.contents.map(&:class).should eq [Hallon::Playlist, Hallon::PlaylistContainer::Folder, Hallon::PlaylistContainer::Folder]
     end
 
-    it "should not do anything if it’s a dry-run operation" do
-      container.contents.map(&:class).should eq [Hallon::Playlist, Hallon::PlaylistContainer::Folder, Hallon::PlaylistContainer::Folder]
-      container.move(0, 2, :dry_run).should be_true
-      container.contents.map(&:class).should eq [Hallon::Playlist, Hallon::PlaylistContainer::Folder, Hallon::PlaylistContainer::Folder]
-    end
-
-    it "should not raise an error for an invalid operation when dry_run is active" do
-      container.move(0, -1, :dry_run).should be_false
-    end
-
     it "should raise an error if the operation failed" do
       expect { container.move(0, -1) }.to raise_error(Hallon::Error)
+    end
+  end
+
+  describe "#can_move?" do
+    it "should be true if the operation can be performed" do
+      expect { container.can_move?(0, 1).should be_true }.to_not change { container.contents.to_a }
+    end
+
+    it "should be false if the operation cannot be performed" do
+      expect { container.can_move?(0, -1).should be_false }.to_not change { container.contents.to_a }
     end
   end
 
@@ -172,7 +172,7 @@ describe Hallon::PlaylistContainer do
         folder.should_not be_moved
         container.move(folder.begin, 0).id.should eq folder.id
         folder.should be_moved
-        container.move(0, 2).id.should eq folder.id
+        container.move(0, 1).id.should eq folder.id
         folder.should_not be_moved
       end
     end

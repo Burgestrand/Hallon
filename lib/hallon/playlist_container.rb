@@ -193,27 +193,52 @@ module Hallon
 
     # Move a playlist or a folder.
     #
+    # @example an illustration of how contents are moved
+    #   # given a container like this:
+    #   # A, B, C, D
+    #
+    #   container.move(0, 1)
+    #     # => B, A, C, D
+    #
+    #   container.move(0, 3)
+    #     # => B, C, D, A
+    #
+    #   container.move(3, 1)
+    #     # => A, D, B, C
+    #
     # @note If moving a folder, only that end of the folder is moved. The folder
     #       size will change!
-    #
-    # @param [Integer] from
-    # @param [Integer] to
-    # @param [Boolean] dry_run don’t really move anything (useful to check if it can be moved)
+    # @param [Integer] from index to move from
+    # @param [Integer] to index the item will end up at
     # @return [Playlist, Folder] the entity that was moved
     # @raise [Error] if the operation failed
-    def move(from, to, dry_run = false)
-      error = Spotify.playlistcontainer_move_playlist(pointer, from, to, !! dry_run)
+    def move(from, to)
+      error = move_playlist(from, to, false)
+      Error.maybe_raise(error)
+      contents[to]
+    end
 
-      if dry_run
-        error, symbol = Error.disambiguate(error)
-        symbol == :ok
-      else
-        Error.maybe_raise(error)
-        contents[from > to ? to : to - 1]
-      end
+    # Control if if the item at index `from` can be moved to `infront_of`.
+    #
+    # @param (see #move)
+    # @return [Boolean] true if the operation can be performed
+    def can_move?(from, to)
+      error = move_playlist(from, to, true)
+      number, symbol = Error.disambiguate(error)
+      symbol == :ok
     end
 
     protected
+      # Wrapper for original API; adjusts indices accordingly.
+      #
+      # @param [Integer] from
+      # @param [Integer] from
+      # @return [Integer] error
+      def move_playlist(from, infront_of, dry_run)
+        infront_of += 1 if from < infront_of
+        Spotify.playlistcontainer_move_playlist(pointer, from, infront_of, dry_run)
+      end
+
       # Given an index, find out the starting point and ending point
       # of the folder at that index.
       #
@@ -247,9 +272,5 @@ module Hallon
       def folder_id(index)
         Spotify.playlistcontainer_playlist_folder_id(pointer, index)
       end
-
-    # playlistcontainer_remove_playlist
-    # playlistcontainer_move_playlist
-    # playlistcontainer_add_folder (#insert)
   end
 end
