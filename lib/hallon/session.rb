@@ -160,6 +160,7 @@ module Hallon
         loop do
           begin
             timeout = [process_events.fdiv(1000), 5].min # scope to five seconds
+            timeout = timeout + 0.010 # minimum of ten miliseconds timeout
             params = Timeout::timeout(timeout) { channel.pop }
             redo if params == :notify
           rescue Timeout::Error
