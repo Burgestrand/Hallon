@@ -7,7 +7,9 @@ RSpec::Core::ExampleGroup.instance_eval do
 
   let(:mock_album)  { Spotify.mock_album!("Finally Woken", mock_artist, 2004, mock_image_id, :single, true, true) }
   let(:mock_user)   { Spotify.mock_user!("burgestrand", "Burgestrand", true) }
+  let(:mock_user_raw) { FFI::Pointer.new(mock_user.address) }
   let(:mock_image)  { Spotify.mock_image!(mock_image_id, :jpeg, File.size(fixture_image_path), File.read(fixture_image_path), :ok) }
+  let(:mock_image_id_pointer) { FFI::MemoryPointer.from_string(mock_image_id) }
 
   let(:mock_track) do
     artists = pointer_array_with(mock_artist, mock_artist_two)
@@ -28,9 +30,8 @@ RSpec::Core::ExampleGroup.instance_eval do
   end
 
   let(:mock_artistbrowse) do
-    mock_image_pointer = FFI::MemoryPointer.from_string(mock_image_id)
     similar_artists    = pointer_array_with(mock_artist, mock_artist_two)
-    portraits = pointer_array_with(mock_image_pointer, mock_image_pointer)
+    portraits = pointer_array_with(mock_image_id_pointer, mock_image_id_pointer)
     tracks    = pointer_array_with(mock_track, mock_track_two)
     albums    = pointer_array_with(mock_album)
 
@@ -98,6 +99,10 @@ RSpec::Core::ExampleGroup.instance_eval do
     tracks[3][:seen] = true
 
     Spotify.mock_playlist!("Megaplaylist", true, mock_user, true, "Playlist description...?", mock_image_id, false, 1000, mock_subscribers, true, :no, 67, num_tracks, tracks_ptr)
+  end
+
+  let(:mock_playlist_raw) do
+    FFI::Pointer.new(mock_playlist.address)
   end
 
   let(:mock_image_uri) { "spotify:image:#{mock_image_hex}" }

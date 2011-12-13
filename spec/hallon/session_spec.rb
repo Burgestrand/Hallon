@@ -74,21 +74,21 @@ describe Hallon::Session do
 
       session.should_receive(:process_events).twice.and_return do
         unless notified
-          session.trigger(:notify_main_thread, :notify)
+          session.notify_main_thread_callback(session.pointer)
           notified = true
         else
-          session.trigger(:bogus, :bogus)
+          session.logged_in_callback(session.pointer, :ok)
         end
 
         0
       end
 
-      session.process_events_on(:bogus) { |e| e == :bogus }.should be_true
+      session.process_events_on(:logged_in) { |e| e == :ok }.should be_true
     end
 
     it "should time out if waiting for events too long" do
       session.should_receive(:process_events).once.and_return(1) # and do nothing
-      session.wait_for(:ever) { |x| x }.should eq :timeout
+      session.wait_for(:logged_in) { |x| x }.should eq :timeout
     end
 
     it "should call the given block once before waiting" do

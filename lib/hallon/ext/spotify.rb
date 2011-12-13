@@ -212,39 +212,35 @@ module Spotify
     def create(target, storage)
       new.tap do |struct|
         members.each do |member|
-          struct[member] = storage[member] = proc_for(target, member)
+          callback = target.callback_for(member)
+          expected = arity_of(member)
+
+          unless callback.arity == expected
+            raise ArgumentError, "#{member} callback takes #{expected}, was #{callback.arity}"
+          end
+
+          struct[member] = storage[member] = callback
         end
       end
     end
+
+    protected
+      def arity_of(member)
+        idx = members.index(member)
+        fn  = layout.fields[idx].type
+        fn.param_types.size
+      end
   end
 
   class << SessionCallbacks
     include CallbackStruct
-
-    private
-      # @see CallbackStruct
-      def proc_for(target, member)
-        lambda { |pointer, *args| target.trigger(member, *args) }
-      end
   end
 
   class << PlaylistCallbacks
     include CallbackStruct
-
-    private
-      # @see CallbackStruct
-      def proc_for(target, member)
-        lambda { |pointer, *args, userdata| target.trigger(member, *args) }
-      end
   end
 
   class << PlaylistContainerCallbacks
     include CallbackStruct
-
-    private
-      # @see CallbackStruct
-      def proc_for(target, member)
-        lambda { |pointer, *args, userdata| target.trigger(member, *args) }
-      end
   end
 end

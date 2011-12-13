@@ -12,8 +12,7 @@ module Hallon
 
     to_link :from_image
 
-    # Image triggers `:load` when loaded
-    include Observable
+    include Observable::Image
 
     # Create a new instance of an Image.
     #
@@ -35,7 +34,7 @@ module Hallon
         Spotify.image_create!(session.pointer, ptr)
       end
 
-      @callback = proc { trigger :load }
+      @callback = callback_for(:load)
       Spotify.image_add_load_callback(pointer, @callback, nil)
     end
 

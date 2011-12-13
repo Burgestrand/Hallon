@@ -6,82 +6,53 @@ module Hallon
   module Observable
     # Defines a handler for the given event.
     #
-    # @example defining a handler and triggering it
-    #   on(:callback) do |message|
-    #     puts message
-    #   end
-    #
-    #   trigger(:callback, "Moo!") # => prints "Moo!"
-    #
-    # @example multiple events with one handler
-    #   on(:a, :b, :c) do |name, *args|
-    #     puts "#{name} called with: #{args.inspect}"
-    #   end
-    #
-    #   trigger(:a) # => prints ":a called with: []"
-    #   trigger(:b, :c) # => prints ":b called with: [:c]"
-    #
-    # @note when defining a handler for multiple events, the
-    #       first argument passed to the handler is the name
-    #       of the event that called it
     # @param [#to_sym] event name of event to handle
+    # @return [Proc] the given block
     # @yield (*args) event handler block
-    def on(*events, &block)
+    def on(event, &block)
       raise ArgumentError, "no block given" unless block
-      wrap = events.length > 1
-      events.map(&:to_sym).each do |event|
-        block = proc { |*args| yield(event, *args) } if wrap
-        __handlers[event] = [] unless __handlers.has_key?(event)
-        __handlers[event] << block
-      end
+      raise NameError, "no such callback: #{event}" unless has_callback?(event)
+      handlers[event.to_s] = block
     end
 
-    # Trigger a handler for a given event.
-    #
-    # @param [#to_sym] event
-    # @param [Object, ...] params given to each handler
-    def trigger(event, *params, &block)
-      catch :return do
-        return_value = nil
-        __handlers[event.to_sym].each do |handler|
-          return_value = handler.call(*params, &block)
-        end
-        return_value
-      end
+    # @param [#to_s] name
+    # @return [Boolean] true if a callback with `name` exists
+    def has_callback?(name)
+      respond_to?("#{name}_callback", true)
     end
 
-    # Run the given block, protecting all previous event handlers.
+    # @param [#to_s] name
+    # @return [Proc] callback method handle for given name.
+    def callback_for(name)
+      method("#{name}_callback").to_proc
+    end
+
+    # Run a given block, and once it exits restore all handlers
+    # to the way they were before running the block.
     #
-    # @example
-    #   o = Object.new
-    #   o.instance_eval { include Hallon::Base }
-    #   o.on(:method) { "outside" }
-    #
-    #   puts o.on_method # => "outside"
-    #   o.protecting_handlers do
-    #     o.on(:method) { "inside" }
-    #     puts o.on_method # => "inside"
-    #   end
-    #   puts o.on_method # => "outside"
-    #
-    # @yield
-    # @return whatever the given block returns
+    # This allows you to temporarily use different handlers for
+    # some events.
     def protecting_handlers
-      deep_copy = __handlers.dup.clear
-      __handlers.each do |k, v|
-        deep_copy[k] = v.dup
-      end
+      old_handlers = handlers.dup
       yield
     ensure
-      __handlers.replace deep_copy
+      handlers.replace(old_handlers)
     end
 
-    private
-      # Hash mapping events to handlers.
-      #
-      # @return [Hash]
-      def __handlers
-        @__handlers ||= Hash.new([])
-      end
+    protected
+
+    # @param [#to_s] name
+    # @param [...] arguments
+    # @return whatever the handler returns
+    def trigger(name, *arguments, &block)
+      name = name.to_s
+      arguments << self
+      handlers[name].call(*arguments, &block)
+    end
+
+    # @return [Hash<String, Proc>]
+    def handlers
+      @__handlers ||= Hash.new(proc {})
+    end
   end
 end

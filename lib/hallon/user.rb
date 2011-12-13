@@ -13,11 +13,11 @@ module Hallon
     #
     # @see http://developer.spotify.com/en/libspotify/docs/group__inbox.html
     class Post < Base
-      include Observable
+      include Observable::Post
 
       # @param [Spotify::Pointer<inbox>]
       def initialize(username, message, tracks, &block)
-        @callback = proc { trigger(:load) }
+        @callback = callback_for(:complete)
 
         FFI::MemoryPointer.new(:pointer, tracks.length) do |ary|
           ary.write_array_of_pointer tracks.map(&:pointer)

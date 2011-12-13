@@ -30,8 +30,8 @@ module Hallon
       undef :instance
     end
 
-    # Session allows you to define your own callbacks.
-    include Observable
+    # We have Session callbacks that you can listen to!
+    include Observable::Session
 
     # Initializes the Spotify session. If you need to access the
     # instance at a later time, you can use {instance}.
@@ -154,7 +154,8 @@ module Hallon
     def process_events_on(*events)
       yield or protecting_handlers do
         channel = SizedQueue.new(1)
-        on(*events) { |*args| channel << args }
+        block   = proc { |*args| channel << args }
+        events.each { |event| on(event, &block) }
         on(:notify_main_thread) { channel << :notify }
 
         loop do
@@ -399,11 +400,6 @@ module Hallon
       status == :offline
     end
 
-    # @return [String] string representation of the Session.
-    def to_s
-      "<#{self.class.name}:0x#{object_id.to_s(16)} status=#{status} @options=#{options.inspect}>"
-    end
-
     private
       # Set starred status of given tracks.
       #
@@ -426,7 +422,7 @@ module Hallon
         # if the user does not have premium, libspotify will still fire logged_in as :ok,
         # but a few moments later it fires connection_error; waiting for both and checking
         # for errors on both hopefully circumvents this!
-        wait_for(:logged_in, :connection_error) do |_, error|
+        wait_for(:logged_in, :connection_error) do |error|
           Error.maybe_raise(error)
           session.logged_in?
         end

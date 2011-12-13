@@ -8,7 +8,7 @@ module Hallon
   #       must still be handled by means of Ruby FFI.
   # @see Session
   class Player
-    include Observable
+    include Observable::Player
 
     # @return [Spotify::Pointer<Session>] session pointer
     attr_reader :pointer
@@ -56,19 +56,11 @@ module Hallon
       @session = session
       @pointer = @session.pointer
 
-      %w[start_playback stop_playback play_token_lost end_of_track streaming_error].each do |cb|
-        @session.on(cb) { |*args| trigger(cb, *args) }
-      end
-
-      @session.on(:audio_buffer_stats) do |stats_ptr|
-        stats = Spotify::AudioBufferStats.new(stats_ptr)
-        samples, dropouts = trigger(:buffer_size?)
-        stats[:samples]  = samples || 0
-        stats[:dropouts] = dropouts || 0
-      end
-
-      @session.on(:music_delivery) do |format, frames, num_frames|
-        trigger(:music_delivery, format, frames, num_frames)
+      %w[
+        start_playback stop_playback play_token_lost end_of_track
+        streaming_error get_audio_buffer_stats music_delivery
+      ].each do |cb|
+        @session.on(cb) { |*args| callback_for(cb).call(*args) }
       end
     end
 

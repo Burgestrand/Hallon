@@ -6,9 +6,6 @@ module Hallon
   #
   # @see http://developer.spotify.com/en/libspotify/docs/group__playlist.html
   class Playlist < Base
-    include Observable
-    extend Linkable
-
     # Playlist::Track is a {Track} with additional information attached to it,
     # that is specific to the playlist it was created from. The returned track
     # is a snapshot of the information, so even if the underlying track moves,
@@ -79,6 +76,11 @@ module Hallon
         Spotify.playlist_track(playlist.pointer, index) != pointer
       end
     end
+
+    extend Linkable
+
+    # CAN HAZ CALLBAKZ
+    include Observable::Playlist
 
     from_link :playlist do |pointer|
       Spotify.playlist_create!(session.pointer, pointer)

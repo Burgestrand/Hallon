@@ -5,7 +5,7 @@ module Hallon
   # @see Artist
   # @see http://developer.spotify.com/en/libspotify/docs/group__artistbrowse.html
   class ArtistBrowse < Base
-    include Observable
+    include Observable::ArtistBrowse
 
     # @return [Array<Symbol>] artist browsing types for use in {#initialize}
     def self.types
@@ -26,7 +26,7 @@ module Hallon
         raise TypeError, "expected artist pointer, was given #{given}"
       end
 
-      @callback = proc { trigger(:load) }
+      @callback = callback_for(:load)
       @pointer  = Spotify.artistbrowse_create!(session.pointer, pointer, type, @callback, nil)
 
       raise FFI::NullPointerError, "artist browsing failed" if @pointer.null?

@@ -1,80 +1,92 @@
+# coding: utf-8
 describe Hallon::Observable do
-  subject do
-    Class.new { include Hallon::Observable }.new
+  let(:klass) do
+    Class.new do
+      include Hallon::Observable
+
+      def fire!(name, *args, &block)
+        callback_for(name).call(*args, &block)
+      end
+
+      protected
+
+      def testing_callback
+        trigger(:testing)
+      end
+
+      def testing_string_callback
+        trigger("testing_string")
+      end
+
+      def testing_symbol_callback
+        trigger(:testing_symbol)
+      end
+
+      def testing_arguments_callback(x, y)
+        trigger(:testing_arguments, x * 2, y * 4)
+      end
+    end
   end
 
-  describe "instance methods" do
-    it { should respond_to :on }
-    it { should respond_to :trigger }
-  end
+  subject { klass.new }
 
   describe "#on" do
-    it "should allow defining one handler for multiple events" do
-      subject.on(:a, :b, :c) do |event, *args|
-        "yay"
+    it "should take both a symbol and a string" do
+      string = false
+      symbol = false
+
+      subject.on("testing_string") { string = true }
+      subject.on(:testing_symbol) { symbol = true }
+
+      subject.fire!(:testing_string)
+      subject.fire!("testing_symbol")
+
+      string.should be_true
+      symbol.should be_true
+    end
+
+    it "should receive the callback after it’s been processed" do
+      x = nil
+      y = nil
+
+      subject.on(:testing_arguments) do |a, b|
+        x = a
+        y = b
       end
 
-      subject.trigger(:a).should eq "yay"
-      subject.trigger(:b).should eq "yay"
-      subject.trigger(:c).should eq "yay"
+      subject.fire!(:testing_arguments, 10, "Hi")
+
+      x.should eq 20
+      y.should eq "HiHiHiHi"
     end
 
-    specify "a multi-declared handler should know its name" do
-      subject.on(:a, :b) { |event, *args| event }
-      subject.trigger(:a).should eq :a
-      subject.trigger(:b).should eq :b
+    it "should replace the previous callback if there was one" do
+      x = 0
+
+      subject.on(:testing) { x += 1 }
+      subject.fire!(:testing)
+      x.should eq 1
+
+      subject.on(:testing) { x -= 1 }
+      subject.fire!(:testing)
+      x.should eq 0
     end
 
-    specify "a single-declared handler should not know its name" do
-      subject.on(:a) { |event, *args| event }
-      subject.trigger(:a).should eq nil
+    it "should raise an error trying to bind to a non-existing callback" do
+      expect { subject.on("nonexisting") {} }.to raise_error(NameError)
     end
 
-    it "should convert the event to a symbol" do
-      subject.on("a") { raise "hell" }
-      expect { subject.trigger(:a) }.to raise_error("hell")
+    it "should raise an error when not given a block" do
+      expect { subject.on(:testing) }.to raise_error(ArgumentError)
     end
   end
 
-  describe "#trigger and #on" do
-    it "should define and call event handlers" do
-      called = false
-      subject.on(:a) { called = true }
-      subject.trigger(:a)
-      called.should be_true
-    end
-
-    it "should pass any arguments to handlers" do
-      passed_args = []
-      subject.on(:a) { |*args| passed_args = args }
-      subject.trigger(:a, :b, :c)
-      passed_args.should eq [:b, :c]
-    end
-
-    it "should do nothing when there are no handlers" do
-      subject.trigger(:this_event_does_not_exist).should be_nil
-    end
-
-    context "multiple handlers" do
-      it "should call all handlers in order" do
-        triggered = []
-        subject.on(:a) { triggered << :a }
-        subject.on(:a) { triggered << :b }
-        subject.trigger(:a)
-        triggered.should eq [:a, :b]
-      end
-
-      it "should return the last-returned value" do
-        subject.on(:a) { :first }
-        subject.on(:a) { :second }
-        subject.trigger(:a).should eq :second
-      end
-
-      it "should allow execution to be aborted" do
-        subject.on(:a) { throw :return, :first }
-        subject.on(:b) { :second }
-        subject.trigger(:a).should eq :first
-      end
+  describe "#trigger" do
+    it "should always append self to the arguments" do
+      block = proc {}
+      subject.on(:testing, &block)
+      block.should_receive(:call).with(subject)
+      subject.send(:trigger, :testing)
     end
   end
 
@@ -86,21 +98,15 @@ describe Hallon::Observable do
     end
 
     it "should restore previous handlers on return" do
-      subject.on(:protected) { "before" }
+      subject.on(:testing) { "before" }
 
       subject.protecting_handlers do
-        subject.trigger(:protected).should eq "before"
-        subject.on(:protected) { "after" }
-        subject.trigger(:protected).should eq "after"
+        subject.fire!(:testing).should eq "before"
+        subject.on(:testing) { "after" }
+        subject.fire!(:testing).should eq "after"
       end
 
-      subject.trigger(:protected).should eq "before"
-    end
-
-    it "should still allow #trigger to work on non-defined events" do
-      subject.protecting_handlers {}
-      expect { subject.trigger(:does_not_exist) }.to_not raise_error
+      subject.fire!(:testing).should eq "before"
     end
   end
-
 end

@@ -6,7 +6,7 @@ module Hallon
   #
   # @see http://developer.spotify.com/en/libspotify/docs/group__toplist.html
   class Toplist < Base
-    include Observable
+    include Observable::Toplist
 
     # Create a Toplist browsing object.
     #
@@ -36,7 +36,7 @@ module Hallon
         region = to_country(region)
       end
 
-      @callback = proc { trigger(:load) }
+      @callback = callback_for(:load)
       @pointer  = Spotify.toplistbrowse_create!(session.pointer, type, region, user, @callback, nil)
     end
 
