@@ -69,7 +69,6 @@ module Hallon
 
       @session.on(:music_delivery) do |format, frames, num_frames|
         trigger(:music_delivery, format, frames, num_frames)
-        num_frames # assume we consume all data
       end
     end
 
