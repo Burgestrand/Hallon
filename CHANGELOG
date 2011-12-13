@@ -1,7 +1,20 @@
 Hallon’s Changelog
 ==================
 
-v10.0.0
+v0.11.0
+------------------
+[ Added ]
+- Playlist#can_move?
+- Base.from(pointer)
+
+[ Changed ]
+- Playlist#move no longer takes a dry_run parameter
+
+[ Fixed ]
+- Player#music_delivery callback ignoring consumed frames
+- Session#wait_for minimum timeout time from 0 to 10 ms
+
+v0.10.1 (actually v0.10.0)
 ------------------
 [ Added ]
 - Add PlaylistContainer::Folder#rename
