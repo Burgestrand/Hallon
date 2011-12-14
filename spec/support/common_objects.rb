@@ -2,21 +2,21 @@
 require 'time'
 
 RSpec::Core::ExampleGroup.instance_eval do
-  let(:mock_artist) { Spotify.mock_artist("Jem", mock_image_id, true) }
-  let(:mock_artist_two) { Spotify.mock_artist("Maroon 5", mock_image_id, true) }
+  let(:mock_artist) { Spotify.mock_artist!("Jem", mock_image_id, true) }
+  let(:mock_artist_two) { Spotify.mock_artist!("Maroon 5", mock_image_id, true) }
 
-  let(:mock_album)  { Spotify.mock_album("Finally Woken", mock_artist, 2004, mock_image_id, :single, true, true) }
-  let(:mock_user)   { Spotify.mock_user("burgestrand", "Burgestrand", true) }
-  let(:mock_image)  { Spotify.mock_image(mock_image_id, :jpeg, File.size(fixture_image_path), File.read(fixture_image_path), :ok) }
+  let(:mock_album)  { Spotify.mock_album!("Finally Woken", mock_artist, 2004, mock_image_id, :single, true, true) }
+  let(:mock_user)   { Spotify.mock_user!("burgestrand", "Burgestrand", true) }
+  let(:mock_image)  { Spotify.mock_image!(mock_image_id, :jpeg, File.size(fixture_image_path), File.read(fixture_image_path), :ok) }
 
   let(:mock_track) do
     artists = pointer_array_with(mock_artist, mock_artist_two)
-    Spotify.mock_track("They", artists.length, artists, mock_album, 123_456, 42, 2, 7, 0, true, :available, :done, false, true, true, false)
+    Spotify.mock_track!("They", artists.length, artists, mock_album, 123_456, 42, 2, 7, 0, true, :available, :done, false, true, true, false)
   end
 
   let(:mock_track_two) do
     artists = pointer_array_with(mock_artist)
-    Spotify.mock_track("Amazing", artists.length, artists, mock_album, 123_456, 42, 2, 7, 0, true, :available, :no, false, true, true, true)
+    Spotify.mock_track!("Amazing", artists.length, artists, mock_album, 123_456, 42, 2, 7, 0, true, :available, :no, false, true, true, true)
   end
 
   let(:mock_albumbrowse) do
@@ -97,7 +97,7 @@ RSpec::Core::ExampleGroup.instance_eval do
     tracks[3][:message] = FFI::MemoryPointer.from_string("message this, YO!")
     tracks[3][:seen] = true
 
-    Spotify.mock_playlist("Megaplaylist", true, mock_user, true, "Playlist description...?", mock_image_id, false, 1000, mock_subscribers, true, :no, 67, num_tracks, tracks_ptr)
+    Spotify.mock_playlist!("Megaplaylist", true, mock_user, true, "Playlist description...?", mock_image_id, false, 1000, mock_subscribers, true, :no, 67, num_tracks, tracks_ptr)
   end
 
   let(:mock_image_uri) { "spotify:image:#{mock_image_hex}" }
@@ -164,7 +164,7 @@ RSpec::Core::ExampleGroup.instance_eval do
     items[2][:type]        = :end_folder
     items[2][:folder_id]   = 1337
 
-    Spotify.mock_playlistcontainer(mock_user, true, num_items, items_ptr, nil, nil)
+    Spotify.mock_playlistcontainer!(mock_user, true, num_items, items_ptr, nil, nil)
   end
 end
 

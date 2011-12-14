@@ -50,9 +50,8 @@ module Spotify
 
   def self.attach_mock_function(name, cname, params, returns, options = {})
     attach_function(name, cname, params, returns, options)
-    old_method = method(name)
-    define_singleton_method(name) do |*args|
-      Spotify::Pointer.new(old_method[*args], returns, false)
+    define_singleton_method("#{name}!") do |*args|
+      Spotify::Pointer.new(send(name, *args), returns, false)
     end
   end
 
