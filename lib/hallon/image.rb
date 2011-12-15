@@ -34,8 +34,10 @@ module Hallon
         Spotify.image_create!(session.pointer, ptr)
       end
 
-      @callback = callback_for(:load)
-      Spotify.image_add_load_callback(pointer, @callback, nil)
+      callback_for(:load) do |callback|
+        Spotify.image_add_load_callback(pointer, callback, nil)
+        pointer
+      end
     end
 
     # @return [Boolean] true if the image is loaded.

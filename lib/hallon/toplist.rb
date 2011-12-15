@@ -36,8 +36,9 @@ module Hallon
         region = to_country(region)
       end
 
-      @callback = callback_for(:load)
-      @pointer  = Spotify.toplistbrowse_create!(session.pointer, type, region, user, @callback, nil)
+      callback_for(:load) do |callback|
+        @pointer = Spotify.toplistbrowse_create!(session.pointer, type, region, user, callback, nil)
+      end
     end
 
     # @return [Boolean] true if the toplist is loaded.

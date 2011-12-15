@@ -26,8 +26,9 @@ module Hallon
         raise TypeError, "expected artist pointer, was given #{given}"
       end
 
-      @callback = callback_for(:load)
-      @pointer  = Spotify.artistbrowse_create!(session.pointer, pointer, type, @callback, nil)
+      callback_for(:load) do |callback|
+        @pointer = Spotify.artistbrowse_create!(session.pointer, pointer, type, callback, nil)
+      end
 
       raise FFI::NullPointerError, "artist browsing failed" if @pointer.null?
     end

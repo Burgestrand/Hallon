@@ -17,11 +17,11 @@ module Hallon
 
       # @param [Spotify::Pointer<inbox>]
       def initialize(username, message, tracks, &block)
-        @callback = callback_for(:complete)
+        ary = FFI::MemoryPointer.new(:pointer, tracks.length)
+        ary.write_array_of_pointer tracks.map(&:pointer)
 
-        FFI::MemoryPointer.new(:pointer, tracks.length) do |ary|
-          ary.write_array_of_pointer tracks.map(&:pointer)
-          @pointer = Spotify.inbox_post_tracks!(session.pointer, username, ary, tracks.length, message, @callback, nil)
+        callback_for(:complete) do |callback|
+          @pointer = Spotify.inbox_post_tracks!(session.pointer, username, ary, tracks.length, message, callback, nil)
         end
       end
 

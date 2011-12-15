@@ -21,10 +21,16 @@ module Hallon
       respond_to?("#{name}_callback", true)
     end
 
+    # @yield [callback] attaches automatically after yielding
+    # @yieldparam [Proc] callback
+    # @yieldreturn [#attach]
+    #
     # @param [#to_s] name
     # @return [Proc] callback method handle for given name.
     def callback_for(name)
-      method("#{name}_callback").to_proc
+      callback = method("#{name}_callback").to_proc
+      yield(callback).attach(callback) if block_given?
+      callback
     end
 
     # Run a given block, and once it exits restore all handlers

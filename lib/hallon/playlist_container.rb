@@ -78,9 +78,7 @@ module Hallon
     # @param [Spotify::Pointer] pointer
     def initialize(pointer)
       @pointer = to_pointer(pointer, :playlistcontainer)
-
-      callbacks = Spotify::PlaylistContainerCallbacks.create(self, @sp_callbacks = {})
-      Spotify.playlistcontainer_add_callbacks(pointer, callbacks, nil)
+      Spotify::PlaylistContainerCallbacks.attach_to(self)
     end
 
     # @return [Boolean] true if the container is loaded.

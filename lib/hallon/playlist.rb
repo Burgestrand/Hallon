@@ -93,9 +93,7 @@ module Hallon
     # @param [String, Link, FFI::Pointer] link
     def initialize(link)
       @pointer = to_pointer(link, :playlist)
-
-      callbacks = Spotify::PlaylistCallbacks.create(self, @sp_callbacks = {})
-      Spotify.playlist_add_callbacks(pointer, callbacks, nil)
+      Spotify::PlaylistCallbacks.attach_to(self)
     end
 
     # @return [Boolean] true if the playlist is loaded

@@ -35,8 +35,9 @@ module Hallon
 
       search = allocate
       search.instance_eval do
-        @callback = callback_for(:load)
-        @pointer  = Spotify.radio_search_create!(session.pointer, from_year, to_year, genres, @callback, nil)
+        callback_for(:load) do |callback|
+          @pointer  = Spotify.radio_search_create!(session.pointer, from_year, to_year, genres, callback, nil)
+        end
 
         raise FFI::NullPointerError, "radio search failed" if @pointer.null?
       end
@@ -57,8 +58,10 @@ module Hallon
     # @see http://developer.spotify.com/en/libspotify/docs/group__search.html#gacf0b5e902e27d46ef8b1f40e332766df
     def initialize(query, options = {})
       o = Search.defaults.merge(options)
-      @callback = callback_for(:load)
-      @pointer  = Spotify.search_create!(session.pointer, query, o[:tracks_offset].to_i, o[:tracks].to_i, o[:albums_offset].to_i, o[:albums].to_i, o[:artists_offset].to_i, o[:artists].to_i, @callback, nil)
+
+      callback_for(:load) do |callback|
+        @pointer  = Spotify.search_create!(session.pointer, query, o[:tracks_offset].to_i, o[:tracks].to_i, o[:albums_offset].to_i, o[:albums].to_i, o[:artists_offset].to_i, o[:artists].to_i, callback, nil)
+      end
 
       raise FFI::NullPointerError, "search for “#{query}” failed" if @pointer.null?
     end

@@ -110,7 +110,7 @@ module Hallon
       config[:api_version]   = Hallon::API_VERSION
       config.application_key = appkey
       @options.each { |(key, value)| config.send(:"#{key}=", value) }
-      config[:callbacks]     = Spotify::SessionCallbacks.create(self, @sp_callbacks = {})
+      config[:callbacks]     = Spotify::SessionCallbacks.attach_to(self)
 
       # Default cache size is 0 (automatic)
       @cache_size = 0

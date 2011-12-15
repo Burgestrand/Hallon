@@ -24,7 +24,7 @@ describe Spotify do
       # we can assume our GC works properly, but up the stakes just for the sake of it
       Spotify.should_receive(:garbage_release).with(my_pointer).at_least(3).times
       5.times { Spotify::Pointer.new(my_pointer, :garbage, false) }
-      5.times { GC.start; sleep 0.1 }
+      5.times { GC.start; sleep 0.01 }
     end
   end
 end

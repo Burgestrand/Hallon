@@ -120,9 +120,20 @@ module Spotify
       end if add_ref
     end
 
+    # Attach an object to this pointer. Prevents object from
+    # getting garbage collected until this pointer is.
+    #
+    # @todo Remove this.
+    # @private
+    # @param [Object] object
+    def attach(object)
+      (@protect_from_gc ||= []) << object
+      object
+    end
+
     # @return [String] representation of the spotify pointer
     def to_s
-      "<#{self.class} address=#{address} type=#{type}>"
+      "<#{self.class} address=0x#{address.to_s(16)} type=#{type}>"
     end
 
     # Create a proc that will accept a pointer of a given type and
@@ -200,30 +211,107 @@ module Spotify
   end
 
   # Makes it easier binding callbacks safely to callback structs.
-  # When including this class you *must* define `proc_for(member)`!
+  #
+  # @see add
+  # @see remove
   module CallbackStruct
-    # Assigns the callbacks to call the given target; the callback
-    # procs are stored in the `storage` parameter. **Make sure the
-    # storage does not get garbage collected as long as these callbacks
-    # are needed!**
+    # Attaches all callbacks to given target.
     #
-    # @param [Object] target
-    # @param [#&#91;&#93;&#61;] storage
-    def create(target, storage)
-      new.tap do |struct|
-        members.each do |member|
-          callback = target.callback_for(member)
+    # @note Be *careful* with this method. Memory stuff imminent.
+    # @param [#pointer and #callback_for] target
+    # @param [FFI::Pointer] userdata
+    # @return [self]
+    def attach_to(target, userdata = nil)
+      struct = new
 
-          unless callback.arity == arity_of(member)
-            raise ArgumentError, "#{member} callback takes #{arity_of(memeber)} arguments, was #{callback.arity}"
-          end
+      # find and add all callbacks to the struct
+      members.map { |m| struct[m] = callback_for(target, m) }
 
-          struct[member] = storage[member] = callback
-        end
+      # now attach the struct of callbacks to the target
+      target.pointer.attach(struct)
+
+      # now, what I really want to do is this:
+      #
+      #   target.instance_variable_set('@_callbacks', struct)
+      #
+      # essentially it would mean that the callbacks would be garbage
+      # collected at the same time as our target object, but it does
+      # not appear to work, and I believe it is for race conditions:
+      #
+      # spotify calls callback, which in turn invokes the ffi callback
+      # handler routine; this routine will wait on a mutex until ruby
+      # becomes available for callback handling
+      #
+      # now, we garbage collect our target, removing all callbacks from
+      # memory pretty much anywhere; try to access them and it goes boom
+      #
+      # assume ffi now gets ahold of the ruby thread, finds the callback
+      # somehow, but it’s GC’d, so trying to call this would make for some
+      # very strange bugs
+      #
+      # attaching the struct to the pointer means we cannot GC any callbacks
+      # whatsoever until the entire pointer is freed, which increases
+      # memory bloat somewhat, but does appear to be a safe alternative
+      # that does not leak memory
+
+      # attach the callbacks to the target
+      add(target.pointer, struct.pointer, userdata)
+
+      # we freeze it because we don’t want anybody modifying
+      # our array of callbacks and removing one of the objects
+      # from it, because that would mean the procs in it could
+      # get garbage collected and thus segfault our application
+      # when called from C
+      # this is the first time I get to use freeze; YAY!
+      #
+      # so finally, attach a finalizer to the callbacks array; we
+      # should be safe because it cannot be modified, so the procs
+      # should never be able to get GC’d without this object getting
+      # GC’d… let’s hope this is correct
+      if finalizer = remover(target.pointer, struct.pointer, userdata)
+        ObjectSpace.define_finalizer(struct, finalizer)
+        struct.freeze
       end
+
+      # and return the struct, if somebody ever needs it
+      struct
     end
 
     protected
+      # Attaches callbacks to given pointer with given userdata.
+      #
+      # @note You must implement this when including this module!
+      # @param [FFI::Pointer] pointer
+      # @param [FFI::MemoryPointer] callbacks
+      # @param [FFI::Pointer] userdata
+      def add(pointer, callbacks, userdata)
+        raise NotImplementedError, "you must implement this!"
+      end
+
+      # Removes callbacks from given pointer with given userdata.
+      #
+      # @note You must implement this when including this module!
+      # @param [FFI::Pointer] pointer
+      # @param [FFI::MemoryPointer] callbacks
+      # @param [FFI::Pointer] userdata
+      # @return [Proc] a proc that removes the callbacks
+      def remover(pointer, callbacks, userdata)
+        raise NotImplementedError, "you must implement this!"
+      end
+
+      # @param [#callback_for] target
+      # @param [Symbol] member
+      # @return [Proc]
+      def callback_for(target, member)
+        target.callback_for(member).tap do |callback|
+          unless callback.arity < 0 or callback.arity == arity_of(member)
+            raise ArgumentError, "#{member} callback takes #{arity_of(member)} arguments, was #{callback.arity}"
+          end
+        end
+      end
+
+      # @param [Symbol] member
+      # @return [Integer] arity of the given callback member
       def arity_of(member)
         idx = members.index(member)
         fn  = layout.fields[idx].type
@@ -233,13 +321,39 @@ module Spotify
 
   class << SessionCallbacks
     include CallbackStruct
+
+    # same protocol, different behaviour
+    def attach_to(session, userdata = nil)
+      struct = new
+      members.map { |m| struct[m] = callback_for(session, m) }
+      session.instance_variable_set('@_callbacks', struct)
+      struct
+    end
   end
 
   class << PlaylistCallbacks
     include CallbackStruct
+
+    protected
+      def add(playlist, callbacks, userdata)
+        Spotify.playlist_add_callbacks(playlist, callbacks, userdata)
+      end
+
+      def remover(playlist, callbacks, userdata)
+        proc { Spotify.playlist_remove_callbacks(playlist, callbacks, userdata) }
+      end
   end
 
   class << PlaylistContainerCallbacks
     include CallbackStruct
+
+    protected
+      def add(container, callbacks, userdata)
+        Spotify.playlistcontainer_add_callbacks(container, callbacks, userdata)
+      end
+
+      def remover(container, callbacks, userdata)
+        proc { Spotify.playlistcontainer_remove_callbacks(container, callbacks, userdata) }
+      end
   end
 end
