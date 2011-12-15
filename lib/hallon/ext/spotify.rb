@@ -213,10 +213,9 @@ module Spotify
       new.tap do |struct|
         members.each do |member|
           callback = target.callback_for(member)
-          expected = arity_of(member)
 
-          unless callback.arity == expected
-            raise ArgumentError, "#{member} callback takes #{expected}, was #{callback.arity}"
+          unless callback.arity == arity_of(member)
+            raise ArgumentError, "#{member} callback takes #{arity_of(memeber)} arguments, was #{callback.arity}"
           end
 
           struct[member] = storage[member] = callback

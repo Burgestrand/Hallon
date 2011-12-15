@@ -47,7 +47,7 @@ module Hallon::Observable
 
     # @example listening to this event
     #   playlist_container.on(:container_loaded) do |container|
-    #     puts "#{container.name} loaded!"
+    #     puts "#{container.owner.name}s container loaded!"
     #   end
     #
     # @yield [self] container_loaded
