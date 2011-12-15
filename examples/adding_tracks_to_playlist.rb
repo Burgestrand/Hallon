@@ -1,4 +1,7 @@
 # coding: utf-8
+
+$LOAD_PATH.unshift(File.expand_path('../lib', File.dirname(__FILE__)))
+
 require 'hallon'
 require './spec/support/config'
 
