@@ -79,7 +79,7 @@ module Hallon
     def initialize(pointer)
       @pointer = to_pointer(pointer, :playlistcontainer)
 
-      callbacks = Spotify::PlaylistContainerCallbacks.create(self, @sp_callbacs = {})
+      callbacks = Spotify::PlaylistContainerCallbacks.create(self, @sp_callbacks = {})
       Spotify.playlistcontainer_add_callbacks(pointer, callbacks, nil)
     end
 
