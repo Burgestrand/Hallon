@@ -66,8 +66,9 @@ describe Hallon::Observable::Playlist do
   end
 
   specification_for_callback "image_changed" do
+    around { |test| mock_session(&test) }
     let(:input)  { [a_pointer, mock_image_id_pointer, :userdata] }
-    let(:output) { mock_session { [Hallon::Image.new(mock_image), subject] } }
+    let(:output) { [Hallon::Image.new(mock_image), subject] }
   end
 
   specification_for_callback "subscribers_changed" do

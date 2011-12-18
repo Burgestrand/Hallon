@@ -34,12 +34,17 @@ describe Hallon::Observable::Session do
   end
 
   specification_for_callback "music_delivery" do
+    let(:num_frames) do
+      data.size / 2
+    end
+
     let(:data) do
       (0...100).zip((0...100).to_a.reverse).flatten # [0, 99, 1, 98 …]
     end
 
     let(:frames) do
-      frames = FFI::MemoryPointer.new(:int16, 100 * 2)
+      channels = 2
+      frames = FFI::MemoryPointer.new(:int16, num_frames * channels)
       frames.write_array_of_int16(data.flatten)
       frames
     end
@@ -52,8 +57,8 @@ describe Hallon::Observable::Session do
       struct.pointer
     end
 
-    let(:input)  { [a_pointer, format, frames, 200] }
-    let(:output) { [{rate: 44100, type: :int16, channels: 2}, data, subject] }
+    let(:input)  { [a_pointer, format, frames, num_frames] }
+    let(:output) { [{rate: 44100, type: :int16, channels: 2}, data.each_slice(2), subject] }
 
     it "should return the resulting value" do
       subject.on(:music_delivery) { 7 }

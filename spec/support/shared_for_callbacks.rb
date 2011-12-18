@@ -34,7 +34,12 @@ RSpec.configure do
         block = proc {}
 
         subject.on(name, &block)
-        block.should_receive(:call).with(*output)
+        block.should_receive(:call) do |*args|
+          output.each_with_index do |e, i|
+            args[i].should === e
+          end
+          nil
+        end
 
         subject_callback.call(*input)
       end

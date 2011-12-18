@@ -96,7 +96,7 @@ module Hallon::Observable
     #
     # @yield [format, frames, self]
     # @yieldparam [Hash] format (contains :type, :rate, :channels)
-    # @yieldparam [Array<Integer>] frames
+    # @yieldparam [Enumerator<[Integer...]>] frames (each frame is an array containing format[:channels] integers of format[:type])
     # @yieldparam [Session] self
     def music_delivery_callback(pointer, format, frames, num_frames)
       struct = Spotify::AudioFormat.new(format)
@@ -107,10 +107,10 @@ module Hallon::Observable
       format[:type] = struct[:sample_type]
 
       # read the frames of the given type
-      frames = frames.public_send("read_array_of_#{format[:type]}", num_frames)
+      frames = frames.public_send("read_array_of_#{format[:type]}", num_frames * format[:channels])
 
       # pass the frames to the callback, allowing it to do whatever
-      consumed_frames = trigger(pointer, :music_delivery, format, frames)
+      consumed_frames = trigger(pointer, :music_delivery, format, frames.each_slice(format[:channels]))
 
       # finally return how many frames the callback reportedly consumed
       consumed_frames.to_i # very important to return something good here!
