@@ -97,9 +97,9 @@ module Hallon::Observable
       struct = Spotify::AudioFormat.new(format)
 
       format = {}
-      format[:rate] = format[:sample_rate]
-      format[:channels] = format[:channels]
-      format[:type] = format[:sample_type]
+      format[:rate] = struct[:sample_rate]
+      format[:channels] = struct[:channels]
+      format[:type] = struct[:sample_type]
 
       # read the frames of the given type
       frames = frames.public_send("read_array_of_#{format[:type]}", num_frames)

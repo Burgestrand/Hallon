@@ -33,13 +33,35 @@ describe Hallon::Observable::Session do
     let(:output) { [subject] }
   end
 
-  specification_for_callback "music_delivery", :pending do
-    let(:input)  { [a_pointer] }
-    let(:output) { [subject] }
+  specification_for_callback "music_delivery" do
+    let(:data) do
+      (0...100).zip((0...100).to_a.reverse).flatten # [0, 99, 1, 98 …]
+    end
+
+    let(:frames) do
+      frames = FFI::MemoryPointer.new(:int16, 100 * 2)
+      frames.write_array_of_int16(data.flatten)
+      frames
+    end
+
+    let(:format) do
+      struct = Spotify::AudioFormat.new
+      struct[:sample_type] = :int16
+      struct[:sample_rate] = 44100 # 44.1khz
+      struct[:channels]    = 2
+      struct.pointer
+    end
+
+    let(:input)  { [a_pointer, format, frames, 200] }
+    let(:output) { [{rate: 44100, type: :int16, channels: 2}, data, subject] }
 
     it "should return the resulting value" do
       subject.on(:music_delivery) { 7 }
-      subject.callback_for(:music_delivery).call(*input).should eq 7
+      subject_callback.call(*input).should eq 7
+    end
+
+    it "should ensure the resulting value is an integer" do
+      subject_callback.call(*input).should eq 0
     end
   end
 
