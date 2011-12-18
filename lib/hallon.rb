@@ -9,6 +9,7 @@ require 'hallon/linkable'
 require 'hallon/version'
 require 'hallon/error'
 require 'hallon/base'
+require 'hallon/queue'
 require 'hallon/enumerator'
 
 require 'hallon/observable/album_browse'
