@@ -49,7 +49,7 @@ module Hallon
       # @param [Fixnum, Symbol] error
       # @return [nil]
       def maybe_raise(x)
-        return nil if [nil, :timeout].include?(x)
+        return nil if [nil, :timeout, :is_loading].include?(x)
 
         error, symbol = disambiguate(x)
         return symbol if symbol == :ok
