@@ -1,4 +1,6 @@
 # coding: utf-8
+require 'thread'
+
 module Hallon
   # Hallon::Queue is a non-blocking (well, not entirely) sized FIFO queue.
   #
