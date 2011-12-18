@@ -171,8 +171,8 @@ module Hallon
     def name=(name)
       name = name.to_s.encode('UTF-8')
 
-      unless name.length < 256
-        raise ArgumentError, "name must be shorter than 256 characters (UTF-8)"
+      unless name.bytesize < 256
+        raise ArgumentError, "name must be shorter than 256 bytes"
       end
 
       unless name =~ /[^ ]/u

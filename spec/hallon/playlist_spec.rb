@@ -149,6 +149,7 @@ describe Hallon::Playlist do
 
     it "should fail given a too long name" do
       expect { playlist.name = "a" * 256 }.to raise_error(ArgumentError)
+      expect { playlist.name = "ä" * 200 }.to raise_error(ArgumentError)
     end
   end
 
