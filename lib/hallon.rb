@@ -38,6 +38,9 @@ require 'hallon/artist_browse'
 require 'hallon/player'
 require 'hallon/search'
 
+# Why is this not the default in Ruby?
+Thread.abort_on_exception = true
+
 # The Hallon module wraps around all Hallon objects to avoid polluting
 # the global namespace. To start using Hallon, you most likely want to
 # be looking for the documentation on {Hallon::Session}.
