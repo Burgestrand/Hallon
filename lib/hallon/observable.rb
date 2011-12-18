@@ -100,7 +100,7 @@ module Hallon
 
     # Defines a handler for the given event.
     #
-    # @param [#to_sym] event name of event to handle
+    # @param [#to_s] event name of event to handle
     # @return [Proc] the given block
     # @yield (*args) event handler block
     def on(event, &block)
@@ -146,9 +146,9 @@ module Hallon
     # @param [...] arguments
     # @return whatever the handler returns
     def trigger(name, *arguments, &block)
-      name = name.to_s
-      arguments << self
-      handlers[name].call(*arguments, &block)
+      if handler = handlers[name.to_s]
+        handler.call(*arguments, self, &block)
+      end
     end
 
     # @return [Hash<String, Proc>]
