@@ -1,6 +1,12 @@
 module Hallon::Observable
   module Post
-    include Hallon::Observable
+    def self.extended(other)
+      other.send(:include, Hallon::Observable)
+    end
+
+    def initialize_callbacks
+      callback_for(:complete)
+    end
 
     # This callback is fired when the Image object is fully loaded.
     #
@@ -13,7 +19,7 @@ module Hallon::Observable
     # @yield [self]
     # @yieldparam [User::Post] self
     def complete_callback(pointer, userdata)
-      trigger(:complete)
+      trigger(pointer, :complete)
     end
   end
 end

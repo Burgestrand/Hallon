@@ -80,7 +80,7 @@ module Hallon
     extend Linkable
 
     # CAN HAZ CALLBAKZ
-    include Observable::Playlist
+    extend Observable::Playlist
 
     from_link :playlist do |pointer|
       Spotify.playlist_create!(session.pointer, pointer)
@@ -93,7 +93,11 @@ module Hallon
     # @param [String, Link, FFI::Pointer] link
     def initialize(link)
       @pointer = to_pointer(link, :playlist)
-      Spotify::PlaylistCallbacks.attach_to(self)
+
+      subscribe_for_callbacks do |callbacks|
+        Spotify.playlist_remove_callbacks(pointer, callbacks, nil)
+        Spotify.playlist_add_callbacks(pointer, callbacks, nil)
+      end
     end
 
     # @return [Boolean] true if the playlist is loaded

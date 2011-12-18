@@ -1,7 +1,17 @@
 # coding: utf-8
 module Hallon::Observable
   module Session
-    include Hallon::Observable
+    def self.extended(other)
+      other.send(:include, Hallon::Observable)
+    end
+
+    def initialize_callbacks
+      struct = Spotify::SessionCallbacks.new
+      struct.members.each do |member|
+        struct[member] = callback_for(member)
+      end
+      struct
+    end
 
     # @example listening to this event
     #   session.on(:logged_in) do |error|
@@ -13,7 +23,7 @@ module Hallon::Observable
     # @yieldparam [Session] self
     # @see Error
     def logged_in_callback(pointer, error)
-      trigger(:logged_in, error)
+      trigger(pointer, :logged_in, error)
     end
 
     # @example listening to this event
@@ -24,7 +34,7 @@ module Hallon::Observable
     # @yield [self]
     # @yieldparam [Session] self
     def logged_out_callback(pointer)
-      trigger(:logged_out)
+      trigger(pointer, :logged_out)
     end
 
     # @example listening to this event
@@ -35,7 +45,7 @@ module Hallon::Observable
     # @yield [self]
     # @yieldparam [Session] self
     def metadata_updated_callback(pointer)
-      trigger(:metadata_updated)
+      trigger(pointer, :metadata_updated)
     end
 
     # @example listening to this event
@@ -48,7 +58,7 @@ module Hallon::Observable
     # @yieldparam [Session] self
     # @see Error
     def connection_error_callback(pointer, error)
-      trigger(:connection_error, error)
+      trigger(pointer, :connection_error, error)
     end
 
     # @example listening to this event
@@ -60,7 +70,7 @@ module Hallon::Observable
     # @yieldparam [String] message
     # @yieldparam [Session] self
     def message_to_user_callback(pointer, message)
-      trigger(:message_to_user, message)
+      trigger(pointer, :message_to_user, message)
     end
 
     # @example listening to this event
@@ -71,7 +81,7 @@ module Hallon::Observable
     # @yield [self]
     # @yieldparam [Session] self
     def notify_main_thread_callback(pointer)
-      trigger(:notify_main_thread)
+      trigger(pointer, :notify_main_thread)
     end
 
     # @example listening to this event
@@ -95,7 +105,7 @@ module Hallon::Observable
       frames = frames.public_send("read_array_of_#{format[:type]}", num_frames)
 
       # pass the frames to the callback, allowing it to do whatever
-      consumed_frames = trigger(:music_delivery, format, frames)
+      consumed_frames = trigger(pointer, :music_delivery, format, frames)
 
       # finally return how many frames the callback reportedly consumed
       consumed_frames.to_i # very important to return something good here!
@@ -109,7 +119,7 @@ module Hallon::Observable
     # @yield [self]
     # @yieldparam [Session] self
     def play_token_lost_callback(pointer)
-      trigger(:play_token_lost)
+      trigger(pointer, :play_token_lost)
     end
 
     # @example listening to this event
@@ -120,7 +130,7 @@ module Hallon::Observable
     # @yield [self]
     # @yieldparam [Session] self
     def end_of_track_callback(pointer)
-      trigger(:end_of_track)
+      trigger(pointer, :end_of_track)
     end
 
     # @example listening to this event
@@ -131,7 +141,7 @@ module Hallon::Observable
     # @yield [self]
     # @yieldparam [Session] self
     def start_playback_callback(pointer)
-      trigger(:start_playback)
+      trigger(pointer, :start_playback)
     end
 
     # @example listening to this event
@@ -142,7 +152,7 @@ module Hallon::Observable
     # @yield [self]
     # @yieldparam [Session] self
     def stop_playback_callback(pointer)
-      trigger(:stop_playback)
+      trigger(pointer, :stop_playback)
     end
 
     # @example listening to this event
@@ -155,7 +165,7 @@ module Hallon::Observable
     # @yieldreturn an integer pair, [samples, dropouts]
     def get_audio_buffer_stats_callback(pointer, stats)
       stats = Spotify::AudioBufferStats.new(stats)
-      samples, dropouts = trigger(:get_audio_buffer_stats)
+      samples, dropouts = trigger(pointer, :get_audio_buffer_stats)
       stats[:samples]  = samples.to_i
       stats[:stutter] = dropouts.to_i
     end
@@ -169,7 +179,7 @@ module Hallon::Observable
     # @yieldparam [Symbol] error
     # @yieldparam [Session] self
     def streaming_error_callback(pointer, error)
-      trigger(:streaming_error, error)
+      trigger(pointer, :streaming_error, error)
     end
 
     # @example listening to this event
@@ -180,7 +190,7 @@ module Hallon::Observable
     # @yield [self]
     # @yieldparam [Session] self
     def userinfo_updated_callback(pointer)
-      trigger(:userinfo_updated)
+      trigger(pointer, :userinfo_updated)
     end
 
     # @example listening to this event
@@ -192,7 +202,7 @@ module Hallon::Observable
     # @yieldparam [String] message
     # @yieldparam [Session] self
     def log_message_callback(pointer, message)
-      trigger(:log_message, message)
+      trigger(pointer, :log_message, message)
     end
 
     # @example listening to this event
@@ -203,7 +213,7 @@ module Hallon::Observable
     # @yield [self]
     # @yieldparam [Session] self
     def offline_status_updated_callback(pointer)
-      trigger(:offline_status_updated)
+      trigger(pointer, :offline_status_updated)
     end
 
     # @example listening to this event
@@ -215,7 +225,7 @@ module Hallon::Observable
     # @yieldparam [Symbol] error
     # @yieldparam [Session] self
     def offline_error_callback(pointer, error)
-      trigger(:offline_error, error)
+      trigger(pointer, :offline_error, error)
     end
   end
 end

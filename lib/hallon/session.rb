@@ -31,7 +31,7 @@ module Hallon
     end
 
     # We have Session callbacks that you can listen to!
-    include Observable::Session
+    extend Observable::Session
 
     # Initializes the Spotify session. If you need to access the
     # instance at a later time, you can use {instance}.
@@ -105,22 +105,23 @@ module Hallon
         raise ArgumentError, "User-agent must be less than 256 bytes long"
       end
 
-      # Set configuration, as well as callbacks
-      config = Spotify::SessionConfig.new
-      config[:api_version]   = Hallon::API_VERSION
-      config.application_key = appkey
-      @options.each { |(key, value)| config.send(:"#{key}=", value) }
-      config[:callbacks]     = Spotify::SessionCallbacks.attach_to(self)
-
       # Default cache size is 0 (automatic)
       @cache_size = 0
 
-      instance_eval(&block) if block_given?
+      subscribe_for_callbacks do |callbacks|
+        config = Spotify::SessionConfig.new
+        config[:api_version]   = Hallon::API_VERSION
+        config.application_key = appkey
+        @options.each { |(key, value)| config.send(:"#{key}=", value) }
+        config[:callbacks]     = callbacks
 
-      # You pass a pointer to the session pointer to libspotify >:)
-      FFI::MemoryPointer.new(:pointer) do |p|
-        Error::maybe_raise Spotify.session_create(config, p)
-        @pointer = p.read_pointer
+        instance_eval(&block) if block_given?
+
+        # You pass a pointer to the session pointer to libspotify >:)
+        FFI::MemoryPointer.new(:pointer) do |p|
+          Error::maybe_raise Spotify.session_create(config, p)
+          @pointer = p.read_pointer
+        end
       end
     end
 

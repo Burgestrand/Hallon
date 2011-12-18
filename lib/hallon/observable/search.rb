@@ -1,6 +1,12 @@
 module Hallon::Observable
   module Search
-    include Hallon::Observable
+    def self.extended(other)
+      other.send(:include, Hallon::Observable)
+    end
+
+    def initialize_callbacks
+      callback_for(:load)
+    end
 
     # This callback is fired when the Image object is fully loaded.
     #
@@ -12,7 +18,7 @@ module Hallon::Observable
     # @yield [self]
     # @yieldparam [Search] self
     def load_callback(pointer, userdata)
-      trigger(:load)
+      trigger(pointer, :load)
     end
   end
 end

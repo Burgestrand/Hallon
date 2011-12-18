@@ -7,7 +7,7 @@ module Hallon
   # @see Album
   # @see http://developer.spotify.com/en/libspotify/docs/group__albumbrowse.html
   class AlbumBrowse < Base
-    include Observable::AlbumBrowse
+    extend Observable::AlbumBrowse
 
     # Creates an AlbumBrowse instance from an Album or an Album pointer.
     #
@@ -22,7 +22,7 @@ module Hallon
         raise TypeError, "expected album pointer, was given #{given}"
       end
 
-      callback_for(:load) do |callback|
+      subscribe_for_callbacks do |callback|
         @pointer = Spotify.albumbrowse_create!(session.pointer, pointer, callback, nil)
       end
 

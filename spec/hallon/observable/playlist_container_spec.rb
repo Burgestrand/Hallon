@@ -1,6 +1,4 @@
 describe Hallon::Observable::PlaylistContainer do
-  it { should include Hallon::Observable }
-
   specification_for_callback "playlist_added" do
     let(:input)  { [a_pointer, mock_playlist_raw, 3, :userdata] }
     let(:output) { [Hallon::Playlist.new(mock_playlist), 3, subject] }

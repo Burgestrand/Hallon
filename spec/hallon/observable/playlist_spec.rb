@@ -1,6 +1,4 @@
 describe Hallon::Observable::Playlist do
-  it { should include Hallon::Observable }
-
   let(:trackpointers_size) { 2 }
   let(:trackpointers) do
     tracks = FFI::MemoryPointer.new(:pointer, 2)

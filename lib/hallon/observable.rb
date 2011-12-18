@@ -1,9 +1,98 @@
 # coding: utf-8
+require 'ref'
+
 module Hallon
   # A module providing event capabilities to Hallon objects.
   #
   # @private
   module Observable
+    # This module is responsible for creating methods for registering
+    # callbacks. It expects a certain protocol to already available.
+    module ClassMethods
+      def self.extended(other)
+        other.send(:initialize_observable)
+      end
+
+      # @return [Method, Struct] callbacks to attach to this object
+      attr_reader :callbacks
+
+      # Subscribe to callbacks for a given pointer.
+      #
+      # @param [Object] object
+      # @param [FFI::Pointer] pointer
+      def subscribe(object, pointer)
+        key = pointer.address
+        ref = Ref::WeakReference.new(object)
+
+        @lock.synchronize do
+          if @subscribers_rev[ref.referenced_object_id]
+            raise ArgumentError, "already subscribed to callbacks"
+          end
+
+          @subscribers[key] ||= {} # use a hash for fast reverse lookups
+          @subscribers[key][ref.referenced_object_id] = ref
+          @subscribers_rev[ref.referenced_object_id] = key
+        end
+
+        ObjectSpace.define_finalizer(object, @unsubscriber)
+      end
+
+      # Retrieve all subscribers for a given pointer.
+      #
+      # @param [FFI::Pointer] pointer
+      def subscribers_for(pointer)
+        key = pointer.address
+
+        @lock.synchronize do
+          @subscribers.fetch(key, {}).values.map(&:object).compact
+        end
+      end
+
+      protected
+
+      # Run when ClassMethods are extended.
+      def initialize_observable
+        @callbacks = initialize_callbacks
+
+        @lock = Ref::SafeMonitor.new
+        @subscribers = {}
+        @subscribers_rev = {}
+        @unsubscriber = proc do |object_id|
+          @lock.synchronize do
+            if key = @subscribers_rev.delete(object_id)
+              @subscribers[key].delete(object_id)
+              @subscribers.delete(key) if @subscribers[key].empty?
+            end
+          end
+        end
+      end
+
+      # @param [#to_s] name
+      # @return [Method]
+      def callback_for(name)
+        method("#{name}_callback")
+      end
+
+      # Scans through the list of subscribers, trying to find any
+      # subscriber attached to this pointer. For each subscriber,
+      # trigger the appropriate event.
+      #
+      # @param [FFI::Pointer] pointer
+      # @param [Symbol] event
+      # @param […] arguments
+      # @return whatever the (last) handler returned
+      def trigger(pointer, event, *arguments)
+        subscribers_for(pointer).inject(nil) do |_, subscriber|
+          # trigger is protected, inconvenient but symbolic
+          subscriber.send(:trigger, event, *arguments)
+        end
+      end
+    end
+
+    def self.included(other)
+      other.extend(ClassMethods)
+    end
+
     # Defines a handler for the given event.
     #
     # @param [#to_sym] event name of event to handle
@@ -18,19 +107,7 @@ module Hallon
     # @param [#to_s] name
     # @return [Boolean] true if a callback with `name` exists
     def has_callback?(name)
-      respond_to?("#{name}_callback", true)
-    end
-
-    # @yield [callback] attaches automatically after yielding
-    # @yieldparam [Proc] callback
-    # @yieldreturn [#attach]
-    #
-    # @param [#to_s] name
-    # @return [Proc] callback method handle for given name.
-    def callback_for(name)
-      callback = method("#{name}_callback").to_proc
-      yield(callback).attach(callback) if block_given?
-      callback
+      self.class.respond_to?("#{name}_callback")
     end
 
     # Run a given block, and once it exits restore all handlers
@@ -46,6 +123,17 @@ module Hallon
     end
 
     protected
+
+    # Register this object as interested in callbacks.
+    #
+    # @yield [callback]
+    # @yieldparam [Method, Struct] callback (always the same object)
+    # @return whatever the block returns
+    def subscribe_for_callbacks
+      yield(self.class.callbacks).tap do
+        self.class.subscribe(self, pointer)
+      end
+    end
 
     # @param [#to_s] name
     # @param [...] arguments

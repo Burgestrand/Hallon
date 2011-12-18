@@ -71,14 +71,18 @@ module Hallon
       end
     end
 
-    include Observable::PlaylistContainer
+    extend Observable::PlaylistContainer
 
     # Wrap an existing PlaylistContainer pointer in an object.
     #
     # @param [Spotify::Pointer] pointer
     def initialize(pointer)
       @pointer = to_pointer(pointer, :playlistcontainer)
-      Spotify::PlaylistContainerCallbacks.attach_to(self)
+
+      subscribe_for_callbacks do |callbacks|
+        Spotify.playlistcontainer_remove_callbacks(pointer, callbacks, nil)
+        Spotify.playlistcontainer_add_callbacks(pointer, callbacks, nil)
+      end
     end
 
     # @return [Boolean] true if the container is loaded.

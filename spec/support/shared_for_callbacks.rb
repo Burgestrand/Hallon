@@ -1,11 +1,32 @@
 RSpec.configure do
   def specification_for_callback(name, *args, &block)
     describe("##{name}_callback", *args) do
-      subject do
-        o = Object.new
-        o.extend(described_class)
-        o
+      let(:subject_callback) do
+        subject.class.send(:callback_for, name)
       end
+
+      let(:klass) do
+        observable_class = described_class
+        pointer_address  = input[0].address
+
+        Class.new do
+          extend observable_class
+
+          attr_reader :callbacks
+
+          def initialize
+            subscribe_for_callbacks do |callbacks|
+              @callbacks = callbacks
+            end
+          end
+
+          define_method(:pointer) do
+            FFI::Pointer.new(pointer_address)
+          end
+        end
+      end
+
+      subject { klass.new }
 
       instance_eval(&block)
 
@@ -15,7 +36,7 @@ RSpec.configure do
         subject.on(name, &block)
         block.should_receive(:call).with(*output)
 
-        subject.callback_for(name).call(*input)
+        subject_callback.call(*input)
       end
 
       # this is not needed for struct members when creating the
@@ -24,7 +45,7 @@ RSpec.configure do
       # (also, we can’t find the struct callback arity in any nice way)
       it "should have the correct arity" do
         fn = Spotify.find_type(type)
-        subject.callback_for(name).arity.should eq fn.param_types.size
+        subject_callback.arity.should eq fn.param_types.size
       end if method_defined?(:type)
     end
   end

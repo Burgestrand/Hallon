@@ -1,6 +1,16 @@
 module Hallon::Observable
   module Playlist
-    include Hallon::Observable
+    def self.extended(other)
+      other.send(:include, Hallon::Observable)
+    end
+
+    def initialize_callbacks
+      struct = Spotify::PlaylistCallbacks.new
+      struct.members.each do |member|
+        struct[member] = callback_for(member)
+      end
+      struct
+    end
 
     # @example listening to this event
     #   playlist.on(:tracks_added) do |tracks, position, playlist|
@@ -12,7 +22,7 @@ module Hallon::Observable
     # @yieldparam [Integer] position
     # @yieldparam [Playlist] self
     def tracks_added_callback(pointer, tracks, num_tracks, position, userdata)
-      trigger(:tracks_added, callback_make_tracks(tracks, num_tracks), position)
+      trigger(pointer, :tracks_added, callback_make_tracks(tracks, num_tracks), position)
     end
 
     # @example listening to this event
@@ -24,7 +34,7 @@ module Hallon::Observable
     # @yieldparam [Array<Track>] tracks
     # @yieldparam [Playlist] self
     def tracks_removed_callback(pointer, tracks, num_tracks, userdata)
-      trigger(:tracks_removed, callback_make_tracks(tracks, num_tracks))
+      trigger(pointer, :tracks_removed, callback_make_tracks(tracks, num_tracks))
     end
 
     # @example listening to this event
@@ -37,7 +47,7 @@ module Hallon::Observable
     # @yieldparam [Integer] new_position
     # @yieldparam [Playlist] self
     def tracks_moved_callback(pointer, tracks, num_tracks, new_position, userdata)
-      trigger(:tracks_moved, callback_make_tracks(tracks, num_tracks), new_position)
+      trigger(pointer, :tracks_moved, callback_make_tracks(tracks, num_tracks), new_position)
     end
 
     # @example listening to this event
@@ -48,7 +58,7 @@ module Hallon::Observable
     # @yield [self] playlist_renamed
     # @yieldparam [Playlist] self
     def playlist_renamed_callback(pointer, userdata)
-      trigger(:playlist_renamed)
+      trigger(pointer, :playlist_renamed)
     end
 
     # @example listening to this event
@@ -59,7 +69,7 @@ module Hallon::Observable
     # @yield [self] playlist_state_changed
     # @yieldparam [Playlist] self
     def playlist_state_changed_callback(pointer, userdata)
-      trigger(:playlist_state_changed)
+      trigger(pointer, :playlist_state_changed)
     end
 
     # @example listening to this event
@@ -71,7 +81,7 @@ module Hallon::Observable
     # @yieldparam [Boolean] is_done
     # @yieldparam [Playlist] self
     def playlist_update_in_progress_callback(pointer, done, userdata)
-      trigger(:playlist_update_in_progress, done)
+      trigger(pointer, :playlist_update_in_progress, done)
     end
 
     # @example listening to this event
@@ -82,7 +92,7 @@ module Hallon::Observable
     # @yield [self] playlist_metadata_updated
     # @yieldparam [Playlist] self
     def playlist_metadata_updated_callback(pointer, userdata)
-      trigger(:playlist_metadata_updated)
+      trigger(pointer, :playlist_metadata_updated)
     end
 
     # @example listening to this event
@@ -98,7 +108,7 @@ module Hallon::Observable
     # @yieldparam [Playlist] self
     def track_created_changed_callback(pointer, position, user, created_at, userdata)
       user = Spotify::Pointer.new(user, :user, true)
-      trigger(:track_created_changed, position, Hallon::User.new(user), Time.at(created_at))
+      trigger(pointer, :track_created_changed, position, Hallon::User.new(user), Time.at(created_at))
     end
 
     # @example listening to this event
@@ -112,7 +122,7 @@ module Hallon::Observable
     # @yieldparam [Boolean] is_seen
     # @yieldparam [Playlist] self
     def track_seen_changed_callback(pointer, position, seen, userdata)
-      trigger(:track_seen_changed, position, seen)
+      trigger(pointer, :track_seen_changed, position, seen)
     end
 
     # @example listening to this event
@@ -126,7 +136,7 @@ module Hallon::Observable
     # @yieldparam [String] message
     # @yieldparam [Playlist] self
     def track_message_changed_callback(pointer, position, message, userdata)
-      trigger(:track_message_changed, position, message)
+      trigger(pointer, :track_message_changed, position, message)
     end
 
     # @example listening to this event
@@ -138,7 +148,7 @@ module Hallon::Observable
     # @yieldparam [String] description
     # @yieldparam [Playlist] self
     def description_changed_callback(pointer, description, userdata)
-      trigger(:description_changed, description)
+      trigger(pointer, :description_changed, description)
     end
 
     # @example listening to this event
@@ -151,7 +161,7 @@ module Hallon::Observable
     # @yieldparam [Playlist] self
     def image_changed_callback(pointer, image, userdata)
       image = Hallon::Image.new(image.read_string(20))
-      trigger(:image_changed, image)
+      trigger(pointer, :image_changed, image)
     end
 
     # @example listening to this event
@@ -162,7 +172,7 @@ module Hallon::Observable
     # @yield [self] subscribers_changed
     # @yieldparam [Playlist] self
     def subscribers_changed_callback(pointer, userdata)
-      trigger(:subscribers_changed)
+      trigger(pointer, :subscribers_changed)
     end
 
     protected

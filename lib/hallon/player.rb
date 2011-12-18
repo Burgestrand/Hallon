@@ -3,12 +3,10 @@ module Hallon
   # A wrapper around Session for playing, stopping and otherwise
   # controlling the playback features of libspotify.
   #
-  # @note This is very much a work in progress. Given Session still
-  #       takes care of all callbacks, and the callbacks themselves
-  #       must still be handled by means of Ruby FFI.
+  # @note This is very much a work in progress.
   # @see Session
   class Player
-    include Observable::Player
+    extend Observable::Player
 
     # @return [Spotify::Pointer<Session>] session pointer
     attr_reader :pointer
@@ -60,7 +58,7 @@ module Hallon
         start_playback stop_playback play_token_lost end_of_track
         streaming_error get_audio_buffer_stats music_delivery
       ].each do |cb|
-        @session.on(cb) { |*args| callback_for(cb).call(*args) }
+        @session.on(cb) { |*args| trigger(cb, *args) }
       end
     end
 

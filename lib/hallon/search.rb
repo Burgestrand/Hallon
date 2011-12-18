@@ -5,7 +5,7 @@ module Hallon
   #
   # @see http://developer.spotify.com/en/libspotify/docs/group__search.html
   class Search < Base
-    include Observable::Search
+    extend Observable::Search
 
     # @return [Array<Symbol>] a list of radio genres available for search
     def self.genres
@@ -35,11 +35,11 @@ module Hallon
 
       search = allocate
       search.instance_eval do
-        callback_for(:load) do |callback|
-          @pointer  = Spotify.radio_search_create!(session.pointer, from_year, to_year, genres, callback, nil)
+        subscribe_for_callbacks do |callback|
+          @pointer = Spotify.radio_search_create!(session.pointer, from_year, to_year, genres, callback, nil)
         end
 
-        raise FFI::NullPointerError, "radio search failed" if @pointer.null?
+        raise FFI::NullPointerError, "radio search failed" if pointer.null?
       end
 
       search
@@ -59,11 +59,11 @@ module Hallon
     def initialize(query, options = {})
       o = Search.defaults.merge(options)
 
-      callback_for(:load) do |callback|
+      subscribe_for_callbacks do |callback|
         @pointer  = Spotify.search_create!(session.pointer, query, o[:tracks_offset].to_i, o[:tracks].to_i, o[:albums_offset].to_i, o[:albums].to_i, o[:artists_offset].to_i, o[:artists].to_i, callback, nil)
       end
 
-      raise FFI::NullPointerError, "search for “#{query}” failed" if @pointer.null?
+      raise FFI::NullPointerError, "search for “#{query}” failed" if pointer.null?
     end
 
     # @return [Boolean] true if the search has been fully loaded.

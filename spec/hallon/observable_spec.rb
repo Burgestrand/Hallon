@@ -2,28 +2,73 @@
 describe Hallon::Observable do
   let(:klass) do
     Class.new do
+      class << self
+        def initialize_callbacks
+          %w[testing testing_string testing_symbol testing_arguments].map do |m|
+            callback_for(m)
+          end
+        end
+
+        def testing_callback(pointer)
+          trigger(pointer, :testing)
+        end
+
+        def testing_string_callback(pointer)
+          trigger(pointer, "testing_string")
+        end
+
+        def testing_symbol_callback(pointer)
+          trigger(pointer, :testing_symbol)
+        end
+
+        def testing_arguments_callback(pointer, x, y)
+          trigger(pointer, :testing_arguments, x * 2, y * 4)
+        end
+      end
+
       include Hallon::Observable
 
+      attr_reader :callbacks
+
+      def initialize
+        subscribe_for_callbacks do |callbacks|
+          @callbacks = callbacks
+        end
+      end
+
       def fire!(name, *args, &block)
-        callback_for(name).call(*args, &block)
+        ptr = FFI::Pointer.new(pointer)
+        cb = self.class.send(:callback_for, name)
+        cb.call(ptr, *args)
       end
 
-      protected
+      def pointer
+        FFI::Pointer.new(0xDEADBEEF)
+      end
+    end
+  end
 
-      def testing_callback
-        trigger(:testing)
+  describe "ClassMethods" do
+    subject { klass }
+
+    describe ".subscribers_for" do
+      around { |test| Ref::Mock.use(&test) }
+
+      it "should contain a list of weak references to subscribers" do
+        ptr = FFI::Pointer.new(0xDEADBEEF)
+
+        objA = klass.new
+        subject.subscribers_for(ptr).should eq [objA]
+
+        objB = klass.new
+        subject.subscribers_for(ptr).should eq [objA, objB]
+
+        Ref::Mock.gc(objA)
+        subject.subscribers_for(ptr).should eq [objB]
       end
 
-      def testing_string_callback
-        trigger("testing_string")
-      end
-
-      def testing_symbol_callback
-        trigger(:testing_symbol)
-      end
-
-      def testing_arguments_callback(x, y)
-        trigger(:testing_arguments, x * 2, y * 4)
+      it "should return an empty array if there are no subscribers" do
+        subject.subscribers_for(null_pointer).should be_empty
       end
     end
   end
@@ -78,6 +123,19 @@ describe Hallon::Observable do
 
     it "should raise an error when not given a block" do
       expect { subject.on(:testing) }.to raise_error(ArgumentError)
+    end
+  end
+
+  describe "#subscribe_for_callbacks" do
+    it "should yield indiscriminetly" do
+      expect { subject.send(:subscribe_for_callbacks) }.to raise_error(LocalJumpError)
+    end
+
+    it "should always yield the *same* object" do
+      a = klass.new
+      b = klass.new
+
+      a.callbacks.should eq b.callbacks
     end
   end
 

@@ -3,8 +3,6 @@ describe Hallon::Observable::Session do
   let(:klass) { Class.new { include described_class } }
   let(:object) { klass.new }
 
-  it { should include Hallon::Observable }
-
   specification_for_callback "logged_in" do
     let(:input)  { [a_pointer, :ok] }
     let(:output) { [:ok, subject] }
@@ -75,7 +73,7 @@ describe Hallon::Observable::Session do
 
       stats[:samples].should eq 0
       stats[:stutter].should eq 0
-      subject.callback_for(:get_audio_buffer_stats).call(a_pointer, stats.pointer)
+      subject_callback.call(a_pointer, stats.pointer)
       stats[:samples].should eq 5
       stats[:stutter].should eq 7
     end
@@ -85,7 +83,7 @@ describe Hallon::Observable::Session do
 
       stats[:samples].should eq 0
       stats[:stutter].should eq 0
-      subject.callback_for(:get_audio_buffer_stats).call(a_pointer, stats.pointer)
+      subject_callback.call(a_pointer, stats.pointer)
       stats[:samples].should eq 0
       stats[:stutter].should eq 0
     end
