@@ -1,8 +1,12 @@
 # coding: utf-8
 require 'rake'
 
-require 'bundler'
-Bundler::GemHelper.install_tasks
+begin
+  require 'bundler'
+  Bundler::GemHelper.install_tasks
+rescue LoadError
+  # not everybody needs these
+end
 
 require 'yard'
 YARD::Rake::YardocTask.new
