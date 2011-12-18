@@ -181,6 +181,9 @@ module Hallon::Observable
     end
 
     protected
+      # @param [FFI::Pointer] tracks
+      # @param [Integer] num_tracks
+      # @param [Array<Track>]
       def callback_make_tracks(tracks, num_tracks)
         tracks.read_array_of_pointer(num_tracks).map do |track|
           ptr = Spotify::Pointer.new(track, :track, true)

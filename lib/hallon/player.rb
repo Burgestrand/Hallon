@@ -6,6 +6,7 @@ module Hallon
   # @note This is very much a work in progress.
   # @see Session
   class Player
+    # meep?
     extend Observable::Player
 
     # @return [Spotify::Pointer<Session>] session pointer
@@ -23,7 +24,7 @@ module Hallon
     #
     # @example
     #   Hallon::Player.new(session) do
-    #     on(:music_delivery) do |*frames|
+    #     on(:music_delivery) do |format, frames|
     #     end
     #
     #     on(:start_playback) do

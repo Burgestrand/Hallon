@@ -4,5 +4,6 @@
 --readme README.markdown
 --markup markdown
 --private
+--protected
 lib/**/*.rb
 ext/**/*.c

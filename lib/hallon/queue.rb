@@ -63,6 +63,7 @@ module Hallon
     end
 
     private
+      # @yield (merely a wrapper over @mutex.synchronize)
       def synchronize
         @mutex.synchronize { return yield }
       end

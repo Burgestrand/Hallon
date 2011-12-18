@@ -104,9 +104,10 @@ track = loop do
   end
 end
 
-tell "Alright! Playing “#{track.name}” by “#{track.artist.name}”."
 output.start
 player.play(track)
+
+tell "Alright! Playing “#{track.name}” by “#{track.artist.name}”."
 
 until end_of_track
   output << audio_queue.pop(sample_rate)
