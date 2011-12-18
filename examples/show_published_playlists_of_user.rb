@@ -1,21 +1,10 @@
 # coding: utf-8
 #
 # DISCLAIMER:
-# This file was written without extensive testing, and is merely a proof
-# of concept. Before using this yourself, I advice you to look through
+# This file was written without extensive testing, and is merely an
+# example. Before using this yourself, I advice you to look through
 # the code carefully.
 #
-# The below code uses the raw Spotify FFI API, and does not represent how
-# this will be done when Hallon has API support for below operations!
-#
-# Hallon API in this file is only used for:
-# - logging in
-# - querying track information
-#
-# Raw Spotify FFI API is used for:
-# - fetching playlist container
-# - fetching playlists
-# - fetching tracks from playlists
 
 $LOAD_PATH.unshift(File.expand_path('../lib', File.dirname(__FILE__)))
 
