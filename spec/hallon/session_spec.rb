@@ -74,10 +74,10 @@ describe Hallon::Session do
 
       session.should_receive(:process_events).twice.and_return do
         unless notified
-          session.class.notify_main_thread_callback(session.pointer)
+          session.class.send(:notify_main_thread_callback, session.pointer)
           notified = true
         else
-          session.class.logged_in_callback(session.pointer, :ok)
+          session.class.send(:logged_in_callback, session.pointer, :ok)
         end
 
         0

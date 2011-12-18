@@ -1,9 +1,14 @@
 module Hallon::Observable
+  # Callbacks related to the {Hallon::Toplist} object.
   module Toplist
+    # Includes {Hallon::Observable} for you.
     def self.extended(other)
       other.send(:include, Hallon::Observable)
     end
 
+    protected
+
+    # @return [Method] load callback
     def initialize_callbacks
       callback_for(:load)
     end

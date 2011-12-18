@@ -1,10 +1,15 @@
 # coding: utf-8
 module Hallon::Observable
+  # Callbacks related to the {Hallon::Session} object.
   module Session
+    # Includes {Hallon::Observable} for you.
     def self.extended(other)
       other.send(:include, Hallon::Observable)
     end
 
+    protected
+
+    # @return [Spotify::SessionCallbacks]
     def initialize_callbacks
       struct = Spotify::SessionCallbacks.new
       struct.members.each do |member|

@@ -9,6 +9,7 @@ module Hallon
     # This module is responsible for creating methods for registering
     # callbacks. It expects a certain protocol to already available.
     module ClassMethods
+      # When extended it’ll call #initialize_observable to set-up `other`.
       def self.extended(other)
         other.send(:initialize_observable)
       end
@@ -51,6 +52,9 @@ module Hallon
       protected
 
       # Run when ClassMethods are extended.
+      #
+      # It sets up the callbacks and all book-keeping required to keep
+      # track of all subscribers properly.
       def initialize_observable
         @callbacks = initialize_callbacks
 
@@ -89,6 +93,7 @@ module Hallon
       end
     end
 
+    # Will extend `other` with {ClassMethods}.
     def self.included(other)
       other.extend(ClassMethods)
     end
@@ -105,9 +110,9 @@ module Hallon
     end
 
     # @param [#to_s] name
-    # @return [Boolean] true if a callback with `name` exists
+    # @return [Boolean] true if a callback with `name` exists.
     def has_callback?(name)
-      self.class.respond_to?("#{name}_callback")
+      self.class.respond_to?("#{name}_callback", true)
     end
 
     # Run a given block, and once it exits restore all handlers
@@ -115,6 +120,8 @@ module Hallon
     #
     # This allows you to temporarily use different handlers for
     # some events.
+    #
+    # @yield
     def protecting_handlers
       old_handlers = handlers.dup
       yield

@@ -1,9 +1,14 @@
 module Hallon::Observable
+  # Callbacks related to {Hallon::PlaylistContainer} objects.
   module PlaylistContainer
+    # Includes {Hallon::Observable} for you.
     def self.extended(other)
       other.send(:include, Hallon::Observable)
     end
 
+    protected
+
+    # @return [Spotify::PlaylistContainerCallbacks]
     def initialize_callbacks
       struct = Spotify::PlaylistContainerCallbacks.new
       struct.members.each do |member|
