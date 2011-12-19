@@ -6,7 +6,7 @@ describe Hallon::PlaylistContainer do
 
   it { should be_loaded }
   its(:owner) { should eq Hallon::User.new("burgestrand") }
-  its(:size) { should eq 3 }
+  its(:size) { should eq 4 }
 
   describe "#add" do
     context "given a string that’s not a valid spotify playlist uri" do
@@ -100,15 +100,15 @@ describe Hallon::PlaylistContainer do
     end
 
     it "should remove the matching :end_folder if removing a :start_folder" do
-      container.contents.map(&:class).should eq [Hallon::Playlist, Hallon::PlaylistContainer::Folder, Hallon::PlaylistContainer::Folder]
+      container.contents.map(&:class).should eq [Hallon::Playlist, Hallon::PlaylistContainer::Folder, Hallon::Playlist, Hallon::PlaylistContainer::Folder]
       expect { container.remove(1) }.to change { container.size }.by(-2)
-      container.contents.map(&:class).should eq [Hallon::Playlist]
+      container.contents.map(&:class).should eq [Hallon::Playlist, Hallon::Playlist]
     end
 
     it "should remove the matching :start_folder if removing a :end_folder" do
-      container.contents.map(&:class).should eq [Hallon::Playlist, Hallon::PlaylistContainer::Folder, Hallon::PlaylistContainer::Folder]
-      expect { container.remove(2) }.to change { container.size }.by(-2)
-      container.contents.map(&:class).should eq [Hallon::Playlist]
+      container.contents.map(&:class).should eq [Hallon::Playlist, Hallon::PlaylistContainer::Folder, Hallon::Playlist, Hallon::PlaylistContainer::Folder]
+      expect { container.remove(3) }.to change { container.size }.by(-2)
+      container.contents.map(&:class).should eq [Hallon::Playlist, Hallon::Playlist]
     end
 
     it "should raise an error if the index is out of range" do
@@ -118,13 +118,17 @@ describe Hallon::PlaylistContainer do
 
   describe "#move" do
     it "should move the playlist from the old index to the new index" do
-      playlist = container.contents[0]
+      playlist     = container.contents[0]
+      playlist_two = container.contents[2]
 
-      container.contents.map(&:class).should eq [Hallon::Playlist, Hallon::PlaylistContainer::Folder, Hallon::PlaylistContainer::Folder]
+      container.contents.map(&:class).should eq [Hallon::Playlist, Hallon::PlaylistContainer::Folder, Hallon::Playlist, Hallon::PlaylistContainer::Folder]
+
       container.move(0, 1).should eq playlist
-      container.contents.map(&:class).should eq [Hallon::PlaylistContainer::Folder, Hallon::Playlist, Hallon::PlaylistContainer::Folder]
-      container.move(1, 0).should eq playlist
-      container.contents.map(&:class).should eq [Hallon::Playlist, Hallon::PlaylistContainer::Folder, Hallon::PlaylistContainer::Folder]
+      container.contents.map(&:class).should eq [Hallon::PlaylistContainer::Folder, Hallon::Playlist, Hallon::Playlist, Hallon::PlaylistContainer::Folder]
+      container.contents[1].should eq playlist
+
+      container.move(2, 0).should eq playlist_two
+      container.contents.map(&:class).should eq [Hallon::Playlist, Hallon::PlaylistContainer::Folder, Hallon::Playlist, Hallon::PlaylistContainer::Folder]
     end
 
     it "should raise an error if the operation failed" do
@@ -148,13 +152,13 @@ describe Hallon::PlaylistContainer do
     end
 
     it "should support retrieving folders from their start" do
-      folder = Hallon::PlaylistContainer::Folder.new(container, 1..2)
+      folder = Hallon::PlaylistContainer::Folder.new(container, 1..3)
       container.contents[1].should eq folder
     end
 
     it "should support retrieving folders from their end" do
-      folder = Hallon::PlaylistContainer::Folder.new(container, 1..2)
-      container.contents[2].should eq folder
+      folder = Hallon::PlaylistContainer::Folder.new(container, 1..3)
+      container.contents[3].should eq folder
     end
   end
 
@@ -165,7 +169,7 @@ describe Hallon::PlaylistContainer do
     its(:id)    { should be 1337 }
     its(:name)  { should eq "Boogie" }
     its(:begin) { should be 1 }
-    its(:end)   { should be 2 }
+    its(:end)   { should be 3 }
 
     describe "#moved?" do
       it "should return true if the folder has moved" do
@@ -178,7 +182,9 @@ describe Hallon::PlaylistContainer do
     end
 
     describe "#contents" do
-      it "should be a collection of folders and playlists"
+      it "should be a collection of folders and playlists" do
+        folder.contents.should eq container.contents[2, 1]
+      end
     end
 
     describe "#rename" do
@@ -190,7 +196,7 @@ describe Hallon::PlaylistContainer do
         folder.id.should eq 1337
         folder.name.should eq "Boogie"
         folder.begin.should be 1
-        folder.end.should be 2
+        folder.end.should be 3
 
         container.contents.should_not include(folder)
       end
@@ -201,7 +207,7 @@ describe Hallon::PlaylistContainer do
         new_folder.id.should_not eq 1337
         new_folder.name.should eq "Hiphip"
         new_folder.begin.should be 1
-        new_folder.end.should be 2
+        new_folder.end.should be 3
       end
 
       it "should raise an error if the folder has moved" do

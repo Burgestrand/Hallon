@@ -101,6 +101,10 @@ RSpec::Core::ExampleGroup.instance_eval do
     Spotify.mock_playlist!("Megaplaylist", true, mock_user, true, "Playlist description...?", mock_image_id, false, 1000, mock_subscribers, true, :no, 67, num_tracks, tracks_ptr)
   end
 
+  let(:mock_playlist_two) do
+    Spotify.mock_playlist!("Dunderlist", true, mock_user, true, nil, nil, false, 1000, nil, true, :no, 0, 0, nil)
+  end
+
   let(:mock_playlist_raw) do
     FFI::Pointer.new(mock_playlist.address)
   end
@@ -152,7 +156,7 @@ RSpec::Core::ExampleGroup.instance_eval do
   end
 
   let(:mock_container) do
-    num_items = 3
+    num_items = 4
     items_ptr = FFI::MemoryPointer.new(Spotify::Mock::PlaylistTrack, num_items)
     items = num_items.times.map do |i|
       Spotify::Mock::PlaylistContainerItem.new(items_ptr + Spotify::Mock::PlaylistContainerItem.size * i)
@@ -165,9 +169,12 @@ RSpec::Core::ExampleGroup.instance_eval do
     items[1][:type]        = :start_folder
     items[1][:folder_id]   = 1337
 
-    items[2][:folder_name] = FFI::Pointer::NULL
-    items[2][:type]        = :end_folder
-    items[2][:folder_id]   = 1337
+    items[2][:playlist] = mock_playlist_two
+    items[2][:type]     = :playlist
+
+    items[3][:folder_name] = FFI::Pointer::NULL
+    items[3][:type]        = :end_folder
+    items[3][:folder_id]   = 1337
 
     Spotify.mock_playlistcontainer!(mock_user, true, num_items, items_ptr, nil, nil)
   end

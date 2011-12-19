@@ -64,6 +64,11 @@ module Hallon
         end if other.is_a?(Folder)
       end
 
+      # @return [Enumerator<Playlist, Folder>] contents of this folder
+      def contents
+        container.contents[(@begin + 1)..(@end - 1)]
+      end
+
       # @return [Boolean] true if the folder has moved.
       def moved?
         Spotify.playlistcontainer_playlist_folder_id(container.pointer, @begin) != id or
