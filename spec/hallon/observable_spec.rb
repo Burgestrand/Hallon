@@ -131,6 +131,11 @@ describe Hallon::Observable do
       expect { subject.send(:subscribe_for_callbacks) }.to raise_error(LocalJumpError)
     end
 
+    it "should raise an error if the same object tries to subscribe twice" do
+      # we already subscribed for callbacks in initialize
+      expect { subject.send(:subscribe_for_callbacks) {} }.to raise_error(ArgumentError)
+    end
+
     it "should always yield the *same* object" do
       a = klass.new
       b = klass.new

@@ -2,34 +2,47 @@ describe Hallon::Base do
   let(:klass) do
     Class.new(Hallon::Base) do
       def initialize(pointer)
-        @pointer = pointer
+        @pointer = to_pointer(pointer, :base) { |x| x }
       end
+    end
+  end
+
+  let(:base_pointer) do
+    Spotify.stub!(:base_add_ref, :base_release)
+    Spotify::Pointer.new(a_pointer, :base, true)
+  end
+
+  describe "#to_pointer" do
+    it "should not accept raw FFI pointers" do
+      expect { klass.new(a_pointer) }.to raise_error(TypeError)
+    end
+
+    it "should raise an error if given an invalid pointer type" do
+      expect { klass.new(mock_album) }.to raise_error(TypeError)
     end
   end
 
   describe ".from" do
     it "should return a new object if given pointer is not null" do
-      a_pointer.should_receive(:null?).and_return(false)
-      klass.from(a_pointer).should_not be_nil
+      klass.from(base_pointer).should_not be_nil
     end
 
     it "should return nil if given pointer is null" do
-      a_pointer.should_receive(:null?).and_return(true)
-      klass.from(a_pointer).should be_nil
+      klass.from(null_pointer).should be_nil
     end
   end
 
   describe "#==" do
     it "should compare the pointers if applicable" do
-      one = klass.new(a_pointer)
-      two = klass.new(a_pointer)
+      one = klass.new(base_pointer)
+      two = klass.new(base_pointer)
 
       one.should eq two
     end
 
     it "should fall back to default object comparison" do
-      one = klass.new(a_pointer)
-      two = klass.new(a_pointer)
+      one = klass.new(base_pointer)
+      two = klass.new(base_pointer)
       two.stub(:respond_to?).and_return(false)
 
       one.should_not eq two

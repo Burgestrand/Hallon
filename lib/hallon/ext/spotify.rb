@@ -120,17 +120,6 @@ module Spotify
       end if add_ref
     end
 
-    # Attach an object to this pointer. Prevents object from
-    # getting garbage collected until this pointer is.
-    #
-    # @todo Remove this.
-    # @private
-    # @param [Object] object
-    def attach(object)
-      (@protect_from_gc ||= []) << object
-      object
-    end
-
     # @return [String] representation of the spotify pointer
     def to_s
       "<#{self.class} address=0x#{address.to_s(16)} type=#{type}>"
@@ -153,14 +142,8 @@ module Spotify
     # @param [Object] pointer
     # @param [Symbol] type (optional, no type checking is done if not given)
     # @return [Boolean] true if object is a spotify pointer and of correct type
-    def self.typechecks?(object, type = nil)
-      if ! object.is_a?(Spotify::Pointer)
-        false
-      elsif type
-        object.type == type.to_s
-      else
-        true
-      end
+    def self.typechecks?(object, type)
+      !! (object.type == type.to_s) if object.is_a?(Spotify::Pointer)
     end
   end
 

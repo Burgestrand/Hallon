@@ -101,4 +101,18 @@ describe Hallon::Link do
       subject.should eq object
     end
   end
+
+  describe "#pointer" do
+    it "should raise an error if the expected type is not the same as requested" do
+      expect { Hallon::Link.new("spotify:user:burgestrand:starred").pointer(:profile) }.to raise_error(ArgumentError)
+    end
+
+    it "should not raise an error if the expected type is :playlist but real type is starred" do
+      expect { Hallon::Link.new("spotify:user:burgestrand:starred").pointer(:playlist) }.to_not raise_error
+    end
+
+    it "should not raise an error if the expected type and type matches" do
+      expect { Hallon::Link.new("spotify:user:burgestrand").pointer(:profile) }.to_not raise_error
+    end
+  end
 end

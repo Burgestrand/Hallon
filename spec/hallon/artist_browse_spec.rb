@@ -5,6 +5,10 @@ describe Hallon::ArtistBrowse do
       Spotify.should_receive(:artistbrowse_create).and_return(null_pointer)
       expect { mock_session { Hallon::ArtistBrowse.new(mock_artist) } }.to raise_error(FFI::NullPointerError)
     end
+
+    it "should raise an error given a non-album spotify pointer" do
+      expect { Hallon::ArtistBrowse.new(mock_album) }.to raise_error(TypeError)
+    end
   end
 
   let(:browse) do
