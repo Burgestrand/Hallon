@@ -72,9 +72,6 @@ task 'spotify:coverage' do
     'wrap_function',    # not a spotify function
     'lookup_return_value', # custom method
     'define_singleton_method', # overloaded by us
-    'image_remove_load_callback', # cleared when Image is GCd
-    'playlist_remove_callbacks', # cleared when Playlist is GCd
-    'playlistcontainer_remove_callbacks', # cleared when Playlist is GCd
   ]
 
   covered -= ignored
@@ -117,7 +114,8 @@ task 'spotify:coverage' do
   FileList['lib/**/*.rb'].each do |file|
     begin
       $file = file
-      ast = Ruby19Parser.new.parse File.read(file)
+      klass = defined?(Ruby19Parser)? Ruby19Parser : RubyParser
+      ast = klass.new.parse File.read(file)
       ast.each_of_type(:call) do |_, recv, meth, args, *rest|
         name = handlers[recv][meth].call(recv, meth, args)
         covered.subtract Array(name).map(&:to_s)
