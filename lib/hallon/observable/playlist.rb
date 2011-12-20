@@ -162,10 +162,13 @@ module Hallon::Observable
     #   end
     #
     # @yield [image, self] image_changed
-    # @yieldparam [Image] image
+    # @yieldparam [Image, nil] image or nil
     # @yieldparam [Playlist] self
     def image_changed_callback(pointer, image, userdata)
-      image = Hallon::Image.new(image.read_string(20))
+      image = unless image.null?
+        Hallon::Image.new(image.read_string(20))
+      end
+
       trigger(pointer, :image_changed, image)
     end
 

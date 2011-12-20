@@ -69,6 +69,15 @@ describe Hallon::Observable::Playlist do
     around { |test| mock_session(&test) }
     let(:input)  { [a_pointer, mock_image_id_pointer, :userdata] }
     let(:output) { [Hallon::Image.new(mock_image), subject] }
+
+    it "should not fail if the image has been *removed*" do
+      Hallon::Session.instance # => work around mock_session
+
+      block = proc { |image| }
+      block.should_receive(:call).with(nil, subject)
+      subject.on(:image_changed, &block)
+      subject_callback.call(a_pointer, null_pointer, :userdata)
+    end
   end
 
   specification_for_callback "subscribers_changed" do
