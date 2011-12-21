@@ -59,7 +59,22 @@ player = Hallon::Player.new(session) do
     audio_queue.push(frames)
   end
 
+  on(:start_playback) do
+    puts "(start playback)"
+    output.start
+  end
+
+  on(:stop_playback) do
+    puts "(stop playback)"
+    output.stop
+  end
+
+  on(:get_audio_buffer_stats) do
+    [audio_queue.size, 0]
+  end
+
   on(:end_of_track) do
+    puts "End of track!"
     end_of_track = true
   end
 end
@@ -104,7 +119,6 @@ track = loop do
   end
 end
 
-output.start
 player.play(track)
 
 tell "Alright! Playing “#{track.name}” by “#{track.artist.name}”."
