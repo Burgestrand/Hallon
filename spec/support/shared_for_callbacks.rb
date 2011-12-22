@@ -1,13 +1,16 @@
+# coding: utf-8
 RSpec.configure do
   def specification_for_callback(name, *args, &block)
     describe("##{name}_callback", *args) do
       let(:subject_callback) do
-        subject.class.send(:callback_for, name)
+        klass.send(:callback_for, name)
       end
+
+      let(:pointer) { input[0] }
 
       let(:klass) do
         observable_class = described_class
-        pointer_address  = input[0].address
+        pointer_address  = pointer.address
 
         Class.new do
           extend observable_class
