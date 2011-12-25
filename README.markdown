@@ -53,7 +53,7 @@ Versioning policy
 -----------------
 Hallon uses [semantic versioning](http://semver.org) as of v0.0.0. As long
 as Hallon stays at major version 0, no guarantees of backwards-compatibility
-are made. CHANGELOG will be kept up to date with the different versions.
+are made. `CHANGELOG.md` will be kept up to date with the different versions.
 
 License
 -------

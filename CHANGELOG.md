@@ -1,22 +1,49 @@
 Hallon’s Changelog
 ==================
 
-v0.11.0
+[v0.12.0][]
 ------------------
-[ Added ]
+
+__Added__
+
+- New system of handling callbacks (with documentation)
+- Hallon::Queue (useful for music_delivery callback)
+- PlaylistContainer::Folder#contents
+
+__Changed__
+
+- Rewrote the callback system (5f74ed8)
+- Thread.abort_on_exception = true
+- Upgraded to Spotify v10.3.0
+
+__Fixed__
+
+- Hallon::Error.maybe_raise(:is_loading) will not raise now
+- UTF8 strings in applicable places for output/input
+- Playlist#name= validation issue (allowing too long names)
+
+[v0.11.0][]
+------------------
+
+__Added__
+
 - Playlist#can_move?
 - Base.from(pointer)
 
-[ Changed ]
+__Changed__
+
 - Playlist#move no longer takes a dry_run parameter
 
-[ Fixed ]
+__Fixed__
+
 - Player#music_delivery callback ignoring consumed frames
 - Session#wait_for minimum timeout time from 0 to 10 ms
 
-v0.10.1 (actually v0.10.0)
+[v0.10.1][] (actually v0.10.0)
 ------------------
-[ Added ]
+
+__Added__
+
 - Add PlaylistContainer::Folder#rename
 - Add PlaylistContainer#insert_folder
 - Add PlaylistContainer#move (do see #57)
@@ -27,33 +54,39 @@ v0.10.1 (actually v0.10.0)
 - Playlist::Track#moved?
 - PlaylistContainer callback support (to be changed, see #56)
 
-[ Fixed ]
+__Fixed__
+
 - A lot of random deadlocks (updated spotify gem dependency)
 
-v0.9.1
+[v0.9.1][]
 ------------------
-[ Added ]
+
+__Added__
+
 - PlaylistContainer#size
 - User#published
 - PlaylistContainer#contents (only for playlists)
 - PlaylistContainer#add (existing playlist, new playlist)
 
-[ Changed ]
+__Changed__
+
 - Playlist#seen now moved to Playlist::Track#seen=
 
-[ Fixed ]
+__Fixed__
+
 - Album#cover null pointer issue (https://github.com/Burgestrand/Hallon/issues/53)
 - Various possible null pointer bugs
 
-
-v0.9.0
+[v0.9.0][]
 ------------------
+
 - Upgraded to libspotify *v10*
 - Improve documentation consistency
 - Link.new now raises an error if there’s no session
 - Minimal PlaylistContainer support (more to come next version)
 
-[ Added ]
+__Added__
+
 - Playlist subsystem support
 - Toplist#request_duration
 - AlbumBrowse#request_duration
@@ -75,23 +108,27 @@ v0.9.0
 - Track#unwrap
 - type parameter to Artist#browse
 
-[ Fixed ]
+__Fixed__
+
 - Moved from using FFI::Pointers to Spotify::Pointers
 - Spotify::Pointer garbage collection
 - Link#valid? using exceptions for flow control
 - Session#connection_rules= now raises an error when given invalid rule
 - Search.radio now raises an error when given invalid genres
 
-[ Changed ]
+__Changed__
+
 - Playlist::Track#seen= removed in favor of Playlist#seen(index, yesno)
 - Object#error -> Object#status (AlbumBrowse, ArtistBrowse, Search, Toplist, User)
 - Album#year renamed to Album#release_year
 - Linkable.from_link/to_link and resulting #from_link are now private
 
 
-v0.8.0
+[v0.8.0][]
 ------------------
-[ Added ]
+
+__Added__
+
 - Add example for listing track information in playlists
 - Updated to (lib)Spotify v9
 - Full Track subsystem support
@@ -112,7 +149,8 @@ v0.8.0
 - Allow Image.new to accept an image id
 - Add Hallon::API_BUILD
 
-[ Fixed ]
+__Fixed__
+
 - Improve speed of Session#wait_for for already-loaded cases
 - Error.maybe_raise no longer errors out on timeout
 - from_link now checks for null pointers
@@ -120,33 +158,38 @@ v0.8.0
 - Cleaned up specs to use same mocks everywhere
 - Make Hallon::URI match image URIs
 
-[ Broke ]
+__Broke__
+
 - Ignore Ruby v1.8.x compatibility
 
-
-v0.3.0
+[v0.3.0][]
 ------------------
+
 - Don’t use bundler for :spec and :test rake tasks
 - Add Error.table
 - Add Track subsystem
 - Fix spec:cov and spotify:coverage rake tasks
 
-v0.2.1
+[v0.2.1][]
 ------------------
+
 - Fix compatibility with v1.8
 
-v0.2.0
+[v0.2.0][]
 ------------------
+
 - Alias Session#process_events_on to Session#wait_until
 - Have Error.maybe_raise return error code
 - Use mockspotify gem (https://rubygems.org/gems/mockspotify) for testing
 
-v0.1.1
+[v0.1.1][]
 ------------------
-Don’t show the README in the gem description.
 
-v0.1.0
+- Don’t show the README in the gem description.
+
+[v0.1.0][]
 ------------------
+
 Initial, first, release! This version is merely made to
 have a starting point, a point of reference, for future
 releases soon to come.
@@ -162,3 +205,15 @@ releases soon to come.
 The API is still very young, and I expect a lot of changes to
 happen to it, to make the asynchronous nature of libspotify
 easier to handle.
+
+[v0.1.0]: https://github.com/Burgestrand/Hallon/compare/5f2e118...v0.1.0
+[v0.1.1]: https://github.com/Burgestrand/Hallon/compare/v0.1.0...v0.1.1
+[v0.2.0]: https://github.com/Burgestrand/Hallon/compare/v0.1.1...v0.2.0
+[v0.2.1]: https://github.com/Burgestrand/Hallon/compare/v0.2.0...v0.2.1
+[v0.3.0]: https://github.com/Burgestrand/Hallon/compare/v0.2.1...v0.3.0
+[v0.8.0]: https://github.com/Burgestrand/Hallon/compare/v0.3.0...v0.8.0
+[v0.9.0]: https://github.com/Burgestrand/Hallon/compare/v0.8.0...v0.9.0
+[v0.9.1]: https://github.com/Burgestrand/Hallon/compare/v0.9.0...v0.9.1
+[v0.10.1]: https://github.com/Burgestrand/Hallon/compare/v0.9.1...v0.10.1
+[v0.11.0]: https://github.com/Burgestrand/Hallon/compare/v0.10.1...v0.11.0
+[v0.12.0]: https://github.com/Burgestrand/Hallon/compare/v0.11.0...v0.12.0
