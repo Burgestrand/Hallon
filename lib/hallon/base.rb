@@ -3,10 +3,15 @@ module Hallon
   # All objects in Hallon are mere representations of Spotify objects.
   # Hallon::Base covers basic functionality shared by all of these.
   class Base
-    # @param [#null?] pointer
+    # @param [#nil?, #null?] pointer
     # @return [self, nil] a new instance of self, unless given pointer is #null?
     def self.from(pointer, *args, &block)
-      new(pointer, *args, &block) unless pointer.null?
+      is_nil  = pointer.nil?
+      is_null = pointer.null? if pointer.respond_to?(:null?)
+
+      unless is_nil or is_null
+        new(pointer, *args, &block)
+      end
     end
 
     # Underlying FFI pointer.

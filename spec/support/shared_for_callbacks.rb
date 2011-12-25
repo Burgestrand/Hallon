@@ -37,9 +37,9 @@ RSpec.configure do
         block = proc {}
 
         subject.on(name, &block)
-        block.should_receive(:call) do |*args|
+        block.should_receive(:call) do |*arguments|
           output.each_with_index do |e, i|
-            args[i].should === e
+            arguments[i].should === e
           end
           nil
         end

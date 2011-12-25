@@ -6,7 +6,6 @@ describe Hallon::Image do
     let(:spotify_uri) { "spotify:image:#{mock_image_hex}" }
     let(:custom_object) { mock_image_hex }
 
-
     let(:described_class) do
       real_session = session
       Hallon::Image.dup.tap do |klass|

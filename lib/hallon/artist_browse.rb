@@ -71,7 +71,7 @@ module Hallon
       size = Spotify.artistbrowse_num_portraits(pointer)
       Enumerator.new(size) do |i|
         if as_image
-          id = Spotify.artistbrowse_portrait(pointer, i).read_string(20)
+          id = Spotify.artistbrowse_portrait(pointer, i)
           Image.new(id)
         else
           link = Spotify.link_create_from_artistbrowse_portrait!(pointer, i)

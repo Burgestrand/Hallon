@@ -30,6 +30,10 @@ describe Hallon::Base do
     it "should return nil if given pointer is null" do
       klass.from(null_pointer).should be_nil
     end
+
+    it "should return nil if given object is nil" do
+      klass.from(nil).should be_nil
+    end
   end
 
   describe "#==" do

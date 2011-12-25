@@ -29,9 +29,7 @@ module Hallon
       end
 
       @pointer = to_pointer(link, :image) do
-        ptr = FFI::MemoryPointer.new(:char, 20)
-        ptr.write_bytes(link)
-        Spotify.image_create!(session.pointer, ptr)
+        Spotify.image_create!(session.pointer, link)
       end
 
       subscribe_for_callbacks do |callbacks|
@@ -59,7 +57,7 @@ module Hallon
     # @param [Boolean] raw true if you want the image id as a hexadecimal string
     # @return [String] image ID as a string.
     def id(raw = false)
-      id = Spotify.image_image_id(pointer).read_string(20)
+      id = Spotify.image_image_id(pointer)
       raw ? id : to_hex(id)
     end
 
