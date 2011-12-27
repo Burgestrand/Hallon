@@ -37,6 +37,11 @@ RSpec.configure do |config|
     yield
   end
 
+  def stub_session
+    Hallon::Session.stub!(:instance => session)
+    yield
+  end
+
   def pointer_array_with(*args)
     ary = FFI::MemoryPointer.new(:pointer, args.size)
     ary.write_array_of_pointer args
