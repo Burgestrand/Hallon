@@ -8,29 +8,59 @@ module Hallon
   class Enumerator
     include Enumerable
 
-    # @return [Integer] number of items this enumerator can yield
-    attr_reader :size
+    # @return [Spotify::Pointer]
+    attr_reader :pointer
 
-    # Construct an enumerator of `size` elements.
+    # @macro [attach] size
+    #   @method size
+    #   @return [Integer] size of this enumerator
     #
-    # @param [Integer] size
-    # @yield to the given block when an item is requested (through #each, #[] etc)
-    # @yieldparam [Integer] index item to retrieve
-    def initialize(size, &yielder)
-      @size  = size
-      @items = Array.new(size) do |i|
-        lambda { yielder[i] }
+    # @param [String, Symbol] method
+    def self.size(method)
+      # this method is about twice as fast as define_method/public_send
+      class_eval <<-SIZE, __FILE__, __LINE__ + 1
+        def size
+          Spotify.#{method}(pointer)
+        end
+      SIZE
+    end
+
+    # @example modifying result with a block
+    #   item :playlist_track! do |track|
+    #     Track.from(track)
+    #   end
+    #
+    # @note block passed is used to modify return value from Spotify#item_method
+    # @param [Symbol, String] method
+    # @yield [item, index, pointer] item from calling Spotify#item_method
+    # @yieldparam item
+    # @yieldparam [Integer] index
+    # @yieldparam [Spotify::Pointer] pointer
+    #
+    # @macro [attach] item
+    #   @method at(index)
+    def self.item(method, &block)
+      define_method(:at) do |index|
+        item = Spotify.public_send(method, pointer, index)
+        item = instance_exec(item, index, pointer, &block) if block_given?
+        item
       end
+    end
+
+    # initialize the enumerator with `subject`.
+    #
+    # @param [#pointer] subject
+    def initialize(subject)
+      @pointer = subject.pointer
     end
 
     # Yield each item out of the enumerator.
     #
     # @yield obj
-    # @return [Enumerator]
+    # @return [Enumerator] self
     def each
-      tap do
-        size.times { |i| yield(self[i]) }
-      end
+      size.times { |i| yield(self[i]) }
+      self
     end
 
     # @overload [](index)
@@ -46,7 +76,9 @@ module Hallon
     #
     # @see http://rdoc.info/stdlib/core/1.9.2/Array:[]
     def [](*args)
-      result = @items[*args]
+      # crazy inefficient, but also crazy easy, don’t hate me :(
+      items  = Array.new(size) { |i| lambda { at(i) } }
+      result = items[*args]
 
       if result.nil?
         nil

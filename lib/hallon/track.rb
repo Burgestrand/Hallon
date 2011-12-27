@@ -5,6 +5,16 @@ module Hallon
   #
   # @see http://developer.spotify.com/en/libspotify/docs/group__track.html
   class Track < Base
+    # Enumerates through all albums of a search object.
+    class Artists < Enumerator
+      size :track_num_artists
+
+      # @return [Artist, nil]
+      item :track_artist! do |artist|
+        Artist.from(artist)
+      end
+    end
+
     extend Linkable
 
     from_link :as_track_and_offset
@@ -143,13 +153,9 @@ module Hallon
     end
 
     # @note Track must be loaded, or you’ll get zero artists.
-    # @return [Hallon::Enumerator<Artist>] all {Artist}s who performed this Track.
+    # @return [Artists] all {Artist}s who performed this Track.
     def artists
-      size = Spotify.track_num_artists(pointer)
-      Enumerator.new(size) do |i|
-        artist = Spotify.track_artist!(pointer, i)
-        Artist.new(artist)
-      end
+      Artists.new(self)
     end
 
     # @note This’ll always return false unless the track is loaded.

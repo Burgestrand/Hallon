@@ -1,4 +1,6 @@
 # coding: utf-8
+require 'ostruct'
+
 module Hallon
   # PlaylistContainers are the objects that hold playlists. Each User
   # in libspotify has a container for its’ starred and published playlists,
@@ -6,13 +8,58 @@ module Hallon
   #
   # @see http://developer.spotify.com/en/libspotify/docs/group__playlist.html
   class PlaylistContainer < Base
+    # Enumerates through all playlists and folders of a container.
+    class Contents < Enumerator
+      size :playlistcontainer_num_playlists
+
+      # @return [Playlist, Folder, nil]
+      item :playlistcontainer_playlist_type do |type, index, pointer|
+        case type
+        when :playlist
+          playlist = Spotify.playlistcontainer_playlist!(pointer, index)
+          Playlist.from(playlist)
+        when :start_folder, :end_folder
+          Folder.new(pointer, folder_range(index, type))
+        else # :unknown
+        end
+      end
+
+      protected
+
+      # Given an index, find out the starting point and ending point
+      # of the folder at that index.
+      #
+      # @param [Integer] index
+      # @param [Symbol] type
+      # @return [Range] begin..end
+      def folder_range(index, type)
+        id      = folder_id(index)
+        same_id = proc { |idx| folder_id(idx) == id }
+
+        case type
+        when :start_folder
+          beginning = index
+          ending    = (index + 1).upto(size - 1).find(&same_id)
+        when :end_folder
+          ending    = index
+          beginning = (index - 1).downto(0).find(&same_id)
+        end
+
+        if beginning and ending and beginning != ending
+          beginning..ending
+        end
+      end
+
+      # @return [Integer] folder ID of folder at `index`.
+      def folder_id(index)
+        Spotify.playlistcontainer_playlist_folder_id(pointer, index)
+      end
+    end
+
     # Folders are parts of playlist containers in that they surround playlists
     # with a beginning marker and an ending marker. The playlists between these
     # markers are considered "inside the playlist".
     class Folder
-      # @return [PlaylistContainer] playlistcontainer this folder was created from.
-      attr_reader :container
-
       # @return [Integer] index this folder starts at in the container.
       attr_reader :begin
 
@@ -24,6 +71,15 @@ module Hallon
 
       # @return [String]
       attr_reader :name
+
+      # @return [Spotify::Pointer<Container>]
+      attr_reader :container_ptr
+      private :container_ptr
+
+      # @return [PlaylistContainer] playlistcontainer this folder was created from.
+      def container
+        PlaylistContainer.new(container_ptr)
+      end
 
       # Rename the folder.
       #
@@ -42,14 +98,14 @@ module Hallon
 
       # @param [PlaylistContainer] container
       # @param [Range] indices
-      def initialize(container, indices)
-        @container = container
-        @begin     = indices.begin
-        @end       = indices.end
+      def initialize(container_pointer, indices)
+        @container_ptr = container_pointer
 
-        @id   = Spotify.playlistcontainer_playlist_folder_id(container.pointer, @begin)
+        @begin = indices.begin
+        @end   = indices.end
+        @id    = Spotify.playlistcontainer_playlist_folder_id(container_ptr, @begin)
         FFI::Buffer.alloc_out(256) do |buffer|
-          error = Spotify.playlistcontainer_playlist_folder_name(container.pointer, @begin, buffer, buffer.size)
+          error = Spotify.playlistcontainer_playlist_folder_name(container_ptr, @begin, buffer, buffer.size)
           Error.maybe_raise(error) # should not fail, but just to be safe!
 
           @name = buffer.get_string(0)
@@ -59,20 +115,21 @@ module Hallon
       # @param [Folder] other
       # @return [Boolean] true if the two folders are the same (same indices, same id).
       def ==(other)
-        !! [:id, :container, :begin, :end].all? do |attr|
-          public_send(attr) == other.public_send(attr)
+        !! [:id, :container_ptr, :begin, :end].all? do |attr|
+          send(attr) == other.send(attr)
         end if other.is_a?(Folder)
       end
 
-      # @return [Enumerator<Playlist, Folder>] contents of this folder
+      # @return [Array<Playlist, Folder>] contents of this folder
       def contents
-        container.contents[(@begin + 1)..(@end - 1)]
+        container = OpenStruct.new(:pointer => container_ptr)
+        Contents.new(container)[(@begin + 1)..(@end - 1)]
       end
 
       # @return [Boolean] true if the folder has moved.
       def moved?
-        Spotify.playlistcontainer_playlist_folder_id(container.pointer, @begin) != id or
-        Spotify.playlistcontainer_playlist_folder_id(container.pointer, @end) != id
+        Spotify.playlistcontainer_playlist_folder_id(container_ptr, @begin) != id or
+        Spotify.playlistcontainer_playlist_folder_id(container_ptr, @end) != id
       end
     end
 
@@ -106,18 +163,9 @@ module Hallon
       Spotify.playlistcontainer_num_playlists(pointer)
     end
 
-    # @return [Enumerator<Playlist, Folder, nil>] an enumerator of folders and playlists.
+    # @return [Contents] an enumerator of folders and playlists.
     def contents
-      Enumerator.new(size) do |i|
-        case playlist_type(i)
-        when :playlist
-          playlist = Spotify.playlistcontainer_playlist!(pointer, i)
-          Playlist.new(playlist)
-        when :start_folder, :end_folder
-          Folder.new(self, folder_range(i))
-        else # :unknown
-        end
-      end
+      Contents.new(self)
     end
 
     # Add the given playlist to the end of the container.
@@ -185,12 +233,12 @@ module Hallon
     def remove(index)
       remove = proc { |idx| Spotify.playlistcontainer_remove_playlist(pointer, idx) }
 
-      error = case playlist_type(index)
+      error = case Spotify.playlistcontainer_playlist_type(pointer, index)
       when :start_folder, :end_folder
-        indices = folder_range(index)
+        folder = contents[index]
 
-        Error.maybe_raise(remove[indices.begin])
-        remove[indices.end - 1] # ^ everything moves down one step
+        Error.maybe_raise(remove[folder.begin])
+        remove[folder.end - 1] # ^ everything moves down one step
       else
         remove[index]
       end
@@ -244,40 +292,6 @@ module Hallon
       def move_playlist(from, infront_of, dry_run)
         infront_of += 1 if from < infront_of
         Spotify.playlistcontainer_move_playlist(pointer, from, infront_of, dry_run)
-      end
-
-      # Given an index, find out the starting point and ending point
-      # of the folder at that index.
-      #
-      # @param [Integer] index
-      # @return [Range] begin..end
-      def folder_range(index)
-        id      = folder_id(index)
-        type    = playlist_type(index)
-        same_id = proc { |idx| folder_id(idx) == id }
-
-        case type
-        when :start_folder
-          beginning = index
-          ending    = (index + 1).upto(size - 1).find(&same_id)
-        when :end_folder
-          ending    = index
-          beginning = (index - 1).downto(0).find(&same_id)
-        end
-
-        if beginning and ending and beginning != ending
-          beginning..ending
-        end
-      end
-
-      # @return [Symbol] playlist type
-      def playlist_type(index)
-        Spotify.playlistcontainer_playlist_type(pointer, index)
-      end
-
-      # @return [Integer] folder ID of folder at `index`.
-      def folder_id(index)
-        Spotify.playlistcontainer_playlist_folder_id(pointer, index)
       end
   end
 end

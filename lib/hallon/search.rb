@@ -5,6 +5,36 @@ module Hallon
   #
   # @see http://developer.spotify.com/en/libspotify/docs/group__search.html
   class Search < Base
+    # Enumerates through all tracks of a search object.
+    class Tracks < Enumerator
+      size :search_num_tracks
+
+      # @return [Track, nil]
+      item :search_track! do |track|
+        Track.from(track)
+      end
+    end
+
+    # Enumerates through all albums of a search object.
+    class Albums < Enumerator
+      size :search_num_albums
+
+      # @return [Album, nil]
+      item :search_album! do |album|
+        Album.from(album)
+      end
+    end
+
+    # Enumerates through all albums of a search object.
+    class Artists < Enumerator
+      size :search_num_artists
+
+      # @return [Artist, nil]
+      item :search_artist! do |artist|
+        Artist.from(artist)
+      end
+    end
+
     extend Observable::Search
 
     # @return [Array<Symbol>] a list of radio genres available for search
@@ -87,13 +117,9 @@ module Hallon
       Spotify.search_did_you_mean(pointer)
     end
 
-    # @return [Enumerator<Track>] list of all tracks in the search result.
+    # @return [Tracks] list of all tracks in the search result.
     def tracks
-      size = Spotify.search_num_tracks(pointer)
-      Enumerator.new(size) do |i|
-        track = Spotify.search_track!(pointer, i)
-        Track.new(track)
-      end
+      Tracks.new(self)
     end
 
     # @return [Integer] total tracks available for this search query.
@@ -101,13 +127,9 @@ module Hallon
       Spotify.search_total_tracks(pointer)
     end
 
-    # @return [Enumerator<Album>] list of all albums in the search result.
+    # @return [Albums] list of all albums in the search result.
     def albums
-      size  = Spotify.search_num_albums(pointer)
-      Enumerator.new(size) do |i|
-        album = Spotify.search_album!(pointer, i)
-        Album.new(album)
-      end
+      Albums.new(self)
     end
 
     # @return [Integer] total tracks available for this search query.
@@ -115,13 +137,9 @@ module Hallon
       Spotify.search_total_albums(pointer)
     end
 
-    # @return [Enumerator<Artist>] list of all artists in the search result.
+    # @return [Artists] list of all artists in the search result.
     def artists
-      size = Spotify.search_num_artists(pointer)
-      Enumerator.new(size) do |i|
-        artist = Spotify.search_artist!(pointer, i)
-        Artist.new(artist)
-      end
+      Artists.new(self)
     end
 
     # @return [Integer] total tracks available for this search query.

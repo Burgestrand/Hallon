@@ -1,16 +1,26 @@
 describe Hallon::Enumerator do
+  def enumerator(items)
+    Spotify.stub(:enumerator_size => items)
+    Spotify.stub(:enumerator_item).and_return { |_, i| item.get(i) }
+
+    klass = Class.new(Hallon::Enumerator) do
+      size :enumerator_size
+      item :enumerator_item
+    end
+
+    struct = OpenStruct.new(:pointer => nil)
+    klass.new(struct)
+  end
+
   let(:item) do
     mock.tap { |x| x.stub(:get).and_return(&alphabet) }
   end
 
-  let(:enum) do
-    Hallon::Enumerator.new(5) { |i| item.get(i) }
-  end
+  let(:enum) { enumerator(5) }
 
   let(:alphabet) do
     proc { |x| %w[a b c d e][x] }
   end
-
 
   it "should be an enumerable" do
     enum.should respond_to :each
@@ -18,15 +28,15 @@ describe Hallon::Enumerator do
   end
 
   describe "#each" do
-    it "should call the containing block" do
-      enum = Hallon::Enumerator.new(4) { |i| item.get(i) }
+    it "should yield items from the collection" do
+      enum = enumerator(4)
       enum.each_with_index { |x, i| x.should eq alphabet[i] }
     end
   end
 
   describe "#size" do
     it "should return the given size" do
-      Hallon::Enumerator.new(4).size.should eq 4
+      enumerator(4).size.should eq 4
     end
   end
 

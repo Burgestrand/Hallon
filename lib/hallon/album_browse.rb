@@ -7,6 +7,24 @@ module Hallon
   # @see Album
   # @see http://developer.spotify.com/en/libspotify/docs/group__albumbrowse.html
   class AlbumBrowse < Base
+    # Enumerates through all copyright notices of an album browsing object.
+    class Copyrights < Enumerator
+      size :albumbrowse_num_copyrights
+
+      # @return [String, nil]
+      item :albumbrowse_copyright
+    end
+
+    # Enumerates through all tracks of an album browsing object.
+    class Tracks < Enumerator
+      size :albumbrowse_num_tracks
+
+      # @return [Track, nil]
+      item :albumbrowse_track! do |track|
+        Track.from(track)
+      end
+    end
+
     extend Observable::AlbumBrowse
 
     # Creates an AlbumBrowse instance from an Album or an Album pointer.
@@ -65,21 +83,14 @@ module Hallon
       Rational(duration, 1000) if duration > 0
     end
 
-    # @return [Enumerator<String>] list of copyright notices.
+    # @return [Copyrights] enumerator of copyright notices.
     def copyrights
-      size = Spotify.albumbrowse_num_copyrights(pointer)
-      Enumerator.new(size) do |i|
-        Spotify.albumbrowse_copyright(pointer, i)
-      end
+      Copyrights.new(self)
     end
 
-    # @return [Enumerator<Track>] list of tracks.
+    # @return [Tracks] enumerator of tracks.
     def tracks
-      size = Spotify.albumbrowse_num_tracks(pointer)
-      Enumerator.new(size) do |i|
-        track = Spotify.albumbrowse_track!(pointer, i)
-        Track.new(track)
-      end
+      Tracks.new(self)
     end
   end
 end

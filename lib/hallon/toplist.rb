@@ -6,6 +6,36 @@ module Hallon
   #
   # @see http://developer.spotify.com/en/libspotify/docs/group__toplist.html
   class Toplist < Base
+    # Enumerates through all tracks of a toplist object.
+    class Tracks < Enumerator
+      size :toplistbrowse_num_tracks
+
+      # @return [Track, nil]
+      item :toplistbrowse_track! do |track|
+        Track.from(track)
+      end
+    end
+
+    # Enumerates through all albums of a toplist object.
+    class Albums < Enumerator
+      size :toplistbrowse_num_albums
+
+      # @return [Album, nil]
+      item :toplistbrowse_album! do |album|
+        Album.from(album)
+      end
+    end
+
+    # Enumerates through all albums of a toplist object.
+    class Artists < Enumerator
+      size :toplistbrowse_num_artists
+
+      # @return [Artist, nil]
+      item :toplistbrowse_artist! do |artist|
+        Artist.from(artist)
+      end
+    end
+
     extend Observable::Toplist
 
     # Create a Toplist browsing object.
@@ -52,31 +82,19 @@ module Hallon
       Spotify.toplistbrowse_error(pointer)
     end
 
-    # @return [Enumerator<Artist>] a list of artists.
+    # @return [Artists] a list of artists.
     def artists
-      size = Spotify.toplistbrowse_num_artists(pointer)
-      Enumerator.new(size) do |i|
-        artist = Spotify.toplistbrowse_artist!(pointer, i)
-        Artist.new(artist)
-      end
+      Artists.new(self)
     end
 
-    # @return [Enumerator<Album>] a list of albums.
+    # @return [Albums] a list of albums.
     def albums
-      size = Spotify.toplistbrowse_num_albums(pointer)
-      Enumerator.new(size) do |i|
-        album = Spotify.toplistbrowse_album!(pointer, i)
-        Album.new(album)
-      end
+      Albums.new(self)
     end
 
-    # @return [Enumerator<Track>] a list of tracks.
+    # @return [Tracks] a list of tracks.
     def tracks
-      size = Spotify.toplistbrowse_num_tracks(pointer)
-      Enumerator.new(size) do |i|
-        track = Spotify.toplistbrowse_track!(pointer, i)
-        Track.new(track)
-      end
+      Tracks.new(self)
     end
 
     # @note If the object is not loaded, the result is undefined.

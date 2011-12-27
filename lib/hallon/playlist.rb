@@ -6,6 +6,16 @@ module Hallon
   #
   # @see http://developer.spotify.com/en/libspotify/docs/group__playlist.html
   class Playlist < Base
+    # Enumerates through all tracks of a playlist.
+    class Tracks < Enumerator
+      size :playlist_num_tracks
+
+      # @return [Track, nil]
+      item :playlist_track! do |track, index, pointer|
+        Playlist::Track.from(track, pointer, index)
+      end
+    end
+
     # Playlist::Track is a {Track} with additional information attached to it,
     # that is specific to the playlist it was created from. The returned track
     # is a snapshot of the information, so even if the underlying track moves,
@@ -259,12 +269,9 @@ module Hallon
     #   track = playlist.tracks[3]
     #   puts track.name
     #
-    # @return [Enumerable<Playlist::Track>] a list of playlist tracks.
+    # @return [Tracks] a list of playlist tracks.
     def tracks
-      Enumerator.new(size) do |index|
-        track = Spotify.playlist_track!(pointer, index)
-        Playlist::Track.from(track, pointer, index)
-      end
+      Tracks.new(self)
     end
 
     # Add a list of tracks to the playlist starting at given position.

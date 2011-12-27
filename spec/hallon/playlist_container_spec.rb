@@ -152,12 +152,12 @@ describe Hallon::PlaylistContainer do
     end
 
     it "should support retrieving folders from their start" do
-      folder = Hallon::PlaylistContainer::Folder.new(container, 1..3)
+      folder = Hallon::PlaylistContainer::Folder.new(container.pointer, 1..3)
       container.contents[1].should eq folder
     end
 
     it "should support retrieving folders from their end" do
-      folder = Hallon::PlaylistContainer::Folder.new(container, 1..3)
+      folder = Hallon::PlaylistContainer::Folder.new(container.pointer, 1..3)
       container.contents[3].should eq folder
     end
   end

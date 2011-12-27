@@ -24,12 +24,11 @@ describe Hallon::ArtistBrowse do
 
   its('portraits.size') { should eq 2 }
   its('portraits.to_a') do
-    mock_session(2) { subject.map{ |img| img.id(true) }.should eq [mock_image_id, mock_image_id] }
+    stub_session { should eq instantiate(Hallon::Image, mock_image_id, mock_image_id) }
   end
 
-  specify 'portraits(false)' do
-    browse.portraits(false)[0].should eq Hallon::Link.new(mock_image_link)
-  end
+  its('portrait_links.size') { should eq 2 }
+  its('portrait_links.to_a') { should eq instantiate(Hallon::Link, mock_image_link, mock_image_link) }
 
   its('tracks.size') { should eq 2 }
   its('tracks.to_a') { should eq [mock_track, mock_track_two].map{ |p| Hallon::Track.new(p) } }

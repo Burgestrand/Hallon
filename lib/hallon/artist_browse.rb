@@ -5,6 +5,56 @@ module Hallon
   # @see Artist
   # @see http://developer.spotify.com/en/libspotify/docs/group__artistbrowse.html
   class ArtistBrowse < Base
+    # Enumerates through all portrait images of an artist browsing object.
+    class Portraits < Enumerator
+      size :artistbrowse_num_portraits
+
+      # @return [Image, nil]
+      item :artistbrowse_portrait do |portrait|
+        Image.new(portrait)
+      end
+    end
+
+    # Enumerates through all portrait links of an artist browsing object.
+    class PortraitLinks < Enumerator
+      size :artistbrowse_num_portraits
+
+      # @return [Link, nil]
+      item :link_create_from_artistbrowse_portrait! do |portrait|
+        Link.from(portrait)
+      end
+    end
+
+    # Enumerates through all tracks of an artist browsing object.
+    class Tracks < Enumerator
+      size :artistbrowse_num_tracks
+
+      # @return [Track, nil]
+      item :artistbrowse_track! do |track|
+        Track.from(track)
+      end
+    end
+
+    # Enumerates through all albums of an artist browsing object.
+    class Albums < Enumerator
+      size :artistbrowse_num_albums
+
+      # @return [Album, nil]
+      item :artistbrowse_album! do |album|
+        Album.from(album)
+      end
+    end
+
+    # Enumerates through all similar artists of an artist browsing object.
+    class SimilarArtists < Enumerator
+      size :artistbrowse_num_similar_artists
+
+      # @return [Artist, nil]
+      item :artistbrowse_similar_artist! do |artist|
+        Artist.from(artist)
+      end
+    end
+
     extend Observable::ArtistBrowse
 
     # @return [Array<Symbol>] artist browsing types for use in {#initialize}
@@ -63,48 +113,29 @@ module Hallon
       Rational(duration, 1000) if duration > 0
     end
 
-    # Retrieve artist portraits as an {Image} or a {Link}.
-    #
-    # @param [Boolean] as_image true if you want an enumerator of Images (false for Links)
-    # @return [Enumerator<Image>, Enumerator<Link>] artist portraits.
-    def portraits(as_image = true)
-      size = Spotify.artistbrowse_num_portraits(pointer)
-      Enumerator.new(size) do |i|
-        if as_image
-          id = Spotify.artistbrowse_portrait(pointer, i)
-          Image.new(id)
-        else
-          link = Spotify.link_create_from_artistbrowse_portrait!(pointer, i)
-          Link.new(link)
-        end
-      end
+    # @return [Portraits] artist portraits as {Image}s.
+    def portraits
+      Portraits.new(self)
     end
 
-    # @return [Enumerator<Track>] artist authored tracks.
+    # @return [PortraitImages] artist portraits as {Link}s.
+    def portrait_links
+      PortraitLinks.new(self)
+    end
+
+    # @return [Tracks] artist authored tracks.
     def tracks
-      size = Spotify.artistbrowse_num_tracks(pointer)
-      Enumerator.new(size) do |i|
-        track = Spotify.artistbrowse_track!(pointer, i)
-        Track.new(track)
-      end
+      Tracks.new(self)
     end
 
-    # @return [Enumerator<Album>] artist authored albums.
+    # @return [Albums] artist authored albums.
     def albums
-      size = Spotify.artistbrowse_num_albums(pointer)
-      Enumerator.new(size) do |i|
-        album = Spotify.artistbrowse_album!(pointer, i)
-        Album.new(album)
-      end
+      Albums.new(self)
     end
 
-    # @return [Enumartor<Artist>] similar artists to this artist.
+    # @return [SimilarArtists] similar artists to this artist.
     def similar_artists
-      size = Spotify.artistbrowse_num_similar_artists(pointer)
-      Enumerator.new(size) do |i|
-        artist = Spotify.artistbrowse_similar_artist!(pointer, i)
-        Artist.new(artist)
-      end
+      SimilarArtists.new(self)
     end
   end
 end
