@@ -77,15 +77,15 @@ module Hallon
     # @see http://rdoc.info/stdlib/core/1.9.2/Array:[]
     def [](*args)
       # crazy inefficient, but also crazy easy, don’t hate me :(
-      items  = Array.new(size) { |i| lambda { at(i) } }
+      items  = [*0...size]
       result = items[*args]
 
       if result.nil?
         nil
       elsif result.respond_to?(:map)
-        result.map(&:call)
+        result.map { |index| at(index) }
       else
-        result.call
+        at(result)
       end
     end
 
