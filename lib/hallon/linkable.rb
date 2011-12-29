@@ -100,5 +100,32 @@ module Hallon
 
     private :from_link
     private :to_link
+
+    def self.extended(other)
+      other.send(:include, InstanceMethods)
+    end
+
+    module InstanceMethods
+      # Converts the Linkable first to a Link, and then that link to a String.
+      #
+      # @note Returns an empty string if the #to_link call fails.
+      # @return [String]
+      def to_str
+        link = to_link
+        link &&= link.to_str
+        link.to_s
+      end
+
+      # Compare the Linkable to other. If other is a Linkable, also
+      # compare their `to_link` if necessary.
+      #
+      # @param [Object] other
+      # @return [Boolean]
+      def ===(other)
+        super or if other.respond_to?(:to_link)
+          to_link == other.to_link
+        end
+      end
+    end
   end
 end

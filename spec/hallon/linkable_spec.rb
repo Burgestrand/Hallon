@@ -35,6 +35,17 @@ describe Hallon::Linkable do
     end
   end
 
+  describe "#to_str" do
+    it "should convert object to a link, and then to a string" do
+      link = mock
+      link.should_receive(:to_str).and_return("spotify:link")
+      object.should_receive(:to_link).and_return(link)
+
+      klass.instance_eval { to_link(:from_user) }
+      object.to_str.should eq "spotify:link"
+    end
+  end
+
   describe "#from_link" do
     it "should call the appropriate Spotify function" do
       Spotify.should_receive(:link_as_search!).and_return(pointer)
