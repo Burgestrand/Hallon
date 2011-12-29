@@ -1,3 +1,4 @@
+# coding: utf-8
 describe Hallon::Enumerator do
   def enumerator(items)
     Spotify.stub(:enumerator_size => items)
@@ -30,6 +31,17 @@ describe Hallon::Enumerator do
     it "should yield items from the collection" do
       enum.each_with_index { |x, i| x.should eq alphabet[i] }
     end
+
+    it "should stop enumerating if the size shrinks below current index during iteration" do
+      iterations = 0
+
+      enum.map do |x|
+        enum.should_receive(:size).and_return(0)
+        iterations += 1
+      end
+
+      iterations.should eq 1
+    end
   end
 
   describe "#size" do
@@ -39,6 +51,11 @@ describe Hallon::Enumerator do
   end
 
   describe "#[]" do
+    it "should return nil if #[x] is not within the enumerators’ size (no matter if the value exists or not)" do
+      enum.should_receive(:size).and_return(1)
+      enum[1].should be_nil
+    end
+
     it "should support #[x] within range" do
       alphabet.should_receive(:[]).with(1).and_return(&alphabet)
 

@@ -59,7 +59,14 @@ module Hallon
     # @yield obj
     # @return [Enumerator] self
     def each
-      size.times { |i| yield(self[i]) }
+      index = 0
+
+      # check size on each iteration, in case it changes
+      while index < size
+        yield self[index]
+        index += 1
+      end
+
       self
     end
 
