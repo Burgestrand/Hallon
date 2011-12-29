@@ -13,6 +13,11 @@ module Hallon
       item :search_track! do |track|
         Track.from(track)
       end
+
+      # @return [Integer] total number of tracks from connected search result.
+      def total
+        Spotify.search_total_tracks(pointer)
+      end
     end
 
     # Enumerates through all albums of a search object.
@@ -23,6 +28,11 @@ module Hallon
       item :search_album! do |album|
         Album.from(album)
       end
+
+      # @return [Integer] total number of tracks from connected search result.
+      def total
+        Spotify.search_total_albums(pointer)
+      end
     end
 
     # Enumerates through all albums of a search object.
@@ -32,6 +42,11 @@ module Hallon
       # @return [Artist, nil]
       item :search_artist! do |artist|
         Artist.from(artist)
+      end
+
+      # @return [Integer] total tracks available from connected search result.
+      def total
+        Spotify.search_total_artists(pointer)
       end
     end
 
@@ -122,29 +137,14 @@ module Hallon
       Tracks.new(self)
     end
 
-    # @return [Integer] total tracks available for this search query.
-    def total_tracks
-      Spotify.search_total_tracks(pointer)
-    end
-
     # @return [Albums] list of all albums in the search result.
     def albums
       Albums.new(self)
     end
 
-    # @return [Integer] total tracks available for this search query.
-    def total_albums
-      Spotify.search_total_albums(pointer)
-    end
-
     # @return [Artists] list of all artists in the search result.
     def artists
       Artists.new(self)
-    end
-
-    # @return [Integer] total tracks available for this search query.
-    def total_artists
-      Spotify.search_total_artists(pointer)
     end
 
     # @return [Link] link for this search query.

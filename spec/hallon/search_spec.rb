@@ -69,15 +69,15 @@ describe Hallon::Search do
 
   its('tracks.size')  { should eq 2 }
   its('tracks.to_a')  { should eq instantiate(Hallon::Track, mock_track, mock_track_two) }
-  its('total_tracks') { should eq 1337 }
+  its('tracks.total') { should eq 1337 }
 
   its('albums.size')  { should eq 1 }
   its('albums.to_a')  { should eq instantiate(Hallon::Album, mock_album) }
-  its('total_albums') { should eq 42 }
+  its('albums.total') { should eq 42 }
 
   its('artists.size')  { should eq 2 }
   its('artists.to_a')  { should eq instantiate(Hallon::Artist, mock_artist, mock_artist_two) }
-  its('total_artists') { should eq 81104 }
+  its('artists.total') { should eq 81104 }
 
   its(:to_link) { should eq Hallon::Link.new("spotify:search:#{search.query}") }
 end
