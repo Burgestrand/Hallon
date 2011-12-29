@@ -77,17 +77,16 @@ describe Hallon::Link do
   end
 
   describe "#==" do
-    it "should compare using #to_str" do
-      obj = Object.new
-      obj.should_receive(:to_str).and_return(subject.to_str)
+    it "should compare using #to_str *if* other is a Link" do
+      objA = double
+      objA.should_not_receive(:to_str)
 
-      subject.should eq obj
-    end
+      objB = Hallon::Link.new(subject.to_str)
+      objB.should_receive(:pointer).and_return(null_pointer)
+      objB.should_receive(:to_str).and_return(subject.to_str)
 
-    it "should not fail when #to_str is unavailable" do
-      object = Object.new
-      object.should_not respond_to :to_str
-      subject.should_not eq object
+      subject.should_not eq objA
+      subject.should eq objB
     end
 
     it "should compare underlying pointers if #to_str is unavailable" do

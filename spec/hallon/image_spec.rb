@@ -47,12 +47,19 @@ describe Hallon::Image do
       end
     end
 
-    describe "#==" do
-      it "should not fail given an object that does not respond to id" do
+    describe "#===" do
+      it "should compare ids (but only if other is an Image)" do
+        other = double
+        other.should_receive(:is_a?).with(Hallon::Image).and_return(true)
+        other.should_receive(:id).with(true).and_return(image.id(true))
+
+        image.should === other
+        image.should_not === double
+      end
+
+      it "should not call #id if other is not an image" do
         o = Object.new
-        def o.id
-          raise NoMethodError
-        end
+        o.should_not_receive(:id)
 
         image.should_not eq o
       end

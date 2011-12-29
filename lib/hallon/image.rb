@@ -69,13 +69,14 @@ module Hallon
       end
     end
 
-    # @see Base#==
+    # Overridden to first and foremost compare by id if applicable.
+    #
     # @param [Object] other
-    # @return [Boolean] true if the images are the same object or have the same ID.
+    # @return [Boolean]
     def ==(other)
-      super or id(true) == other.id(true)
-    rescue NoMethodError, ArgumentError
-      false
+      super or if other.is_a?(Image)
+        id(true) == other.id(true)
+      end
     end
 
     protected

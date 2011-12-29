@@ -65,12 +65,15 @@ module Hallon
       "http://open.spotify.com/%s" % to_str[8..-1].gsub(':', '/')
     end
 
+    # Compare the Link to other. If other is a Link, also compare
+    # their `to_str` if necessary.
+    #
     # @param [Object] other
-    # @return [Boolean] true if this link equals `other.to_str`.
+    # @return [Boolean]
     def ==(other)
-      to_str == other.to_str
-    rescue NoMethodError
-      super
+      super or if other.is_a?(Link)
+        to_str == other.to_str
+      end
     end
 
     # @return [String] string representation of the Link.

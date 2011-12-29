@@ -14,12 +14,6 @@ describe Hallon::User do
       end
     end
 
-    describe "#to_link" do
-      it "should return a Link for this user" do
-        user.to_link.should eq "spotify:user:burgestrand"
-      end
-    end
-
     describe "#name" do
       it "should be the canonical name" do
         user.name.should eq "burgestrand"
