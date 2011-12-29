@@ -1,3 +1,4 @@
+# coding: utf-8
 describe Hallon::Player do
   let(:player) { Hallon::Player.new(session) }
   let(:track) { Hallon::Track.new(mock_track) }
@@ -22,6 +23,11 @@ describe Hallon::Player do
     it "should load the given track" do
       Spotify.should_receive(:session_player_load).with(session.pointer, track.pointer)
       player.load(track)
+    end
+
+    it "should try to instantiate the track if it’s not a track" do
+      Spotify.should_receive(:session_player_load).with(session.pointer, track.pointer)
+      player.load(track.to_str)
     end
 
     it "should raise an error if load was unsuccessful" do
@@ -51,8 +57,8 @@ describe Hallon::Player do
     end
 
     it "should load and play given track if one was given" do
-      Spotify.should_receive(:session_player_load).with(session.pointer, track.pointer)
       Spotify.should_receive(:session_player_play).with(session.pointer, true)
+      player.should_receive(:load).with(track)
       player.play(track)
     end
   end

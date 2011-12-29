@@ -73,10 +73,11 @@ module Hallon
 
     # Loads a Track for playing.
     #
-    # @param [Track] track
+    # @param [Track, Link, String] track
     # @return [Player]
     # @raise [Error] if the track could not be loaded
     def load(track)
+      track = Track.new(track) unless track.is_a?(Track)
       error = Spotify.session_player_load(pointer, track.pointer)
       tap { Error.maybe_raise(error) }
     end
@@ -93,6 +94,11 @@ module Hallon
 
     # Starts playing a Track by feeding data to your application.
     #
+    # @example
+    #   player.play("spotify:track:44FHDONpdYeDpmqyS3BLRP")
+    #
+    # @note If no track is given, will try to play currently {#load}ed track.
+    # @param [Track, Link, String, nil] track
     # @return [Player]
     def play(track = nil)
       load(track) unless track.nil?
