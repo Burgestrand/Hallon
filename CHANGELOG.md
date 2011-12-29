@@ -1,6 +1,20 @@
 Hallon’s Changelog
 ==================
 
+[HEAD][]
+------------------
+
+__Added__
+
+__Changed__
+
+- Rewritten Enumerator system (Playlist#tracks, Search#albums et al) [676f7d1e]
+- Search#{tracks,albums,artists}_total removed in favor of Search#{tracks,albums,artists}.total [d5c2e7aa]
+
+__Fixed__
+
+- Enumerators now check size before each iteration [4ec24969]
+
 [v0.12.0][]
 ------------------
 
@@ -217,3 +231,4 @@ easier to handle.
 [v0.10.1]: https://github.com/Burgestrand/Hallon/compare/v0.9.1...v0.10.1
 [v0.11.0]: https://github.com/Burgestrand/Hallon/compare/v0.10.1...v0.11.0
 [v0.12.0]: https://github.com/Burgestrand/Hallon/compare/v0.11.0...v0.12.0
+[HEAD]: https://github.com/Burgestrand/Hallon/compare/v0.12.0...HEAD
