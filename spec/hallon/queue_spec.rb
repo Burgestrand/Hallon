@@ -32,4 +32,13 @@ describe Hallon::Queue do
       (Time.now - start).should be_within(0.08).of(0.2)
     end
   end
+
+  describe "#clear" do
+    it "should clear the queue" do
+      queue.push([1, 2])
+      queue.should_not be_empty
+      queue.clear
+      queue.should be_empty
+    end
+  end
 end

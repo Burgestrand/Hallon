@@ -1,5 +1,5 @@
 # coding: utf-8
-require 'thread'
+require 'monitor'
 
 module Hallon
   # Hallon::Queue is a non-blocking (well, not entirely) sized FIFO queue.
@@ -26,11 +26,11 @@ module Hallon
 
     # @param [Integer] max_size
     def initialize(max_size)
-      @mutex    = Mutex.new
-      @condv    = ConditionVariable.new
-
       @max_size = max_size
       @samples  = []
+
+      @samples.extend(MonitorMixin)
+      @condvar  = @samples.new_cond
     end
 
     # @param [#take] data
@@ -41,7 +41,7 @@ module Hallon
         new_samples = samples.take(can_accept)
 
         @samples.concat(new_samples)
-        @condv.signal
+        @condvar.signal
 
         new_samples.size
       end
@@ -52,20 +52,30 @@ module Hallon
     # @return [Array] data, where data.size might be less than num_samples but never more
     def pop(num_samples = max_size)
       synchronize do
-        @condv.wait(@mutex) while @samples.empty?
+        @condvar.wait_while { empty? }
         @samples.shift(num_samples)
       end
     end
 
-    # @return [Integer] number of samples in buffer
+    # @return [Integer] number of samples in buffer.
     def size
-      @samples.size
+      synchronize { @samples.size }
+    end
+
+    # @return [Boolean] true if the queue has a {#size} of 0.
+    def empty?
+      size.zero?
+    end
+
+    # Clear all data from the Queue.
+    def clear
+      synchronize { @samples.clear }
     end
 
     private
       # @yield (merely a wrapper over @mutex.synchronize)
       def synchronize
-        @mutex.synchronize { return yield }
+        @samples.synchronize { return yield }
       end
   end
 end
