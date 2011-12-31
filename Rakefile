@@ -110,6 +110,18 @@ task 'spotify:coverage' do
     [method, "#{method}!"]
   end
 
+  # Hallon::Enumerator
+  no_receiver[:size] = proc do |recv, meth, (_, name)|
+    name.value if name.respond_to?(:value)
+  end
+
+  # Hallon::Enumerator
+  no_receiver[:item] = proc do |recv, meth, (_, name)|
+    next unless name.respond_to?(:value)
+    method = name.value.to_s
+    [method.delete("!"), method]
+  end
+
   fails = {}
   FileList['lib/**/*.rb'].each do |file|
     begin
