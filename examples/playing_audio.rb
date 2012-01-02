@@ -37,7 +37,7 @@ end
 sample_rate = 44100 # 44100 samples / second
 device      = CoreAudio.default_output_device
 output      = device.output_buffer(sample_rate * 3)
-audio_queue = Hallon::Queue.new(sample_rate)
+audio_queue = Hallon::AudioQueue.new(sample_rate)
 
 session = Hallon::Session.initialize IO.read(ENV['HALLON_APPKEY']) do
   on(:log_message) do |message|
