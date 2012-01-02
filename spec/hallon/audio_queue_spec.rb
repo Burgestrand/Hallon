@@ -1,6 +1,6 @@
 # coding: utf-8
-describe Hallon::Queue do
-  let(:queue) { Hallon::Queue.new(4) }
+describe Hallon::AudioQueue do
+  let(:queue) { Hallon::AudioQueue.new(4) }
   subject { queue }
 
   it "should conform to the example specification of its’ documentation" do
@@ -39,6 +39,12 @@ describe Hallon::Queue do
       queue.should_not be_empty
       queue.clear
       queue.should be_empty
+    end
+  end
+
+  describe "#synchronize" do
+    it "should be re-entrant" do
+      expect { queue.synchronize { queue.synchronize {} } }.to_not raise_error
     end
   end
 end

@@ -2,18 +2,18 @@
 require 'monitor'
 
 module Hallon
-  # Hallon::Queue is a non-blocking (well, not entirely) sized FIFO queue.
+  # Hallon::AudioQueue is a non-blocking (well, not entirely) sized FIFO queue.
   #
   # You initialize the queue with a `max_size`, and then push data to it.
-  # For every push operation, the Queue will tell you how much of your data
+  # For every push operation, the AudioQueue will tell you how much of your data
   # it could consume. If the queue becomes full, it won’t accept any more
   # data (and will return 0 on the #push operation) until you pull some data
   # out of it with #pop.
   #
-  # Hallon::Queue is useful for handling {Hallon::Observable::Session#music_delivery_callback}.
+  # Hallon::AudioQueue is useful for handling {Hallon::Observable::Session#music_delivery_callback}.
   #
   # @example
-  #   queue = Hallon::Queue.new(4)
+  #   queue = Hallon::AudioQueue.new(4)
   #   queue.push([1, 2]) # => 2
   #   queue.push([3]) # => 1
   #   queue.push([4, 5, 6]) # => 1
@@ -21,7 +21,9 @@ module Hallon
   #   queue.pop(1) # => [1]
   #   queue.push([5, 6]) # => 1
   #   queue.pop # => [2, 3, 4, 5]
-  class Queue
+  #
+  # @private
+  class AudioQueue
     attr_reader :max_size
 
     # @param [Integer] max_size
@@ -67,15 +69,19 @@ module Hallon
       size.zero?
     end
 
-    # Clear all data from the Queue.
+    # Clear all data from the AudioQueue.
     def clear
       synchronize { @samples.clear }
     end
 
-    private
-      # @yield (merely a wrapper over @mutex.synchronize)
-      def synchronize
-        @samples.synchronize { return yield }
-      end
+    # Use this if you wish to perform multiple operations on
+    # the AudioQueue atomicly.
+    #
+    # @note this lock is re-entrant, you can nest it in itself
+    # @yield exclusive section around the queue contents
+    # @return whatever the given block returns
+    def synchronize
+      @samples.synchronize { return yield }
+    end
   end
 end
