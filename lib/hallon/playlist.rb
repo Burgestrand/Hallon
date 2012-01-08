@@ -245,7 +245,7 @@ module Hallon
     #
     # @return [Playlist]
     def update_subscribers
-      Spotify.playlist_update_subscribers(session.pointer, pointer)
+      tap { Spotify.playlist_update_subscribers(session.pointer, pointer) }
     end
 
     # @note only applicable if {#offline_status} is `:downloading`

@@ -38,7 +38,7 @@ RSpec.configure do |config|
   end
 
   def stub_session
-    Hallon::Session.stub!(:instance => session)
+    Hallon::Session.stub(:instance).and_return(session)
     yield
   end
 

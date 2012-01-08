@@ -189,9 +189,13 @@ describe Hallon::Playlist do
     end
   end
 
-  describe "#update_subscribers" do
+  describe "#update_subscribers", :stub_session do
     it "should ask libspotify to update the subscribers" do
-      expect { mock_session { playlist.update_subscribers } }.to_not raise_error
+      expect { playlist.update_subscribers }.to_not raise_error
+    end
+
+    it "should return the playlist" do
+      playlist.update_subscribers.should eq playlist
     end
   end
 
