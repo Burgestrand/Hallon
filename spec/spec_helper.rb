@@ -37,9 +37,14 @@ RSpec.configure do |config|
     yield
   end
 
-  def stub_session
-    Hallon::Session.stub(:instance).and_return(session)
-    yield
+  def stub_session(target = nil)
+    if target
+      target.stub(:session).and_return(session)
+    else
+      Hallon::Session.stub(:instance).and_return(session)
+    end
+
+    target.tap { yield if block_given? }
   end
 
   def pointer_array_with(*args)
