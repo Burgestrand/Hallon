@@ -83,5 +83,14 @@ module Hallon
     def synchronize
       @samples.synchronize { return yield }
     end
+
+    # Create a condition variable bound to this AudioQueue.
+    # Should be used if you want to wait inside {#synchronize}.
+    #
+    # @return [MonitorMixin::ConditionVariable]
+    # @see monitor.rb (ruby stdlib)
+    def new_cond
+      @samples.new_cond
+    end
   end
 end

@@ -1,4 +1,6 @@
 # coding: utf-8
+require 'timeout'
+
 describe Hallon::AudioQueue do
   let(:queue) { Hallon::AudioQueue.new(4) }
   subject { queue }
@@ -45,6 +47,28 @@ describe Hallon::AudioQueue do
   describe "#synchronize" do
     it "should be re-entrant" do
       expect { queue.synchronize { queue.synchronize {} } }.to_not raise_error
+    end
+  end
+
+  describe "#new_cond" do
+    it "should be bound to the queue" do
+      condvar = queue.new_cond
+      inside  = false
+
+      thr = Thread.new(queue, condvar) do |q, c|
+        q.synchronize do
+          inside = true
+          c.signal
+        end
+      end
+
+      Timeout::timeout(1) do
+        queue.synchronize do
+          condvar.wait_until { inside }
+        end
+      end
+
+      inside.should be_true
     end
   end
 end
