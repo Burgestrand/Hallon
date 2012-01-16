@@ -55,7 +55,7 @@ describe Hallon::AudioQueue do
       condvar = queue.new_cond
       inside  = false
 
-      thr = Thread.new(queue, condvar) do |q, c|
+      Thread.new(queue, condvar) do |q, c|
         q.synchronize do
           inside = true
           c.signal
