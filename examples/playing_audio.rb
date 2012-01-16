@@ -3,17 +3,14 @@
 $LOAD_PATH.unshift(File.expand_path('../lib', File.dirname(__FILE__)))
 
 require 'hallon'
-require_relative '../spec/support/config'
 
 begin
-  require 'coreaudio'
+  require 'hallon/openal'
 rescue LoadError
-  abort <<-ERROR
-    This example requires the ruby-coreaudio gem.
-
-    See: http://rubygems.org/gems/coreaudio
-  ERROR
+  require_relative 'audio_driver'
 end
+
+require_relative '../spec/support/config'
 
 # Utility
 def say(string)
@@ -34,11 +31,6 @@ end
 
 # Hallon set-up.
 
-sample_rate = 44100 # 44100 samples / second
-device      = CoreAudio.default_output_device
-output      = device.output_buffer(sample_rate * 3)
-audio_queue = Hallon::AudioQueue.new(sample_rate)
-
 session = Hallon::Session.initialize IO.read(ENV['HALLON_APPKEY']) do
   on(:log_message) do |message|
     puts "[LOG] #{message}"
@@ -53,31 +45,9 @@ session = Hallon::Session.initialize IO.read(ENV['HALLON_APPKEY']) do
   end
 end
 
-end_of_track = false
-player = Hallon::Player.new(session) do
-  on(:music_delivery) do |format, frames|
-    audio_queue.push(frames)
-  end
-
-  on(:start_playback) do
-    puts "(start playback)"
-    output.start
-  end
-
-  on(:stop_playback) do
-    puts "(stop playback)"
-    output.stop
-  end
-
-  on(:get_audio_buffer_stats) do
-    [audio_queue.size, 0]
-  end
-
-  on(:end_of_track) do
-    puts "End of track!"
-    end_of_track = true
-  end
-end
+driver = defined?(Hallon::OpenAL) ? Hallon::OpenAL : Hallon::CoreAudio
+player = Hallon::Player.new(session, driver)
+puts "Driver: #{driver}"
 
 # Program flow.
 
@@ -119,12 +89,6 @@ track = loop do
   end
 end
 
-player.play(track)
-
 tell "Alright! Playing “#{track.name}” by “#{track.artist.name}”."
-
-until end_of_track
-  output << audio_queue.pop(sample_rate)
-end
-
+player.play!(track)
 tell "Done! This was “#{track.name}” by “#{track.artist.name}”. Bye bye!"

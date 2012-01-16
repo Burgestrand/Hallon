@@ -1,7 +1,9 @@
 # coding: utf-8
 describe Hallon::Player do
-  let(:player) { Hallon::Player.new(session) }
-  let(:track) { Hallon::Track.new(mock_track) }
+  let(:player) { Hallon::Player.new(session, AudioDriverMock) }
+  let(:track)  { Hallon::Track.new(mock_track) }
+  let(:driver) { player.instance_variable_get('@driver') }
+  let(:queue)  { player.instance_variable_get('@queue') } # black box? WHAT?
 
   describe "events" do
     %w(end_of_track streaming_error play_token_lost).each do |e|
@@ -90,6 +92,83 @@ describe Hallon::Player do
       player.volume_normalization?.should be_false
       player.volume_normalization = true
       player.volume_normalization?.should be_true
+    end
+  end
+
+  context "playing audio" do
+    before { session.class.send(:public, :trigger) }
+
+    it "should correctly report the status to libspotify" do
+      queue.should_receive(:size).and_return(7)
+      driver.should_receive(:drops).and_return(19)
+      session.trigger(:get_audio_buffer_stats).should eq [7, 19]
+    end
+
+    it "should assume no drops in audio if driver does not support checking" do
+      driver.should_receive(:respond_to?).with(:drops).and_return(false)
+      driver.should_not_receive(:drops)
+      session.trigger(:get_audio_buffer_stats).should eq [0, 0]
+    end
+
+    it "should tell the driver to start playback when commanded so by libspotify" do
+      driver.should_receive(:play)
+      session.trigger(:start_playback)
+    end
+
+    it "should tell the driver to stop playback when commanded so by libspotify" do
+      driver.should_receive(:pause)
+      session.trigger(:stop_playback)
+    end
+
+    it "should tell the driver to pause when pause is requested" do
+      driver.should_receive(:pause)
+      player.pause
+    end
+
+    it "should tell the driver to stop when stop is requested" do
+      queue.should_receive(:clear)
+      driver.should_receive(:stop)
+      player.stop
+    end
+
+    it "should not set the format on music delivery if it’s the same" do
+      queue.should_not_receive(:clear)
+      driver.should_not_receive(:format=)
+      session.trigger(:music_delivery, driver.format, [1, 2, 3])
+    end
+
+    it "should set the format on music delivery if format changes" do
+      queue.should_receive(:clear)
+      driver.should_receive(:format=).with(:new_format)
+      session.trigger(:music_delivery, :new_format, [1, 2, 3])
+    end
+
+    # why? it says so in the docs!
+    it "should clear the audio queue when receiving 0 audio frames" do
+      queue.should_receive(:clear)
+      session.trigger(:music_delivery, driver.format, [])
+    end
+
+    context "the output streaming" do
+      it "should feed music to the output stream" do
+        Thread.stub(:start).and_return{ |*args, block| block[*args] }
+
+        player # create the Player
+        session.trigger(:music_delivery, :new_format, [1, 2, 3])
+
+        # it should block while player is stopped
+        begin
+          player.status.should be :stopped
+          Timeout::timeout(0.1) { driver.stream.call.should eq [1, 2, 3] }
+        rescue
+          :timeout
+        end.should eq :timeout
+
+        session.trigger(:start_playback)
+        player.status.should be :playing
+        driver.stream.call(1).should eq [1]
+        driver.stream.call(nil).should eq [2, 3]
+      end
     end
   end
 end
