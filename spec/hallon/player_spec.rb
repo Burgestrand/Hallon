@@ -3,6 +3,14 @@ describe Hallon::Player do
   let(:player) { Hallon::Player.new(session) }
   let(:track) { Hallon::Track.new(mock_track) }
 
+  describe "events" do
+    %w(end_of_track streaming_error play_token_lost).each do |e|
+      it "should support listening for #{e}" do
+        expect { player.on(e) {} }.to_not raise_error
+      end
+    end
+  end
+
   describe ".bitrates" do
     it "should be a list of symbols in ascending order" do
       Hallon::Player.bitrates.should eq %w[96k 160k 320k].map(&:to_sym)
