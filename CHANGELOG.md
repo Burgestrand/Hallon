@@ -6,14 +6,22 @@ Hallon’s Changelog
 
 __Added__
 
+- Linkable#to_str, all linkable objects can now easily be converted to a spotify URI [132981a9]
+- AudioQueue#clear/#synchronize/#new_cond (formerly Queue) [62bf4622, c2b14481, bb65cf28]
+
 __Changed__
 
+- Rewritten Player API (now deals in audio drivers) [53cfac21]
 - Rewritten Enumerator system (Playlist#tracks, Search#albums et al) [676f7d1e]
 - Search#{tracks,albums,artists}_total removed in favor of Search#{tracks,albums,artists}.total [d5c2e7aa]
+- Image#== and Link#== [8a1e4a33]
+- Player#load now accepts a spotify uri [710baf34]
+- Renamed Queue to AudioQueue [c2b14481]
 
 __Fixed__
 
 - Enumerators now check size before each iteration [4ec24969]
+- Playlist#update_subscribers now returns the Playlist [86120836]
 
 [v0.12.0][]
 ------------------
