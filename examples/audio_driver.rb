@@ -12,11 +12,15 @@ rescue LoadError
 end
 
 puts <<-INFO
+**************************************************************
+
   Keep in mind, you’re now using the CoreAudio driver, part
   of Hallon examples. This driver does not buffer data, so
   even the slightest hickup in Ruby will make the playback
   stutter. The reason is that this CoreAudio driver does not
   buffer data internally.
+
+**************************************************************
 INFO
 
 module Hallon
