@@ -16,7 +16,7 @@ Also, these people are worthy of mention simply for their contribution:
 - Jesper Särnesjö, unknowingly providing me a starting point with [Greenstripes][]
 - Emil “@mrevilme” Palm, for his patience in helping me debug Hallon deadlock issues
 
-Code samples can be found under `examples/` directory.
+Code samples can be found under `examples/` directory. An explanation on how to run them can be found on the [Hallon wiki on GitHub](https://github.com/Burgestrand/Hallon/wiki).
 
 You have any questions?
 -----------------------
