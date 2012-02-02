@@ -44,6 +44,21 @@ describe Hallon::AudioQueue do
     end
   end
 
+  describe "#format" do
+    it "should clear the queue when setting the format" do
+      queue.push([1, 2])
+      queue.should_not be_empty
+      queue.format = :new_format
+      queue.should be_empty
+    end
+
+    it "should allow setting and retrieving the format" do
+      queue.format.should_not be :new_format
+      queue.format = :new_format
+      queue.format.should be :new_format
+    end
+  end
+
   describe "#synchronize" do
     it "should be re-entrant" do
       expect { queue.synchronize { queue.synchronize {} } }.to_not raise_error

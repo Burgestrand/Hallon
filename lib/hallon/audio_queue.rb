@@ -74,6 +74,20 @@ module Hallon
       synchronize { @samples.clear }
     end
 
+    # Attach format metadata to the queue.
+    #
+    # @note this will clear the queue of all audio data!
+    # @param format new audio format
+    def format=(format)
+      synchronize do
+        @format = format
+        clear
+      end
+    end
+
+    # Returns the format previously set by #format=.
+    attr_reader :format
+
     # Use this if you wish to perform multiple operations on
     # the AudioQueue atomicly.
     #
