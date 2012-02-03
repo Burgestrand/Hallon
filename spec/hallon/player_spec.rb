@@ -132,14 +132,12 @@ describe Hallon::Player do
     end
 
     it "should not set the format on music delivery if it’s the same" do
-      queue.should_not_receive(:clear)
-      driver.should_not_receive(:format=)
-      session.trigger(:music_delivery, driver.format, [1, 2, 3])
+      queue.should_not_receive(:format=)
+      session.trigger(:music_delivery, queue.format, [1, 2, 3])
     end
 
     it "should set the format on music delivery if format changes" do
-      queue.should_receive(:clear)
-      driver.should_receive(:format=).with(:new_format)
+      queue.should_receive(:format=).with(:new_format)
       session.trigger(:music_delivery, :new_format, [1, 2, 3])
     end
 
@@ -150,16 +148,16 @@ describe Hallon::Player do
     end
 
     context "the output streaming" do
-      it "should feed music to the output stream" do
+      it "should feed music to the output stream if the format stays the same" do
         Thread.stub(:start).and_return{ |*args, block| block[*args] }
 
         player # create the Player
-        session.trigger(:music_delivery, :new_format, [1, 2, 3])
+        session.trigger(:music_delivery, queue.format, [1, 2, 3])
 
         # it should block while player is stopped
         begin
           player.status.should be :stopped
-          Timeout::timeout(0.1) { driver.stream.call.should eq [1, 2, 3] }
+          Timeout::timeout(0.1) { driver.stream.call and "call was not blocking" }
         rescue
           :timeout
         end.should eq :timeout
@@ -168,6 +166,21 @@ describe Hallon::Player do
         player.status.should be :playing
         driver.stream.call(1).should eq [1]
         driver.stream.call(nil).should eq [2, 3]
+      end
+
+      it "should set the driver format and return no audio if audio format has changed" do
+        Thread.stub(:start).and_return{ |*args, block| block[*args] }
+
+        player # create the Player
+        session.trigger(:start_playback)
+        session.trigger(:music_delivery, :new_format, [1, 2, 3])
+
+        driver.should_receive(:format=).with(:new_format)
+        driver.stream.call.should eq []
+
+        # driver.should_not_receive(:format)
+        driver.should_receive(:format).and_return(:new_format)
+        driver.stream.call.should eq [1, 2, 3]
       end
     end
   end

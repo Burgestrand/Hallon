@@ -42,6 +42,7 @@ module Hallon
       # we keep an audio queue that can store 3s of audio
       @driver = driver.new(rate: 44100, channels: 2, type: :int16)
       @queue  = AudioQueue.new(@driver.format[:rate])
+      @queue.format = @driver.format
 
       # used for feeder thread to know if it should stream
       # data to the driver or not (see #status=)
@@ -55,6 +56,12 @@ module Hallon
         output.stream do |num_frames|
           queue.synchronize do
             cond.wait_until { status == :playing }
+
+            if output.format != queue.format
+              output.format = queue.format
+              num_frames = 0 # format changed, so expected num_frames is no longer valid
+            end
+
             queue.pop(*num_frames)
           end
         end
@@ -95,9 +102,8 @@ module Hallon
       @queue.synchronize do
         if frames.none?
           @queue.clear
-        elsif @driver.format != format
-          @driver.format = format
-          @queue.clear
+        elsif @queue.format != format
+          @queue.format = format
         end
 
         @queue.push(frames)
