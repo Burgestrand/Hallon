@@ -176,7 +176,7 @@ describe Hallon::Player do
         session.trigger(:music_delivery, :new_format, [1, 2, 3])
 
         driver.should_receive(:format=).with(:new_format)
-        driver.stream.call.should eq []
+        driver.stream.call.should be_nil
 
         # driver.should_not_receive(:format)
         driver.should_receive(:format).and_return(:new_format)

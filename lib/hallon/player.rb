@@ -59,7 +59,7 @@ module Hallon
 
             if output.format != queue.format
               output.format = queue.format
-              num_frames = 0 # format changed, so expected num_frames is no longer valid
+              next # format changed, so we return nil
             end
 
             queue.pop(*num_frames)
