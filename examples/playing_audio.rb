@@ -14,7 +14,7 @@ require_relative '../spec/support/config'
 
 # Utility
 def say(string)
-  system('say', string)
+  # system('say', string)
 end
 
 def tell(string)
