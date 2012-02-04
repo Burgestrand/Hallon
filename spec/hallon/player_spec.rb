@@ -182,6 +182,13 @@ describe Hallon::Player do
         driver.should_receive(:format).and_return(:new_format)
         driver.stream.call.should eq [1, 2, 3]
       end
+
+      it "should set the format on initialization" do
+        Thread.stub(:start).and_return{ |*args, block| block[*args] }
+        AudioDriverMock.any_instance.should_receive(:format=)
+        Hallon::AudioQueue.any_instance.should_receive(:format=)
+        player
+      end
     end
   end
 end

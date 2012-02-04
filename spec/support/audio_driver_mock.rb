@@ -2,11 +2,6 @@ class AudioDriverMock
   attr_reader :state
 
   # Expected implementation:
-
-  def initialize(format)
-    self.format = format
-  end
-
   attr_accessor :format
 
   def stream(&block)
