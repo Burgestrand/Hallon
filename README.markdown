@@ -1,9 +1,7 @@
 [What is Hallon?][] [![Build Status][]](http://travis-ci.org/Burgestrand/Hallon)
-===============
+===================
 
-We rubyists have this awesome [spotify gem][] allowing us to use [libspotify][] from within Ruby, but it has a significant drawback: the `libspotify` API is very hard to use. Now, we can’t have that, so what do we do? We make Hallon!
-
-Hallon is Swedish for “[Raspberry][]”, and has been written to satisfy my needs for API simplicity. Hallon is written on top of [Spotify for Ruby][], but with the goal of making the experience of using `libspotify` from Ruby much more enjoyable.
+Hallon — which is Swedish for “[Raspberry][]” — is a ruby gem for interacting with the official Spotify C API. It is written on top of [Spotify for Ruby][], with the goal of making the experience of using `libspotify` as enjoyable as it can be.
 
 Hallon would not have been possible if not for these people:
 
@@ -17,6 +15,34 @@ Also, these people are worthy of mention simply for their contribution:
 - Emil “@mrevilme” Palm, for his patience in helping me debug Hallon deadlock issues
 
 Code samples can be found under `examples/` directory. An explanation on how to run them can be found on the [Hallon wiki on GitHub](https://github.com/Burgestrand/Hallon/wiki).
+
+Installation
+------------
+
+    gem install hallon
+
+If you want to play audio as well, you’ll want to install an audio driver. As of current writing there is only one driver in existence.
+
+    gem install hallon-openal
+
+For more information about audio support in Hallon, see the section "Audio support" below.
+
+Audio support
+-------------
+Hallon supports streaming audio from Spotify via [Hallon::Player][]. When you create the player you give it your current session and an audio driver, which the player will then use for audio playback.
+
+```ruby
+player = Hallon::Player.new(session, Hallon::OpenAL)
+player.play(loaded_track)
+```
+
+The list of available drivers are:
+
+- [Hallon::OpenAL](https://rubygems.org/gems/hallon-openal)
+
+        gem install hallon-openal
+
+For information on how to write your own audio driver, see [Hallon::ExampleAudioDriver].
 
 You have any questions?
 -----------------------
@@ -66,3 +92,6 @@ Hallon is licensed under a 2-clause (Simplified) BSD license. More information c
 [Greenstripes]:     http://github.com/sarnesjo/greenstripes
 [What is Hallon?]:  http://burgestrand.se/articles/hallon-delicious-ruby-bindings-to-libspotify.html
 [Build Status]:     https://secure.travis-ci.org/Burgestrand/Hallon.png
+
+[Hallon::Player]:             http://rubydoc.info/github/Burgestrand/Hallon/Hallon/Player
+[Hallon::ExampleAudioDriver]: http://rubydoc.info/github/Burgestrand/Hallon/Hallon/ExampleAudioDriver

@@ -5,7 +5,6 @@ module Hallon
   # A wrapper around Session for playing, stopping and otherwise
   # controlling the playback features of libspotify.
   #
-  # @note This is very much a work in progress.
   # @see Session
   class Player
     # meep?
@@ -25,12 +24,13 @@ module Hallon
       end
     end
 
-    # Constructs a Player, given a Session.
+    # Constructs a Player, given a Session and an audio driver.
     #
     # @example
-    #   player = Hallon::Player.new(session, Hallon::Audio::CoreAudio)
-    #   player.play(spotify_uri)
+    #   player = Hallon::Player.new(session, Hallon::OpenAL)
+    #   player.play(track)
     #
+    # @note for instructions on how to write your own audio driver, see Hallons’ README
     # @param [Session] session
     # @param [AudioDriver] driver
     # @yield instance_evals itself, allowing you to define callbacks using `on`
@@ -229,7 +229,7 @@ module Hallon
       tap { Error.maybe_raise(error) }
     end
 
-    # Prepares a Track for playing, without #{load}ing it.
+    # Prepares a Track for playing, without {#load}ing it.
     #
     # @note You can only prefetch if caching is on.
     # @param [Track] track
