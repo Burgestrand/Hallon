@@ -107,7 +107,11 @@ module Hallon::Observable
       format[:type] = struct[:sample_type]
 
       # read the frames of the given type
-      frames = frames.public_send("read_array_of_#{format[:type]}", num_frames * format[:channels])
+      frames = unless num_frames.zero?
+        frames.public_send("read_array_of_#{format[:type]}", num_frames * format[:channels])
+      else
+        [] # when seeking, for example, num_frames will be zero and frames will be nil
+      end
 
       # pass the frames to the callback, allowing it to do whatever
       consumed_frames = trigger(pointer, :music_delivery, format, frames.each_slice(format[:channels]))

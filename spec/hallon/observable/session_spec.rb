@@ -68,6 +68,10 @@ describe Hallon::Observable::Session do
     it "should ensure the resulting value is an integer" do
       subject_callback.call(*input).should eq 0
     end
+
+    it "should not go ballistic when there is no audio data" do
+      subject_callback.call(a_pointer, format, FFI::Pointer::NULL, 0)
+    end
   end
 
   specification_for_callback "play_token_lost" do
