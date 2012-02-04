@@ -14,14 +14,14 @@ Also, these people are worthy of mention simply for their contribution:
 - Jesper Särnesjö, unknowingly providing me a starting point with [Greenstripes][]
 - Emil “@mrevilme” Palm, for his patience in helping me debug Hallon deadlock issues
 
-Code samples can be found under `examples/` directory. An explanation on how to run them can be found on the [Hallon wiki on GitHub](https://github.com/Burgestrand/Hallon/wiki).
+Code samples can be found under the `examples/` directory. An explanation on how to run them can be found on the [Hallon wiki on GitHub](https://github.com/Burgestrand/Hallon/wiki).
 
 Installation
 ------------
 
     gem install hallon
 
-If you want to play audio as well, you’ll want to install an audio driver. As of current writing there is only one driver in existence.
+If you want to play audio you’ll need to install an audio driver. As of current writing there is only one driver in existence. You can install it with:
 
     gem install hallon-openal
 
@@ -36,7 +36,7 @@ player = Hallon::Player.new(session, Hallon::OpenAL)
 player.play(loaded_track)
 ```
 
-The list of available drivers are:
+Available drivers are:
 
 - [Hallon::OpenAL](https://rubygems.org/gems/hallon-openal)
 
@@ -46,9 +46,10 @@ For information on how to write your own audio driver, see [Hallon::ExampleAudio
 
 You have any questions?
 -----------------------
-If you need to discuss issues or feature requests you can use [Hallons issue tracker](http://github.com/Burgestrand/Hallon/issues). For *anything* else you have to say or ask I can also be reached via [email (found on GitHub profile)](http://github.com/Burgestrand) or [@burgestrand on twitter](http://twitter.com/Burgestrand).
+I can be reached at my [email (found on GitHub profile)](http://github.com/Burgestrand) or [@burgestrand on twitter](http://twitter.com/Burgestrand). I’d be extremely happy to discuss Hallon with
+you if you have any feedback or thoughts.
 
-In fact, you can contact me via email or twitter even if it’s about features or issues. I’ll probably put them in the issue tracker myself after the discussion ;)
+For issues and feature requests, please use use [Hallons issue tracker](http://github.com/Burgestrand/Hallon/issues).
 
 This is awesome! I want to help!
 --------------------------------
@@ -60,20 +61,20 @@ Sweet! You contribute in more than one way!
 ### [Send me feedback and requests](http://github.com/Burgestrand/Hallon/issues)
 Really, I ❤ feedback! Suggestions on how to improve the API, tell me what is delicious about Hallon, tell me what is yucky about Hallon… anything! All feedback is useful in one way or another.
 
-Finally, here’s some important notes
-------------------------------------
+Finally, here are some important notes
+--------------------------------------
 
 ### Hallon is unstable
 The API is unstable, my code is likely unstable. Everything should be considered unstable!
 
 ### Hallon only supports one session per process
-You can only keep one session with Spotify alive at a time in the same process, due to a limitation of `libspotify`.
+You can only keep one session with Spotify alive at a time within the same process, due to a limitation of `libspotify`.
 
 ### You still have to worry about threads
 I have been doing my best at hiding the complexity in `libspotify`, but it’s still a work in progress. Despite my efforts, you’ll need to be familiar with concurrent programming to use Hallon properly.
 
 ### When forking, you need to be extra careful
-If you fork, you need to instantiate the session in the process you plan to use Hallon in. You want to use Hallon in the parent? Create the session in the parent. You want to use it in the child? Create the session in the child! This is a limitation of libspotify itself.
+If you fork, you need to instantiate the session within the process you plan to use Hallon in. You want to use Hallon in the parent? Create the session in the parent. You want to use it in the child? Create the session in the child! This is a limitation of libspotify itself.
 
 Versioning policy
 -----------------
