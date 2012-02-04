@@ -6,8 +6,26 @@ Hallon’s Changelog
 
 __Added__
 
+__Changed__
+
+__Fixed__
+
+[v0.13.0][]
+------------------
+
+Hallon v0.13.0 brings support for using external audio drivers with
+the Hallon::Player API. The specification on how to write your own
+driver is in the README.
+
+An audio driver was also written as a separate gem:
+
+    https://rubygems.org/gems/hallon-openal
+
+__Added__
+
 - Linkable#to_str, all linkable objects can now easily be converted to a spotify URI [132981a9]
 - AudioQueue#clear/#synchronize/#new_cond (formerly Queue) [62bf4622, c2b14481, bb65cf28]
+- AudioQueue#format/format= [27084a3a]
 
 __Changed__
 
@@ -239,4 +257,5 @@ easier to handle.
 [v0.10.1]: https://github.com/Burgestrand/Hallon/compare/v0.9.1...v0.10.1
 [v0.11.0]: https://github.com/Burgestrand/Hallon/compare/v0.10.1...v0.11.0
 [v0.12.0]: https://github.com/Burgestrand/Hallon/compare/v0.11.0...v0.12.0
+[v0.13.0]: https://github.com/Burgestrand/Hallon/compare/v0.12.0...v0.13.0
 [HEAD]: https://github.com/Burgestrand/Hallon/compare/v0.12.0...HEAD
