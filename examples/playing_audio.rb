@@ -2,6 +2,7 @@
 
 $LOAD_PATH.unshift(File.expand_path('../lib', File.dirname(__FILE__)))
 
+require 'bundler/setup'
 require 'hallon'
 
 begin
@@ -32,10 +33,6 @@ end
 # Hallon set-up.
 
 session = Hallon::Session.initialize IO.read(ENV['HALLON_APPKEY']) do
-  on(:log_message) do |message|
-    puts "[LOG] #{message}"
-  end
-
   on(:connection_error) do |error|
     Hallon::Error.maybe_raise(error)
   end
@@ -47,7 +44,6 @@ end
 
 driver = defined?(Hallon::OpenAL) ? Hallon::OpenAL : Hallon::CoreAudio
 player = Hallon::Player.new(session, driver)
-puts "Driver: #{driver}"
 
 # Program flow.
 

@@ -40,9 +40,9 @@ module Hallon
 
       # sample rate is often (if not always) 44.1KHz, so
       # we keep an audio queue that can store 3s of audio
-      @driver = driver.new(rate: 44100, channels: 2, type: :int16)
-      @queue  = AudioQueue.new(@driver.format[:rate])
-      @queue.format = @driver.format
+      @queue  = AudioQueue.new(44100)
+      @driver = driver.new
+      @queue.format = @driver.format = { rate: 44100, channels: 2, type: :int16 }
 
       # used for feeder thread to know if it should stream
       # data to the driver or not (see #status=)
