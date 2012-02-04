@@ -19,7 +19,7 @@ Gem::Specification.new do |gem|
 
   gem.version     = Hallon::VERSION
   gem.platform    = Gem::Platform::RUBY
-  gem.required_ruby_version = '~> 1.8'
+  gem.required_ruby_version = '~> 1.9'
 
   gem.add_dependency 'ref', '~> 1.0'
   gem.add_dependency 'spotify', '~> 10.3.0'
