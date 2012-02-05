@@ -35,6 +35,7 @@ __Changed__
 - Image#== and Link#== [8a1e4a33]
 - Player#load now accepts a spotify uri [710baf34]
 - Renamed Queue to AudioQueue [c2b14481]
+- Error.mabe_raise no longer ignores :is_loading, and now takes an :ignores option [53ad65c8]
 
 __Fixed__
 
