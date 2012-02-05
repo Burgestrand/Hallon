@@ -424,7 +424,7 @@ module Hallon
         # but a few moments later it fires connection_error; waiting for both and checking
         # for errors on both hopefully circumvents this!
         wait_for(:logged_in, :connection_error) do |error|
-          Error.maybe_raise(error)
+          Error.maybe_raise(error, :ignore => :timeout)
           session.logged_in?
         end
       end

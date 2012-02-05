@@ -55,7 +55,7 @@ search = loop do
 
   tell "Searching for “#{search.query}”…"
   session.wait_for do
-    search.loaded? or Hallon::Error.maybe_raise(search.status)
+    search.loaded? or Hallon::Error.maybe_raise(search.status, ignore: :is_loading)
   end
 
   if search.tracks.size.zero?

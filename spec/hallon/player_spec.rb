@@ -41,8 +41,8 @@ describe Hallon::Player do
     end
 
     it "should raise an error if load was unsuccessful" do
-      Spotify.should_receive(:session_player_load).and_return(:track_not_playable)
-      expect { player.load(track) }.to raise_error(Hallon::Error, /TRACK_NOT_PLAYABLE/)
+      Spotify.should_receive(:session_player_load).and_return(:is_loading)
+      expect { player.load(track) }.to raise_error(Hallon::Error, /IS_LOADING/)
     end
   end
 

@@ -42,8 +42,8 @@ describe Hallon::Error do
       subject.maybe_raise(nil).should eq nil
     end
 
-    it "should return nil when the error is timeout" do
-      subject.maybe_raise(:timeout).should eq nil
+    it "should return nil if the given symbol is also ignored" do
+      subject.maybe_raise(:is_loading, ignore: :is_loading).should eq nil
     end
   end
 

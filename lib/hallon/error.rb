@@ -46,10 +46,17 @@ module Hallon
 
       # Raise an {Error} with the given errno, unless it is `nil`, `:timeout`, `0` or `:ok`.
       #
+      # @example
+      #
+      #   Hallon::Error.maybe_raise(error, ignore: :is_loading)
+      #
       # @param [Fixnum, Symbol] error
+      # @param [Hash] options
+      # @option options [Array] :ignore ([]) other values to ignore of error
       # @return [nil]
-      def maybe_raise(x)
-        return nil if [nil, :timeout, :is_loading].include?(x)
+      def maybe_raise(x, options = {})
+        ignore = [nil, :timeout] + Array(options[:ignore])
+        return nil if ignore.include?(x)
 
         error, symbol = disambiguate(x)
         return symbol if symbol == :ok
