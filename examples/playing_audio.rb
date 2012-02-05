@@ -2,13 +2,13 @@
 
 $LOAD_PATH.unshift(File.expand_path('../lib', File.dirname(__FILE__)))
 
-require 'bundler/setup'
 require 'hallon'
 
 begin
   require 'hallon/openal'
-rescue LoadError
-  require_relative 'audio_driver'
+rescue LoadError => e
+  puts e.message
+  abort "[ERROR] Could not load gem 'hallon-openal', please install with 'gem install hallon-openal'"
 end
 
 require_relative '../spec/support/config'
@@ -42,8 +42,7 @@ session = Hallon::Session.initialize IO.read(ENV['HALLON_APPKEY']) do
   end
 end
 
-driver = defined?(Hallon::OpenAL) ? Hallon::OpenAL : Hallon::CoreAudio
-player = Hallon::Player.new(session, driver)
+player = Hallon::Player.new(session, Hallon::OpenAL)
 
 # Program flow.
 
