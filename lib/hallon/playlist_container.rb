@@ -58,7 +58,7 @@ module Hallon
 
     # Folders are parts of playlist containers in that they surround playlists
     # with a beginning marker and an ending marker. The playlists between these
-    # markers are considered "inside the playlist".
+    # markers are considered "inside the folder".
     class Folder
       # @return [Integer] index this folder starts at in the container.
       attr_reader :begin
@@ -88,7 +88,7 @@ module Hallon
       # @param [#to_s] new_name
       # @return [Folder] the new folder
       def rename(new_name)
-        raise IndexError, "playlist has moved from #{@begin}..#{@end}" if moved?
+        raise IndexError, "folder has moved from #{@begin}..#{@end}" if moved?
 
         insert_at = @begin
         container.remove(@begin)
@@ -278,7 +278,7 @@ module Hallon
     # @param (see #move)
     # @return [Boolean] true if the operation can be performed
     def can_move?(from, to)
-      error = move_playlist(from, to, true)
+      error = move_playlist(from, to, dry_run = true)
       _, symbol = Error.disambiguate(error)
       symbol == :ok
     end
