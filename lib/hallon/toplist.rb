@@ -38,6 +38,9 @@ module Hallon
 
     extend Observable::Toplist
 
+    # @return [Symbol] type of toplist request (one of :artists, :albums or :tracks)
+    attr_reader :type
+
     # Create a Toplist browsing object.
     #
     # @overload initialize(type, username)
@@ -67,6 +70,7 @@ module Hallon
       end
 
       subscribe_for_callbacks do |callback|
+        @type    = type
         @pointer = Spotify.toplistbrowse_create!(session.pointer, type, region, user, callback, nil)
       end
     end
@@ -82,19 +86,19 @@ module Hallon
       Spotify.toplistbrowse_error(pointer)
     end
 
-    # @return [Artists] a list of artists.
-    def artists
-      Artists.new(self)
-    end
+    # @note the returned enumerator corresponds to the #type of Toplist.
+    # @return [Artists, Albums, Tracks] an enumerator over the collection of results.
+    def results
+      klass = case type
+      when :artists
+        Artists
+      when :albums
+        Albums
+      when :tracks
+        Tracks
+      end
 
-    # @return [Albums] a list of albums.
-    def albums
-      Albums.new(self)
-    end
-
-    # @return [Tracks] a list of tracks.
-    def tracks
-      Tracks.new(self)
+      klass.new(self)
     end
 
     # @note If the object is not loaded, the result is undefined.
