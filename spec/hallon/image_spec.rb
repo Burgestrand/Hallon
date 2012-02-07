@@ -24,9 +24,16 @@ describe Hallon::Image do
     its(:status) { should be :ok }
     its(:format) { should be :jpeg }
 
-    describe "id" do
-      specify("in hex") { subject.id.should eq mock_image_hex }
-      specify("raw") { subject.id(true).should eq mock_image_id }
+    describe "#id" do
+      it "should return the image id as a hexadecimal string" do
+        image.id.should eq mock_image_hex
+      end
+    end
+
+    describe "#raw_id" do
+      it "should return the image id as a binary string" do
+        image.raw_id.should eq mock_image_id
+      end
     end
 
     describe "#data" do
@@ -51,17 +58,17 @@ describe Hallon::Image do
       it "should compare ids (but only if other is an Image)" do
         other = double
         other.should_receive(:is_a?).with(Hallon::Image).and_return(true)
-        other.should_receive(:id).with(true).and_return(image.id(true))
+        other.should_receive(:raw_id).and_return(image.raw_id)
 
-        image.should === other
-        image.should_not === double
+        image.should eq other
+        image.should_not eq double
       end
 
       it "should not call #id if other is not an image" do
-        o = Object.new
-        o.should_not_receive(:id)
+        other = double
+        other.should_not_receive(:raw_id)
 
-        image.should_not eq o
+        image.should_not eq other
       end
     end
   end

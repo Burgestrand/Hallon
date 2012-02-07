@@ -42,18 +42,18 @@ module Hallon
       Spotify.artist_is_loaded(pointer)
     end
 
-    # Retrieve artist portrait as an {Image} or a {Link}.
-    #
-    # @param [Boolean] as_image true if you want it as an Image
-    # @return [Image, Link, nil] artist portrait, the link to it, or nil.
-    def portrait(as_image = true)
-      if as_image
-        portrait = Spotify.artist_portrait(pointer)
-        Image.from(portrait)
-      else
-        portrait = Spotify.link_create_from_artist_portrait!(pointer)
-        Link.from(portrait)
-      end
+    # @see portrait_link
+    # @return [Image, nil] artist portrait as an Image.
+    def portrait
+      portrait = Spotify.artist_portrait(pointer)
+      Image.from(portrait)
+    end
+
+    # @see portrait
+    # @return [Link, nil] artist portrait as a Link.
+    def portrait_link
+      portrait = Spotify.link_create_from_artist_portrait!(pointer)
+      Link.from(portrait)
     end
 
     # Browse the Artist, giving you the ability to explore its’

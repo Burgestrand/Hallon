@@ -54,11 +54,16 @@ module Hallon
       Spotify.image_format(pointer)
     end
 
-    # @param [Boolean] raw true if you want the image id as a hexadecimal string
-    # @return [String] image ID as a string.
-    def id(raw = false)
-      id = Spotify.image_image_id(pointer)
-      raw ? id : to_hex(id)
+    # @see raw_id
+    # @return [String] image ID as a sequence of hexadecimal digits.
+    def id
+      to_hex(raw_id)
+    end
+
+    # @see id
+    # @return [String] image ID as a binary string.
+    def raw_id
+      Spotify.image_image_id(pointer)
     end
 
     # @return [String] raw image data as a binary encoded string.
@@ -75,19 +80,21 @@ module Hallon
     # @return [Boolean]
     def ==(other)
       super or if other.is_a?(Image)
-        id(true) == other.id(true)
+        raw_id == other.raw_id
       end
     end
 
     protected
-      # @param [String]
-      # @return [String]
+      # @see to_id
+      # @param [String] id an image id as a binary string
+      # @return [String] image id as a hexadecimal string
       def to_hex(id)
         id.unpack('H40')[0]
       end
 
-      # @param [String]
-      # @return [String]
+      # @see to_hex
+      # @param [String] hex an image id as a hexadecimal string
+      # @return [String] image id as a binary string
       def to_id(hex)
         [hex].pack('H40')
       end

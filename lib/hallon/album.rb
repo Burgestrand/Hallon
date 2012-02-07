@@ -77,18 +77,18 @@ module Hallon
       Artist.from(artist)
     end
 
-    # Retrieves album cover art as an {Image} or a {Link}.
-    #
-    # @param [Boolean] as_image true if you want it as an {Image}.
-    # @return [Image, Link, nil] album cover, the link to it, or nil.
-    def cover(as_image = true)
-      if as_image
-        cover = Spotify.album_cover(pointer)
-        Image.from(cover)
-      else
-        cover = Spotify.link_create_from_album_cover!(pointer)
-        Link.from(cover)
-      end
+    # @see cover_link
+    # @return [Image, nil] album cover as an Image.
+    def cover
+      cover = Spotify.album_cover(pointer)
+      Image.from(cover)
+    end
+
+    # @see cover
+    # @return [Link, nil] album cover as a spotify URI.
+    def cover_link
+      cover = Spotify.link_create_from_album_cover!(pointer)
+      Link.from(cover)
     end
 
     # Browse the Album by creating an {AlbumBrowse} instance from it.

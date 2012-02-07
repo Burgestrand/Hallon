@@ -28,21 +28,25 @@ describe Hallon::Album do
     end
   end
 
-  describe "cover" do
+  describe "#cover" do
     it "should be nil if there is no image" do
       Spotify.should_receive(:album_cover).and_return(null_pointer)
       album.cover.should be_nil
-
-      Spotify.should_receive(:link_create_from_album_cover).and_return(null_pointer)
-      album.cover(false).should be_nil
     end
 
     it "should be an image if it exists" do
-      mock_session { album.cover.id.should eq mock_image_hex }
+      stub_session { album.cover.should eq Hallon::Image.new(mock_image_id) }
+    end
+  end
+
+  describe "#cover_link" do
+    it "should be nil if there is no image" do
+      Spotify.should_receive(:link_create_from_album_cover).and_return(null_pointer)
+      album.cover_link.should be_nil
     end
 
-    it "should be a link if requested" do
-      album.cover(false).to_str.should eq "spotify:image:3ad93423add99766e02d563605c6e76ed2b0e450"
+    it "should be a link if it exists" do
+      album.cover_link.should eq Hallon::Link.new("spotify:image:3ad93423add99766e02d563605c6e76ed2b0e450")
     end
   end
 

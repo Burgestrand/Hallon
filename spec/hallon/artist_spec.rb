@@ -29,20 +29,24 @@ describe Hallon::Artist do
   describe "#portrait" do
     let(:link) { Hallon::Link.new(mock_image_uri) }
 
-    specify "as an image" do
-      mock_session(2) { artist.portrait.should eq Hallon::Image.new(mock_image_id) }
-    end
-
-    specify "as a link" do
-      artist.portrait(false).should eq Hallon::Link.new(mock_image_uri)
-    end
-
     it "should be nil if an image is not available" do
       Spotify.should_receive(:artist_portrait).and_return(null_pointer)
       artist.portrait.should be_nil
+    end
 
+    it "should be an image if it exists" do
+      stub_session { artist.portrait.should eq Hallon::Image.new(mock_image_id) }
+    end
+  end
+
+  describe "#portrait_link" do
+    it "should be nil if an image is not available" do
       Spotify.should_receive(:link_create_from_artist_portrait).and_return(null_pointer)
-      artist.portrait(false).should be_nil
+      artist.portrait_link.should be_nil
+    end
+
+    it "should be a link if it exists" do
+      artist.portrait_link.should eq Hallon::Link.new(mock_image_uri)
     end
   end
 end
