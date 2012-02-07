@@ -92,8 +92,8 @@ module Hallon
     def initialize(appkey, options = {}, &block)
       @options = {
         :user_agent => "Hallon",
-        :settings_path => "tmp",
-        :cache_path => "",
+        :settings_path => "tmp/hallon/",
+        :cache_path => "tmp/hallon/",
         :load_playlists => true,
         :compress_playlists => true,
         :cache_playlist_metadata => true,
