@@ -12,6 +12,20 @@ describe Hallon::Playlist do
     Hallon::Playlist.new(mock_playlist)
   end
 
+  describe ".invalid_name?" do
+    it "should return false if the name is valid" do
+      Hallon::Playlist.invalid_name?("Moo").should be_false
+    end
+
+    it "should return an error message when the name is blank" do
+      Hallon::Playlist.invalid_name?(" ").should match "blank"
+    end
+
+    it "should return an error message when the name is too long" do
+      Hallon::Playlist.invalid_name?("Moo" * 256).should match "bytes"
+    end
+  end
+
   it { should be_loaded }
   it { should be_collaborative }
   it { should_not be_pending }
@@ -135,7 +149,7 @@ describe Hallon::Playlist do
     end
 
     it "should fail given an empty name" do
-      expect { playlist.name = "" }.to raise_error(Hallon::Error)
+      expect { playlist.name = "" }.to raise_error(ArgumentError)
     end
 
     it "should fail given a name of only spaces" do

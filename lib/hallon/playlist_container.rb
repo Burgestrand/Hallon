@@ -194,7 +194,11 @@ module Hallon
     # @return [Playlist, nil] the added playlist, or nil if the operation failed
     def add(name, force_create = false)
       playlist = if force_create or not Link.valid?(name) and name.is_a?(String)
-        Spotify.playlistcontainer_add_new_playlist!(pointer, name.to_s)
+        unless error = Playlist.invalid_name?(name)
+          Spotify.playlistcontainer_add_new_playlist!(pointer, name)
+        else
+          raise ArgumentError, error
+        end
       else
         link = Link.new(name)
         Spotify.playlistcontainer_add_playlist!(pointer, link.pointer)

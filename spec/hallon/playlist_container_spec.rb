@@ -18,6 +18,10 @@ describe Hallon::PlaylistContainer do
           container.contents[-1].should eq playlist
         end.to change{ container.size }.by(1)
       end
+
+      it "should raise an error if the name is invalid" do
+        expect { container.add(" ") }.to raise_error(ArgumentError)
+      end
     end
 
     context "given a string that’s a valid spotify playlist uri" do

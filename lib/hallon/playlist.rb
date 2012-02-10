@@ -104,6 +104,24 @@ module Hallon
 
     to_link :from_playlist
 
+    # Given a string, returns `false` if the string is a valid spotify playlist name.
+    # If it’s an invalid spotify playlist name, a string describing the fault is returned.
+    #
+    # @see http://developer.spotify.com/en/libspotify/docs/group__playlist.html#ga840b82b1074a7ca1c9eacd351bed24c2
+    # @param [String] name
+    # @return [String, false] description of why the name is invalid, or false if it’s valid
+    def self.invalid_name?(name)
+      unless name.bytesize < 256
+        return "name must be shorter than 256 bytes"
+      end
+
+      unless name =~ /[^[:space:]]/
+        return "name must not be blank"
+      end
+
+      return false # no error
+    end
+
     # Construct a new Playlist, given a pointer.
     #
     # @param [String, Link, FFI::Pointer] link
@@ -185,17 +203,11 @@ module Hallon
     # @param [#to_s] name new name for playlist
     # @raise [Error] if name could not be changed
     def name=(name)
-      name = name.to_s.encode('UTF-8')
-
-      unless name.bytesize < 256
-        raise ArgumentError, "name must be shorter than 256 bytes"
+      unless error = Playlist.invalid_name?(name)
+        Error.maybe_raise(Spotify.playlist_rename(pointer, name))
+      else
+        raise ArgumentError, error
       end
-
-      unless name =~ /[^ ]/u
-        raise ArgumentError, "name must not consist of only spaces"
-      end unless name.empty?
-
-      Error.maybe_raise(Spotify.playlist_rename(pointer, name))
     end
 
     # @return [User, nil]
