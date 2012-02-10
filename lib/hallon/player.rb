@@ -48,7 +48,7 @@ module Hallon
       # data to the driver or not (see #status=)
       @status_c = @queue.new_cond
       # set initial status (we assume stopped)
-      self.status = @status = :stopped
+      self.status = :stopped
 
       # this thread feeds the audio driver with data, but
       # if we are not playing it’ll wait until we are
@@ -125,9 +125,9 @@ module Hallon
     #
     # @param [Symbol] status one of :playing, :paused, :stopped
     # @raise [ArgumentError] if given an invalid status
-    def status=(status)
+    def status=(new_status)
       @queue.synchronize do
-        old_status, @status = @status, status
+        old_status, @status = status, new_status
 
         case status
         when :playing
