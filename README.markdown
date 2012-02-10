@@ -1,7 +1,7 @@
 [What is Hallon?][] [![Build Status][]](http://travis-ci.org/Burgestrand/Hallon)
 ===================
 
-Hallon — which is Swedish for “[Raspberry][]” — is a ruby gem for interacting with the official Spotify C API. It is written on top of [Spotify for Ruby][], with the goal of making the experience of using `libspotify` as enjoyable as it can be.
+Hallon — which is Swedish for “[Raspberry][]” — is a ruby gem for interacting with the official Spotify C API. It is written on top of [Spotify for Ruby][], with the goal of making the experience of using [libspotify][] as enjoyable as it can be.
 
 Hallon would not have been possible if not for these people:
 
@@ -68,10 +68,10 @@ Finally, here are some important notes
 The API is unstable, my code is likely unstable. Everything should be considered unstable!
 
 ### Hallon only supports one session per process
-You can only keep one session with Spotify alive at a time within the same process, due to a limitation of `libspotify`.
+You can only keep one session with Spotify alive at a time within the same process, due to a limitation of libspotify.
 
 ### You still have to worry about threads
-I have been doing my best at hiding the complexity in `libspotify`, but it’s still a work in progress. Despite my efforts, you’ll need to be familiar with concurrent programming to use Hallon properly.
+I have been doing my best at hiding the complexity in libspotify, but it’s still a work in progress. Despite my efforts, you’ll need to be familiar with concurrent programming to use Hallon properly.
 
 ### When forking, you need to be extra careful
 If you fork, you need to instantiate the session within the process you plan to use Hallon in. You want to use Hallon in the parent? Create the session in the parent. You want to use it in the child? Create the session in the child! This is a limitation of libspotify itself.
