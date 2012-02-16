@@ -37,7 +37,7 @@ As far as usage of the library goes, what applies to libspotify also applies to 
 On failed libspotify API calls, a [Hallon::Error][] will be raised with a message explaining the error. Methods that might fail in this way (e.g. [Session.initialize][]) should have this clearly stated in its’ documentation.
 
 ### Enumerators
-Some methods (e.g. [Track#artists][]) return a [Hallon::Enumerator][] object. Enumerators are lazily loaded, which means that calling `track.artists` won’t create any artist objects until you try to retrieve one of the records out of the returned enumerator. This means that if you want to load all artists for a track you can retrieve them all then load them in bulk.
+Some methods (e.g. [Track#artists][]) return a [Hallon::Enumerator][] object. Enumerators are lazily loaded, which means that calling `track.artists` won’t create any artist objects until you try to retrieve one of the records out of the returned enumerator. If you want to load all artists for a track you can retrieve them all then load them in bulk.
 
 ```ruby
 artists = track.artists.to_a # force creation of all artist objects
