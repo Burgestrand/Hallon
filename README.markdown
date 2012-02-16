@@ -27,6 +27,30 @@ If you want to play audio you’ll need to install an audio driver. As of curren
 
 For more information about audio support in Hallon, see the section "Audio support" below.
 
+Hallon and Spotify objects
+--------------------------
+All objects from libspotify have a counterpart in Hallon, and just like in libspotify the objects are populated with information as it becomes available. This means you’ll need to call [Session#process_events][] occasionally to load instantiated objects with data.
+
+As far as usage of the library goes, what applies to libspotify also applies to Hallon, so I would suggest you also read [the libspotify library overview](http://developer.spotify.com/en/libspotify/docs/) and related documentation.
+
+### Errors
+On failed libspotify API calls, a [Hallon::Error][] will be raised with a message explaining the error. Methods that might fail in this way (e.g. [Session.initialize][]) should have this clearly stated in its’ documentation.
+
+### Enumerators
+Some methods (e.g. [Track#artists][]) return a [Hallon::Enumerator][] object. Enumerators are lazily loaded, which means that calling `track.artists` won’t create any artist objects until you try to retrieve one of the records out of the returned enumerator. This means that if you want to load all artists for a track you can retrieve them all then load them in bulk.
+
+```ruby
+artists = track.artists.to_a # force creation of all artist objects
+session.process_events until artists.all?(&:loaded?)
+```
+
+An additional note is that the size of an enumerator may change, and its’ contents may move as libspotify updates its’ information. However, `#each` and `#[]` will never attempt to retrieve items outside of the enumerator.
+
+For the API reference and existing subclasses, see [Hallon::Enumerator][].
+
+### Garbage collection
+Hallon makes use of Ruby’s own garbage collection to automatically release libspotify objects when they are no longer in use. There is no need to retain or release the spotify objects manually.
+
 Audio support
 -------------
 Hallon supports streaming audio from Spotify via [Hallon::Player][]. When you create the player you give it your current session and an audio driver, which the player will then use for audio playback.
@@ -94,5 +118,11 @@ Hallon is licensed under a 2-clause (Simplified) BSD license. More information c
 [What is Hallon?]:  http://burgestrand.se/articles/hallon-delicious-ruby-bindings-to-libspotify.html
 [Build Status]:     https://secure.travis-ci.org/Burgestrand/Hallon.png
 
+[Hallon::Enumerator]:         http://rubydoc.info/github/Burgestrand/Hallon/Hallon/Enumerator
+[Hallon::Error]:              http://rubydoc.info/github/Burgestrand/Hallon/Hallon/Error
 [Hallon::Player]:             http://rubydoc.info/github/Burgestrand/Hallon/Hallon/Player
 [Hallon::ExampleAudioDriver]: http://rubydoc.info/github/Burgestrand/Hallon/Hallon/ExampleAudioDriver
+
+[Session#process_events]:     http://rubydoc.info/github/Burgestrand/Hallon/Hallon/Session:process_events
+[Session.initialize]:         http://rubydoc.info/github/Burgestrand/Hallon/Hallon/Session.initialize
+[Track#artists]:              http://rubydoc.info/github/Burgestrand/Hallon/Hallon/Track:artists
