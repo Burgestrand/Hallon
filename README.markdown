@@ -44,7 +44,7 @@ artists = track.artists.to_a # force creation of all artist objects
 session.process_events until artists.all?(&:loaded?)
 ```
 
-An additional note is that the size of an enumerator may change, and its contents may move as libspotify updates its information. However, `#each` and `#[]` will never attempt to retrieve items outside of the enumerator.
+An additional note is that the size of an enumerator may change, and its contents may move as libspotify updates its information.
 
 For the API reference and existing subclasses, see [Hallon::Enumerator][].
 
