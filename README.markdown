@@ -29,12 +29,40 @@ For more information about audio support in Hallon, see the section "Audio suppo
 
 Hallon and Spotify objects
 --------------------------
-All objects from libspotify have a counterpart in Hallon, and just like in libspotify the objects are populated with information as it becomes available. This means you’ll need to call [Session#process_events][] occasionally to load instantiated objects with data.
+All objects from libspotify have a counterpart in Hallon, and just like in libspotify the objects are populated with information as it becomes available. All objects that behave in this way respond to `#loaded?`, which’ll return true if the object has been populated with data.
+
+To load data you use [Session#process_events][] while polling on the objects you want loaded with `#loaded?`.
 
 As far as usage of the library goes, what applies to libspotify also applies to Hallon, so I would suggest you also read [the libspotify library overview](http://developer.spotify.com/en/libspotify/docs/) and related documentation.
 
+### Callbacks
+Some objects may fire callbacks, most of the time as a direct result of [Session#process_events][]. In libspotify the callbacks are only fired once for every object, but in Hallon you may have more than one object attached to the same libspotify object. As a result, callbacks are handled individually for each Hallon object, and in the case of a required return value the last handler is what decides the final return value.
+
+```ruby
+imageA = Hallon::Image.new("spotify:image:548957670a3e9950e87ce61dc0c188debd22b0cb")
+imageB = Hallon::Image.new("spotify:image:548957670a3e9950e87ce61dc0c188debd22b0cb")
+
+imageA.on(:load) do
+  puts "imageA loaded!"
+end
+
+imageB.on(:load) do
+  puts "imageB loaded!"
+end
+
+session.process_events until imageA.loaded? and imageB.loaded?
+
+imageA == imageB # => true
+imageA.pointer == imageB.pointer # => true
+imageA.object_id == imageB.object_id # => false
+```
+
+A list of all objects that can fire callbacks can be found on the [API page for Hallon::Observable][].
+
 ### Errors
 On failed libspotify API calls, a [Hallon::Error][] will be raised with a message explaining the error. Methods that might fail in this way (e.g. [Session.initialize][]) should have this clearly stated in its’ documentation.
+
+For a full list of possible errors, see [the official libspotify documentation on error handling](http://developer.spotify.com/en/libspotify/docs/group__error.html).
 
 ### Enumerators
 Some methods (e.g. [Track#artists][]) return a [Hallon::Enumerator][] object. Enumerators are lazily loaded, which means that calling `track.artists` won’t create any artist objects until you try to retrieve one of the records out of the returned enumerator. If you want to load all artists for a track you can retrieve them all then load them in bulk.
@@ -117,6 +145,8 @@ Hallon is licensed under a 2-clause (Simplified) BSD license. More information c
 [Greenstripes]:     http://github.com/sarnesjo/greenstripes
 [What is Hallon?]:  http://burgestrand.se/articles/hallon-delicious-ruby-bindings-to-libspotify.html
 [Build Status]:     https://secure.travis-ci.org/Burgestrand/Hallon.png
+
+[API page for Hallon::Observable]: http://rubydoc.info/github/Burgestrand/Hallon/master/Hallon/Observable
 
 [Hallon::Enumerator]:         http://rubydoc.info/github/Burgestrand/Hallon/Hallon/Enumerator
 [Hallon::Error]:              http://rubydoc.info/github/Burgestrand/Hallon/Hallon/Error
