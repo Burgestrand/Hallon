@@ -3,12 +3,25 @@ Hallon’s Changelog
 
 [HEAD][]
 ------------------
+This release brings a lot more meat added to the README, in addition to the following:
 
 __Added__
+- Toplist#type [0ea8bac]
+- Playlist.invalid_name? [a516cf0]
+- User::Post#loaded? [373fd7]
+- User::Post#message and User::Post#recipient_name [e31ff68]
+- User::Post#recipient [4c6b71f]
 
 __Changed__
+- User::Post.new is now private, use User::Post.create instead [00ee6db]
+- Toplist#artists/albums/tracks are now just Toplist#results [0ea8bac]
+- Image#id(param) split up into Image#id and Image#raw_id [1bbd7def]
+- Album#cover(param) split up into Album#cover and Album#cover_link [1bbd7def]
+- Artist#portrait(param) split up into Artist#portrait and Artist#portrait_link [1bbd7def]
+- Default cache_path and settings_path for Session#initialize are now both "tmp/hallon" [15573a7]
 
 __Fixed__
+- Observable#subscribe_for_callbacks subscribing to null pointers [f9cf72d]
 
 [v0.13.0][]
 ------------------
