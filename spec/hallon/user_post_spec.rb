@@ -48,6 +48,12 @@ describe Hallon::User::Post do
     end
   end
 
+  describe "#recipient" do
+    it "should return the recipient" do
+      post.recipient.should eq Hallon::User.new("burgestrand")
+    end
+  end
+
   describe "#recipient_name" do
     it "should return the username of the post recipient" do
       post.recipient_name.should eq "burgestrand"

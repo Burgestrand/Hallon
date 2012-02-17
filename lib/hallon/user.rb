@@ -47,6 +47,11 @@ module Hallon
         end
       end
 
+      # @return [User] the user named {#recipient_name}.
+      def recipient
+        User.new(recipient_name)
+      end
+
       # @return [Boolean] true if the post has been successfully sent.
       def loaded?
         status == :ok
