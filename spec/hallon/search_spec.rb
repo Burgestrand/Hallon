@@ -1,4 +1,6 @@
 describe Hallon::Search do
+  it { should be_a Hallon::Loadable }
+
   subject { search }
   let(:search) do
     Spotify.registry_add 'spotify:search:my query', mock_search

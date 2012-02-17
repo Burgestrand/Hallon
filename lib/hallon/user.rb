@@ -7,13 +7,12 @@ module Hallon
   #
   # @see http://developer.spotify.com/en/libspotify/docs/group__user.html
   class User < Base
-    extend Linkable
-
     # A Post is created upon sending tracks (with an optional message) to a user.
     #
     # @see http://developer.spotify.com/en/libspotify/docs/group__inbox.html
     class Post < Base
       extend Observable::Post
+      include Loadable
 
       # Use {.create} instead!
       private_class_method :new
@@ -63,6 +62,9 @@ module Hallon
         Spotify.inbox_error(pointer)
       end
     end
+
+    extend Linkable
+    include Loadable
 
     from_link :profile do |link|
       Spotify.link_as_user!(link)

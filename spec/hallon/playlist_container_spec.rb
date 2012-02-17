@@ -1,5 +1,7 @@
 # coding: utf-8
 describe Hallon::PlaylistContainer do
+  it { should be_a Hallon::Loadable }
+
   let(:container) { Hallon::PlaylistContainer.new(mock_container) }
 
   subject { container }

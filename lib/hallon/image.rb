@@ -13,6 +13,7 @@ module Hallon
     to_link :from_image
 
     extend Observable::Image
+    include Loadable
 
     # Create a new instance of an Image.
     #

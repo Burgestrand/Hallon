@@ -5,6 +5,7 @@ require 'hallon/ext/ffi'
 
 require 'hallon/observable'
 require 'hallon/linkable'
+require 'hallon/loadable'
 
 require 'hallon/version'
 require 'hallon/error'
@@ -64,4 +65,23 @@ module Hallon
     |image:[a-fA-F0-9]{40}
     ))
   /x
+
+  # Thrown by {Loadable#load} on failure.
+  TimeoutError = Class.new(StandardError)
+
+  class << self
+    # @return [Numeric] default load timeout in seconds, used in {Loadable#load}.
+    attr_reader :load_timeout
+
+    # @param [Numeric] sets the default load_timeout in seconds for {Loadable#load}.
+    def load_timeout=(new_timeout)
+      if new_timeout < 0
+        raise ArgumentError, "timeout cannot be negative"
+      end
+
+      @load_timeout = new_timeout
+    end
+  end
+
+  self.load_timeout = 5 # seconds
 end

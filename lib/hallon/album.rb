@@ -24,6 +24,7 @@ module Hallon
     end
 
     extend Linkable
+    include Loadable
 
     to_link   :from_album
 

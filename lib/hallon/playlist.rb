@@ -94,6 +94,7 @@ module Hallon
     end
 
     extend Linkable
+    include Loadable
 
     # CAN HAZ CALLBAKZ
     extend Observable::Playlist

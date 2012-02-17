@@ -56,6 +56,7 @@ module Hallon
     end
 
     extend Observable::ArtistBrowse
+    include Loadable
 
     # @return [Array<Symbol>] artist browsing types for use in {#initialize}
     def self.types

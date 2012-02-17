@@ -1,5 +1,7 @@
 # coding: utf-8
 describe Hallon::User do
+  it { described_class.should include Hallon::Loadable }
+
   it_should_behave_like "a Linkable object" do
     let(:spotify_uri) { "spotify:user:burgestrand" }
     let(:custom_object) { "burgestrand" }

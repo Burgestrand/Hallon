@@ -37,6 +37,7 @@ module Hallon
     end
 
     extend Observable::Toplist
+    include Loadable
 
     # @return [Symbol] type of toplist request (one of :artists, :albums or :tracks)
     attr_reader :type

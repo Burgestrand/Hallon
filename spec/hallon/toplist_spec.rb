@@ -1,4 +1,6 @@
 describe Hallon::Toplist do
+  it { should be_a Hallon::Loadable }
+
   let(:toplist) do
     Spotify.registry_add 'spotify:toplist:artists:everywhere', mock_toplistbrowse
     mock_session { Hallon::Toplist.new(:artists) }

@@ -1,6 +1,8 @@
 # coding: utf-8
 
 describe Hallon::User::Post do
+  it { described_class.should include Hallon::Loadable }
+
   let(:tracks) do
     [].tap do |tracks|
       tracks << Hallon::Track.new(mock_track)

@@ -51,6 +51,7 @@ module Hallon
     end
 
     extend Observable::Search
+    include Loadable
 
     # @return [Array<Symbol>] a list of radio genres available for search
     def self.genres

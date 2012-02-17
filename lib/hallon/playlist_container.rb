@@ -134,6 +134,7 @@ module Hallon
     end
 
     extend Observable::PlaylistContainer
+    include Loadable
 
     # Wrap an existing PlaylistContainer pointer in an object.
     #

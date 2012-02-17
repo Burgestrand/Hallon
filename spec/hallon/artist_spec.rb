@@ -1,5 +1,7 @@
 # coding: utf-8
 describe Hallon::Artist do
+  it { should be_a Hallon::Loadable }
+
   it_should_behave_like "a Linkable object" do
     let(:spotify_uri) { "spotify:artist:3bftcFwl4vqRNNORRsqm1G" }
   end

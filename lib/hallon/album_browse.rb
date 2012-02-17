@@ -26,6 +26,7 @@ module Hallon
     end
 
     extend Observable::AlbumBrowse
+    include Loadable
 
     # Creates an AlbumBrowse instance from an Album or an Album pointer.
     #

@@ -1,5 +1,7 @@
 # coding: utf-8
 describe Hallon::ArtistBrowse do
+  it { should be_a Hallon::Loadable }
+
   describe ".new" do
     it "should raise an error if the browse request failed" do
       Spotify.should_receive(:artistbrowse_create).and_return(null_pointer)

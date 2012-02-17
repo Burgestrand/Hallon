@@ -2,6 +2,8 @@
 require 'ostruct'
 
 describe Hallon::Image do
+  it { described_class.should include Hallon::Loadable }
+
   it_should_behave_like "a Linkable object" do
     let(:spotify_uri) { "spotify:image:#{mock_image_hex}" }
     let(:custom_object) { mock_image_hex }

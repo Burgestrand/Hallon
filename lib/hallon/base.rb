@@ -1,4 +1,6 @@
 # coding: utf-8
+require 'timeout'
+
 module Hallon
   # All objects in Hallon are mere representations of Spotify objects.
   # Hallon::Base covers basic functionality shared by all of these.

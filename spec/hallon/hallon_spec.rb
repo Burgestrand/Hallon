@@ -18,4 +18,16 @@ describe Hallon do
       it { should match uri }
     end
   end
+
+  describe "#load_timeout" do
+    it "should raise an error given a negative timeout" do
+      expect { Hallon.load_timeout = -1 }.to raise_error(ArgumentError)
+    end
+
+    it "should allow setting and retrieving the value" do
+      Hallon.load_timeout.should eq 5
+      Hallon.load_timeout = 0.2
+      Hallon.load_timeout.should eq 0.2
+    end
+  end
 end

@@ -12,6 +12,7 @@ module Hallon
   # @see http://developer.spotify.com/en/libspotify/docs/group__artist.html
   class Artist < Base
     extend Linkable
+    include Loadable
 
     from_link :as_artist
     to_link   :from_artist
