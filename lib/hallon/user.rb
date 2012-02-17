@@ -39,6 +39,11 @@ module Hallon
         end
       end
 
+      # @return [Boolean] true if the post has been successfully sent.
+      def loaded?
+        status == :ok
+      end
+
       # @see Error.explain
       # @return [Symbol] error status of inbox post
       def status
