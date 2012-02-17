@@ -41,4 +41,16 @@ describe Hallon::User::Post do
       post.should be_loaded
     end
   end
+
+  describe "#message" do
+    it "should return the message sent with the post" do
+      post.message.should eq "These be some tight tracks, yo!"
+    end
+  end
+
+  describe "#recipient_name" do
+    it "should return the username of the post recipient" do
+      post.recipient_name.should eq "burgestrand"
+    end
+  end
 end

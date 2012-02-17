@@ -30,23 +30,17 @@ describe Hallon::User do
       let(:post) { mock_session { user.post(tracks) } }
       let(:tracks) { instantiate(Hallon::Track, mock_track, mock_track_two) }
 
-      it "should have an error status" do
-        post.status.should eq :ok
-      end
-
       it "should post to the correct user" do
-        Spotify.should_receive(:inbox_post_tracks).with(any_args, user.name, any_args, any_args, any_args, any_args, any_args).and_return(null_pointer)
-        mock_session { user.post(tracks) }
+        post.recipient_name.should eq user.name
       end
 
-      it "should use given message if available" do
-        Spotify.should_receive(:inbox_post_tracks).with(any_args, any_args, any_args, any_args, "Hello there", any_args, any_args).and_return(null_pointer)
-        mock_session { user.post("Hello there", tracks) }
+      it "should post with the given message" do
+        post.message.should be_nil
+        stub_session { user.post("Hey ho!", tracks) }.message.should eq "Hey ho!"
       end
 
       it "should return nil on failure" do
-        Spotify.should_receive(:inbox_post_tracks).and_return(null_pointer)
-        mock_session { user.post([]).should be_nil }
+        stub_session { user.post([]).should be_nil }
       end
     end
 
