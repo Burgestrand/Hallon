@@ -15,13 +15,27 @@ module Hallon
     class Post < Base
       extend Observable::Post
 
-      # @param [Spotify::Pointer<inbox>]
-      def initialize(username, message, tracks, &block)
+      # Use {.create} instead!
+      private_class_method :new
+
+      # @param (see #initialize)
+      # @return [Post, nil] post, or nil if posting failed.
+      def self.create(recipient_name, message, tracks)
+        post = new(recipient_name, message, tracks)
+        post unless post.pointer.null?
+      end
+
+      # Send a list of tracks to another users’ inbox.
+      #
+      # @param [String] recipient_name username of person to send post to
+      # @param [String, nil] message
+      # @param [Array<Track>] tracks
+      def initialize(recipient_name, message, tracks)
         ary = FFI::MemoryPointer.new(:pointer, tracks.length)
         ary.write_array_of_pointer tracks.map(&:pointer)
 
         subscribe_for_callbacks do |callback|
-          @pointer = Spotify.inbox_post_tracks!(session.pointer, username, ary, tracks.length, message, callback, nil)
+          @pointer = Spotify.inbox_post_tracks!(session.pointer, recipient_name, ary, tracks.length, message, callback, nil)
         end
       end
 
@@ -95,11 +109,9 @@ module Hallon
     # @overload post(tracks)
     #   @param [Array<Track>] tracks
     #
-    # @return [Post, nil]
+    # @return (see Post.create)
     def post(message = nil, tracks)
-      message &&= message.encode('UTF-8')
-      post = Post.new(name, message, tracks)
-      post unless post.pointer.null?
+      Post.create(name, message, tracks)
     end
   end
 end
