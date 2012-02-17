@@ -138,7 +138,7 @@ module Hallon
     # @return whatever the block returns
     def subscribe_for_callbacks
       yield(self.class.callbacks).tap do
-        self.class.subscribe(self, pointer)
+        self.class.subscribe(self, pointer) unless pointer.null?
       end
     end
 

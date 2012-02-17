@@ -136,6 +136,12 @@ describe Hallon::Observable do
       expect { subject.send(:subscribe_for_callbacks) {} }.to raise_error(ArgumentError)
     end
 
+    it "should do nothing if the result is a null pointer" do
+      klass.should_not_receive(:subscribe)
+      klass.any_instance.stub(:pointer).and_return(FFI::Pointer::NULL)
+      subject.send(:subscribe_for_callbacks) {}
+    end
+
     it "should always yield the *same* object" do
       a = klass.new
       b = klass.new
