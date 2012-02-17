@@ -4,7 +4,7 @@ require 'time'
 describe Hallon::Playlist do
   it_should_behave_like "a Linkable object" do
     let(:spotify_uri) { "spotify:user:burgestrand:playlist:07AX9IY9Hqmj1RqltcG0fi" }
-    let(:described_class) { Hallon::Playlist.tap { |o| stub_session(o.any_instance) } }
+    let(:described_class) { stub_session(Hallon::Playlist) }
   end
 
   subject { playlist }
