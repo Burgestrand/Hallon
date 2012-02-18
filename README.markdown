@@ -31,7 +31,7 @@ Hallon and Spotify objects
 --------------------------
 All objects from libspotify have a counterpart in Hallon, and just like in libspotify the objects are populated with information as it becomes available. All objects that behave in this way respond to `#loaded?`, which’ll return true if the object has been populated with data.
 
-To load data you use [Session#process_events][] while polling on the objects you want loaded with `#loaded?`.
+To ease loading objects, all loadable objects also respond to [#load][]. This method simply polls on the target object, repeatedly calling [Session#process_events][] until either a time limit is reached or the object has finished loading.
 
 As far as usage of the library goes, what applies to libspotify also applies to Hallon, so I would suggest you also read [the libspotify library overview](http://developer.spotify.com/en/libspotify/docs/) and related documentation.
 
@@ -50,7 +50,7 @@ imageB.on(:load) do
   puts "imageB loaded!"
 end
 
-session.process_events until imageA.loaded? and imageB.loaded?
+imageA.load and imageB.load
 
 imageA == imageB # => true
 imageA.pointer == imageB.pointer # => true
@@ -69,7 +69,7 @@ Some methods (e.g. [Track#artists][]) return a [Hallon::Enumerator][] object. En
 
 ```ruby
 artists = track.artists.to_a # force creation of all artist objects
-session.process_events until artists.all?(&:loaded?)
+artists.map(&:load)
 ```
 
 An additional note is that the size of an enumerator may change, and its contents may move as libspotify updates its information.
@@ -156,3 +156,4 @@ Hallon is licensed under a 2-clause (Simplified) BSD license. More information c
 [Session#process_events]:     http://rubydoc.info/github/Burgestrand/Hallon/Hallon/Session:process_events
 [Session.initialize]:         http://rubydoc.info/github/Burgestrand/Hallon/Hallon/Session.initialize
 [Track#artists]:              http://rubydoc.info/github/Burgestrand/Hallon/Hallon/Track:artists
+[#load]:                      http://rubydoc.info/github/Burgestrand/Hallon/Hallon/Loadable:load
