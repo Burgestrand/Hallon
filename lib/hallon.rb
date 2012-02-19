@@ -67,7 +67,7 @@ module Hallon
   /x
 
   # Thrown by {Loadable#load} on failure.
-  TimeoutError = Class.new(StandardError)
+  TimeoutError = Class.new(Hallon::Error)
 
   class << self
     # @return [Numeric] default load timeout in seconds, used in {Loadable#load}.
