@@ -222,7 +222,9 @@ module Hallon
       Spotify.playlist_get_description(pointer)
     end
 
-    # @return [Image, nil]
+    # @note this is not the mosaic image you see in the client. Spotify allows custom images
+    #       on playlists for promo campaigns etc.
+    # @return [Image, nil] custom image for the playlist, if one exists
     def image
       buffer = FFI::Buffer.alloc_out(20)
       if Spotify.playlist_get_image(pointer, buffer)
