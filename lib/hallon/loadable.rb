@@ -7,7 +7,12 @@ module Hallon
     # @raise [Hallon::TimeoutError] after `timeout` seconds if the object does not load.
     def load(timeout = Hallon.load_timeout)
       Timeout.timeout(timeout, Hallon::TimeoutError) do
-        tap { session.process_events until loaded? }
+        until loaded?
+          session.process_events
+          sleep(0.001)
+        end
+
+        self
       end
     end
   end
