@@ -33,6 +33,11 @@ All objects from libspotify have a counterpart in Hallon, and just like in libsp
 
 To ease loading objects, all loadable objects also respond to [#load][]. This method simply polls on the target object, repeatedly calling [Session#process_events][] until either a time limit is reached or the object has finished loading.
 
+```ruby
+user = Hallon::User.new("spotify:user:burgestrand").load
+puts user.loaded? # => true
+```
+
 As far as usage of the library goes, what applies to libspotify also applies to Hallon, so I would suggest you also read [the libspotify library overview](http://developer.spotify.com/en/libspotify/docs/) and related documentation.
 
 ### Callbacks
@@ -42,6 +47,9 @@ Some objects may fire callbacks, most of the time as a direct result of [Session
 imageA = Hallon::Image.new("spotify:image:548957670a3e9950e87ce61dc0c188debd22b0cb")
 imageB = Hallon::Image.new("spotify:image:548957670a3e9950e87ce61dc0c188debd22b0cb")
 
+imageA.pointer == imageB.pointer # => true, same spotify pointer
+imageA.object_id == imageB.object_id # => false, different objects
+
 imageA.on(:load) do
   puts "imageA loaded!"
 end
@@ -50,11 +58,8 @@ imageB.on(:load) do
   puts "imageB loaded!"
 end
 
-imageA.load and imageB.load
-
-imageA == imageB # => true
-imageA.pointer == imageB.pointer # => true
-imageA.object_id == imageB.object_id # => false
+imageA.load # might load imageB as well, we don’t know
+imageB.load # but the callbacks will both fire on load
 ```
 
 A list of all objects that can fire callbacks can be found on the [API page for Hallon::Observable][].
@@ -65,10 +70,10 @@ On failed libspotify API calls, a [Hallon::Error][] will be raised with a messag
 For a full list of possible errors, see [the official libspotify documentation on error handling](http://developer.spotify.com/en/libspotify/docs/group__error.html).
 
 ### Enumerators
-Some methods (e.g. [Track#artists][]) return a [Hallon::Enumerator][] object. Enumerators are lazily loaded, which means that calling `track.artists` won’t create any artist objects until you try to retrieve one of the records out of the returned enumerator. If you want to load all artists for a track you can retrieve them all then load them in bulk.
+Some methods (e.g. [Track#artists][]) return a [Hallon::Enumerator][] object. Enumerators are lazily loaded, which means that calling `track.artists` won’t create any artist objects until you try to retrieve one of the records out of the returned enumerator. If you want to load all artists for a track you should retrieve them all then load them in bulk.
 
 ```ruby
-artists = track.artists.to_a # force creation of all artist objects
+artists = track.artists.to_a # avoid laziness, instantiate all artist objects
 artists.map(&:load)
 ```
 
@@ -116,14 +121,8 @@ Really, I ❤ feedback! Suggestions on how to improve the API, tell me what is d
 Finally, here are some important notes
 --------------------------------------
 
-### Hallon is unstable
-The API is unstable, my code is likely unstable. Everything should be considered unstable!
-
 ### Hallon only supports one session per process
 You can only keep one session with Spotify alive at a time within the same process, due to a limitation of libspotify.
-
-### You still have to worry about threads
-I have been doing my best at hiding the complexity in libspotify, but it’s still a work in progress. Despite my efforts, you’ll need to be familiar with concurrent programming to use Hallon properly.
 
 ### When forking, you need to be extra careful
 If you fork, you need to instantiate the session within the process you plan to use Hallon in. You want to use Hallon in the parent? Create the session in the parent. You want to use it in the child? Create the session in the child! This is a limitation of libspotify itself.
