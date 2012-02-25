@@ -1,31 +1,30 @@
 [What is Hallon?][] [![Build Status][]](http://travis-ci.org/Burgestrand/Hallon)
 ===================
 
-Hallon — which is Swedish for “[Raspberry][]” — is a ruby gem for interacting with the official Spotify C API. It is written on top of [Spotify for Ruby][], with the goal of making the experience of using [libspotify][] as enjoyable as it can be.
-
-Hallon would not have been possible if not for these people:
-
-- Per Reimers, cracking synchronization bugs with me in the deep night (4 AM) and correcting me when I didn’t know better
-- Spotify, providing a service worth attention (and my money!)
-- Linus Oleander, originally inspiring me to write Hallon (for the radiofy.se project)
-
-Also, these people are worthy of mention simply for their contribution:
-
-- Jesper Särnesjö, unknowingly providing me a starting point with [Greenstripes][]
-- Emil “@mrevilme” Palm, for his patience in helping me debug Hallon deadlock issues
+Hallon (Swedish for “[Raspberry][]”) is _the_ ruby gem for interacting with the official Spotify C API. It is the only gem for libspotify that is up-to-date and usable. My goal with Hallon is to make libspotify a joy to use.
 
 Code samples can be found under the `examples/` directory. An explanation on how to run them can be found on the [Hallon wiki on GitHub](https://github.com/Burgestrand/Hallon/wiki).
 
 Installation
 ------------
 
-    gem install hallon
+```bash
+gem install hallon
+```
+
+You can now require Hallon with,
+
+```ruby
+require 'hallon'
+```
 
 If you want to play audio you’ll need to install an audio driver. As of current writing there is only one driver in existence. You can install it with:
 
-    gem install hallon-openal
+```bash
+gem install hallon-openal
+```
 
-For more information about audio support in Hallon, see the section "Audio support" below.
+For more information about audio support in Hallon, see the section "[Audio support](#audio-support)" below.
 
 Hallon and Spotify objects
 --------------------------
@@ -41,7 +40,7 @@ puts user.loaded? # => true
 As far as usage of the library goes, what applies to libspotify also applies to Hallon, so I would suggest you also read [the libspotify library overview](http://developer.spotify.com/en/libspotify/docs/) and related documentation.
 
 ### Callbacks
-Some objects may fire callbacks, most of the time as a direct result of [Session#process_events][]. In libspotify the callbacks are only fired once for every object, but in Hallon you may have more than one object attached to the same libspotify object. As a result, callbacks are handled individually for each Hallon object, and in the case of a required return value the last handler is what decides the final return value.
+Some objects may fire callbacks, most of the time as a direct result of [Session#process_events][]. In libspotify the callbacks are only fired once for every object, but in Hallon you may have more than one object attached to the same libspotify object. As a result, callbacks are handled individually for each Hallon object.
 
 ```ruby
 imageA = Hallon::Image.new("spotify:image:548957670a3e9950e87ce61dc0c188debd22b0cb")
@@ -62,7 +61,7 @@ imageA.load # might load imageB as well, we don’t know
 imageB.load # but the callbacks will both fire on load
 ```
 
-A list of all objects that can fire callbacks can be found on the [API page for Hallon::Observable][].
+A list of all objects that may fire callbacks can be found on the [API page for Hallon::Observable][].
 
 ### Errors
 On failed libspotify API calls, a [Hallon::Error][] will be raised with a message explaining the error. Methods that might fail in this way (e.g. [Session.initialize][]) should have this clearly stated in its’ documentation.
@@ -84,6 +83,7 @@ For the API reference and existing subclasses, see [Hallon::Enumerator][].
 ### Garbage collection
 Hallon makes use of Ruby’s own garbage collection to automatically release libspotify objects when they are no longer in use. There is no need to retain or release the spotify objects manually.
 
+<span id="audio-support" name="audio-support"></span>
 Audio support
 -------------
 Hallon supports streaming audio from Spotify via [Hallon::Player][]. When you create the player you give it your current session and an audio driver, which the player will then use for audio playback.
@@ -97,29 +97,23 @@ Available drivers are:
 
 - [Hallon::OpenAL](https://rubygems.org/gems/hallon-openal)
 
-        gem install hallon-openal
+  ```bash
+  gem install hallon-openal
+  ```
 
-For information on how to write your own audio driver, see [Hallon::ExampleAudioDriver].
-
-You have any questions?
------------------------
-I can be reached at my [email (found on GitHub profile)](http://github.com/Burgestrand) or [@burgestrand on twitter](http://twitter.com/Burgestrand). I’d be extremely happy to discuss Hallon with
-you if you have any feedback or thoughts.
-
-For issues and feature requests, please use use [Hallons issue tracker](http://github.com/Burgestrand/Hallon/issues).
-
-This is awesome! I want to help!
---------------------------------
-Sweet! You contribute in more than one way!
-
-### Write code!
-[Fork](http://help.github.com/forking/) Hallon, [write tests for everything](http://relishapp.com/rspec) you do (so I don’t break your stuff during my own development) and send a pull request. If you modify existing files, please adhere to the coding standard surrounding your code!
-
-### [Send me feedback and requests](http://github.com/Burgestrand/Hallon/issues)
-Really, I ❤ feedback! Suggestions on how to improve the API, tell me what is delicious about Hallon, tell me what is yucky about Hallon… anything! All feedback is useful in one way or another.
+For information on how to write your own audio driver, see [Hallon::ExampleAudioDriver][].
 
 Finally, here are some important notes
 --------------------------------------
+
+### [Please tell me your feedback and requests!](http://github.com/Burgestrand/Hallon/issues)
+Really, I ❤ feedback! Suggestions on how to improve the API, tell me what is delicious about Hallon, tell me what is yucky about Hallon… anything! All feedback is useful in one way or another. You have any issues with Hallon? Just ask, and I’ll answer if I can.
+
+### Contributing to Hallon
+[Fork](http://help.github.com/forking/) Hallon, write tests for everything you do (so I don’t break your stuff during my own development) and send a pull request. If you modify existing files, please adhere to the coding standard surrounding your code.
+
+### Hallon uses [semantic versioning](http://semver.org) as of v0.0.0
+As long as Hallon stays at major version 0, no guarantees of backwards-compatibility are made. `CHANGELOG.md` will be kept up to date with the different versions.
 
 ### Hallon only supports one session per process
 You can only keep one session with Spotify alive at a time within the same process, due to a limitation of libspotify.
@@ -127,11 +121,16 @@ You can only keep one session with Spotify alive at a time within the same proce
 ### When forking, you need to be extra careful
 If you fork, you need to instantiate the session within the process you plan to use Hallon in. You want to use Hallon in the parent? Create the session in the parent. You want to use it in the child? Create the session in the child! This is a limitation of libspotify itself.
 
-Versioning policy
------------------
-Hallon uses [semantic versioning](http://semver.org) as of v0.0.0. As long
-as Hallon stays at major version 0, no guarantees of backwards-compatibility
-are made. `CHANGELOG.md` will be kept up to date with the different versions.
+You have more questions?
+------------------------
+I can be reached at my [email (found on GitHub profile)](http://github.com/Burgestrand) or [@burgestrand on twitter](http://twitter.com/Burgestrand). I’d be extremely happy to discuss Hallon with you if you have any feedback or thoughts.
+
+Credits
+-------
+- Per Reimers, cracking synchronization bugs with me deep in the night (4 AM), thanks. :)
+- Jesper Särnesjö, unknowingly providing me a starting point with [Greenstripes][]
+- Linus Oleander, originally inspiring me to write Hallon (for the radiofy.se project)
+- Emil “@mrevilme” Palm, for his patience in helping me debug Hallon deadlock issues
 
 License
 -------
