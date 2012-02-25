@@ -12,19 +12,13 @@ Installation
 gem install hallon
 ```
 
-You can now require Hallon with,
-
-```ruby
-require 'hallon'
-```
-
 If you want to play audio you’ll need to install an audio driver. As of current writing there is only one driver in existence. You can install it with:
 
 ```bash
 gem install hallon-openal
 ```
 
-For more information about audio support in Hallon, see the section "[Audio support](#audio-support)" below.
+For more information about audio support in Hallon, see the section "Audio support" below.
 
 Hallon and Spotify objects
 --------------------------
@@ -83,7 +77,6 @@ For the API reference and existing subclasses, see [Hallon::Enumerator][].
 ### Garbage collection
 Hallon makes use of Ruby’s own garbage collection to automatically release libspotify objects when they are no longer in use. There is no need to retain or release the spotify objects manually.
 
-<span id="audio-support" name="audio-support"></span>
 Audio support
 -------------
 Hallon supports streaming audio from Spotify via [Hallon::Player][]. When you create the player you give it your current session and an audio driver, which the player will then use for audio playback.
