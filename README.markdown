@@ -1,7 +1,7 @@
 [What is Hallon?][] [![Build Status][]](http://travis-ci.org/Burgestrand/Hallon)
 ===================
 
-Hallon (Swedish for “[Raspberry][]”) is _the_ ruby gem for interacting with the official Spotify C API. It is the only gem for libspotify that is up-to-date and usable. My goal with Hallon is to make libspotify a joy to use.
+Hallon (Swedish for “[Raspberry][]”) is _the_ ruby gem for interacting with the official Spotify C API. It is the only ruby gem for libspotify that is up-to-date and usable. My goal with Hallon is to make libspotify a joy to use.
 
 Code samples can be found under the `examples/` directory. An explanation on how to run them can be found on the [Hallon wiki on GitHub](https://github.com/Burgestrand/Hallon/wiki).
 
