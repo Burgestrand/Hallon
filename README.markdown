@@ -90,16 +90,14 @@ Available drivers are:
 
 - [Hallon::OpenAL](https://rubygems.org/gems/hallon-openal)
 
-  ```bash
-  gem install hallon-openal
-  ```
+      gem install hallon-openal
 
 For information on how to write your own audio driver, see [Hallon::ExampleAudioDriver][].
 
 Finally, here are some important notes
 --------------------------------------
 
-### [Please tell me your feedback and requests!](http://github.com/Burgestrand/Hallon/issues)
+### [Please tell me your feedback and requests!](https://github.com/Burgestrand/Hallon/issues/new)
 Really, I ❤ feedback! Suggestions on how to improve the API, tell me what is delicious about Hallon, tell me what is yucky about Hallon… anything! All feedback is useful in one way or another. You have any issues with Hallon? Just ask, and I’ll answer if I can.
 
 ### Contributing to Hallon
