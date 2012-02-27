@@ -312,6 +312,14 @@ module Hallon
     # @return [Playlist]
     # @raise [Error] if the operation failed
     def remove(*indices)
+      unless indices == indices.uniq
+        raise ArgumentError, "no index may occur twice"
+      end
+
+      unless indices.all? { |i| i.between?(0, size-1) }
+        raise ArgumentError, "indices must be inside #{0...size}"
+      end
+
       indices_ary = FFI::MemoryPointer.new(:int, indices.size)
       indices_ary.write_array_of_int(indices)
 

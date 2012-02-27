@@ -124,8 +124,9 @@ describe Hallon::Playlist do
       playlist.tracks.to_a.should eq new_tracks
     end
 
-    it "should raise an error if the operation cannot be completed" do
-      expect { playlist.remove(-1) }.to raise_error(Hallon::Error)
+    it "should raise an error if given invalid parameters" do
+      expect { playlist.remove(-1) }.to raise_error(ArgumentError)
+      expect { playlist.remove(playlist.size) }.to raise_error(ArgumentError)
     end
   end
 
