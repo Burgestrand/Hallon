@@ -3,16 +3,41 @@ Hallon’s Changelog
 
 [HEAD][]
 ------------------
+
+__Added__
+
+__Changed__
+
+__Fixed__
+
+[v0.14.0][]
+------------------
 This release brings a lot more meat added to the README, in addition to the following:
 
 __Added__
+
+- Add #load to all loadable objects [acb508a, d554fb9]
+  - Album
+  - AlbumBrowse
+  - Artist
+  - ArtistBrowse
+  - Image
+  - Playlist
+  - PlaylistContainer
+  - Search
+  - Toplist
+  - Track
+  - User
 - Toplist#type [0ea8bac]
 - Playlist.invalid_name? [a516cf0]
 - User::Post#loaded? [373fd7]
 - User::Post#message and User::Post#recipient_name [e31ff68]
 - User::Post#recipient [4c6b71f]
+- User::Post#tracks [1c407b6f]
 
 __Changed__
+
+- User::Post.create and User#post now accepts a single track [542f344]
 - User::Post.new is now private, use User::Post.create instead [00ee6db]
 - Toplist#artists/albums/tracks are now just Toplist#results [0ea8bac]
 - Image#id(param) split up into Image#id and Image#raw_id [1bbd7def]
@@ -21,6 +46,9 @@ __Changed__
 - Default cache_path and settings_path for Session#initialize are now both "tmp/hallon" [15573a7]
 
 __Fixed__
+
+- Playlist#remove accepting invalid parameters [91ccef6]
+- Segfault in tracks_removed/tracks_moved playlist callbacks [46ac650]
 - Observable#subscribe_for_callbacks subscribing to null pointers [f9cf72d]
 
 [v0.13.0][]
@@ -272,4 +300,5 @@ easier to handle.
 [v0.11.0]: https://github.com/Burgestrand/Hallon/compare/v0.10.1...v0.11.0
 [v0.12.0]: https://github.com/Burgestrand/Hallon/compare/v0.11.0...v0.12.0
 [v0.13.0]: https://github.com/Burgestrand/Hallon/compare/v0.12.0...v0.13.0
-[HEAD]: https://github.com/Burgestrand/Hallon/compare/v0.12.0...HEAD
+[v0.14.0]: https://github.com/Burgestrand/Hallon/compare/v0.13.0...v0.14.0
+[HEAD]: https://github.com/Burgestrand/Hallon/compare/v0.14.0...HEAD
