@@ -283,7 +283,8 @@ module Hallon
     # @param (see #move)
     # @return [Boolean] true if the operation can be performed
     def can_move?(from, to)
-      error = move_playlist(from, to, dry_run = true)
+      dry_run = true
+      error   = move_playlist(from, to, dry_run)
       _, symbol = Error.disambiguate(error)
       symbol == :ok
     end
