@@ -1,12 +1,13 @@
 # coding: utf-8
 
 describe Hallon::Loadable do
+  let(:session) { double(:session, :process_events => 5) }
   let(:loadable) do
-    actual_session = double(:session, :process_events => 5)
+    _session = session
     Class.new do
       include Hallon::Loadable
 
-      define_method(:session) { actual_session }
+      define_method(:session) { _session }
     end.new
   end
 
@@ -26,6 +27,19 @@ describe Hallon::Loadable do
 
     it "should return the object in question on success" do
       loadable.stub(:loaded?).and_return(true)
+      loadable.load.should eq loadable
+    end
+
+    it "should raise an error when status is an error" do
+      session.should_receive(:process_events).once
+      loadable.stub(:loaded?).and_return(false)
+      loadable.stub(:status).and_return(:other_permanent)
+      expect { loadable.load }.to raise_error(Hallon::Error)
+    end
+
+    it "should not raise an error when status is_loading" do
+      loadable.stub(:loaded?).and_return(false, true)
+      loadable.stub(:status).and_return(:is_loading)
       loadable.load.should eq loadable
     end
   end

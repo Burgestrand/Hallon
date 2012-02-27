@@ -9,6 +9,11 @@ module Hallon
       Timeout.timeout(timeout, Hallon::TimeoutError) do
         until loaded?
           session.process_events
+
+          if respond_to?(:status)
+            Error.maybe_raise(status, :ignore => :is_loading)
+          end
+
           sleep(0.001)
         end
 
