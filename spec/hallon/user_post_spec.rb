@@ -33,6 +33,12 @@ describe Hallon::User::Post do
     end
   end
 
+  describe "#tracks" do
+    it "should return an array of tracks posted" do
+      post.tracks.should eq tracks
+    end
+  end
+
   describe "#loaded?" do
     it "should return true only if the status is ok" do
       post.should_receive(:status).and_return(:is_loading)

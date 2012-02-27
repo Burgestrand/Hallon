@@ -24,6 +24,9 @@ module Hallon
         post unless post.pointer.null?
       end
 
+      # @return [Array<Track>] an array of tracks posted.
+      attr_reader :tracks
+
       # @param [String, nil] message together with the post.
       attr_reader :message
 
@@ -40,6 +43,7 @@ module Hallon
         ary.write_array_of_pointer tracks.map(&:pointer)
 
         subscribe_for_callbacks do |callback|
+          @tracks  = tracks
           @message = message
           @recipient_name = recipient_name
           @pointer = Spotify.inbox_post_tracks!(session.pointer, @recipient_name, ary, tracks.length, @message, callback, nil)
