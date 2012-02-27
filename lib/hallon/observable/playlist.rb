@@ -27,7 +27,12 @@ module Hallon::Observable
     # @yieldparam [Integer] position
     # @yieldparam [Playlist] self
     def tracks_added_callback(pointer, tracks, num_tracks, position, userdata)
-      trigger(pointer, :tracks_added, callback_make_tracks(tracks, num_tracks), position)
+      tracks_ary = tracks.read_array_of_pointer(num_tracks).map do |track|
+        ptr = Spotify::Pointer.new(track, :track, true)
+        Hallon::Track.new(ptr)
+      end
+
+      trigger(pointer, :tracks_added, tracks_ary, position)
     end
 
     # @example listening to this event
@@ -38,8 +43,8 @@ module Hallon::Observable
     # @yield [tracks, self] tracks_removed
     # @yieldparam [Array<Track>] tracks
     # @yieldparam [Playlist] self
-    def tracks_removed_callback(pointer, tracks, num_tracks, userdata)
-      trigger(pointer, :tracks_removed, callback_make_tracks(tracks, num_tracks))
+    def tracks_removed_callback(pointer, track_indices, num_indices, userdata)
+      trigger(pointer, :tracks_removed, track_indices.read_array_of_int(num_indices))
     end
 
     # @example listening to this event
@@ -51,8 +56,8 @@ module Hallon::Observable
     # @yieldparam [Array<Track>] tracks
     # @yieldparam [Integer] new_position
     # @yieldparam [Playlist] self
-    def tracks_moved_callback(pointer, tracks, num_tracks, new_position, userdata)
-      trigger(pointer, :tracks_moved, callback_make_tracks(tracks, num_tracks), new_position)
+    def tracks_moved_callback(pointer, track_indices, num_indices, new_position, userdata)
+      trigger(pointer, :tracks_moved, track_indices.read_array_of_int(num_indices), new_position)
     end
 
     # @example listening to this event
@@ -179,16 +184,5 @@ module Hallon::Observable
     def subscribers_changed_callback(pointer, userdata)
       trigger(pointer, :subscribers_changed)
     end
-
-    protected
-      # @param [FFI::Pointer] tracks
-      # @param [Integer] num_tracks
-      # @param [Array<Track>]
-      def callback_make_tracks(tracks, num_tracks)
-        tracks.read_array_of_pointer(num_tracks).map do |track|
-          ptr = Spotify::Pointer.new(track, :track, true)
-          Hallon::Track.new(ptr)
-        end
-      end
   end
 end

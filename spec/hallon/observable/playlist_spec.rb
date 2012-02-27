@@ -1,7 +1,13 @@
 describe Hallon::Observable::Playlist do
   let(:trackpointers_size) { 2 }
+  let(:track_index_pointers) do
+    tracks = FFI::MemoryPointer.new(:pointer, trackpointers_size)
+    tracks.write_array_of_int([0, 1])
+    tracks
+  end
+
   let(:trackpointers) do
-    tracks = FFI::MemoryPointer.new(:pointer, 2)
+    tracks = FFI::MemoryPointer.new(:pointer, trackpointers_size)
     tracks.write_array_of_pointer([mock_track, mock_track_two])
     tracks
   end
@@ -16,13 +22,13 @@ describe Hallon::Observable::Playlist do
   end
 
   specification_for_callback "tracks_removed" do
-    let(:input)  { [a_pointer, trackpointers, trackpointers_size, :userdata] }
-    let(:output) { [tracks, subject] }
+    let(:input)  { [a_pointer, track_index_pointers, trackpointers_size, :userdata] }
+    let(:output) { [[0, 1], subject] }
   end
 
   specification_for_callback "tracks_moved" do
-    let(:input)  { [a_pointer, trackpointers, trackpointers_size, 7, :userdata] }
-    let(:output) { [tracks, 7, subject] }
+    let(:input)  { [a_pointer, track_index_pointers, trackpointers_size, 7, :userdata] }
+    let(:output) { [[0, 1], 7, subject] }
   end
 
   specification_for_callback "playlist_renamed" do
