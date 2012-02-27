@@ -37,8 +37,9 @@ module Hallon
       #
       # @param [String] recipient_name username of person to send post to
       # @param [String, nil] message
-      # @param [Array<Track>] tracks
+      # @param [Track, Array<Track>] tracks
       def initialize(recipient_name, message, tracks)
+        tracks = Array(tracks)
         ary = FFI::MemoryPointer.new(:pointer, tracks.length)
         ary.write_array_of_pointer tracks.map(&:pointer)
 
@@ -128,10 +129,10 @@ module Hallon
     #
     # @overload post(message, tracks)
     #   @param [#to_s] message
-    #   @param [Array<Track>] tracks
+    #   @param [Track, Array<Track>] tracks
     #
     # @overload post(tracks)
-    #   @param [Array<Track>] tracks
+    #   @param [Track, Array<Track>] tracks
     #
     # @return (see Post.create)
     def post(message = nil, tracks)

@@ -25,6 +25,11 @@ describe Hallon::User::Post do
       Spotify.should_receive(:inbox_post_tracks).and_return(null_pointer)
       post.should be_nil
     end
+
+    it "should allow you to post a single track" do
+      post = stub_session { Hallon::User::Post.create("burgestrand", nil, tracks[0]) }
+      post.tracks.should eq tracks[0, 1]
+    end
   end
 
   describe "#status" do
