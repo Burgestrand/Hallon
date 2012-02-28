@@ -59,8 +59,9 @@ module Hallon
   # @example
   #   Hallon::URI === "spotify:user:burgestrand" # => true
   URI = /(spotify:(?:
-    (?:artist|album|track|user:[^:]+:playlist):[a-fA-F0-9]+
-    |user:[^:]+
+    (?:artist|album|user:[^:]+:playlist):[a-zA-Z0-9]{22}
+    |track:[a-zA-Z0-9]{22}(?:\#\d{1,2}:\d{1,2})?
+    |user:[^:]+(?::starred)?
     |search:(?:[-\w$\.+!*'(),]+|%[a-fA-F0-9]{2})+
     |image:[a-fA-F0-9]{40}
     ))

@@ -13,9 +13,8 @@ describe Hallon do
   end
 
   describe "URI" do
-    subject { Hallon::URI }
     example_uris.keys.each do |uri|
-      it { should match uri }
+      specify(uri) { Hallon::URI.match(uri)[0].should eq uri }
     end
   end
 
