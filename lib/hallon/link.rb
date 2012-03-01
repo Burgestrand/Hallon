@@ -11,6 +11,8 @@ module Hallon
     def self.valid?(spotify_uri)
       if spotify_uri.is_a?(Link)
         return true
+      elsif spotify_uri.to_s["\x00"] # image ids
+        return false
       end
 
       link = Spotify.link_create_from_string!(spotify_uri.to_s)

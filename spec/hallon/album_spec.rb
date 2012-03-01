@@ -49,7 +49,7 @@ describe Hallon::Album do
     end
 
     it "should be a link if it exists" do
-      album.cover_link.should eq Hallon::Link.new("spotify:image:3ad93423add99766e02d563605c6e76ed2b0e450")
+      album.cover_link.should eq Hallon::Link.new("spotify:image:3ad93423add99766e02d563605c6e76ed2b0e400")
     end
   end
 
