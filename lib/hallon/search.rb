@@ -103,10 +103,11 @@ module Hallon
     # @option options [#to_i] :artists_offset (0) offset of artists in search result
     # @see http://developer.spotify.com/en/libspotify/docs/group__search.html#gacf0b5e902e27d46ef8b1f40e332766df
     def initialize(query, options = {})
-      o = Search.defaults.merge(options)
+      opts = Search.defaults.merge(options)
+      opts = opts.values_at(:tracks_offset, :tracks, :albums_offset, :albums, :artists_offset, :artists).map(&:to_i)
 
       subscribe_for_callbacks do |callback|
-        @pointer  = Spotify.search_create!(session.pointer, query, o[:tracks_offset].to_i, o[:tracks].to_i, o[:albums_offset].to_i, o[:albums].to_i, o[:artists_offset].to_i, o[:artists].to_i, callback, nil)
+        @pointer  = Spotify.search_create!(session.pointer, query, *opts, callback, nil)
       end
 
       raise FFI::NullPointerError, "search for “#{query}” failed" if pointer.null?
