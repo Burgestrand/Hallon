@@ -50,6 +50,10 @@ describe Hallon::Link do
     it "should truncate if given a small maximum length" do
       subject.to_str(7).should == "spotify"
     end
+
+    it "should be in UTF-8 encoding" do
+      subject.to_str.encoding.should eq Encoding::UTF_8
+    end
   end
 
   describe "#to_url" do

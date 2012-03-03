@@ -56,7 +56,7 @@ module Hallon
     def to_str(length = length)
       FFI::Buffer.alloc_out(length + 1) do |b|
         Spotify.link_as_string(pointer, b, b.size)
-        return b.get_string(0)
+        return b.get_string(0).force_encoding("UTF-8")
       end
     end
 
