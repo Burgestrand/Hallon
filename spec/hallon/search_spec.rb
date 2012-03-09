@@ -1,20 +1,28 @@
+# coding: utf-8
+require 'cgi'
+
 describe Hallon::Search do
+  it_should_behave_like "a Linkable object" do
+    let(:spotify_uri) { "spotify:search:my+%C3%A5+utf8+%EF%A3%BF+query" }
+    let(:custom_object) { "http://open.spotify.com/search/my+%C3%A5+utf8+%EF%A3%BF+query" }
+    let(:described_class) { stub_session(Hallon::Search) }
+  end
+
   it { should be_a Hallon::Loadable }
 
   subject { search }
   let(:search) do
-    Spotify.registry_add 'spotify:search:my query', mock_search
-    mock_session { Hallon::Search.new("my query") }
+    mock_session { Hallon::Search.new("my å utf8  query") }
   end
 
   describe ".new" do
     it "should have some sane defaults" do
-      Spotify.should_receive(:search_create).with(session.pointer, "my query", 0, 25, 0, 25, 0, 25, anything, anything).and_return(mock_search)
-      mock_session { Hallon::Search.new("my query") }
+      Spotify.should_receive(:search_create).with(session.pointer, "my å utf8  query", 0, 25, 0, 25, 0, 25, anything, anything).and_return(mock_search)
+      mock_session { Hallon::Search.new("my å utf8  query") }
     end
 
     it "should allow you to customize the defaults" do
-      Spotify.should_receive(:search_create).with(session.pointer, "my query", 1, 2, 3, 4, 5, 6, anything, anything).and_return(mock_search)
+      Spotify.should_receive(:search_create).with(session.pointer, "my å utf8  query", 1, 2, 3, 4, 5, 6, anything, anything).and_return(mock_search)
       my_params = {
         :tracks_offset  => 1,
         :tracks         => 2,
@@ -24,7 +32,7 @@ describe Hallon::Search do
         :artists        => 6
       }
 
-      mock_session { Hallon::Search.new("my query", my_params) }
+      mock_session { Hallon::Search.new("my å utf8  query", my_params) }
     end
 
     it "should raise an error if the search failed" do
@@ -66,7 +74,7 @@ describe Hallon::Search do
   it { should be_a Hallon::Observable }
   it { should be_loaded }
   its(:status) { should eq :ok }
-  its(:query) { should eq "my query" }
+  its(:query) { should eq "my å utf8  query" }
   its(:did_you_mean) { should eq "another thing" }
 
   its('tracks.size')  { should eq 2 }
@@ -81,5 +89,5 @@ describe Hallon::Search do
   its('artists.to_a')  { should eq instantiate(Hallon::Artist, mock_artist, mock_artist_two) }
   its('artists.total') { should eq 81104 }
 
-  its(:to_link) { should eq Hallon::Link.new("spotify:search:#{search.query}") }
+  its(:to_link) { should eq Hallon::Link.new("spotify:search:#{CGI.escape(search.query)}") }
 end

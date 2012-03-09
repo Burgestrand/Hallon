@@ -50,7 +50,7 @@ RSpec::Core::ExampleGroup.instance_eval do
     albums  = pointer_array_with(mock_album)
     tracks  = pointer_array_with(mock_track, mock_track_two)
 
-    Spotify.mock_search(:ok, "my query", "another thing", 1337, tracks.length, tracks, 42, albums.length, albums, 81104, artists.length, artists, nil, nil)
+    Spotify.mock_search(:ok, "my å utf8  query", "another thing", 1337, tracks.length, tracks, 42, albums.length, albums, 81104, artists.length, artists, nil, nil)
   end
 
   let(:mock_subscribers) do
@@ -192,6 +192,7 @@ RSpec.configure do |config|
     Spotify.registry_add 'spotify:user:burgestrand', mock_user
     Spotify.registry_add 'spotify:user:burgestrand:playlist:07AX9IY9Hqmj1RqltcG0fi', mock_playlist
     Spotify.registry_add 'spotify:user:burgestrand:starred', mock_playlist
+    Spotify.registry_add 'spotify:search:my+%C3%A5+utf8+%EF%A3%BF+query', mock_search
   end
 
   config.after do

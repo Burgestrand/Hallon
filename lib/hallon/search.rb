@@ -1,4 +1,6 @@
 # coding: utf-8
+require 'cgi'
+
 module Hallon
   # Search allows you to search Spotify for tracks, albums
   # and artists, just like in the client.
@@ -50,6 +52,15 @@ module Hallon
       end
     end
 
+    extend Linkable
+
+    to_link :from_search
+
+    from_link :search do |link|
+      link = Link.new(link).to_uri
+      ::CGI.unescape(link[/\Aspotify:search:(.+)\z/m, 1])
+    end
+
     extend Observable::Search
     include Loadable
 
@@ -93,7 +104,7 @@ module Hallon
 
     # Construct a new search with given query.
     #
-    # @param [String] query search query
+    # @param [String, Link] search search query or spotify URI
     # @param [Hash] options additional search options
     # @option options [#to_i] :tracks (25) max number of tracks you want in result
     # @option options [#to_i] :albums (25) max number of albums you want in result
@@ -102,15 +113,20 @@ module Hallon
     # @option options [#to_i] :albums_offset (0) offset of albums in search result
     # @option options [#to_i] :artists_offset (0) offset of artists in search result
     # @see http://developer.spotify.com/en/libspotify/docs/group__search.html#gacf0b5e902e27d46ef8b1f40e332766df
-    def initialize(query, options = {})
+    def initialize(search, options = {})
       opts = Search.defaults.merge(options)
       opts = opts.values_at(:tracks_offset, :tracks, :albums_offset, :albums, :artists_offset, :artists).map(&:to_i)
+      search = from_link(search) if Link.valid?(search)
 
       subscribe_for_callbacks do |callback|
-        @pointer  = Spotify.search_create!(session.pointer, query, *opts, callback, nil)
-      end
+        @pointer = if Spotify::Pointer.typechecks?(search, :search)
+          search
+        else
+          Spotify.search_create!(session.pointer, search, *opts, callback, nil)
+        end
 
-      raise FFI::NullPointerError, "search for “#{query}” failed" if pointer.null?
+        raise ArgumentError, "search with #{search} failed" if @pointer.null?
+      end
     end
 
     # @return [Boolean] true if the search has been fully loaded.
@@ -147,12 +163,6 @@ module Hallon
     # @return [Artists] list of all artists in the search result.
     def artists
       Artists.new(self)
-    end
-
-    # @return [Link] link for this search query.
-    def to_link
-      link = Spotify.link_create_from_search!(pointer)
-      Link.from(link)
     end
   end
 end
