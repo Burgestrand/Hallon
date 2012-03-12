@@ -52,6 +52,28 @@ module Hallon
       end
     end
 
+    class Radio < Search
+      extend Observable::Search
+      include Loadable
+
+      # @param [Range<Integer>] range (`from_year`..`to_year`)
+      # @param [Symbol, …] genres
+      # @return [Radio] radio search within the given period and genres.
+      def initialize(range, *genres)
+        from_year, to_year = range.begin, range.end
+        genres = genres.reduce(0) do |mask, genre|
+          mask | Spotify.enum_value!(genre, "genre")
+        end
+
+        subscribe_for_callbacks do |callback|
+          @pointer = Spotify.radio_search_create!(session.pointer, from_year, to_year, genres, callback, nil)
+        end
+
+        raise ArgumentError, "radio search failed" if @pointer.null?
+      end
+    end
+
+
     extend Linkable
 
     to_link :from_search
@@ -81,25 +103,10 @@ module Hallon
       }
     end
 
-    # @param [Range<Integer>] range (from_year..to_year)
-    # @param [Symbol, …] genres
-    # @return [Search] radio search in given period and genres
+    # @param (see Radio#initialize)
+    # @return (see Radio#initialize)
     def self.radio(range, *genres)
-      from_year, to_year = range.begin, range.end
-      genres = genres.reduce(0) do |mask, genre|
-        mask | Spotify.enum_value!(genre, "genre")
-      end
-
-      search = allocate
-      search.instance_eval do
-        subscribe_for_callbacks do |callback|
-          @pointer = Spotify.radio_search_create!(session.pointer, from_year, to_year, genres, callback, nil)
-        end
-
-        raise FFI::NullPointerError, "radio search failed" if pointer.null?
-      end
-
-      search
+      Radio.new(range, *genres)
     end
 
     # Construct a new search with given query.
