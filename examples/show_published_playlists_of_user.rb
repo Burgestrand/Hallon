@@ -1,62 +1,33 @@
 # coding: utf-8
-#
-# DISCLAIMER:
-# This file was written without extensive testing, and is merely an
-# example. Before using this yourself, I advice you to look through
-# the code carefully.
-#
 
-$LOAD_PATH.unshift(File.expand_path('../lib', File.dirname(__FILE__)))
-
-require 'hallon'
-require './spec/support/config'
-
-# Utility
-def prompt(str)
-  print str
-  gets.chomp
-end
-
-session = Hallon::Session.initialize IO.read(ENV['HALLON_APPKEY']) do
-  on(:log_message) do |message|
-    puts "[LOG] #{message}"
-  end
-
-  on(:connection_error) do |error|
-    Hallon::Error.maybe_raise(error)
-  end
-
-  on(:logged_out) do
-    abort "[FAIL] Logged out!"
-  end
-end
-
-session.login!(ENV['HALLON_USERNAME'], ENV['HALLON_PASSWORD'])
-
-puts "Successfully logged in!"
+require_relative 'example_support'
+session = Hallon::Session.instance
 
 while username = prompt("Enter a Spotify username: ")
   begin
-    puts "Fetching container for #{username}..."
-    published = Hallon::User.new(username).published
-    session.wait_for { published.loaded? }
+    puts "Loading #{username}."
+    user = Hallon::User.new(username)
 
-    puts "Listing #{published.size} playlists."
-    published.contents.each do |playlist|
-      next if playlist.nil? # folder or somesuch
+    puts "Fetching published playlists for #{username}..."
+    published = user.published.load
 
-      session.wait_for { playlist.loaded? }
+    puts "Loading #{published.size} playlists."
+    all_playlists = published.contents.find_all do |playlist|
+      playlist.is_a?(Hallon::Playlist) # ignore folders
+    end
 
+    all_playlists.each(&:load)
+
+    all_playlists.each do |playlist|
       puts
-      puts playlist.name << ": "
+      puts "Listing tracks for #{playlist.name} (#{playlist.to_str}):"
 
-      playlist.tracks.each_with_index do |track, i|
-        session.wait_for { track.loaded? }
-
+      tracks = playlist.tracks.to_a.map(&:load)
+      tracks.each_with_index do |track, i|
         puts "\t (#{i+1}/#{playlist.size}) #{track.name}"
       end
     end
   rescue Interrupt
-    # do nothing, continue with loop
+    puts "Interrupted!"
   end
 end
