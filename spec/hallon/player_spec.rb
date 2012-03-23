@@ -149,7 +149,7 @@ describe Hallon::Player do
 
     context "the output streaming" do
       it "should feed music to the output stream if the format stays the same" do
-        Thread.stub(:start).and_return{ |*args, block| block[*args] }
+        Thread.stub(:start).and_return{ |*args, &block| block[*args] }
 
         player # create the Player
         session.trigger(:music_delivery, queue.format, [1, 2, 3])
@@ -169,7 +169,7 @@ describe Hallon::Player do
       end
 
       it "should set the driver format and return no audio if audio format has changed" do
-        Thread.stub(:start).and_return{ |*args, block| block[*args] }
+        Thread.stub(:start).and_return{ |*args, &block| block[*args] }
 
         player # create the Player
         session.trigger(:start_playback)
@@ -184,7 +184,8 @@ describe Hallon::Player do
       end
 
       it "should set the format on initialization" do
-        Thread.stub(:start).and_return{ |*args, block| block[*args] }
+        Thread.stub(:start).and_return{ |*args, &block| block[*args] }
+
         AudioDriverMock.any_instance.should_receive(:format=)
         Hallon::AudioQueue.any_instance.should_receive(:format=)
         player
