@@ -130,6 +130,13 @@ describe Hallon::Session do
     end
   end
 
+  describe "#login" do
+    it "should raise an error when given empty credentials" do
+      expect { session.login '', 'pass' }.to raise_error(ArgumentError)
+      expect { session.login 'Kim', '' }.to raise_error(ArgumentError)
+    end
+  end
+
   describe "#logout" do
     it "should check logged in status" do
       session.should_receive(:logged_in?).once.and_return(false)

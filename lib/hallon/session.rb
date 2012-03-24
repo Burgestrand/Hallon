@@ -185,6 +185,10 @@ module Hallon
     # @return [Session]
     # @see login!
     def login(username, password, remember_me = false)
+      if username.empty? or password.empty?
+        raise ArgumentError, "username and password may not be blank"
+      end
+
       tap { Spotify.session_login(pointer, username, password, remember_me) }
     end
 
