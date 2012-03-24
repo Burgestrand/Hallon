@@ -1,5 +1,6 @@
 # coding: utf-8
 
+# Require support code, used by all the examples.
 require_relative 'example_support'
 session = Hallon::Session.instance
 

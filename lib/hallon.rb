@@ -67,7 +67,7 @@ module Hallon
     ))
   /x
 
-  # Thrown by {Loadable#load} on failure.
+  # Thrown by {Loadable#load} and {Playlist#update} on failure.
   TimeoutError = Class.new(Hallon::Error)
 
   class << self

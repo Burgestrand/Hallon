@@ -78,6 +78,41 @@ describe Hallon::Playlist do
     end
   end
 
+  describe "#upload", :stub_session do
+    it "should wait until the state changes, and then wait for it to stop pending" do
+      ticker = 0
+
+      playlist.should_receive(:pending?).and_return(false, true, false)
+
+      session.should_receive(:process_events).exactly(2).times do
+        playlist.send(:trigger, :playlist_state_changed)
+        0
+      end
+
+      playlist.upload
+    end
+
+    it "should raise an error if the playlist takes too long to load" do
+      Timeout.timeout(1) do # make sure test does not hang if it fails
+        expect { playlist.upload(0.01) }.to raise_error(Hallon::TimeoutError)
+      end
+    end
+
+    it "should not erase the existing state handler" do
+      handler = proc { }
+      playlist.on(:playlist_state_changed, &handler)
+
+      # make sure we trigger an update for test to not timeout
+      session.should_receive(:process_events) do
+        playlist.send(:trigger, :playlist_state_changed)
+        0
+      end
+
+      expect { playlist.upload }.
+        to_not change { playlist.on(:playlist_state_changed, &handler) }
+    end
+  end
+
   describe "#subscribers" do
     it "should return an array of names for the subscribers" do
       subject.subscribers.should eq %w[Kim Elin Ylva]
