@@ -117,6 +117,15 @@ describe Hallon::Observable do
       x.should eq 0
     end
 
+    it "should return the previous callback" do
+      previous = proc { puts "hey!" }
+      new_one  = proc { puts "ho!" }
+      initial  = subject.on(:testing, &previous)
+
+      subject.on(:testing, &new_one).should eq previous
+      subject.on(:testing, &previous).should eq new_one
+    end
+
     it "should raise an error trying to bind to a non-existing callback" do
       expect { subject.on("nonexisting") {} }.to raise_error(NameError)
     end

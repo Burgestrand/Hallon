@@ -101,12 +101,14 @@ module Hallon
     # Defines a handler for the given event.
     #
     # @param [#to_s] event name of event to handle
-    # @return [Proc] the given block
+    # @return [Proc] the previous handler
     # @yield (*args) event handler block
     def on(event, &block)
       raise ArgumentError, "no block given" unless block
       raise NameError, "no such callback: #{event}" unless has_callback?(event)
-      handlers[event.to_s] = block
+      handlers[event.to_s].tap do
+        handlers[event.to_s] = block
+      end
     end
 
     # @param [#to_s] name
