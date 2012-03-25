@@ -84,5 +84,5 @@ module Hallon
     end
   end
 
-  self.load_timeout = 5 # seconds
+  self.load_timeout = 31.4159 # seconds
 end

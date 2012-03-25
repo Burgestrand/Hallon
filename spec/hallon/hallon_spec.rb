@@ -24,9 +24,8 @@ describe Hallon do
     end
 
     it "should allow setting and retrieving the value" do
-      Hallon.load_timeout.should eq 5
-      Hallon.load_timeout = 0.2
-      Hallon.load_timeout.should eq 0.2
+      expect { Hallon.load_timeout = 0.2 }.
+        to change { Hallon.load_timeout }
     end
   end
 end
