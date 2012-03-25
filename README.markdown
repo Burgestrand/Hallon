@@ -5,12 +5,54 @@ Hallon (Swedish for “[Raspberry][]”) is _the_ ruby gem for interacting with 
 
 Code samples can be found under the `examples/` directory. An explanation on how to run them can be found on the [Hallon wiki on GitHub](https://github.com/Burgestrand/Hallon/wiki).
 
-Installation
-------------
+Prerequisites
+-------------
+
+Before you start using Hallon you’ll need to complete the following steps.
+
+1. Get yourself a Spotify premium account, which is required for libspotify to work. You username and password
+   (either classic Spotify, or facebook credentials) will be used to connect to Spotify later.
+2. [Download your application key from developer.spotify.com](https://developer.spotify.com/en/libspotify/application-key/),
+   and place it in a known location. You’ll have the option of downloading it either in **binary** or c-code. You want the
+   **binary** one. If you do not have an application key already, you will be asked to create one.
+3. Install libspotify. Hallon always aims to support to most recent version, which is currently **v10.1.16**. Older
+   versions are not supported. For help installing libspotify, please see the wiki on [How to install libspotify][].
+4. Once the above are done, you are ready to try out Hallon.
+
+### Using Hallon
+
+First, begin by installing the latest version of Hallon.
 
 ```bash
 gem install hallon
 ```
+
+Great! Now you’re ready to start experimenting. Everything in Hallon, from searching to looking up tracks, requires you to
+have an active Spotify session. You create it by initializing it with your application key.
+
+```ruby
+require 'hallon'
+
+session = Hallon::Session.initialize IO.read('./spotify_appkey.key')
+```
+
+Now that you have your session you may also want to login (even though you can still do a few things without logging in).
+
+```ruby
+session.login!('username', 'password')
+```
+
+You may now experiment with just about anything. For an API reference, please see [Hallon’s page at rdoc.info](http://rdoc.info/github/Burgestrand/Hallon/master/frames).
+As a starter tip, many objects can be constructed by giving it a Spotify URI, like this.
+
+```ruby
+track = Hallon::Track.new("spotify:track:1ZPsdTkzhDeHjA5c2Rnt2I").load
+artist = track.artist.load
+
+puts "#{track.name} by #{artist.name}"
+```
+
+### If you want to play audio…
 
 If you want to play audio you’ll need to install an audio driver. As of current writing there is only one driver in existence. You can install it with:
 
@@ -82,8 +124,17 @@ Audio support
 Hallon supports streaming audio from Spotify via [Hallon::Player][]. When you create the player you give it your current session and an audio driver, which the player will then use for audio playback.
 
 ```ruby
+require 'hallon'
+require 'hallon-openal'
+
+session = Hallon::Session.initialize(IO.read('./spotify_appkey.key'))
+session.login!('username', 'password')
+
+track = Hallon::Track.new("spotify:track:1ZPsdTkzhDeHjA5c2Rnt2I")
+track.load
+
 player = Hallon::Player.new(session, Hallon::OpenAL)
-player.play(loaded_track)
+player.play!(track)
 ```
 
 Available drivers are:
@@ -134,6 +185,8 @@ Hallon is licensed under a 2-clause (Simplified) BSD license. More information c
 [Greenstripes]:     http://github.com/sarnesjo/greenstripes
 [What is Hallon?]:  http://burgestrand.se/articles/hallon-delicious-ruby-bindings-to-libspotify.html
 [Build Status]:     https://secure.travis-ci.org/Burgestrand/Hallon.png
+
+[How to install libspotify]: https://github.com/Burgestrand/Hallon/wiki/How-to-install-libspotify
 
 [API page for Hallon::Observable]: http://rubydoc.info/github/Burgestrand/Hallon/master/Hallon/Observable
 
