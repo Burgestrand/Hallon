@@ -4,6 +4,7 @@
 require_relative 'example_support'
 session = Hallon::Session.instance
 
+puts
 puts "Hi there! I am adding_tracks_to_playlist.rb. You and me, we will manipulate some playlists today.
 We shall add a few tracks to a playlist of your choice."
 
@@ -12,6 +13,7 @@ playlist_uri = loop do
   break uri if uri
 end
 
+puts
 puts "Now I need the tracks we should add to it. Give them all to me. End it with a blank line."
 track_uris = []
 loop do
@@ -28,6 +30,7 @@ puts
 # First, we load the playlist. This is necessary for libspotify to know if we
 # have write access to it or not. Not doing it might end us up getting permission
 # denied errors later.
+puts
 puts "Loading playlist #{playlist_uri}."
 playlist = Hallon::Playlist.new(playlist_uri).load
 puts "(it has #{playlist.size} tracks)"
@@ -42,6 +45,7 @@ playlist.insert(position, tracks)
 # finally, wait for the updates to the playlist to be acknowledged by the
 # Spotify back-end. Once they have, we’ll see the tracks in our desktop
 # client as well.
+puts
 puts "Uploading playlist changes to Spotify back-end!"
 
 # We allow a timeout of 30 seconds. These things sometimes take a long time.
