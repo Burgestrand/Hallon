@@ -6,9 +6,21 @@ Hallon’s Changelog
 
 __Added__
 
+- You can now construct Search objects from a Link! [7f87e74c]
+- Playlist#upload [479c3d20]
+
 __Changed__
 
+- Hallon::Search::Radio now replaces Hallon::Search.radio [73d6afa3]
+- Observable#on now returns the previous handler [7ed42c4b]
+- Default load time is now 30 seconds instead of 5 [d04440ba]
+
 __Fixed__
+
+- Hallon::URI now matches entire URIs [397cf711]
+- Image IDs with NUL-bytes now no longer raise errors [30a376eb]
+- Link#to_str/to_uri now returns a String in UTF-8 encoding [f1661736]
+- Session#login now raises an error when given empty credentials [dbc390ea]
 
 [v0.14.0][]
 ------------------
