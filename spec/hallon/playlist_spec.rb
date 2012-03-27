@@ -83,37 +83,9 @@ describe Hallon::Playlist do
       Timeout.timeout(1) { example.run }
     end
 
-    it "should wait until the state changes, and then wait for it to stop pending" do
-      ticker = 0
-
-      playlist.should_receive(:pending?).and_return(false, true, false)
-
-      session.should_receive(:process_events).exactly(3).times do
-        playlist.send(:trigger, :playlist_state_changed)
-        playlist.send(:trigger, :playlist_update_in_progress, (ticker += 1) >= 2)
-        ticker
-      end
-
-      playlist.upload
-    end
-
     it "should raise an error if the playlist takes too long to load" do
+      playlist.stub(:pending? => true)
       expect { playlist.upload(0.01) }.to raise_error(Hallon::TimeoutError)
-    end
-
-    it "should not erase the existing state handler" do
-      handler = proc { }
-      playlist.on(:playlist_state_changed, &handler)
-
-      # make sure we trigger an update for test to not timeout
-      session.should_receive(:process_events) do
-        playlist.send(:trigger, :playlist_state_changed)
-        playlist.send(:trigger, :playlist_update_in_progress, true)
-        0
-      end
-
-      expect { playlist.upload }.
-        to_not change { playlist.on(:playlist_state_changed, &handler) }
     end
   end
 
