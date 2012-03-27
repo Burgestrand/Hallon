@@ -1,5 +1,8 @@
 # coding: utf-8
 
+require 'bundler'
+Bundler.setup
+
 begin
   require 'cover_me'
 rescue LoadError

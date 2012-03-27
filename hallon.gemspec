@@ -26,5 +26,6 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'rake', '~> 0.8'
   gem.add_development_dependency 'rspec', '~> 2'
   gem.add_development_dependency 'yard'
+  gem.add_development_dependency 'bundler'
   gem.add_development_dependency 'rdiscount'
 end
