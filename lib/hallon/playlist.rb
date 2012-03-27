@@ -156,27 +156,18 @@ module Hallon
     #
     # @return [Playlist]
     def upload(timeout = Hallon.load_timeout)
-      state_changed = pending?
-      done_updating = false
-
-      previous_state_changed = on(:playlist_state_changed) do
-        state_changed = true
-        previous_state_changed.call
-      end
-
-      previous_update_in_progress = on(:playlist_update_in_progress) do |done, playlist|
-        done_updating = done
-        previous_update_in_progress.call(done, playlist)
+      unless pending?
+        # libspotify has this bug where pending? returns false directly after
+        # adding tracks to a playlist; processing events once usually toggles
+        # the playlist into pending? mode
+        session.process_events
       end
 
       Timeout.timeout(timeout, Hallon::TimeoutError) do
-        session.wait_for { state_changed and done_updating and not pending? }
+        session.wait_for { not pending? }
       end
 
       self
-    ensure
-      on(:playlist_state_changed, &previous_state_changed)
-      on(:playlist_update_in_progress, &previous_update_in_progress)
     end
 
     # @return [Boolean] true if playlist has pending changes
