@@ -236,5 +236,18 @@ module Hallon::Observable
     def offline_error_callback(pointer, error)
       trigger(pointer, :offline_error, error)
     end
+
+
+    # @example listening to this event
+    #   session.on(:credentials_blob_updated) do |credentials|
+    #     File.open('.spotify-credentials', 'w') { |io| io.write(credentials) }
+    #   end
+    #
+    # @yield [credentials, self]
+    # @yieldparam [String] credentials
+    # @yieldparam [Session] self
+    def credentials_blob_updated_callback(pointer, credentials)
+      trigger(pointer, :credentials_blob_updated, credentials)
+    end
   end
 end

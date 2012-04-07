@@ -120,7 +120,7 @@ module Hallon
         # You pass a pointer to the session pointer to libspotify >:)
         FFI::MemoryPointer.new(:pointer) do |p|
           Error::maybe_raise Spotify.session_create(config, p)
-          @pointer = p.read_pointer
+          @pointer = Spotify::Pointer.new(p.read_pointer, :session, false)
         end
       end
     end
@@ -189,7 +189,7 @@ module Hallon
         raise ArgumentError, "username and password may not be blank"
       end
 
-      tap { Spotify.session_login(pointer, username, password, remember_me) }
+      tap { Spotify.session_login(pointer, username, password, remember_me, nil) }
     end
 
     # Login the remembered user (see {#login}).
@@ -424,10 +424,7 @@ module Hallon
       # @see login!
       # @see relogin!
       def wait_until_logged_in
-        # if the user does not have premium, libspotify will still fire logged_in as :ok,
-        # but a few moments later it fires connection_error; waiting for both and checking
-        # for errors on both hopefully circumvents this!
-        wait_for(:logged_in, :connection_error) do |error|
+        wait_for(:connection_error) do |error|
           Error.maybe_raise(error, :ignore => :timeout)
           session.logged_in?
         end

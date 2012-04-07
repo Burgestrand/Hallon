@@ -52,28 +52,6 @@ module Hallon
       end
     end
 
-    class Radio < Search
-      extend Observable::Search
-      include Loadable
-
-      # @param [Range<Integer>] range (`from_year`..`to_year`)
-      # @param [Symbol, …] genres
-      # @return [Radio] radio search within the given period and genres.
-      def initialize(range, *genres)
-        from_year, to_year = range.begin, range.end
-        genres = genres.reduce(0) do |mask, genre|
-          mask | Spotify.enum_value!(genre, "genre")
-        end
-
-        subscribe_for_callbacks do |callback|
-          @pointer = Spotify.radio_search_create!(session.pointer, from_year, to_year, genres, callback, nil)
-        end
-
-        raise ArgumentError, "radio search failed" if @pointer.null?
-      end
-    end
-
-
     extend Linkable
 
     to_link :from_search
@@ -86,27 +64,18 @@ module Hallon
     extend Observable::Search
     include Loadable
 
-    # @return [Array<Symbol>] a list of radio genres available for search
-    def self.genres
-      Spotify.enum_type(:radio_genre).symbols
-    end
-
     # @return [Hash] default search parameters
     def self.defaults
       @defaults ||= {
         :tracks  => 25,
         :albums  => 25,
         :artists => 25,
+        :playlists => 25,
         :tracks_offset  => 0,
         :albums_offset  => 0,
-        :artists_offset => 0
+        :artists_offset => 0,
+        :playlists_offset => 0
       }
-    end
-
-    # @param (see Radio#initialize)
-    # @return (see Radio#initialize)
-    def self.radio(range, *genres)
-      Radio.new(range, *genres)
     end
 
     # Construct a new search with given query.
@@ -116,20 +85,22 @@ module Hallon
     # @option options [#to_i] :tracks (25) max number of tracks you want in result
     # @option options [#to_i] :albums (25) max number of albums you want in result
     # @option options [#to_i] :artists (25) max number of artists you want in result
+    # @option options [#to_i] :playlists (25) max number of playlists you want in result
     # @option options [#to_i] :tracks_offset (0) offset of tracks in search result
     # @option options [#to_i] :albums_offset (0) offset of albums in search result
     # @option options [#to_i] :artists_offset (0) offset of artists in search result
+    # @option options [#to_i] :playlists_offset (0) offset of playlists in search result
     # @see http://developer.spotify.com/en/libspotify/docs/group__search.html#gacf0b5e902e27d46ef8b1f40e332766df
     def initialize(search, options = {})
       opts = Search.defaults.merge(options)
-      opts = opts.values_at(:tracks_offset, :tracks, :albums_offset, :albums, :artists_offset, :artists).map(&:to_i)
+      opts = opts.values_at(:tracks_offset, :tracks, :albums_offset, :albums, :artists_offset, :artists, :playlists_offset, :playlists).map(&:to_i)
       search = from_link(search) if Link.valid?(search)
 
       subscribe_for_callbacks do |callback|
         @pointer = if Spotify::Pointer.typechecks?(search, :search)
           search
         else
-          Spotify.search_create!(session.pointer, search, *opts, callback, nil)
+          Spotify.search_create!(session.pointer, search, *opts, :standard, callback, nil)
         end
 
         raise ArgumentError, "search with #{search} failed" if @pointer.null?

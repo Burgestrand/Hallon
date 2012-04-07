@@ -22,7 +22,7 @@ Gem::Specification.new do |gem|
   gem.required_ruby_version = '>= 1.9'
 
   gem.add_dependency 'ref', '~> 1.0'
-  gem.add_dependency 'spotify', '~> 10.3.0'
+  gem.add_dependency 'spotify', '~> 11.0.2'
   gem.add_development_dependency 'rake', '~> 0.8'
   gem.add_development_dependency 'rspec', '~> 2'
   gem.add_development_dependency 'yard'

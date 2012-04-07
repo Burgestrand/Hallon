@@ -42,7 +42,9 @@ module Spotify
       layout :playlist, :playlist,
              :type, :playlist_type,
              :folder_name, :pointer,
-             :folder_id, :uint64
+             :folder_id, :uint64,
+             :num_seen_tracks, :int,
+             :seen_tracks, :pointer
     end
   end
 
@@ -61,18 +63,18 @@ module Spotify
 
   attach_function :mock_session, :mocksp_session_create, [:pointer, :connectionstate, :int, Spotify::OfflineSyncStatus, :int, :int, :playlist], :session
   attach_mock_function :mock_user, :mocksp_user_create, [:string, :string, :bool], :user
-  attach_mock_function :mock_track, :mocksp_track_create, [:string, :int, :array, :album, :int, :int, :int, :int, :error, :bool, :availability, :track_offline_status, :bool, :bool, :bool, :bool], :track
+  attach_mock_function :mock_track, :mocksp_track_create, [:string, :int, :array, :album, :int, :int, :int, :int, :error, :bool, :availability, :track_offline_status, :bool, :bool, :track, :bool, :bool], :track
   attach_mock_function :mock_image, :mocksp_image_create, [:image_id, :imageformat, :size_t, :buffer_in, :error], :image
   attach_mock_function :mock_artist, :mocksp_artist_create, [:string, :image_id, :bool], :artist
   attach_mock_function :mock_album, :mocksp_album_create, [:string, :artist, :int, :image_id, :albumtype, :bool, :bool], :album
 
   attach_function :mock_albumbrowse, :mocksp_albumbrowse_create, [:error, :int, :album, :artist, :int, :array, :int, :array, :string, :albumbrowse_complete_cb, :pointer], :albumbrowse
-  attach_function :mock_artistbrowse, :mocksp_artistbrowse_create, [:error, :int, :artist, :int, :array, :int, :array, :int, :array, :int, :array, :string, :artistbrowse_type, :artistbrowse_complete_cb, :pointer], :artistbrowse
+  attach_function :mock_artistbrowse, :mocksp_artistbrowse_create, [:error, :int, :artist, :int, :array, :int, :array, :int, :array, :int, :array, :int, :array, :string, :artistbrowse_type, :artistbrowse_complete_cb, :pointer], :artistbrowse
   attach_function :mock_toplistbrowse, :mocksp_toplistbrowse_create, [:error, :int, :int, :array, :int, :array, :int, :array], :toplistbrowse
 
   attach_mock_function :mock_playlist, :mocksp_playlist_create, [:string, :bool, :user, :bool, :string, :image_id, :bool, :uint, Spotify::Subscribers, :bool, :playlist_offline_status, :int, :int, :array], :playlist
   attach_mock_function :mock_playlistcontainer, :mocksp_playlistcontainer_create, [:user, :bool, :int, :array, PlaylistContainerCallbacks, :userdata], :playlistcontainer
-  attach_function :mock_search, :mocksp_search_create, [:error, :string, :string, :int, :int, :array, :int, :int, :array, :int, :int, :array, :search_complete_cb, :pointer], :search
+  attach_function :mock_search, :mocksp_search_create, [:error, :string, :string, :int, :int, :array, :int, :int, :array, :int, :int, :array, :int, :int, :array, :search_complete_cb, :pointer], :search
   attach_function :mock_subscribers, :mocksp_subscribers, [:int, :array], Spotify::Subscribers
 
   # mocked accessors

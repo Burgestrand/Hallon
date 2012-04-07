@@ -13,12 +13,17 @@ RSpec::Core::ExampleGroup.instance_eval do
 
   let(:mock_track) do
     artists = pointer_array_with(mock_artist, mock_artist_two)
-    Spotify.mock_track!("They", artists.length, artists, mock_album, 123_456, 42, 2, 7, 0, true, :available, :done, false, true, true, false)
+    Spotify.mock_track!("They", artists.length, artists, mock_album, 123_456, 42, 2, 7, :ok, true, :available, :done, false, true, nil, true, false)
   end
 
   let(:mock_track_two) do
     artists = pointer_array_with(mock_artist)
-    Spotify.mock_track!("Amazing", artists.length, artists, mock_album, 123_456, 42, 2, 7, 0, true, :available, :no, false, true, true, true)
+    Spotify.mock_track!("Amazing", artists.length, artists, mock_album, 123_456, 42, 2, 7, :ok, true, :available, :no, false, true, nil, true, true)
+  end
+
+  let(:mock_linked_track) do
+    artists = pointer_array_with(mock_artist_two)
+    Spotify.mock_track!("They", artists.length, artists, mock_album, 60, 100, 1, 1, :ok, true, :available, :no, false, true, mock_track, false, false)
   end
 
   let(:mock_albumbrowse) do
@@ -34,8 +39,9 @@ RSpec::Core::ExampleGroup.instance_eval do
     portraits = pointer_array_with(mock_image_id_pointer, mock_image_id_pointer)
     tracks    = pointer_array_with(mock_track, mock_track_two)
     albums    = pointer_array_with(mock_album)
+    tophits   = pointer_array_with(mock_track)
 
-    Spotify.mock_artistbrowse(:ok, 2751, mock_artist, portraits.length, portraits, tracks.length, tracks, albums.length, albums, similar_artists.length, similar_artists, "grew up in DA BLOCK", :full, nil, nil)
+    Spotify.mock_artistbrowse(:ok, 2751, mock_artist, portraits.length, portraits, tracks.length, tracks, albums.length, albums, similar_artists.length, similar_artists, tophits.length, tophits, "grew up in DA BLOCK", :full, nil, nil)
   end
 
   let(:mock_toplistbrowse) do
@@ -46,11 +52,12 @@ RSpec::Core::ExampleGroup.instance_eval do
   end
 
   let(:mock_search) do
-    artists = pointer_array_with(mock_artist, mock_artist_two)
-    albums  = pointer_array_with(mock_album)
-    tracks  = pointer_array_with(mock_track, mock_track_two)
+    artists   = pointer_array_with(mock_artist, mock_artist_two)
+    albums    = pointer_array_with(mock_album)
+    tracks    = pointer_array_with(mock_track, mock_track_two)
+    playlists = pointer_array_with(mock_playlist, mock_playlist_two)
 
-    Spotify.mock_search(:ok, "my å utf8  query", "another thing", 1337, tracks.length, tracks, 42, albums.length, albums, 81104, artists.length, artists, nil, nil)
+    Spotify.mock_search(:ok, "my å utf8  query", "another thing", 1337, tracks.length, tracks, 42, albums.length, albums, 81104, artists.length, artists, 0716, playlists.length, playlists, nil, nil)
   end
 
   let(:mock_subscribers) do
@@ -157,7 +164,7 @@ RSpec::Core::ExampleGroup.instance_eval do
 
   let(:mock_container) do
     num_items = 4
-    items_ptr = FFI::MemoryPointer.new(Spotify::Mock::PlaylistTrack, num_items)
+    items_ptr = FFI::MemoryPointer.new(Spotify::Mock::PlaylistContainerItem, num_items)
     items = num_items.times.map do |i|
       Spotify::Mock::PlaylistContainerItem.new(items_ptr + Spotify::Mock::PlaylistContainerItem.size * i)
     end

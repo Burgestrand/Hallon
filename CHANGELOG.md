@@ -3,6 +3,8 @@ Hallon’s Changelog
 
 [HEAD][]
 ------------------
+Updated to libspotify v11.1.60, and improved the examples provided within
+Hallon codebase significantly.
 
 __Added__
 
