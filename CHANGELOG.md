@@ -7,7 +7,7 @@ Hallon’s Changelog
 __Added__
 
 - You can now construct Search objects from a Link! [7f87e74c]
-- Playlist#upload [479c3d20]
+- Playlist#upload [479c3d20, 2a90097]
 
 __Changed__
 
