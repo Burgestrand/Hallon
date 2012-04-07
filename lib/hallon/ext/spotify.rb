@@ -23,6 +23,7 @@ module Spotify
   # @raise [NoMethodError] if `function` is not defined
   # @see Spotify::Pointer
   def self.wrap_function(function, return_type)
+    method(function)
     define_singleton_method("#{function}!") do |*args|
       pointer = public_send(function, *args)
       Spotify::Pointer.new(pointer, return_type, function !~ /create/)
