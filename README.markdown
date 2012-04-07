@@ -62,6 +62,14 @@ gem install hallon-openal
 
 For more information about audio support in Hallon, see the section "Audio support" below.
 
+### Contact details
+
+- __Got questions?__ Ask on the mailing list: <https://groups.google.com/d/forum/ruby-hallon>
+- __Found a bug?__ Report an issue: <https://github.com/Burgestrand/Hallon/issues/new>
+- __Have feedback?__ I ❤ feedback! Please send it to the mailing list.
+
+If you for some reason cannot use the mailing list or GitHub issue tracker you may contact me directly. My email is found on [my GitHub profile](https://github.com/Burgestrand), and I’m also available as [@burgestrand on twitter](https://twitter.com/Burgestrand).
+
 Hallon and Spotify objects
 --------------------------
 All objects from libspotify have a counterpart in Hallon, and just like in libspotify the objects are populated with information as it becomes available. All objects that behave in this way respond to `#loaded?`, which’ll return true if the object has been populated with data.
@@ -148,9 +156,6 @@ For information on how to write your own audio driver, see [Hallon::ExampleAudio
 Finally, here are some important notes
 --------------------------------------
 
-### [Please tell me your feedback and requests!](https://github.com/Burgestrand/Hallon/issues/new)
-Really, I ❤ feedback! Suggestions on how to improve the API, tell me what is delicious about Hallon, tell me what is yucky about Hallon… anything! All feedback is useful in one way or another. You have any issues with Hallon? Just ask, and I’ll answer if I can.
-
 ### Contributing to Hallon
 [Fork](http://help.github.com/forking/) Hallon, write tests for everything you do (so I don’t break your stuff during my own development) and send a pull request. If you modify existing files, please adhere to the coding standard surrounding your code.
 
@@ -162,10 +167,6 @@ You can only keep one session with Spotify alive at a time within the same proce
 
 ### When forking, you need to be extra careful
 If you fork, you need to instantiate the session within the process you plan to use Hallon in. You want to use Hallon in the parent? Create the session in the parent. You want to use it in the child? Create the session in the child! This is a limitation of libspotify itself.
-
-You have more questions?
-------------------------
-I can be reached at my [email (found on GitHub profile)](http://github.com/Burgestrand) or [@burgestrand on twitter](http://twitter.com/Burgestrand). I’d be extremely happy to discuss Hallon with you if you have any feedback or thoughts.
 
 Credits
 -------
