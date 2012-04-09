@@ -39,6 +39,7 @@ module Hallon
     end
 
     private
+
       # @macro [attach] to_link
       #   @method to_link
       #   @scope  instance
@@ -70,7 +71,8 @@ module Hallon
       #
       # @param [Spotify::Pointer, String, Link] resource
       # @return [Spotify::Pointer]
-      # @raise [TypeError] when pointer could not be created, or null
+      # @raise [TypeError] when the pointer is of the wrong type
+      # @raise [ArgumentError] when pointer could not be created, or null
       def to_pointer(resource, type, *args)
         if resource.is_a?(FFI::Pointer) and not resource.is_a?(Spotify::Pointer)
           raise TypeError, "Hallon does not support raw FFI::Pointers, wrap it in a Spotify::Pointer"

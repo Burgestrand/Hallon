@@ -4,7 +4,7 @@ module Hallon
   #
   # @see http://developer.spotify.com/en/libspotify/docs/group__image.html
   class Image < Base
-    extend Linkable
+    include Linkable
 
     from_link :as_image do |link|
       Spotify.image_create_from_link!(session.pointer, link)

@@ -93,7 +93,7 @@ module Hallon
       end
     end
 
-    extend Linkable
+    include Linkable
     include Loadable
 
     # CAN HAZ CALLBAKZ

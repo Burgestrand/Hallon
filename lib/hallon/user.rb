@@ -68,7 +68,7 @@ module Hallon
       end
     end
 
-    extend Linkable
+    include Linkable
     include Loadable
 
     from_link :profile do |link|

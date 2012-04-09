@@ -23,7 +23,7 @@ module Hallon
       Spotify.enum_type(:albumtype).symbols
     end
 
-    extend Linkable
+    include Linkable
     include Loadable
 
     to_link   :from_album

@@ -15,7 +15,7 @@ module Hallon
       end
     end
 
-    extend Linkable
+    include Linkable
     include Loadable
 
     from_link :as_track_and_offset

@@ -2,7 +2,7 @@ describe Hallon::Linkable do
   let(:klass) do
     klass = Class.new
     klass.instance_eval do
-      extend Hallon::Linkable
+      include Hallon::Linkable
     end
     klass
   end

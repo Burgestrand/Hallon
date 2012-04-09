@@ -52,7 +52,7 @@ module Hallon
       end
     end
 
-    extend Linkable
+    include Linkable
 
     to_link :from_search
 
