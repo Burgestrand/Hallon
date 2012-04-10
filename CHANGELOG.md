@@ -3,8 +3,14 @@ Hallon’s Changelog
 
 [HEAD][]
 ------------------
-Updated to libspotify v11.1.60, and improved the examples provided within
-Hallon codebase significantly.
+
+[v0.15.0][]
+------------------
+Updated to libspotify v11.1.60 [3c810b0], and improved the examples provided within Hallon codebase significantly.
+
+__Removed__
+
+- Hallon::Search.radio (was removed in libspotify upgrade)
 
 __Added__
 
@@ -13,7 +19,6 @@ __Added__
 
 __Changed__
 
-- Hallon::Search::Radio now replaces Hallon::Search.radio [73d6afa3]
 - Observable#on now returns the previous handler [7ed42c4b]
 - Default load time is now 30 seconds instead of 5 [d04440ba]
 
@@ -315,4 +320,5 @@ easier to handle.
 [v0.12.0]: https://github.com/Burgestrand/Hallon/compare/v0.11.0...v0.12.0
 [v0.13.0]: https://github.com/Burgestrand/Hallon/compare/v0.12.0...v0.13.0
 [v0.14.0]: https://github.com/Burgestrand/Hallon/compare/v0.13.0...v0.14.0
-[HEAD]: https://github.com/Burgestrand/Hallon/compare/v0.14.0...HEAD
+[v0.15.0]: https://github.com/Burgestrand/Hallon/compare/v0.14.0...v0.15.0
+[HEAD]: https://github.com/Burgestrand/Hallon/compare/v0.15.0...HEAD
