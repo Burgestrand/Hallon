@@ -112,6 +112,10 @@ RSpec::Core::ExampleGroup.instance_eval do
     Spotify.mock_playlist!("Dunderlist", true, mock_user, true, nil, nil, false, 1000, nil, true, :no, 0, 0, nil)
   end
 
+  let(:mock_empty_playlist) do
+    Spotify.mock_playlist!(nil, false, nil, false, nil, nil, false, 0, nil, false, :no, 0, 0, nil)
+  end
+
   let(:mock_playlist_raw) do
     FFI::Pointer.new(mock_playlist.address)
   end
@@ -185,11 +189,18 @@ RSpec::Core::ExampleGroup.instance_eval do
 
     Spotify.mock_playlistcontainer!(mock_user, true, num_items, items_ptr, nil, nil)
   end
+
+  let(:mock_playlists) do
+    {
+      default: mock_playlist,
+      empty:   mock_empty_playlist
+    }
+  end
 end
 
 RSpec.configure do |config|
   config.before do
-    Spotify.registry_add mock_image_uri, mock_image
+    Spotify.registry_add 'spotify:image:3ad93423add99766e02d563605c6e76ed2b0e400', mock_image
     Spotify.registry_add 'spotify:container:burgestrand', mock_container
     Spotify.registry_add 'spotify:albumbrowse:1xvnWMz2PNFf7mXOSRuLws', mock_albumbrowse
     Spotify.registry_add 'spotify:artistbrowse:3bftcFwl4vqRNNORRsqm1G', mock_artistbrowse

@@ -11,7 +11,13 @@ describe Hallon::Playlist do
 
   subject { playlist }
   let(:playlist) do
-    Hallon::Playlist.new(mock_playlist)
+    playlist = Hallon::Playlist.new(mock_playlists[:default])
+    playlist.tap { |x| x.stub(session: session) }
+  end
+
+  let(:empty_playlist) do
+    playlist = Hallon::Playlist.new(mock_playlists[:empty])
+    playlist.tap { |x| x.stub(session: session) }
   end
 
   describe ".invalid_name?" do
@@ -28,19 +34,113 @@ describe Hallon::Playlist do
     end
   end
 
-  it { should be_loaded }
-  it { should be_collaborative }
-  it { should_not be_pending }
-  it { stub_session { should be_in_ram } }
-  it { stub_session { should_not be_available_offline } }
+  describe "#loaded?" do
+    it "is true when the playlist is loaded" do
+      playlist.should be_loaded
+    end
 
-  its(:name)  { should eq "Megaplaylist" }
-  its(:owner) { should eq Hallon::User.new(mock_user) }
-  its(:description) { should eq "Playlist description...?" }
-  its(:image) { stub_session { should eq Hallon::Image.new(mock_image_id) } }
-  its(:total_subscribers) { should eq 1000 }
-  its(:sync_progress) { stub_session { should eq 67 } }
-  its(:size) { should eq 4 }
+    it "is false when the playlist is not loaded" do
+      empty_playlist.should_not be_loaded
+    end
+  end
+
+  describe "#name" do
+    it "returns the playlist’s name as a string" do
+      playlist.name.should eq "Megaplaylist"
+    end
+
+    it "returns an empty string when the playlist is not loaded" do
+      empty_playlist.name.should be_empty
+    end
+  end
+
+  describe "#owner" do
+    it "returns the playlist’s owner" do
+      playlist.owner.should eq Hallon::User.new(mock_user)
+    end
+
+    it "returns nil when the playlist is not loaded" do
+      empty_playlist.owner.should be_nil
+    end
+  end
+
+  describe "#description" do
+    it "returns the playlist’s description" do
+      playlist.description.should eq "Playlist description...?"
+    end
+
+    it "returns an empty string if the playlist is not loaded" do
+      empty_playlist.description.should be_empty
+    end
+  end
+
+  describe "#image" do
+    it "returns the playlists’s image as an image" do
+      stub_session do
+        playlist.image.should eq Hallon::Image.new("spotify:image:3ad93423add99766e02d563605c6e76ed2b0e400")
+      end
+    end
+
+    it "returns nil if the playlist is not loaded" do
+      stub_session do
+        empty_playlist.image.should be_nil
+      end
+    end
+  end
+
+  describe "#total_subscribers" do
+    it "returns the total number of subscribers to the playlist" do
+      playlist.total_subscribers.should eq 1000
+    end
+
+    it "returns zero if the playlist is not loaded" do
+      empty_playlist.total_subscribers.should eq 0
+    end
+  end
+
+  describe "#sync_progress" do
+    it "returns the completed percentage of the playlist download" do
+      playlist.sync_progress.should eq 67
+    end
+
+    it "returns zero if the playlist is not loaded" do
+      empty_playlist.sync_progress.should eq 0
+    end
+  end
+
+  describe "#size" do
+    it "returns the number of tracks in the playlist" do
+      playlist.size.should eq 4
+    end
+
+    it "returns zero if the playlist is not loaded" do
+      empty_playlist.size.should eq 0
+    end
+  end
+
+  describe "#collaborative?" do
+    it "is true when the playlist is set to be collaborative" do
+      playlist.should be_collaborative
+    end
+  end
+
+  describe "#pending?" do
+    it "is false when the playlist does not have pending updates" do
+      playlist.should_not be_pending
+    end
+  end
+
+  describe "#in_ram?" do
+    it "is true when the playlist is loaded in memory" do
+      playlist.should be_in_ram
+    end
+  end
+
+  describe "#available_offline?" do
+    it "is false when the playlist is not enabled for offline use" do
+      playlist.should_not be_available_offline
+    end
+  end
 
   its('tracks.size') { should eq 4 }
   its('tracks.to_a') { should eq instantiate(Hallon::Playlist::Track, *(0...4).map { |index| [Spotify.playlist_track!(playlist.pointer, index), playlist.pointer, index] }) }
@@ -78,34 +178,33 @@ describe Hallon::Playlist do
     end
   end
 
-  describe "#upload", :stub_session do
+  describe "#upload" do
     around(:each) do |example|
       Timeout.timeout(1) { example.run }
     end
 
     it "should raise an error if the playlist takes too long to load" do
       playlist.stub(:pending? => true)
-      expect { playlist.upload(0.01) }.to raise_error(Hallon::TimeoutError)
+      expect { playlist.upload(0.1) }.to raise_error(Hallon::TimeoutError)
     end
   end
 
   describe "#subscribers" do
     it "should return an array of names for the subscribers" do
-      subject.subscribers.should eq %w[Kim Elin Ylva]
+      playlist.subscribers.should eq %w[Kim Elin Ylva]
     end
 
     it "should return an empty array when there are no subscribers" do
-      Spotify.should_receive(:playlist_subscribers).and_return(mock_empty_subscribers)
-      subject.subscribers.should eq []
+      empty_playlist.subscribers.should be_nil
     end
 
-    it "should return nil when subscriber fetching failed" do
+    it "should return an empty array when subscriber fetching failed" do
       Spotify.should_receive(:playlist_subscribers).and_return(null_pointer)
-      playlist.subscribers.should be_nil
+      empty_playlist.subscribers.should be_nil
     end
   end
 
-  describe "#insert", :stub_session do
+  describe "#insert" do
     let(:tracks) { instantiate(Hallon::Track, mock_track, mock_track_two) }
 
     it "should add the given tracks to the playlist at correct index" do
@@ -192,7 +291,7 @@ describe Hallon::Playlist do
     end
   end
 
-  describe "#in_ram=", :stub_session do
+  describe "#in_ram=" do
     it "should set in_ram status" do
       playlist.should be_in_ram
       playlist.in_ram = false
@@ -200,7 +299,7 @@ describe Hallon::Playlist do
     end
   end
 
-  describe "#offline_mode=", :stub_session do
+  describe "#offline_mode=" do
     it "should set offline mode" do
       playlist.should_not be_available_offline
       playlist.offline_mode = true
@@ -208,7 +307,7 @@ describe Hallon::Playlist do
     end
   end
 
-  describe "#update_subscribers", :stub_session do
+  describe "#update_subscribers" do
     it "should ask libspotify to update the subscribers" do
       expect { playlist.update_subscribers }.to_not raise_error
     end
@@ -218,7 +317,7 @@ describe Hallon::Playlist do
     end
   end
 
-  describe "offline status methods", :stub_session do
+  describe "offline status methods" do
     def symbol_for(number)
       Spotify.enum_type(:playlist_offline_status)[number]
     end
