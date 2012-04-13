@@ -8,6 +8,20 @@ RSpec::Core::ExampleGroup.instance_eval do
     }
   end
 
+  let(:mock_subscribers) do
+    people = %w[Kim Elin Ylva]
+    people.map! { |x| FFI::MemoryPointer.from_string(x) }
+
+    subscribers = FFI::MemoryPointer.new(:pointer, people.size)
+    subscribers.write_array_of_pointer people
+
+    Spotify.mock_subscribers(people.count, subscribers)
+  end
+
+  let(:mock_empty_subscribers) do
+    Spotify.mock_subscribers(0, nil)
+  end
+
   let(:mock_playlist) do
     num_tracks = 4
     tracks_ptr = FFI::MemoryPointer.new(Spotify::Mock::PlaylistTrack, num_tracks)

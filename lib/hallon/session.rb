@@ -335,12 +335,14 @@ module Hallon
 
     # Offline synchronization status.
     #
-    # @return [Hash, nil] sync status, or nil if not applicable
+    # @return [Hash] sync status (empty hash if not applicable)
     # @see http://developer.spotify.com/en/libspotify/docs/structsp__offline__sync__status.html
     def offline_sync_status
       struct = Spotify::OfflineSyncStatus.new
       if Spotify.offline_sync_get_status(pointer, struct.pointer)
         Hash[struct.members.zip(struct.values)]
+      else
+        {}
       end
     end
 

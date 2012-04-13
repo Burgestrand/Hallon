@@ -232,16 +232,35 @@ describe Hallon::Session do
   end
 
   describe "offline settings readers" do
-    subject { mock_session_object }
+    let(:session) { mock_session_object }
 
-    its(:offline_time_left) { should eq 60 * 60 * 24 * 30 } # a month!
-    its(:offline_sync_status) { should eq mock_offline_sync_status_hash }
-    its(:offline_playlists_count) { should eq 7 }
-    its(:offline_tracks_to_sync) { should eq 3 }
+    describe "#offline_time_left" do
+      it "returns the time left until libspotify must go online" do
+        session.offline_time_left.should eq 60 * 60 * 24 * 30
+      end
+    end
 
-    specify "offline_sync_status when given false as return from libspotify" do
-      Spotify.should_receive(:offline_sync_get_status).and_return(false)
-      subject.offline_sync_status.should eq nil
+    describe "#offline_sync_status" do
+      it "returns a hash of offline sync status details" do
+        session.offline_sync_status.should eq mock_offline_sync_status_hash
+      end
+
+      it "returns an empty hash when offline sync status details are unavailable" do
+        Spotify.should_receive(:offline_sync_get_status).and_return(false)
+        session.offline_sync_status.should eq Hash.new
+      end
+    end
+
+    describe "#offline_playlists_count" do
+      it "returns the number of playlists marked for offline synchronization" do
+        session.offline_playlists_count.should eq 7
+      end
+    end
+
+    describe "#offline_tracks_to_sync" do
+      it "returns the number of tracks that still need to be synchronized" do
+        session.offline_tracks_to_sync.should eq 3
+      end
     end
   end
 
