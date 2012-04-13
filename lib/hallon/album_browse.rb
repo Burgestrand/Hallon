@@ -77,11 +77,11 @@ module Hallon
     end
 
     # @note If the object is not loaded, the result is undefined.
-    # @note Returns nil if the request was served from the local libspotify cache.
-    # @return [Rational, nil] time it took for the albumbrowse request to complete (in seconds).
+    # @return [Rational] time it took for the albumbrowse request to complete (in seconds).
     def request_duration
       duration = Spotify.albumbrowse_backend_request_duration(pointer)
-      Rational(duration, 1000) if duration > 0
+      duration = 0 if duration < 0
+      Rational(duration, 1000)
     end
 
     # @return [Copyrights] enumerator of copyright notices.

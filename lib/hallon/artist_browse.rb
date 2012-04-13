@@ -111,7 +111,8 @@ module Hallon
     # @return [Rational, nil] time it took for the albumbrowse request to complete (in seconds).
     def request_duration
       duration = Spotify.artistbrowse_backend_request_duration(pointer)
-      Rational(duration, 1000) if duration > 0
+      duration = 0 if duration < 0
+      Rational(duration, 1000)
     end
 
     # @return [Portraits] artist portraits as {Image}s.
