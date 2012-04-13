@@ -9,12 +9,13 @@ __Changed__
 - Renamed Playlist::Track#create_time to added_at [1adc2d7]
 - Renamed Playlist::Track#creator to adder [1adc2d7]
 - Session#offline_sync_status now returns a hash always [c14d42ae]
+- Make AlbumBrowse#request_duration always return an integer [ee0697c2]
+- Make ArtistBrowse#request_duration always return an integer [ee0697c2]
+- Make Toplist#request_duration always return an integer [ebc64e1a]
 
 __Fixed__
 
 - Have Playlist#subscribers always return an array [a8d26c9a]
-- Make AlbumBrowse#request_duration always return an integer [ee0697c2]
-- Make ArtistBrowse#request_duration always return an integer [ee0697c2]
 - Fix Image#data for images with no data [e7d8627]
 - Playlist::Track#message always return a string [72a644a]
 
