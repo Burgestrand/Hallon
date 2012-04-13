@@ -4,6 +4,11 @@ Hallon’s Changelog
 [HEAD][]
 ------------------
 
+__Changed__
+
+- Renamed Playlist::Track#create_time to added_at [1adc2d7]
+- Renamed Playlist::Track#creator to adder [1adc2d7]
+
 __Fixed__
 
 - Have Playlist#subscribers always return an array [a8d26c9a]
