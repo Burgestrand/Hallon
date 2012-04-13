@@ -12,6 +12,7 @@ __Changed__
 - Make AlbumBrowse#request_duration always return an integer [ee0697c2]
 - Make ArtistBrowse#request_duration always return an integer [ee0697c2]
 - Make Toplist#request_duration always return an integer [ebc64e1a]
+- Track#popularity now returns a value between 0 and 100 [cd85ae7f]
 
 __Fixed__
 
