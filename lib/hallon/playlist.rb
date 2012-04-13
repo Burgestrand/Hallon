@@ -215,7 +215,7 @@ module Hallon
       Spotify.playlist_set_offline_mode(session.pointer, pointer, !! available_offline)
     end
 
-    # @return [String]
+    # @return [String] playlist name, or an empty string if unavailable.
     def name
       Spotify.playlist_name(pointer)
     end
