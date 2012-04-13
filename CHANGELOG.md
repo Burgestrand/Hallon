@@ -10,6 +10,7 @@ __Fixed__
 - Make AlbumBrowse#request_duration always return an integer [ee0697c2]
 - Make ArtistBrowse#request_duration always return an integer [ee0697c2]
 - Fix Image#data for images with no data [e7d8627]
+- Playlist::Track#message always return a string [72a644a]
 
 [v0.15.0][]
 ------------------
