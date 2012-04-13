@@ -2,17 +2,21 @@
 require 'cgi'
 
 describe Hallon::Search do
+  let(:search) do
+    Hallon::Search.new("my å utf8  query")
+  end
+
+  let(:empty_search) do
+    Hallon::Search.new("")
+  end
+
+  specify { search.should be_a Hallon::Loadable }
+  specify { search.should be_a Hallon::Observable }
+
   it_should_behave_like "a Linkable object" do
     let(:spotify_uri) { "spotify:search:my+%C3%A5+utf8+%EF%A3%BF+query" }
     let(:custom_object) { "http://open.spotify.com/search/my+%C3%A5+utf8+%EF%A3%BF+query" }
     let(:described_class) { Hallon::Search }
-  end
-
-  it { should be_a Hallon::Loadable }
-
-  subject { search }
-  let(:search) do
-    Hallon::Search.new("my å utf8  query")
   end
 
   describe ".new" do
@@ -43,23 +47,97 @@ describe Hallon::Search do
     end
   end
 
-  it { should be_a Hallon::Observable }
-  it { should be_loaded }
-  its(:status) { should eq :ok }
-  its(:query) { should eq "my å utf8  query" }
-  its(:did_you_mean) { should eq "another thing" }
+  describe "#loaded?" do
+    it "returns true if the search is complete" do
+      search.should be_loaded
+    end
+  end
 
-  its('tracks.size')  { should eq 2 }
-  its('tracks.to_a')  { should eq instantiate(Hallon::Track, mock_track, mock_track_two) }
-  its('tracks.total') { should eq 1337 }
+  describe "#status" do
+    it "returns the status of the search" do
+      search.status.should eq :ok
+    end
+  end
 
-  its('albums.size')  { should eq 1 }
-  its('albums.to_a')  { should eq instantiate(Hallon::Album, mock_album) }
-  its('albums.total') { should eq 42 }
+  describe "#query" do
+    it "returns the search query" do
+      search.query.should eq "my å utf8  query"
+    end
+  end
 
-  its('artists.size')  { should eq 2 }
-  its('artists.to_a')  { should eq instantiate(Hallon::Artist, mock_artist, mock_artist_two) }
-  its('artists.total') { should eq 81104 }
+  describe "#did_you_mean" do
+    it "returns a suggestion for what the query might have intended to be" do
+      search.did_you_mean.should eq "another thing"
+    end
 
-  its(:to_link) { should eq Hallon::Link.new("spotify:search:#{CGI.escape(search.query)}") }
+    it "returns an empty string if there is no suggestion available" do
+      empty_search.did_you_mean.should be_empty
+    end
+  end
+
+  describe "#tracks" do
+    it "returns an enumerator of the search’s track" do
+      search.tracks.to_a.should eq instantiate(Hallon::Track, mock_track, mock_track_two)
+    end
+
+    it "returns an empty enumerator if there are no search results" do
+      empty_search.tracks.should be_empty
+    end
+
+    describe ".total" do
+      it "returns the total number of track search results" do
+        search.tracks.total.should eq 1337
+      end
+
+      it "returns zero if there are no search results whatsoever" do
+        empty_search.tracks.total.should eq 0
+      end
+    end
+  end
+
+  describe "#albums" do
+    it "returns an enumerator of the search’s albums" do
+      search.albums.to_a.should eq instantiate(Hallon::Album, mock_album)
+    end
+
+    it "returns an empty enumerator if there are no search results" do
+      empty_search.albums.should be_empty
+    end
+
+    describe ".total" do
+      it "returns the total number of album search results" do
+        search.albums.total.should eq 42
+      end
+
+      it "returns zero if there are no search results whatsoever" do
+        empty_search.albums.total.should eq 0
+      end
+    end
+  end
+
+  describe "#artists" do
+    it "returns an enumerator of the search’s artists" do
+      search.artists.to_a.should eq instantiate(Hallon::Artist, mock_artist, mock_artist_two)
+    end
+
+    it "returns an empty enumerator if there are no search results" do
+      empty_search.artists.should be_empty
+    end
+
+    describe ".total" do
+      it "returns the total number of artist search results" do
+        search.artists.total.should eq 81104
+      end
+
+      it "returns zero if there are no search results whatsoever" do
+        empty_search.artists.total.should eq 0
+      end
+    end
+  end
+
+  describe "#to_link" do
+    it "contains the search query" do
+      search.to_link.should eq Hallon::Link.new("spotify:search:#{CGI.escape(search.query)}")
+    end
+  end
 end

@@ -27,15 +27,6 @@ RSpec::Core::ExampleGroup.instance_eval do
     Spotify.mock_toplistbrowse(:ok, 2751, artists.length, artists, albums.length, albums, tracks.length, tracks)
   end
 
-  let(:mock_search) do
-    artists   = pointer_array_with(mock_artist, mock_artist_two)
-    albums    = pointer_array_with(mock_album)
-    tracks    = pointer_array_with(mock_track, mock_track_two)
-    playlists = pointer_array_with(mock_playlist, mock_playlist_two)
-
-    Spotify.mock_search(:ok, "my å utf8  query", "another thing", 1337, tracks.length, tracks, 42, albums.length, albums, 81104, artists.length, artists, 0716, playlists.length, playlists, nil, nil)
-  end
-
   let(:mock_subscribers) do
     people = %w[Kim Elin Ylva]
     people.map! { |x| FFI::MemoryPointer.from_string(x) }
@@ -92,7 +83,6 @@ RSpec.configure do |config|
     Spotify.registry_add 'spotify:user:burgestrand', mock_user
     Spotify.registry_add 'spotify:user:burgestrand:playlist:07AX9IY9Hqmj1RqltcG0fi', mock_playlist
     Spotify.registry_add 'spotify:user:burgestrand:starred', mock_playlist
-    Spotify.registry_add 'spotify:search:my+%C3%A5+utf8+%EF%A3%BF+query', mock_search
   end
 
   config.after do

@@ -120,12 +120,12 @@ module Hallon
 
     # @return [String] search query this search was created with.
     def query
-      Spotify.search_query(pointer)
+      Spotify.search_query(pointer).to_s
     end
 
     # @return [String] “did you mean?” suggestion for current search.
     def did_you_mean
-      Spotify.search_did_you_mean(pointer)
+      Spotify.search_did_you_mean(pointer).to_s
     end
 
     # @return [Tracks] list of all tracks in the search result.
