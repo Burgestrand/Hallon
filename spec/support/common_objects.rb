@@ -4,8 +4,6 @@ require 'time'
 RSpec::Core::ExampleGroup.instance_eval do
   let(:mock_user)   { Spotify.mock_user!("burgestrand", "Burgestrand", true) }
   let(:mock_user_raw) { FFI::Pointer.new(mock_user.address) }
-  let(:mock_image)  { Spotify.mock_image!(mock_image_id, :jpeg, File.size(fixture_image_path), File.read(fixture_image_path), :ok) }
-  let(:mock_image_id_pointer) { FFI::MemoryPointer.from_string(mock_image_id) }
 
   let(:mock_track) do
     artists = pointer_array_with(mock_artist, mock_artist_two)
@@ -52,9 +50,6 @@ RSpec::Core::ExampleGroup.instance_eval do
     Spotify.mock_subscribers(0, nil)
   end
 
-  let(:mock_image_uri) { "spotify:image:#{mock_image_hex}" }
-  let(:mock_image_hex) { "3ad93423add99766e02d563605c6e76ed2b0e400" }
-  let(:mock_image_id)  { ":\xD94#\xAD\xD9\x97f\xE0-V6\x05\xC6\xE7n\xD2\xB0\xE4\0".force_encoding("BINARY") }
   let(:null_pointer)   { FFI::Pointer.new(0) }
   let(:a_pointer)      { FFI::Pointer.new(1) }
 
@@ -90,14 +85,6 @@ RSpec::Core::ExampleGroup.instance_eval do
     session
   end
 
-  let(:mock_image_link) do
-    Spotify.link_create_from_string!(mock_image_uri)
-  end
-
-  let(:mock_image_link_two) do
-    Spotify.link_create_from_string!("spotify:image:ce9da340323614dc95ae96b68843b1c726dc5c8a")
-  end
-
   let(:mock_container) do
     num_items = 4
     items_ptr = FFI::MemoryPointer.new(Spotify::Mock::PlaylistContainerItem, num_items)
@@ -125,7 +112,6 @@ end
 
 RSpec.configure do |config|
   config.before do
-    Spotify.registry_add 'spotify:image:3ad93423add99766e02d563605c6e76ed2b0e400', mock_image
     Spotify.registry_add 'spotify:container:burgestrand', mock_container
     Spotify.registry_add 'spotify:track:7N2Vc8u56VGA4KUrGbikC2', mock_track
     Spotify.registry_add 'spotify:user:burgestrand', mock_user

@@ -18,7 +18,7 @@ describe Hallon do
     end
   end
 
-  describe "#load_timeout" do
+  describe ".load_timeout" do
     it "should raise an error given a negative timeout" do
       expect { Hallon.load_timeout = -1 }.to raise_error(ArgumentError)
     end

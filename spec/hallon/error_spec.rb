@@ -3,7 +3,7 @@ describe Hallon::Error do
 
   it { should <= RuntimeError }
 
-  describe "::disambiguate" do
+  describe ".disambiguate" do
     it "should not fail on invalid numbers" do
       subject.disambiguate(10000).should eq [-1, nil]
     end
@@ -13,7 +13,7 @@ describe Hallon::Error do
     end
   end
 
-  describe "::explain" do
+  describe ".explain" do
     it "should work properly given an integer" do
       subject.explain(0).should eq 'sp_error: 0'
     end
@@ -23,7 +23,7 @@ describe Hallon::Error do
     end
   end
 
-  describe "::maybe_raise" do
+  describe ".maybe_raise" do
     it "should not raise error when given 0 as error code" do
       expect { subject.maybe_raise(0) }.to_not raise_error
     end
@@ -47,7 +47,7 @@ describe Hallon::Error do
     end
   end
 
-  describe "::table" do
+  describe ".table" do
     it "should return a hash of symbol to integer" do
       Hallon::Error.table[:ok].should eq 0
     end

@@ -71,7 +71,13 @@ module Hallon
     def data
       FFI::MemoryPointer.new(:size_t) do |size|
         data = Spotify.image_data(pointer, size)
-        return data.read_bytes(size.read_size_t)
+        size = size.read_size_t
+
+        if size > 0
+          return data.read_bytes(size)
+        else
+          return "".force_encoding("BINARY")
+        end
       end
     end
 
