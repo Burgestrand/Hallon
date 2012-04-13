@@ -34,9 +34,9 @@ RSpec::Core::ExampleGroup.instance_eval do
     tracks[2][:seen] = true
 
     tracks[3][:track] = mock_track_two
-    tracks[3][:create_time] = Time.parse("2009-11-07").to_i
-    tracks[3][:creator] = mock_user
-    tracks[3][:message] = FFI::MemoryPointer.from_string("message this, YO!")
+    tracks[3][:create_time] = 0
+    tracks[3][:creator] = nil
+    tracks[3][:message] = nil
     tracks[3][:seen] = true
 
     Spotify.mock_playlist!("Megaplaylist", true, mock_user, true, "Playlist description...?", mock_image_id, false, 1000, mock_subscribers, true, :no, 67, num_tracks, tracks_ptr)

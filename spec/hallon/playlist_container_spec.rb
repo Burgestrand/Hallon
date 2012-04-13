@@ -1,14 +1,40 @@
 # coding: utf-8
 describe Hallon::PlaylistContainer do
-  it { should be_a Hallon::Loadable }
+  let(:container) do
+    Hallon::PlaylistContainer.new(mock_containers[:default])
+  end
 
-  let(:container) { Hallon::PlaylistContainer.new(mock_container) }
+  let(:empty_container) do
+    Hallon::PlaylistContainer.new(mock_containers[:empty])
+  end
 
-  subject { container }
+  specify { container.should be_a Hallon::Loadable }
 
-  it { should be_loaded }
-  its(:owner) { should eq Hallon::User.new("burgestrand") }
-  its(:size) { should eq 4 }
+  describe "#loaded?" do
+    it "returns true if the playlist container is loaded" do
+      container.should be_loaded
+    end
+  end
+
+  describe "#owner" do
+    it "returns the playlist container’s owner" do
+      container.owner.should eq Hallon::User.new("burgestrand") 
+    end
+
+    it "returns nil if the playlist container is not loaded" do
+      empty_container.owner.should be_nil
+    end
+  end
+
+  describe "#size" do
+    it "returns the number of playlists inside the container" do
+      container.size.should eq 4
+    end
+
+    it "returns zero if the container is empty" do
+      empty_container.size.should eq 0
+    end
+  end
 
   describe "#add" do
     context "given a string that’s not a valid spotify playlist uri" do
@@ -169,13 +195,31 @@ describe Hallon::PlaylistContainer do
   end
 
   describe Hallon::PlaylistContainer::Folder do
-    subject { container.contents[1] }
-    let(:folder) { subject }
+    let(:folder) { container.contents[1] }
 
-    its(:id)    { should be 1337 }
-    its(:name)  { should eq "Boogie" }
-    its(:begin) { should be 1 }
-    its(:end)   { should be 3 }
+    describe "#id" do
+      it "returns the folder’s ID" do
+        folder.id.should eq 1337
+      end
+    end
+
+    describe "#name" do
+      it "returns the folder’s name" do
+        folder.name.should eq "Boogie"
+      end
+    end
+
+    describe "#begin" do
+      it "returns the folder’s starting index" do
+        folder.begin.should eq 1
+      end
+    end
+
+    describe "#end" do
+      it "returns the folder’s ending index" do
+        folder.end.should eq 3
+      end
+    end
 
     describe "#moved?" do
       it "should return true if the folder has moved" do
