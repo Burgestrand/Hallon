@@ -8,6 +8,7 @@ __Changed__
 
 - Renamed Playlist::Track#create_time to added_at [1adc2d7]
 - Renamed Playlist::Track#creator to adder [1adc2d7]
+- Session#offline_sync_status now returns a hash always [c14d42ae]
 
 __Fixed__
 
