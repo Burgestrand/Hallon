@@ -60,7 +60,6 @@ module Hallon
       new(track)
     end
 
-    # @note This’ll be an empty string unless the track is loaded.
     # @return [String]
     def name
       Spotify.track_name(pointer)
@@ -68,23 +67,22 @@ module Hallon
 
     # Duration of the track in seconds.
     #
-    # @note This’ll be `0` unless the track is loaded.
     # @return [Rational]
     def duration
       Rational(Spotify.track_duration(pointer), 1000)
     end
 
-    # Track popularity, between 0 and 1.
+    # Track popularity, between 0 and 100.
     #
-    # @note This’ll be `0` unless the track is loaded.
     # @return [Rational]
     def popularity
-      Rational(Spotify.track_popularity(pointer), 100)
+      Spotify.track_popularity(pointer)
     end
 
     # Disc number this track appears in.
     #
     # @note This function is a bit special. See libspotify docs for details.
+    # @return [Integer] disc index from album this track appears in.
     def disc
       Spotify.track_disc(pointer)
     end
@@ -139,7 +137,6 @@ module Hallon
       Spotify.track_offline_get_status(pointer)
     end
 
-    # @note This’ll be `nil` unless the track is loaded.
     # @return [Hallon::Album] album this track belongs to.
     def album
       album = Spotify.track_album!(pointer)
@@ -153,13 +150,11 @@ module Hallon
       artists.first
     end
 
-    # @note Track must be loaded, or you’ll get zero artists.
     # @return [Artists] all {Artist}s who performed this Track.
     def artists
       Artists.new(self)
     end
 
-    # @note This’ll always return false unless the track is loaded.
     # @return [Boolean] true if {#availability} is available.
     def available?
       availability == :available
@@ -172,13 +167,11 @@ module Hallon
       Spotify.track_get_availability(session.pointer, pointer)
     end
 
-    # @note This’ll always return false unless the track is loaded.
     # @return [Boolean] true if the track is a local track.
     def local?
       Spotify.track_is_local(session.pointer, pointer)
     end
 
-    # @note This’ll always return false unless the track is loaded.
     # @return [Boolean] true if the track is autolinked.
     def autolinked?
       Spotify.track_is_autolinked(session.pointer, pointer)

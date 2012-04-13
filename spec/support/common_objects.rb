@@ -5,21 +5,6 @@ RSpec::Core::ExampleGroup.instance_eval do
   let(:mock_user)   { Spotify.mock_user!("burgestrand", "Burgestrand", true) }
   let(:mock_user_raw) { FFI::Pointer.new(mock_user.address) }
 
-  let(:mock_track) do
-    artists = pointer_array_with(mock_artist, mock_artist_two)
-    Spotify.mock_track!("They", artists.length, artists, mock_album, 123_456, 42, 2, 7, :ok, true, :available, :done, false, true, nil, true, false)
-  end
-
-  let(:mock_track_two) do
-    artists = pointer_array_with(mock_artist)
-    Spotify.mock_track!("Amazing", artists.length, artists, mock_album, 123_456, 42, 2, 7, :ok, true, :available, :no, false, true, nil, true, true)
-  end
-
-  let(:mock_linked_track) do
-    artists = pointer_array_with(mock_artist_two)
-    Spotify.mock_track!("They", artists.length, artists, mock_album, 60, 100, 1, 1, :ok, true, :available, :no, false, true, mock_track, false, false)
-  end
-
   let(:null_pointer)   { FFI::Pointer.new(0) }
   let(:a_pointer)      { FFI::Pointer.new(1) }
 

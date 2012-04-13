@@ -1,25 +1,118 @@
 # coding: utf-8
 describe Hallon::Track do
-  it { should be_a Hallon::Loadable }
+  let(:track) do
+    Hallon::Track.new(mock_tracks[:default])
+  end
+
+  let(:empty_track) do
+    Hallon::Track.new(mock_tracks[:empty])
+  end
+
+  specify { track.should be_a Hallon::Loadable }
 
   it_should_behave_like "a Linkable object" do
     let(:spotify_uri) { "spotify:track:7N2Vc8u56VGA4KUrGbikC2#01:00" }
   end
 
-  let(:track) { Hallon::Track.new(mock_track) }
-  subject { track }
+  describe "#loaded?" do
+    it "returns true if the track is loaded" do
+      track.should be_loaded
+    end
+  end
 
-  it { should be_loaded }
-  its(:name)   { should eq "They" }
-  its(:disc)   { should be 2 }
-  its(:index)  { should be 7 }
-  its(:status) { should be :ok }
-  its(:duration)   { should eq 123.456 }
-  its(:popularity) { should eq 0.42 }
-  its(:album) { should eq Hallon::Album.new(mock_album) }
-  its(:artist) { should eq Hallon::Artist.new(mock_artist) }
-  its('artists.size') { should eq 2 }
-  its('artists.to_a') { should eq [mock_artist, mock_artist_two].map{ |p| Hallon::Artist.new(p) } }
+  describe "#name" do
+    it "returns the track’s name" do
+      track.name.should eq "They"
+    end
+
+    it "returns an empty string if the track’s name is unavailable" do
+      empty_track.name.should be_empty
+    end
+  end
+
+  describe "#disc" do
+    it "returns the track’s disc number in it’s album" do
+      track.disc.should eq 2
+    end
+  end
+
+  describe "#index" do
+    it "returns the track’s position on the disc" do
+      track.index.should eq 7
+    end
+  end
+
+  describe "#status" do
+    it "returns the track’s status" do
+      track.status.should eq :ok
+    end
+  end
+
+  describe "#duration" do
+    it "returns track’s duration" do
+      track.duration.should eq 123.456
+    end
+  end
+
+  describe "#popularity" do
+    it "returns the track’s popularity" do
+      track.popularity.should eq 42
+    end
+  end
+
+  describe "#available?" do
+    it "returns true if the track is available for playback" do
+      track.should be_available
+    end
+  end
+
+  describe "#local?" do
+    it "returns true if the track is a local track" do
+      track.should_not be_local
+    end
+  end
+
+  describe "#autolinked?" do
+    it "returns true if the track is autolinked to another for playback" do
+      track.should be_autolinked
+    end
+  end
+
+  describe "#availability" do
+    it "returns the track’s availability" do
+      track.availability.should eq :available
+    end
+  end
+
+  describe "#album" do
+    it "returns the track’s album" do
+      track.album.should eq Hallon::Album.new(mock_album)
+    end
+
+    it "returns nil if the track’s not loaded" do
+      empty_track.album.should be_nil
+    end
+  end
+
+  describe "#artist" do
+    it "returns the track’s artist" do
+      track.artist.should eq Hallon::Artist.new(mock_artist)
+    end
+
+    it "returns nil if the track’s not loaded" do
+      empty_track.artist.should be_nil
+    end
+  end
+
+  describe "#artists" do
+    it "returns an enumerator of the track’s artists" do
+      track.artists.to_a.should eq instantiate(Hallon::Artist, mock_artist, mock_artist_two)
+    end
+
+    it "returns an empty enumerator if the track has no artists" do
+      empty_track.artists.should be_empty
+    end
+  end
 
   describe "#starred=" do
     it "should delegate to session to unstar" do
@@ -39,29 +132,7 @@ describe Hallon::Track do
     end
   end
 
-  describe "session bound queries" do
-    subject { Hallon::Track.new(mock_track) }
-
-    it { should be_available }
-    it { should_not be_local }
-    it { should be_autolinked }
-    it { should be_starred }
-
-    its(:availability) { should eq :available }
-  end
-
-  describe "album" do
-    it "should be an album when there is one" do
-      track.album.should eq Hallon::Album.new(mock_album)
-    end
-
-    it "should be nil when there isn’t one" do
-      Spotify.should_receive(:track_album).and_return(null_pointer)
-      track.album.should be_nil
-    end
-  end
-
-  describe "to_link" do
+  describe "#to_link" do
     it "should pass the current offset by default" do
       track.should_receive(:offset).and_return(10)
       track.to_link.to_str.should match(/#00:10/)
@@ -88,6 +159,11 @@ describe Hallon::Track do
     let(:artist)   { Spotify.link_create_from_string!('spotify:artist:3bftcFwl4vqRNNORRsqm1G') }
     let(:album)    { Spotify.link_create_from_string!('spotify:album:1xvnWMz2PNFf7mXOSRuLws') }
 
+    it "does nothing if the track is not a placeholder" do
+      track.stub(:placeholder? => false)
+      track.unwrap.should eq track
+    end
+
     it "should unwrap a playlist placeholder into a playlist" do
       Spotify.should_receive(:link_create_from_track!).and_return(playlist)
       track.unwrap.should eq Hallon::Playlist.new(playlist)
@@ -110,7 +186,7 @@ describe Hallon::Track do
     end
   end
 
-  describe "offset" do
+  describe "#offset" do
     let(:without_offset) { 'spotify:track:7N2Vc8u56VGA4KUrGbikC2' }
     let(:with_offset)    { without_offset + '#1:00' }
 
@@ -128,18 +204,38 @@ describe Hallon::Track do
   end
 
   describe "a local track" do
-    subject do
+    let(:local) do
       Hallon::Track.local "Nissy", "Emmy", "Coolio", 100
     end
 
-    its(:name) { should eq "Nissy" }
-    its("album.name") { should eq "Coolio" }
-    its("artist.name") { should eq "Emmy" }
-    its(:duration) { should eq 0.1 }
+    describe "#name" do
+      it "returns the track’s name" do
+        local.name.should eq "Nissy"
+      end
+    end
 
-    it do
-      Hallon::Session.should_receive(:instance).and_return(session)
-      should be_local
+    describe "#album" do
+      it "returns the track’s album" do
+        local.album.name.should eq "Coolio"
+      end
+    end
+
+    describe "#artist" do
+      it "returns the track’s artist" do
+        local.artist.name.should eq "Emmy"
+      end
+    end
+
+    describe "#duration" do
+      it "returns the track’s duration" do
+        local.duration.should eq 0.1
+      end
+    end
+
+    describe "#local?" do
+      it "returns true for local tracks" do
+        local.should be_local
+      end
     end
   end
 end
