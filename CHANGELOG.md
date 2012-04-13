@@ -4,6 +4,10 @@ Hallon’s Changelog
 [HEAD][]
 ------------------
 
+__Fixed__
+
+- Have Playlist#subscribers always return an array [a8d26c9a]
+
 [v0.15.0][]
 ------------------
 Updated to libspotify v11.1.60 [3c810b0], and improved the examples provided within Hallon codebase significantly.
