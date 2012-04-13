@@ -258,17 +258,18 @@ module Hallon
     def subscribers
       ptr = Spotify.playlist_subscribers(pointer)
 
-      begin
+      if ptr.null?
+        []
+      else
         struct = Spotify::Subscribers.new(ptr)
-
         if struct[:count].zero?
           []
         else
           struct[:subscribers].map(&:read_string)
         end
-      ensure
-        Spotify.playlist_subscribers_free(ptr)
-      end unless ptr.null?
+      end
+    ensure
+      Spotify.playlist_subscribers_free(ptr) unless ptr.null?
     end
 
     # @return [Integer] total number of subscribers.

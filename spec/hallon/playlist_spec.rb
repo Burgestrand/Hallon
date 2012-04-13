@@ -195,12 +195,12 @@ describe Hallon::Playlist do
     end
 
     it "should return an empty array when there are no subscribers" do
-      empty_playlist.subscribers.should be_nil
+      empty_playlist.subscribers.should eq []
     end
 
     it "should return an empty array when subscriber fetching failed" do
       Spotify.should_receive(:playlist_subscribers).and_return(null_pointer)
-      empty_playlist.subscribers.should be_nil
+      empty_playlist.subscribers.should eq []
     end
   end
 
