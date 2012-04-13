@@ -50,6 +50,16 @@ describe Hallon::Enumerator do
     end
   end
 
+  describe "#empty?" do
+    it "returns true if the enumerator is empty" do
+      enumerator(0).should be_empty
+    end
+
+    it "returns false if the enumerator is not empty" do
+      enum.should_not be_empty
+    end
+  end
+
   describe "#[]" do
     it "should return nil if #[x] is not within the enumerators’ size (no matter if the value exists or not)" do
       enum.should_receive(:size).and_return(1)

@@ -70,6 +70,11 @@ module Hallon
       self
     end
 
+    # @return [Boolean] true if the size is zero.
+    def empty?
+      size.zero?
+    end
+
     # @overload [](index)
     #   @return [Object, nil]
     #
