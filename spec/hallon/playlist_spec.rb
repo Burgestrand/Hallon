@@ -162,21 +162,21 @@ describe Hallon::Playlist do
 
     describe "#create_time" do
       it "returns the time the track was added to the playlist" do
-        track.create_time.should eq Time.parse("2009-11-04")
+        track.added_at.should eq Time.parse("2009-11-04")
       end
 
       it "returns the time in UTC" do
-        track.create_time.utc_offset.should eq 0
+        track.added_at.utc_offset.should eq 0
       end
     end
 
     describe "#creator" do
       it "returns the track’s creator" do
-        track.creator.should eq Hallon::User.new(mock_user)
+        track.adder.should eq Hallon::User.new(mock_user)
       end
 
       it "returns nil if there is no track creator available" do
-        empty_track.creator.should be_nil
+        empty_track.adder.should be_nil
       end
     end
 
