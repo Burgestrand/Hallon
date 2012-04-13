@@ -20,13 +20,6 @@ RSpec::Core::ExampleGroup.instance_eval do
     Spotify.mock_track!("They", artists.length, artists, mock_album, 60, 100, 1, 1, :ok, true, :available, :no, false, true, mock_track, false, false)
   end
 
-  let(:mock_toplistbrowse) do
-    artists = pointer_array_with(mock_artist, mock_artist_two)
-    albums  = pointer_array_with(mock_album)
-    tracks  = pointer_array_with(mock_track, mock_track_two)
-    Spotify.mock_toplistbrowse(:ok, 2751, artists.length, artists, albums.length, albums, tracks.length, tracks)
-  end
-
   let(:null_pointer)   { FFI::Pointer.new(0) }
   let(:a_pointer)      { FFI::Pointer.new(1) }
 

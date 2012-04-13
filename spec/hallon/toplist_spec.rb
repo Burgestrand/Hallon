@@ -1,13 +1,18 @@
-describe Hallon::Toplist do
-  it { should be_a Hallon::Loadable }
+# coding: utf-8
 
+describe Hallon::Toplist do
   let(:toplist) do
     Spotify.registry_add 'spotify:toplist:artists:everywhere', mock_toplistbrowse
     Hallon::Toplist.new(:artists)
   end
-  subject { toplist }
 
-  it { should be_a Hallon::Observable }
+  let(:empty_toplist) do
+    Spotify.registry_add 'spotify:toplist:tracks:everywhere', mock_empty_toplistbrowse
+    Hallon::Toplist.new(:tracks)
+  end
+
+  specify { toplist.should be_a Hallon::Loadable }
+  specify { toplist.should be_a Hallon::Observable }
 
   describe ".new" do
     it "should fail given an invalid type" do
@@ -25,8 +30,17 @@ describe Hallon::Toplist do
     end
   end
 
-  it { should be_loaded }
-  its(:status) { should eq :ok }
+  describe "#loaded?" do
+    it "returns true if the toplist is loaded" do
+      toplist.should be_loaded
+    end
+  end
+
+  describe "#status" do
+    it "returns the toplist’s status" do
+      toplist.status.should eq :ok
+    end
+  end
 
   describe "#type" do
     it "should be the same as the type given to .new" do
@@ -50,6 +64,10 @@ describe Hallon::Toplist do
       toplist.should_receive(:type).and_return(:tracks)
       toplist.results.to_a.should eq instantiate(Hallon::Track, mock_track, mock_track_two)
     end
+
+    it "returns an empty enumerator when there are no results" do
+      empty_toplist.results.should be_empty
+    end
   end
 
   describe "#request_duration" do
@@ -57,9 +75,8 @@ describe Hallon::Toplist do
       toplist.request_duration.should eq 2.751
     end
 
-    it "should be nil if the request was fetched from local cache" do
-      Spotify.should_receive(:toplistbrowse_backend_request_duration).and_return(-1)
-      toplist.request_duration.should be_nil
+    it "should be zero if the request was fetched from local cache" do
+      empty_toplist.request_duration.should eq 0
     end
   end
 end
