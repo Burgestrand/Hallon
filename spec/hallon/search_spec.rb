@@ -5,20 +5,20 @@ describe Hallon::Search do
   it_should_behave_like "a Linkable object" do
     let(:spotify_uri) { "spotify:search:my+%C3%A5+utf8+%EF%A3%BF+query" }
     let(:custom_object) { "http://open.spotify.com/search/my+%C3%A5+utf8+%EF%A3%BF+query" }
-    let(:described_class) { stub_session(Hallon::Search) }
+    let(:described_class) { Hallon::Search }
   end
 
   it { should be_a Hallon::Loadable }
 
   subject { search }
   let(:search) do
-    mock_session { Hallon::Search.new("my å utf8  query") }
+    Hallon::Search.new("my å utf8  query")
   end
 
   describe ".new" do
     it "should have some sane defaults" do
       Spotify.should_receive(:search_create).with(session.pointer, "my å utf8  query", 0, 25, 0, 25, 0, 25, 0, 25, :standard, anything, anything).and_return(mock_search)
-      mock_session { Hallon::Search.new("my å utf8  query") }
+      Hallon::Search.new("my å utf8  query")
     end
 
     it "should allow you to customize the defaults" do
@@ -34,12 +34,12 @@ describe Hallon::Search do
         :playlists      => 8
       }
 
-      mock_session { Hallon::Search.new("my å utf8  query", my_params) }
+      Hallon::Search.new("my å utf8  query", my_params)
     end
 
     it "should raise an error if the search failed" do
       Spotify.should_receive(:search_create).and_return(null_pointer)
-      expect { mock_session { Hallon::Search.new("omgwtfbbq") } }.to raise_error(/search (.*?) failed/)
+      expect { Hallon::Search.new("omgwtfbbq") }.to raise_error(/search (.*?) failed/)
     end
   end
 

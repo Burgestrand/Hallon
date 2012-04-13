@@ -20,6 +20,7 @@ RSpec.configure do |config|
 
   config.before do
     Hallon::Session.stub(:instance?).and_return(true)
+    Hallon::Session.stub(:instance).and_return(session)
   end
 
   def fixture_image_path
@@ -33,21 +34,6 @@ RSpec.configure do |config|
 
   def instantiate(klass, *pointers)
     pointers.map { |x| klass.new(*x) }
-  end
-
-  def mock_session(times = 1)
-    Hallon::Session.should_receive(:instance).at_least(times).times.and_return(session)
-    yield
-  end
-
-  def stub_session(target = nil)
-    if target
-      target.any_instance.stub(:session).and_return(session)
-    else
-      Hallon::Session.stub(:instance).and_return(session)
-    end
-
-    target || (yield if block_given?)
   end
 
   def pointer_array_with(*args)

@@ -22,8 +22,6 @@ describe Hallon::Track do
   its('artists.to_a') { should eq [mock_artist, mock_artist_two].map{ |p| Hallon::Artist.new(p) } }
 
   describe "#starred=" do
-    around { |test| mock_session(&test) }
-
     it "should delegate to session to unstar" do
       session.should_receive(:unstar).with(track)
       track.starred = false
@@ -43,7 +41,6 @@ describe Hallon::Track do
 
   describe "session bound queries" do
     subject { Hallon::Track.new(mock_track) }
-    around  { |test| mock_session(&test) }
 
     it { should be_available }
     it { should_not be_local }
@@ -93,7 +90,7 @@ describe Hallon::Track do
 
     it "should unwrap a playlist placeholder into a playlist" do
       Spotify.should_receive(:link_create_from_track!).and_return(playlist)
-      mock_session { track.unwrap.should eq Hallon::Playlist.new(playlist) }
+      track.unwrap.should eq Hallon::Playlist.new(playlist)
     end
 
     it "should unwrap an album placeholder into an album" do

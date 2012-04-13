@@ -6,18 +6,16 @@ describe Hallon::Playlist do
 
   it_should_behave_like "a Linkable object" do
     let(:spotify_uri) { "spotify:user:burgestrand:playlist:07AX9IY9Hqmj1RqltcG0fi" }
-    let(:described_class) { stub_session(Hallon::Playlist) }
+    let(:described_class) { Hallon::Playlist }
   end
 
   subject { playlist }
   let(:playlist) do
-    playlist = Hallon::Playlist.new(mock_playlists[:default])
-    playlist.tap { |x| x.stub(session: session) }
+    Hallon::Playlist.new(mock_playlists[:default])
   end
 
   let(:empty_playlist) do
-    playlist = Hallon::Playlist.new(mock_playlists[:empty])
-    playlist.tap { |x| x.stub(session: session) }
+    Hallon::Playlist.new(mock_playlists[:empty])
   end
 
   describe ".invalid_name?" do
@@ -76,15 +74,11 @@ describe Hallon::Playlist do
 
   describe "#image" do
     it "returns the playlists’s image as an image" do
-      stub_session do
-        playlist.image.should eq Hallon::Image.new("spotify:image:3ad93423add99766e02d563605c6e76ed2b0e400")
-      end
+      playlist.image.should eq Hallon::Image.new("spotify:image:3ad93423add99766e02d563605c6e76ed2b0e400")
     end
 
     it "returns nil if the playlist is not loaded" do
-      stub_session do
-        empty_playlist.image.should be_nil
-      end
+      empty_playlist.image.should be_nil
     end
   end
 

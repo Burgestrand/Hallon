@@ -14,7 +14,7 @@ describe Hallon::Artist do
 
   describe "#browse" do
     it "should return an artist browsing object" do
-      mock_session(2) { subject.browse.should eq Hallon::ArtistBrowse.new(mock_artist) }
+      subject.browse.should eq Hallon::ArtistBrowse.new(mock_artist)
     end
 
     it "should default to full browsing" do
@@ -37,7 +37,7 @@ describe Hallon::Artist do
     end
 
     it "should be an image if it exists" do
-      stub_session { artist.portrait.should eq Hallon::Image.new(mock_image_id) }
+      artist.portrait.should eq Hallon::Image.new(mock_image_id)
     end
   end
 

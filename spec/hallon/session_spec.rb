@@ -267,7 +267,7 @@ describe Hallon::Session do
 
 
   describe "#starred" do
-    let(:starred) { mock_session { Hallon::Playlist.new("spotify:user:burgestrand:starred") } }
+    let(:starred) { Hallon::Playlist.new("spotify:user:burgestrand:starred") }
 
     it "should return the sessions (current users) starred playlist" do
       session.login 'burgestrand', 'pass'

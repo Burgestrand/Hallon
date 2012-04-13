@@ -3,7 +3,7 @@ describe Hallon::Toplist do
 
   let(:toplist) do
     Spotify.registry_add 'spotify:toplist:artists:everywhere', mock_toplistbrowse
-    mock_session { Hallon::Toplist.new(:artists) }
+    Hallon::Toplist.new(:artists)
   end
   subject { toplist }
 
@@ -11,17 +11,17 @@ describe Hallon::Toplist do
 
   describe ".new" do
     it "should fail given an invalid type" do
-      expect { stub_session { Hallon::Toplist.new(:invalid_type) } }.to raise_error(ArgumentError, /invalid enum value/)
+      expect { Hallon::Toplist.new(:invalid_type) }.to raise_error(ArgumentError, /invalid enum value/)
     end
 
     it "should pass the username given a string to libspotify" do
       Spotify.registry_add 'spotify:toplist:user:Kim:tracks', mock_toplistbrowse
-      stub_session { Hallon::Toplist.new(:tracks, "Kim").should be_loaded }
+      Hallon::Toplist.new(:tracks, "Kim").should be_loaded
     end
 
     it "should pass the correct region to libspotify" do
       Spotify.registry_add 'spotify:toplist:tracks:SE', mock_toplistbrowse
-      mock_session { Hallon::Toplist.new(:tracks, :se).should be_loaded }
+      Hallon::Toplist.new(:tracks, :se).should be_loaded
     end
   end
 
@@ -30,7 +30,7 @@ describe Hallon::Toplist do
 
   describe "#type" do
     it "should be the same as the type given to .new" do
-      toplist = mock_session { Hallon::Toplist.new(:tracks, :se) }
+      toplist = Hallon::Toplist.new(:tracks, :se)
       toplist.type.should eq :tracks
     end
   end

@@ -5,7 +5,7 @@ describe Hallon::AlbumBrowse do
   describe ".new" do
     it "should raise an error if the browse request failed" do
       Spotify.should_receive(:albumbrowse_create).and_return(null_pointer)
-      expect { mock_session { Hallon::AlbumBrowse.new(mock_album) } }.to raise_error(FFI::NullPointerError)
+      expect { Hallon::AlbumBrowse.new(mock_album) }.to raise_error(FFI::NullPointerError)
     end
 
     it "should raise an error given a non-album spotify pointer" do
@@ -15,7 +15,7 @@ describe Hallon::AlbumBrowse do
 
   let(:browse) do
     album = Hallon::Album.new(mock_album)
-    mock_session { Hallon::AlbumBrowse.new(album) }
+    Hallon::AlbumBrowse.new(album)
   end
 
   subject { browse }

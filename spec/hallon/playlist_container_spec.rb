@@ -29,7 +29,7 @@ describe Hallon::PlaylistContainer do
     context "given a string that’s a valid spotify playlist uri" do
       it "should add the existing Playlist at the end of the container" do
         playlist_uri = "spotify:user:burgestrand:playlist:07AX9IY9Hqmj1RqltcG0fi"
-        playlist = mock_session { Hallon::Playlist.new(playlist_uri) }
+        playlist = Hallon::Playlist.new(playlist_uri)
 
         expect do
           new_playlist = container.add(playlist_uri)

@@ -5,7 +5,7 @@ describe Hallon::ArtistBrowse do
   describe ".new" do
     it "should raise an error if the browse request failed" do
       Spotify.should_receive(:artistbrowse_create).and_return(null_pointer)
-      expect { mock_session { Hallon::ArtistBrowse.new(mock_artist) } }.to raise_error(FFI::NullPointerError)
+      expect { Hallon::ArtistBrowse.new(mock_artist) }.to raise_error(FFI::NullPointerError)
     end
 
     it "should raise an error given a non-album spotify pointer" do
@@ -15,7 +15,7 @@ describe Hallon::ArtistBrowse do
 
   let(:browse) do
     artist = Hallon::Artist.new(mock_artist)
-    mock_session { Hallon::ArtistBrowse.new(artist) }
+    Hallon::ArtistBrowse.new(artist)
   end
 
   subject { browse }
@@ -26,7 +26,7 @@ describe Hallon::ArtistBrowse do
 
   its('portraits.size') { should eq 2 }
   its('portraits.to_a') do
-    stub_session { should eq instantiate(Hallon::Image, mock_image_id, mock_image_id) }
+    should eq instantiate(Hallon::Image, mock_image_id, mock_image_id)
   end
 
   its('portrait_links.size') { should eq 2 }

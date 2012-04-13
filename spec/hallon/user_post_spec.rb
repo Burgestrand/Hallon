@@ -11,7 +11,7 @@ describe Hallon::User::Post do
   end
 
   let(:post) do
-    stub_session { Hallon::User::Post.create("burgestrand", "These be some tight tracks, yo!", tracks) }
+    Hallon::User::Post.create("burgestrand", "These be some tight tracks, yo!", tracks)
   end
 
   describe ".new" do
@@ -27,7 +27,7 @@ describe Hallon::User::Post do
     end
 
     it "should allow you to post a single track" do
-      post = stub_session { Hallon::User::Post.create("burgestrand", nil, tracks[0]) }
+      post = Hallon::User::Post.create("burgestrand", nil, tracks[0])
       post.tracks.should eq tracks[0, 1]
     end
   end

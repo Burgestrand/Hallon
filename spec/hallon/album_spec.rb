@@ -13,9 +13,7 @@ describe Hallon::Album do
   its(:name) { should eq "Finally Woken" }
   its(:release_year) { should be 2004 }
   its(:type) { should be :single }
-  its(:browse) do
-    mock_session { should eq Hallon::AlbumBrowse.new(album) }
-  end
+  its(:browse) { should eq Hallon::AlbumBrowse.new(album) }
 
   it { should be_available }
   it { should be_loaded }
@@ -38,7 +36,7 @@ describe Hallon::Album do
     end
 
     it "should be an image if it exists" do
-      stub_session { album.cover.should eq Hallon::Image.new(mock_image_id) }
+      album.cover.should eq Hallon::Image.new(mock_image_id)
     end
   end
 
