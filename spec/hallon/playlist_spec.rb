@@ -2,20 +2,19 @@
 require 'time'
 
 describe Hallon::Playlist do
-  it { should be_a Hallon::Loadable }
-
-  it_should_behave_like "a Linkable object" do
-    let(:spotify_uri) { "spotify:user:burgestrand:playlist:07AX9IY9Hqmj1RqltcG0fi" }
-    let(:described_class) { Hallon::Playlist }
-  end
-
-  subject { playlist }
   let(:playlist) do
     Hallon::Playlist.new(mock_playlists[:default])
   end
 
   let(:empty_playlist) do
     Hallon::Playlist.new(mock_playlists[:empty])
+  end
+
+  specify { playlist.should be_a Hallon::Loadable }
+
+  it_should_behave_like "a Linkable object" do
+    let(:spotify_uri) { "spotify:user:burgestrand:playlist:07AX9IY9Hqmj1RqltcG0fi" }
+    let(:described_class) { Hallon::Playlist }
   end
 
   describe ".invalid_name?" do
@@ -136,17 +135,60 @@ describe Hallon::Playlist do
     end
   end
 
-  its('tracks.size') { should eq 4 }
-  its('tracks.to_a') { should eq instantiate(Hallon::Playlist::Track, *(0...4).map { |index| [Spotify.playlist_track!(playlist.pointer, index), playlist.pointer, index] }) }
+  describe "#tracks" do
+    it "returns an enumerator of the playlist’s tracks" do
+      playlist.tracks.to_a.should eq instantiate(Hallon::Playlist::Track, *(0...4).map { |index| [Spotify.playlist_track!(playlist.pointer, index), playlist.pointer, index] })
+    end
 
-  describe "tracks#[]" do
-    let(:track) { subject }
-    subject { playlist.tracks[0] }
+    it "returns an empty enumerator if the playlist has no tracks" do
+      empty_playlist.tracks.should be_empty
+    end
+  end
 
-    it { should be_seen }
-    its(:create_time) { should eq Time.parse("2009-11-04") }
-    its(:creator)     { should eq Hallon::User.new(mock_user) }
-    its(:message)     { should eq "message this, YO!" }
+  describe "#tracks entries" do
+    let(:track) do
+      playlist.tracks[0]
+    end
+
+    let(:empty_track) do
+      playlist.tracks[3]
+    end
+
+    describe "#seen?" do
+      it "returns true if the track is seen" do
+        track.should be_seen
+      end
+    end
+
+    describe "#create_time" do
+      it "returns the time the track was added to the playlist" do
+        track.create_time.should eq Time.parse("2009-11-04")
+      end
+
+      it "returns the time in UTC" do
+        track.create_time.utc_offset.should eq 0
+      end
+    end
+
+    describe "#creator" do
+      it "returns the track’s creator" do
+        track.creator.should eq Hallon::User.new(mock_user)
+      end
+
+      it "returns nil if there is no track creator available" do
+        empty_track.creator.should be_nil
+      end
+    end
+
+    describe "#message" do
+      it "returns the message attached to the track" do
+        track.message.should eq "message this, YO!"
+      end
+
+      it "returns an empty message if there is none for the given track" do
+        empty_track.message.should be_empty
+      end
+    end
 
     describe "#seen=" do
       it "should raise an error if the track has moved" do
@@ -189,11 +231,11 @@ describe Hallon::Playlist do
     end
 
     it "should return an empty array when there are no subscribers" do
-      empty_playlist.subscribers.should eq []
+      Spotify.should_receive(:playlist_subscribers).and_return(mock_empty_subscribers)
+      playlist.subscribers.should eq []
     end
 
     it "should return an empty array when subscriber fetching failed" do
-      Spotify.should_receive(:playlist_subscribers).and_return(null_pointer)
       empty_playlist.subscribers.should eq []
     end
   end
@@ -318,22 +360,22 @@ describe Hallon::Playlist do
 
     specify "#available_offline?" do
       Spotify.should_receive(:playlist_get_offline_status).and_return symbol_for(1)
-      should be_available_offline
+      playlist.should be_available_offline
     end
 
     specify "#syncing?" do
       Spotify.should_receive(:playlist_get_offline_status).and_return symbol_for(2)
-      should be_syncing
+      playlist.should be_syncing
     end
 
     specify "#waiting?" do
       Spotify.should_receive(:playlist_get_offline_status).and_return symbol_for(3)
-      should be_waiting
+      playlist.should be_waiting
     end
 
     specify "#offline_mode?" do
       Spotify.should_receive(:playlist_get_offline_status).and_return symbol_for(0)
-      should_not be_offline_mode
+      playlist.should_not be_offline_mode
     end
   end
 end

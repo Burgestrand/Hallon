@@ -29,9 +29,9 @@ module Hallon
 
         @index        = index
         @playlist_ptr = playlist_pointer
-        @create_time  = Time.at Spotify.playlist_track_create_time(playlist_ptr, index)
-        @message      = Spotify.playlist_track_message(playlist_ptr, index)
+        @message      = Spotify.playlist_track_message(playlist_ptr, index).to_s
         @seen         = Spotify.playlist_track_seen(playlist_ptr, index)
+        @create_time  = Time.at(Spotify.playlist_track_create_time(playlist_ptr, index)).utc
         @creator      = begin
           creator = Spotify.playlist_track_creator!(playlist_ptr, index)
           User.from(creator)
@@ -46,7 +46,7 @@ module Hallon
       # @return [Integer] index this track was created with.
       attr_reader :index
 
-      # @return [Time] time when track at {#index} was added to playlist.
+      # @return [Time, nil] time when track at {#index} was added to playlist.
       attr_reader :create_time
 
       # @return [User, nil] person who added track at {#index} to this playlist.
