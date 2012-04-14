@@ -68,35 +68,6 @@ describe Hallon::Session do
     end
   end
 
-  describe "#process_events_on" do
-    it "should not call given block on :notify_main_thread implicitly" do
-      notified = false
-
-      session.should_receive(:process_events).twice.and_return do
-        unless notified
-          session.class.send(:notify_main_thread_callback, session.pointer)
-          notified = true
-        else
-          session.class.send(:logged_in_callback, session.pointer, :ok)
-        end
-
-        0
-      end
-
-      session.process_events_on(:logged_in) { |e| e == :ok }.should be_true
-    end
-
-    it "should time out if waiting for events too long" do
-      session.should_receive(:process_events).once.and_return(1) # and do nothing
-      session.wait_for(:logged_in) { |x| x }.should eq :timeout
-    end
-
-    it "should call the given block once before waiting" do
-      session.should_not_receive(:process_events)
-      session.process_events_on { true }
-    end
-  end
-
   describe "#relogin" do
     it "should raise if no credentials have been saved" do
       expect { session.relogin }.to raise_error(Hallon::Error)

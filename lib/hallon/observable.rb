@@ -111,6 +111,52 @@ module Hallon
       end
     end
 
+    # Wait for the given callbacks to fire until the block returns true
+    #
+    # @note Given block will be called once instantly without parameters.
+    # @note If no events happen for 0.25 seconds, the block will be called without parameters.
+    # @param [Symbol, ...] *events list of events to wait for
+    # @yield [Symbol, *args] name of the event that fired, and its’ arguments
+    # @return whatever the block returns
+    def wait_for(*events)
+      if result = yield
+        return result
+      end
+
+      channel = SizedQueue.new(10) # sized just to be safe
+
+      old_handlers = events.each_with_object({}) do |event, hash|
+        hash[event] = on(event) do |*args|
+          channel << [event, *args]
+        end
+      end
+
+      old_notify = session.on(:notify_main_thread) do
+        channel << :notify
+      end
+
+      loop do
+        begin
+          timeout = [session.process_events.fdiv(1000), 2].min # scope to two seconds
+          timeout = timeout + 0.010 # minimum of ten miliseconds timeout
+          params = Timeout::timeout(timeout) { channel.pop }
+          redo if params == :notify
+        rescue Timeout::Error
+          params = nil
+        end
+
+        if result = yield(*params)
+          return result
+        end
+      end
+    ensure
+      old_handlers.each_pair do |event, handler|
+        on(event, &handler)
+      end unless old_handlers.nil?
+      session.on(:notify_main_thread, &old_notify) unless old_notify.nil?
+    end
+
+
     # @param [#to_s] name
     # @return [Boolean] true if a callback with `name` exists.
     def has_callback?(name)

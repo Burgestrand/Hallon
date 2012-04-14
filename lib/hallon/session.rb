@@ -148,39 +148,6 @@ module Hallon
       end
     end
 
-    # Wait for the given callbacks to fire until the block returns true
-    #
-    # @note Given block will be called once instantly without parameters.
-    # @note If no events happen for 0.25 seconds, the given block will be called
-    #       with `:timeout` as parameter.
-    # @param [Symbol, ...] *events list of events to wait for
-    # @yield [Symbol, *args] name of the callback that fired, and its’ arguments
-    # @return [Hash<Event, Arguments>]
-    def process_events_on(*events)
-      yield or protecting_handlers do
-        channel = SizedQueue.new(1)
-        block   = proc { |*args| channel << args }
-        events.each { |event| on(event, &block) }
-        on(:notify_main_thread) { channel << :notify }
-
-        loop do
-          begin
-            timeout = [process_events.fdiv(1000), 5].min # scope to five seconds
-            timeout = timeout + 0.010 # minimum of ten miliseconds timeout
-            params = Timeout::timeout(timeout) { channel.pop }
-            redo if params == :notify
-          rescue Timeout::Error
-            params = :timeout
-          end
-
-          if result = yield(*params)
-            return result
-          end
-        end
-      end
-    end
-    alias :wait_for :process_events_on
-
     # Log into Spotify using the given credentials.
     #
     # @param [String] username

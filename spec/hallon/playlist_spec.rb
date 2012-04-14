@@ -216,7 +216,7 @@ describe Hallon::Playlist do
 
   describe "#upload" do
     around(:each) do |example|
-      Timeout.timeout(1) { example.run }
+      Timeout.timeout(1, SlowTestError, &example)
     end
 
     it "should raise an error if the playlist takes too long to load" do

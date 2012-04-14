@@ -45,6 +45,10 @@ describe Hallon::Observable do
       def pointer
         FFI::Pointer.new(0xDEADBEEF)
       end
+
+      def session
+        Hallon::Session.instance
+      end
     end
   end
 
@@ -156,6 +160,45 @@ describe Hallon::Observable do
       b = klass.new
 
       a.callbacks.should eq b.callbacks
+    end
+  end
+
+  describe "#wait_for" do
+    around(:each) do |example|
+      Timeout.timeout(0.5, SlowTestError, &example)
+    end
+
+    it "should not call the given block on notify main thread event" do
+      notified = false
+      counter  = 0
+
+      session.should_receive(:process_events).twice.and_return do
+        if notified
+          subject.class.send(:testing_callback, subject.pointer)
+        else
+          session.class.send(:notify_main_thread_callback, session.pointer)
+          notified = true
+        end
+
+        0
+      end
+
+      subject.wait_for(:testing) do |event|
+        event.should eq :testing if (counter += 1) > 1
+      end
+    end
+
+    it "should time out if waiting for events too long" do
+      counter = 0
+      session.should_receive(:process_events).once.and_return(0) # and do nothing
+      subject.wait_for(:testing) do |event|
+        event.should be_nil if (counter += 1) > 1
+      end
+    end
+
+    it "should call the given block once before waiting" do
+      session.should_not_receive(:process_events)
+      subject.wait_for { true }
     end
   end
 

@@ -15,6 +15,12 @@ require 'hallon'
 # Bail on failure
 Thread.abort_on_exception = true
 
+# We don’t do long running tests.
+# Actually, some tests might deadlock, so we guard against
+# them doing that. It’s annoying.
+class SlowTestError < StandardError
+end
+
 RSpec.configure do |config|
   config.treat_symbols_as_metadata_keys_with_true_values = true
 
