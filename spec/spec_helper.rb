@@ -23,6 +23,10 @@ RSpec.configure do |config|
     Hallon::Session.stub(:instance).and_return(session)
   end
 
+  config.after do
+    Spotify.registry_clean
+  end
+
   def fixture_image_path
     File.expand_path('../fixtures/pink_cover.jpg', __FILE__)
   end

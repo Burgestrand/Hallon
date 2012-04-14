@@ -1,7 +1,9 @@
 # coding: utf-8
 
 describe Hallon::User::Post do
-  it { described_class.should include Hallon::Loadable }
+  let(:post) do
+    Hallon::User::Post.create("burgestrand", "These be some tight tracks, yo!", tracks)
+  end
 
   let(:tracks) do
     [].tap do |tracks|
@@ -10,9 +12,7 @@ describe Hallon::User::Post do
     end
   end
 
-  let(:post) do
-    Hallon::User::Post.create("burgestrand", "These be some tight tracks, yo!", tracks)
-  end
+  specify { post.should be_a Hallon::Loadable }
 
   describe ".new" do
     it "should be private" do
@@ -58,6 +58,11 @@ describe Hallon::User::Post do
   describe "#message" do
     it "should return the message sent with the post" do
       post.message.should eq "These be some tight tracks, yo!"
+    end
+
+    it "returns an empty string if no message was sent" do
+      post = Hallon::User::Post.create("burgestrand", nil, tracks)
+      post.message.should be_nil
     end
   end
 

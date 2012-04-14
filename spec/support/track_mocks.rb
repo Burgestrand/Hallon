@@ -25,3 +25,9 @@ RSpec::Core::ExampleGroup.instance_eval do
     Spotify.mock_track!(nil, 0, nil, nil, 0, 0, 0, 0, :ok, false, :unavailable, :no, false, true, nil, false, false)
   end
 end
+
+RSpec.configure do |config|
+  config.before do
+    Spotify.registry_add 'spotify:track:7N2Vc8u56VGA4KUrGbikC2', mock_track
+  end
+end
