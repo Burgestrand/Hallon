@@ -10,6 +10,10 @@ module Hallon
   #
   # @see https://developer.spotify.com/en/libspotify/docs/group__session.html
   class Session < Base
+    # Raised by #login! and #relogin!
+    class LoginError < StandardError
+    end
+
     # The options Hallon used at {Session#initialize}.
     #
     # @return [Hash]
@@ -221,7 +225,8 @@ module Hallon
     # @raise [Error] if failed to log in
     # @see #relogin
     def relogin!
-      tap { relogin; wait_until_logged_in }
+      relogin
+      tap { wait_until_logged_in }
     end
 
     # Log out the current user.
@@ -229,7 +234,8 @@ module Hallon
     # @note This method will not return until you’ve logged out successfully.
     # @return [Session]
     def logout!
-      tap { logout; wait_for(:logged_out) { logged_out? } }
+      logout
+      tap { wait_for(:logged_out) { logged_out? } }
     end
 
     # @return [String] username of the user stored in libspotify-remembered credentials.
@@ -426,8 +432,8 @@ module Hallon
       # @see login!
       # @see relogin!
       def wait_until_logged_in
-        wait_for(:connection_error) do |error|
-          Error.maybe_raise(error, :ignore => :timeout)
+        wait_for(:logged_in, :connection_error) do |event, error|
+          Error.maybe_raise(error)
           session.logged_in?
         end
       end
