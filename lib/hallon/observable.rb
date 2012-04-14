@@ -149,7 +149,7 @@ module Hallon
     # @return whatever the handler returns
     def trigger(name, *arguments, &block)
       if handler = handlers[name.to_s]
-        handler.call(*arguments, self, &block)
+        handler.call(*arguments, &block)
       end
     end
 

@@ -159,15 +159,6 @@ describe Hallon::Observable do
     end
   end
 
-  describe "#trigger" do
-    it "should always append self to the arguments" do
-      block = proc {}
-      subject.on(:testing, &block)
-      block.should_receive(:call).with(subject)
-      subject.send(:trigger, :testing)
-    end
-  end
-
   describe "#protecting_handlers" do
     it "should call the given block, returning the result" do
       was_called = false

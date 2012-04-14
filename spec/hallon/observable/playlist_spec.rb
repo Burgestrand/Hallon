@@ -18,67 +18,67 @@ describe Hallon::Observable::Playlist do
 
   specification_for_callback "tracks_added" do
     let(:input)  { [a_pointer, trackpointers, trackpointers_size, 0, :userdata] }
-    let(:output) { [tracks, 0, subject] }
+    let(:output) { [tracks, 0] }
   end
 
   specification_for_callback "tracks_removed" do
     let(:input)  { [a_pointer, track_index_pointers, trackpointers_size, :userdata] }
-    let(:output) { [[0, 1], subject] }
+    let(:output) { [[0, 1]] }
   end
 
   specification_for_callback "tracks_moved" do
     let(:input)  { [a_pointer, track_index_pointers, trackpointers_size, 7, :userdata] }
-    let(:output) { [[0, 1], 7, subject] }
+    let(:output) { [[0, 1], 7] }
   end
 
   specification_for_callback "playlist_renamed" do
     let(:input)  { [a_pointer, :userdata] }
-    let(:output) { [subject] }
+    let(:output) { [] }
   end
 
   specification_for_callback "playlist_state_changed" do
     let(:input)  { [a_pointer, :userdata] }
-    let(:output) { [subject] }
+    let(:output) { [] }
   end
 
   specification_for_callback "playlist_update_in_progress" do
     let(:input)  { [a_pointer, true, :userdata] }
-    let(:output) { [true, subject] }
+    let(:output) { [true] }
   end
 
   specification_for_callback "playlist_metadata_updated" do
     let(:input)  { [a_pointer, :userdata] }
-    let(:output) { [subject] }
+    let(:output) { [] }
   end
 
   specification_for_callback "track_created_changed" do
     let(:input)  { [a_pointer, 7, mock_user_raw, 15, :userdata] }
-    let(:output) { [7, Hallon::User.new(mock_user), Time.at(15), subject] }
+    let(:output) { [7, Hallon::User.new(mock_user), Time.at(15)] }
   end
 
   specification_for_callback "track_seen_changed" do
     let(:input)  { [a_pointer, 0, true, :userdata] }
-    let(:output) { [0, true, subject] }
+    let(:output) { [0, true] }
   end
 
   specification_for_callback "track_message_changed" do
     let(:input)  { [a_pointer, 13, "I LUFF JOO!", :userdata] }
-    let(:output) { [13, "I LUFF JOO!", subject] }
+    let(:output) { [13, "I LUFF JOO!"] }
   end
 
   specification_for_callback "description_changed" do
     let(:input)  { [a_pointer, "Merily merily merily bong", :userdata] }
-    let(:output) { ["Merily merily merily bong", subject] }
+    let(:output) { ["Merily merily merily bong"] }
   end
 
   specification_for_callback "image_changed" do
     before { Hallon::Session.stub!(:instance => session) }
     let(:input)  { [a_pointer, mock_image_id, :userdata] }
-    let(:output) { [Hallon::Image.new(mock_image), subject] }
+    let(:output) { [Hallon::Image.new(mock_image)] }
 
     it "should not fail if the image has been *removed*" do
       block = proc { |image| }
-      block.should_receive(:call).with(nil, subject)
+      block.should_receive(:call).with(nil)
       subject.on(:image_changed, &block)
       subject_callback.call(a_pointer, null_pointer, :userdata)
     end
@@ -86,6 +86,6 @@ describe Hallon::Observable::Playlist do
 
   specification_for_callback "subscribers_changed" do
     let(:input)  { [a_pointer, :userdata] }
-    let(:output) { [subject] }
+    let(:output) { [] }
   end
 end

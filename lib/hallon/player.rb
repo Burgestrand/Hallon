@@ -85,20 +85,20 @@ module Hallon
     #
     # Will be called after calling our buffers are full enough to support
     # continous playback.
-    def start_playback(session)
+    def start_playback
       self.status = :playing
     end
 
     # Called by libspotify when the driver should pause audio playback.
     #
     # Might happen if we’re playing audio faster than we can stream it.
-    def stop_playback(session)
+    def stop_playback
       self.status = :paused
     end
 
     # Called by libspotify on music delivery; format is
     # a hash of (sample) rate, channels and (sample) type.
-    def music_delivery(format, frames, session)
+    def music_delivery(format, frames)
       @queue.synchronize do
         if frames.none?
           @queue.clear
@@ -113,7 +113,7 @@ module Hallon
     # Called by libspotify to request information about our
     # audio buffer. Required if we want libspotify to tell
     # us when we should start and stop playback.
-    def get_audio_buffer_stats(session)
+    def get_audio_buffer_stats
       drops = @driver.drops if @driver.respond_to?(:drops)
       [@queue.size, drops.to_i]
     end

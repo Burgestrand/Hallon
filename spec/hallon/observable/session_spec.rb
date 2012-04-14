@@ -5,32 +5,32 @@ describe Hallon::Observable::Session do
 
   specification_for_callback "logged_in" do
     let(:input)  { [a_pointer, :ok] }
-    let(:output) { [:ok, subject] }
+    let(:output) { [:ok] }
   end
 
   specification_for_callback "logged_out" do
     let(:input)  { [a_pointer] }
-    let(:output) { [subject] }
+    let(:output) { [] }
   end
 
   specification_for_callback "metadata_updated" do
     let(:input)  { [a_pointer] }
-    let(:output) { [subject] }
+    let(:output) { [] }
   end
 
   specification_for_callback "connection_error" do
     let(:input)  { [a_pointer, :ok] }
-    let(:output) { [:ok, subject] }
+    let(:output) { [:ok] }
   end
 
   specification_for_callback "message_to_user" do
     let(:input)  { [a_pointer, "ALL UR BASE"] }
-    let(:output) { ["ALL UR BASE", subject] }
+    let(:output) { ["ALL UR BASE"] }
   end
 
   specification_for_callback "notify_main_thread" do
     let(:input)  { [a_pointer] }
-    let(:output) { [subject] }
+    let(:output) { [] }
   end
 
   specification_for_callback "music_delivery" do
@@ -58,7 +58,7 @@ describe Hallon::Observable::Session do
     end
 
     let(:input)  { [a_pointer, format, frames, num_frames] }
-    let(:output) { [{rate: 44100, type: :int16, channels: 2}, data.each_slice(2), subject] }
+    let(:output) { [{rate: 44100, type: :int16, channels: 2}, data.each_slice(2)] }
 
     it "should return the resulting value" do
       subject.on(:music_delivery) { 7 }
@@ -76,27 +76,27 @@ describe Hallon::Observable::Session do
 
   specification_for_callback "play_token_lost" do
     let(:input)  { [a_pointer] }
-    let(:output) { [subject] }
+    let(:output) { [] }
   end
 
   specification_for_callback "end_of_track" do
     let(:input)  { [a_pointer] }
-    let(:output) { [subject] }
+    let(:output) { [] }
   end
 
   specification_for_callback "start_playback" do
     let(:input)  { [a_pointer] }
-    let(:output) { [subject] }
+    let(:output) { [] }
   end
 
   specification_for_callback "stop_playback" do
     let(:input)  { [a_pointer] }
-    let(:output) { [subject] }
+    let(:output) { [] }
   end
 
   specification_for_callback "get_audio_buffer_stats" do
     let(:input)  { [a_pointer, Spotify::AudioBufferStats.new.pointer] }
-    let(:output) { [subject] }
+    let(:output) { [] }
 
     it "should return the resulting audio buffer stats" do
       stats = Spotify::AudioBufferStats.new
@@ -122,26 +122,26 @@ describe Hallon::Observable::Session do
 
   specification_for_callback "streaming_error" do
     let(:input)  { [a_pointer, :ok] }
-    let(:output) { [:ok, subject] }
+    let(:output) { [:ok] }
   end
 
   specification_for_callback "userinfo_updated" do
     let(:input)  { [a_pointer] }
-    let(:output) { [subject] }
+    let(:output) { [] }
   end
 
   specification_for_callback "log_message" do
     let(:input)  { [a_pointer, "WATCHING U!"] }
-    let(:output) { ["WATCHING U!", subject] }
+    let(:output) { ["WATCHING U!"] }
   end
 
   specification_for_callback "offline_status_updated" do
     let(:input)  { [a_pointer] }
-    let(:output) { [subject] }
+    let(:output) { [] }
   end
 
   specification_for_callback "offline_error" do
     let(:input)  { [a_pointer, :ok] }
-    let(:output) { [:ok, subject] }
+    let(:output) { [:ok] }
   end
 end
