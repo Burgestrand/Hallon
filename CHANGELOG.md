@@ -3,6 +3,8 @@ Hallon’s Changelog
 
 [HEAD][]
 ------------------
+This release brings a lot of changes to the Hallon test suite, mainly to make
+it more readable and less of a mess.
 
 __Changed__
 
