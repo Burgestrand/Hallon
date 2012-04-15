@@ -124,7 +124,7 @@ module Hallon
         # You pass a pointer to the session pointer to libspotify >:)
         FFI::MemoryPointer.new(:pointer) do |p|
           Error::maybe_raise Spotify.session_create(config, p)
-          @pointer = Spotify::Pointer.new(p.read_pointer, :session, false)
+          @pointer = p.read_pointer
         end
       end
     end
