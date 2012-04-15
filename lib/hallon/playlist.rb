@@ -150,24 +150,14 @@ module Hallon
       Spotify.playlist_set_collaborative(pointer, !!collaborative)
     end
 
-    # Allow the playlist time to update itself and the Spotify backend.
-    # This method will block until libspotify says the playlist no longer
-    # has pending changes.
+    # Waits for the playlist to begin updating and blocks until it is done.
     #
     # @return [Playlist]
     def upload(timeout = Hallon.load_timeout)
-      unless pending?
-        # libspotify has this bug where pending? returns false directly after
-        # adding tracks to a playlist; processing events once usually toggles
-        # the playlist into pending? mode
-        session.process_events
-      end
-
       Timeout.timeout(timeout, Hallon::TimeoutError) do
-        session.wait_for { not pending? }
+        wait_for(:playlist_update_in_progress) { |done| done }
+        self
       end
-
-      self
     end
 
     # @return [Boolean] true if playlist has pending changes
