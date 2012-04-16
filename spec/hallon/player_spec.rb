@@ -1,6 +1,6 @@
 # coding: utf-8
 describe Hallon::Player do
-  let(:player) { Hallon::Player.new(session, AudioDriverMock) }
+  let(:player) { Hallon::Player.new(AudioDriverMock) }
   let(:track)  { Hallon::Track.new(mock_track) }
   let(:driver) { player.instance_variable_get('@driver') }
   let(:queue)  { player.instance_variable_get('@queue') } # black box? WHAT?

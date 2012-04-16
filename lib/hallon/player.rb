@@ -24,18 +24,17 @@ module Hallon
       end
     end
 
-    # Constructs a Player, given a Session and an audio driver.
+    # Constructs a Player, given an audio driver.
     #
     # @example
-    #   player = Hallon::Player.new(session, Hallon::OpenAL)
+    #   player = Hallon::Player.new(Hallon::OpenAL)
     #   player.play(track)
     #
     # @note for instructions on how to write your own audio driver, see Hallons’ README
-    # @param [Session] session
     # @param [AudioDriver] driver
     # @yield instance_evals itself, allowing you to define callbacks using `on`
-    def initialize(session, driver, &block)
-      @session = session
+    def initialize(driver, &block)
+      @session = Hallon::Session.instance
       @pointer = @session.pointer
 
       # sample rate is often (if not always) 44.1KHz, so
