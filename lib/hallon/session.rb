@@ -129,6 +129,15 @@ module Hallon
       end
     end
 
+    # Flushes the Session cache to disk.
+    #
+    # @note libspotify does this automatically periodically, under normal
+    #       circumstances this method should not need to be used.
+    # @return [Session]
+    def flush_caches
+      Spotify.session_flush_caches(pointer)
+    end
+
     # PlaylistContainer for the currently logged in session.
     #
     # @note returns nil if the session is not logged in.

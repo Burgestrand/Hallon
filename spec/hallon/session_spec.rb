@@ -288,4 +288,10 @@ describe Hallon::Session do
       session.inbox.should be_nil
     end
   end
+
+  describe "#flush_caches" do
+    it "flushes the session cache to disk" do
+      session.flush_caches # or, actually, it does not crash
+    end
+  end
 end
