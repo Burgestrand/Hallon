@@ -113,6 +113,16 @@ describe Hallon::ArtistBrowse do
     end
   end
 
+  describe "#top_hits" do
+    it "returns an enumerator of the artist’s top hits" do
+      browse.top_hits.to_a.should eq instantiate(Hallon::Track, mock_track)
+    end
+
+    it "returns an empty enumerator when the artist browser is not loaded" do
+      empty_browse.top_hits.should be_empty
+    end
+  end
+
   describe "#request_duration" do
     it "should return the request duration in seconds" do
       browse.request_duration.should eq 2.751

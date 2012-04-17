@@ -59,6 +59,7 @@ module Spotify
   wrap_function :artistbrowse_track, :track
   wrap_function :artistbrowse_album, :album
   wrap_function :artistbrowse_similar_artist, :artist
+  wrap_function :artistbrowse_tophit_track, :track
 
   wrap_function :image_create, :image
   wrap_function :image_create_from_link, :image

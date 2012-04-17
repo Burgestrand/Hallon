@@ -1,6 +1,7 @@
 # coding: utf-8
 module Hallon
-  # ArtistBrowse is like AlbumBrowse, only that it’s for {Track}s.
+  # An ArtistBrowse object is for retrieving details about a given artist, such
+  # as it’s tracks, albums, similar artists and more.
   #
   # @see Artist
   # @see http://developer.spotify.com/en/libspotify/docs/group__artistbrowse.html
@@ -52,6 +53,16 @@ module Hallon
       # @return [Artist, nil]
       item :artistbrowse_similar_artist! do |artist|
         Artist.from(artist)
+      end
+    end
+
+    # Enumerates through all tophit tracks of an album browsing object.
+    class TopHits < Enumerator
+      size :artistbrowse_num_tophit_tracks
+
+      # @return [Track, nil]
+      item :artistbrowse_tophit_track! do |track|
+        Track.from(track)
       end
     end
 
@@ -137,6 +148,11 @@ module Hallon
     # @return [SimilarArtists] similar artists to this artist.
     def similar_artists
       SimilarArtists.new(self)
+    end
+
+    # @return [TopHits] enumerator of the artist’s most popular tracks.
+    def top_hits
+      TopHits.new(self)
     end
   end
 end
