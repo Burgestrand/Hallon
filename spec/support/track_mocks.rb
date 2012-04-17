@@ -2,7 +2,8 @@ RSpec::Core::ExampleGroup.instance_eval do
   let(:mock_tracks) do
     {
       default: mock_track,
-      empty:   mock_empty_track
+      empty:   mock_empty_track,
+      linked:  mock_linked_track
     }
   end
 

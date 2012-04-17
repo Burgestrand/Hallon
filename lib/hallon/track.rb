@@ -167,6 +167,13 @@ module Hallon
       Spotify.track_get_availability(session.pointer, pointer)
     end
 
+    # @see autolinked?
+    # @return [Track] the track this track is autolinked to for audio playback.
+    def playable_track
+      track = Spotify.track_get_playable!(session.pointer, pointer)
+      Track.from(track)
+    end
+
     # @return [Boolean] true if the track is a local track.
     def local?
       Spotify.track_is_local(session.pointer, pointer)

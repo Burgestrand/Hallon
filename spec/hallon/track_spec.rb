@@ -8,6 +8,10 @@ describe Hallon::Track do
     Hallon::Track.new(mock_tracks[:empty])
   end
 
+  let(:autolinked_track) do
+    Hallon::Track.new(mock_tracks[:linked])
+  end
+
   specify { track.should be_a Hallon::Loadable }
 
   it_should_behave_like "a Linkable object" do
@@ -57,6 +61,18 @@ describe Hallon::Track do
   describe "#popularity" do
     it "returns the track’s popularity" do
       track.popularity.should eq 42
+    end
+  end
+
+  describe "#playable_track" do
+    it "returns the autolinked track" do
+      linked = autolinked_track.playable_track
+      linked.should_not eq autolinked_track
+      linked.should eq track
+    end
+
+    it "returns itself if the track is not autolinked" do
+      track.playable_track.should eq track
     end
   end
 

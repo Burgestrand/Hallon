@@ -46,6 +46,7 @@ module Spotify
   wrap_function :track_artist, :artist
   wrap_function :track_album, :album
   wrap_function :localtrack_create, :track
+  wrap_function :track_get_playable, :track
 
   wrap_function :album_artist, :artist
 
