@@ -135,6 +135,106 @@ describe Hallon::Search do
     end
   end
 
+  describe "#playlist_names" do
+    it "returns an enumerator of the search’s playlist names" do
+      search.playlist_names.to_a.should eq %w(Dunderlist)
+    end
+
+    it "returns an empty enumerator of there are no search results" do
+      empty_search.playlist_names.should be_empty
+    end
+
+    describe ".total" do
+      it "returns the total number of search results" do
+        search.playlist_names.total.should eq 462
+      end
+
+      it "returns zero if there are no search results whatsoever" do
+        empty_search.playlist_names.total.should eq 0
+      end
+    end
+  end
+
+  describe "#playlist_uris" do
+    it "returns an enumerator of the search’s playlist uris" do
+      search.playlist_uris.to_a.should eq %w(spotify:user:burgestrand:playlist:megaplaylist)
+    end
+
+    it "returns an empty enumerator of there are no search results" do
+      empty_search.playlist_uris.should be_empty
+    end
+
+    describe ".total" do
+      it "returns the total number of search results" do
+        search.playlist_uris.total.should eq 462
+      end
+
+      it "returns zero if there are no search results whatsoever" do
+        empty_search.playlist_uris.total.should eq 0
+      end
+    end
+  end
+
+  describe "#playlist_image_uris" do
+    it "returns an enumerator of the search’s playlist image uris" do
+      search.playlist_image_uris.to_a.should eq %w(spotify:image:3ad93423add99766e02d563605c6e76ed2b0e400)
+    end
+
+    it "returns an empty enumerator of there are no search results" do
+      empty_search.playlist_image_uris.should be_empty
+    end
+
+    describe ".total" do
+      it "returns the total number of search results" do
+        search.playlist_image_uris.total.should eq 462
+      end
+
+      it "returns zero if there are no search results whatsoever" do
+        empty_search.playlist_image_uris.total.should eq 0
+      end
+    end
+  end
+
+  describe "#playlists" do
+    it "returns an enumerator of the search’s playlists" do
+      search.playlists.to_a.should eq instantiate(Hallon::Playlist, mock_playlist_two)
+    end
+
+    it "returns an empty enumerator of there are no search results" do
+      empty_search.playlists.should be_empty
+    end
+
+    describe ".total" do
+      it "returns the total number of search results" do
+        search.playlists.total.should eq 462
+      end
+
+      it "returns zero if there are no search results whatsoever" do
+        empty_search.playlists.total.should eq 0
+      end
+    end
+  end
+
+  describe "#playlist_images" do
+    it "returns an enumerator of the search’s playlist images" do
+      search.playlist_images.to_a.should eq instantiate(Hallon::Image, mock_image)
+    end
+
+    it "returns an empty enumerator of there are no search results" do
+      empty_search.playlist_images.should be_empty
+    end
+
+    describe ".total" do
+      it "returns the total number of search results" do
+        search.playlist_images.total.should eq 462
+      end
+
+      it "returns zero if there are no search results whatsoever" do
+        empty_search.playlist_images.total.should eq 0
+      end
+    end
+  end
+
   describe "#to_link" do
     it "contains the search query" do
       search.to_link.should eq Hallon::Link.new("spotify:search:#{CGI.escape(search.query)}")

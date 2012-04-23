@@ -57,7 +57,7 @@ RSpec::Core::ExampleGroup.instance_eval do
   end
 
   let(:mock_playlist_two) do
-    Spotify.mock_playlist!("Dunderlist", true, mock_user, true, nil, nil, false, 1000, nil, true, :no, 0, 0, nil)
+    Spotify.mock_playlist!("Dunderlist", true, mock_user, true, nil, mock_image_id, false, 1000, nil, true, :no, 0, 0, nil)
   end
 
   let(:mock_empty_playlist) do

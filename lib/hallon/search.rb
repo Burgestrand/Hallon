@@ -52,6 +52,49 @@ module Hallon
       end
     end
 
+    class PlaylistEnumerator < Enumerator
+      size :search_num_playlists
+
+      # @return [Integer] total playlists available from connected search result.
+      def total
+        Spotify.search_total_playlists(pointer)
+      end
+    end
+
+    # Enumerates through all playlist names of a search object.
+    class PlaylistNames < PlaylistEnumerator
+      # @return [String, nil]
+      item :search_playlist_name
+    end
+
+    # Enumerates through all playlist uris of a search object.
+    class PlaylistUris < PlaylistEnumerator
+      # @return [String, nil]
+      item :search_playlist_uri
+    end
+
+    # Enumerates through all playlist image uris of a search object.
+    class PlaylistImageUris < PlaylistEnumerator
+      # @return [String, nil]
+      item :search_playlist_image_uri
+    end
+
+    # Enumerates through all playlists of a search object.
+    class Playlists < PlaylistEnumerator
+      # @return [Playlist]
+      item :search_playlist_uri do |uri|
+        Playlist.from(uri)
+      end
+    end
+
+    # Enumerates through all playlist images of a search object.
+    class Images < PlaylistEnumerator
+      # @return [Playlist]
+      item :search_playlist_image_uri do |uri|
+        Image.from(uri)
+      end
+    end
+
     include Linkable
 
     to_link :from_search
@@ -141,6 +184,31 @@ module Hallon
     # @return [Artists] list of all artists in the search result.
     def artists
       Artists.new(self)
+    end
+
+    # @return [PlaylistNames] list of all playlist names in the search result.
+    def playlist_names
+      PlaylistNames.new(self)
+    end
+
+    # @return [PlaylistUris] list of all playlist uris in the search result.
+    def playlist_uris
+      PlaylistUris.new(self)
+    end
+
+    # @return [PlaylistImageUris] list of all playlist image uris in the search result.
+    def playlist_image_uris
+      PlaylistImageUris.new(self)
+    end
+
+    # @return [Playlists] list of all playlists in the search result.
+    def playlists
+      Playlists.new(self)
+    end
+
+    # @return [Images] list of all images in the search result.
+    def playlist_images
+      Images.new(self)
     end
   end
 end
