@@ -34,9 +34,3 @@ RSpec::Core::ExampleGroup.instance_eval do
     Spotify.mock_playlistcontainer!(nil, false, 0, nil, nil, nil)
   end
 end
-
-RSpec.configure do |config|
-  config.before do
-    Spotify.registry_add 'spotify:container:burgestrand', mock_container
-  end
-end

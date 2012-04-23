@@ -32,9 +32,3 @@ RSpec::Core::ExampleGroup.instance_eval do
     Spotify.link_create_from_string!("spotify:image:ce9da340323614dc95ae96b68843b1c726dc5c8a")
   end
 end
-
-RSpec.configure do |config|
-  config.before do
-    Spotify.registry_add 'spotify:image:3ad93423add99766e02d563605c6e76ed2b0e400', mock_image
-  end
-end

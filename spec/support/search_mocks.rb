@@ -21,11 +21,3 @@ RSpec::Core::ExampleGroup.instance_eval do
     Spotify.mock_search(:ok, "", nil, 0, 0, nil, 0, 0, nil, 0, 0, nil, 0, 0, nil, nil, nil)
   end
 end
-
-RSpec.configure do |config|
-  config.before do
-    Spotify.registry_add 'spotify:user:burgestrand:playlist:megaplaylist', mock_playlist_two
-    Spotify.registry_add 'spotify:search:my+%C3%A5+utf8+%EF%A3%BF+query', mock_search
-    Spotify.registry_add 'spotify:search:', mock_empty_search
-  end
-end

@@ -28,13 +28,3 @@ RSpec::Core::ExampleGroup.instance_eval do
     Spotify.mock_albumbrowse(:ok, -1, nil, nil, 0, nil, 0, nil, nil, nil, nil)
   end
 end
-
-RSpec.configure do |config|
-  config.before do
-    Spotify.registry_add 'spotify:albumbrowse:1xvnWMz2PNFf7mXOSRuLws', mock_albumbrowse
-    Spotify.registry_add 'spotify:album:1xvnWMz2PNFf7mXOSRuLws', mock_album
-
-    Spotify.registry_add 'spotify:albumbrowse:thisisanemptyalbumyoow', mock_empty_albumbrowse
-    Spotify.registry_add 'spotify:album:thisisanemptyalbumyoow', mock_empty_album
-  end
-end

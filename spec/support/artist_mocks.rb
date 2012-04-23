@@ -34,13 +34,3 @@ RSpec::Core::ExampleGroup.instance_eval do
     Spotify.mock_artistbrowse(:ok, 0, nil, 0, nil, 0, nil, 0, nil, 0, nil, 0, nil, nil, :full, nil, nil)
   end
 end
-
-RSpec.configure do |config|
-  config.before do
-    Spotify.registry_add 'spotify:artist:3bftcFwl4vqRNNORRsqm1G', mock_artist
-    Spotify.registry_add 'spotify:artistbrowse:3bftcFwl4vqRNNORRsqm1G', mock_artistbrowse
-
-    Spotify.registry_add 'spotify:artist:thisisanemptyartistyow', mock_empty_artist
-    Spotify.registry_add 'spotify:artistbrowse:thisisanemptyartistyow', mock_empty_artistbrowse
-  end
-end
