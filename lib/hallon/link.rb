@@ -9,6 +9,10 @@ module Hallon
     # @param [#to_s] spotify_uri
     # @return [Boolean]
     def self.valid?(spotify_uri)
+      unless Session.instance?
+        raise NoSessionError, "You must have initialized a session to create links"
+      end
+
       if spotify_uri.is_a?(Link)
         return true
       elsif spotify_uri.to_s["\x00"] # image ids
@@ -25,9 +29,8 @@ module Hallon
     # @param [#to_str] uri
     # @raise [ArgumentError] link could not be parsed
     def initialize(uri)
-      # if no session instance exists, libspotify segfaults, so assert that we have one
       unless Session.instance?
-        raise "Link.new requires an existing Session instance"
+        raise NoSessionError, "You must have initialized a session to create links"
       end
 
       # we support any #to_link’able object

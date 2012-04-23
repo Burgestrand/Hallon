@@ -19,7 +19,7 @@ describe Hallon::Link do
     it "should raise an error when no session instance is about" do
       # this is due to a bug in libspotify, it will segfault otherwise
       Hallon::Session.stub(:instance?).and_return(false)
-      expect { Hallon::Link.new("spotify:user:burgestrand") }.to raise_error(/session/i)
+      expect { Hallon::Link.new("spotify:user:burgestrand") }.to raise_error(Hallon::NoSessionError)
     end
 
     it "should accept any object that supplies a #to_link method" do
@@ -39,6 +39,12 @@ describe Hallon::Link do
 
     it "should be false for an invalid link" do
       Hallon::Link.valid?("omgwtfbbq").should be_false
+    end
+
+    it "raises an error when no session has been initialized" do
+      # this is due to a bug in libspotify, it will segfault otherwise
+      Hallon::Session.stub(:instance?).and_return(false)
+      expect { Hallon::Link.valid?("omgwtfbbq") }.to raise_error(Hallon::NoSessionError)
     end
   end
 
