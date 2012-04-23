@@ -10,10 +10,6 @@ module Hallon
   #
   # @see https://developer.spotify.com/en/libspotify/docs/group__session.html
   class Session < Base
-    # Raised by #login! and #relogin!
-    class LoginError < StandardError
-    end
-
     # The options Hallon used at {Session#initialize}.
     #
     # @return [Hash]
@@ -59,7 +55,7 @@ module Hallon
     #
     # @return [Session]
     def Session.instance
-      @__instance__ or raise "Session has not been initialized"
+      @__instance__ or raise NoSessionError, "Session has not been initialized"
     end
 
     # @return [Boolean] true if a Session instance exists.

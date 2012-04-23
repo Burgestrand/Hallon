@@ -70,6 +70,12 @@ module Hallon
   # Thrown by {Loadable#load} and {Playlist#update} on failure.
   TimeoutError = Class.new(Hallon::Error)
 
+  # Raised by Session.instance
+  NoSessionError = Class.new(StandardError)
+
+  # Raised by Session#login! and Session#relogin!
+  LoginError = Class.new(StandardError)
+
   class << self
     # @return [Numeric] default load timeout in seconds, used in {Loadable#load}.
     attr_reader :load_timeout
