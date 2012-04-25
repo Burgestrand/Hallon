@@ -58,7 +58,7 @@ module Hallon
     # If the track is successfully matched, once loaded, {Track#available?}
     # will return true and you’ll be able to inspect the track’s {#artist}
     # and {#album}, as well as the information in the track itself. If the
-    # track is {#playable?} you’ll also be able to play it!
+    # track is playable you’ll also be able to play it!
     #
     # @example creating a local track
     #   track = Hallon::Track.local "Californication", "Red Hot Chili Peppers"
