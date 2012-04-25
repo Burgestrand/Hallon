@@ -50,6 +50,24 @@ module Hallon
 
     # Create a new local track.
     #
+    # Local tracks in Spotify allows you to specify title, artist, and
+    # optionally also album and length. This will create a local track
+    # (meaning {Track#local?} returns true) that libspotify will try to
+    # match up with an *actual* track in the Spotify database.
+    #
+    # If the track is successfully matched, once loaded, {Track#available?}
+    # will return true and you’ll be able to inspect the track’s {#artist}
+    # and {#album}, as well as the information in the track itself. If the
+    # track is {#playable?} you’ll also be able to play it!
+    #
+    # @example creating a local track
+    #   track = Hallon::Track.local "Californication", "Red Hot Chili Peppers"
+    #   puts track.artist.name # => "Red Hot Chili Peppers"
+    #   puts track.album.name # => "Californication"
+    #   p track.local? # => true
+    #
+    # @note I’ve been unable to get local tracks to get matched up in libspotify v11,
+    #       it’s possible this function does not work properly in libspotify v11.
     # @param [String] title
     # @param [String] artist
     # @param [String] album
