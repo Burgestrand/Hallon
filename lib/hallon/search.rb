@@ -117,7 +117,8 @@ module Hallon
         :tracks_offset  => 0,
         :albums_offset  => 0,
         :artists_offset => 0,
-        :playlists_offset => 0
+        :playlists_offset => 0,
+        :type => :standard
       }
     end
 
@@ -125,6 +126,7 @@ module Hallon
     #
     # @param [String, Link] search search query or spotify URI
     # @param [Hash] options additional search options
+    # @option options [Symbol] :type (:standard) search type, either standard or suggest
     # @option options [#to_i] :tracks (25) max number of tracks you want in result
     # @option options [#to_i] :albums (25) max number of albums you want in result
     # @option options [#to_i] :artists (25) max number of artists you want in result
@@ -136,6 +138,7 @@ module Hallon
     # @see http://developer.spotify.com/en/libspotify/docs/group__search.html#gacf0b5e902e27d46ef8b1f40e332766df
     def initialize(search, options = {})
       opts = Search.defaults.merge(options)
+      type = opts.delete(:type)
       opts = opts.values_at(:tracks_offset, :tracks, :albums_offset, :albums, :artists_offset, :artists, :playlists_offset, :playlists).map(&:to_i)
       search = from_link(search) if Link.valid?(search)
 
@@ -143,7 +146,7 @@ module Hallon
         @pointer = if Spotify::Pointer.typechecks?(search, :search)
           search
         else
-          Spotify.search_create!(session.pointer, search, *opts, :standard, callback, nil)
+          Spotify.search_create!(session.pointer, search, *opts, type, callback, nil)
         end
 
         raise ArgumentError, "search with #{search} failed" if @pointer.null?

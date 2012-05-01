@@ -26,7 +26,7 @@ describe Hallon::Search do
     end
 
     it "should allow you to customize the defaults" do
-      Spotify.should_receive(:search_create).with(session.pointer, "my å utf8  query", 1, 2, 3, 4, 5, 6, 7, 8, :standard, anything, anything).and_return(mock_search)
+      Spotify.should_receive(:search_create).with(session.pointer, "my å utf8  query", 1, 2, 3, 4, 5, 6, 7, 8, :suggest, anything, anything).and_return(mock_search)
       my_params = {
         :tracks_offset  => 1,
         :tracks         => 2,
@@ -35,10 +35,15 @@ describe Hallon::Search do
         :artists_offset => 5,
         :artists        => 6,
         :playlists_offset => 7,
-        :playlists      => 8
+        :playlists      => 8,
+        :type           => :suggest
       }
 
       Hallon::Search.new("my å utf8  query", my_params)
+    end
+
+    it "should raise an error given an invalid search type" do
+      expect { Hallon::Search.new("my å utf8  query", type: :hulabandola) }.to raise_error(ArgumentError)
     end
 
     it "should raise an error if the search failed" do
