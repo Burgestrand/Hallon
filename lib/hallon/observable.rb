@@ -119,20 +119,21 @@ module Hallon
     # @yield [Symbol, *args] name of the event that fired, and its’ arguments
     # @return whatever the block returns
     def wait_for(*events)
-      if result = yield
-        return result
-      end
-
       channel = SizedQueue.new(10) # sized just to be safe
 
       old_handlers = events.each_with_object({}) do |event, hash|
         hash[event] = on(event) do |*args|
           channel << [event, *args]
+          hash[event].call(*args)
         end
       end
 
       old_notify = session.on(:notify_main_thread) do
         channel << :notify
+      end
+
+      if result = yield
+        return result
       end
 
       loop do

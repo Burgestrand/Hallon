@@ -6,7 +6,7 @@ module Hallon
   # controlling the playback features of libspotify.
   #
   # @see Session
-  class Player
+  class Player < Base
     # meep?
     extend Observable::Player
 
@@ -191,22 +191,12 @@ module Hallon
     # @param (see #play)
     # @return (see #play)
     def play!(track = nil)
-      monitor = Monitor.new
-      condvar = monitor.new_cond
-
-      monitor.synchronize do
-        end_of_track = false
-
-        on(:end_of_track) do
-          monitor.synchronize do
-            end_of_track = true
-            condvar.signal
-          end
-        end
-
-        play(track)
-        condvar.wait_until { end_of_track }
-      end
+      end_of_track = false
+      old_callback = on(:end_of_track) { end_of_track = true }
+      play(track)
+      wait_for(:end_of_track) { end_of_track }
+    ensure
+      on(:end_of_track, &old_callback)
     end
 
     # Set preferred playback bitrate.
