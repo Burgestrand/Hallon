@@ -8,6 +8,14 @@ describe Hallon::PlaylistContainer do
     Hallon::PlaylistContainer.new(mock_containers[:empty])
   end
 
+  let(:empty_playlist) do
+    Hallon::Playlist.new(mock_playlists[:empty])
+  end
+
+  let(:playlist) do
+    Hallon::Playlist.new(mock_playlists[:default])
+  end
+
   specify { container.should be_a Hallon::Loadable }
 
   describe "#loaded?" do
@@ -264,6 +272,37 @@ describe Hallon::PlaylistContainer do
         container.move(folder.begin, 0)
         expect { folder.rename "Boogelyboogely" }.to raise_error(IndexError)
       end
+    end
+  end
+
+  describe "#unseen_tracks_count_for" do
+    it "returns the number of unseen tracks for the given playlist" do
+      container.unseen_tracks_count_for(playlist).should eq 4
+    end
+
+    it "raises an error if the result was an error" do
+      expect { container.unseen_tracks_count_for(empty_playlist) }.to raise_error(Hallon::OperationFailedError)
+    end
+  end
+
+  describe "#unseen_tracks_for" do
+    it "returns an array of unseen tracks" do
+      container.unseen_tracks_for(playlist).should eq playlist.tracks.to_a
+    end
+
+    it "returns an array of unseen tracks, no bigger than the given count" do
+      container.unseen_tracks_for(playlist, 2).should eq playlist.tracks.to_a[0, 2]
+    end
+
+    it "raises an error if the result was an error (but count was not)" do
+      Spotify.should_receive(:playlistcontainer_get_unseen_tracks).and_return(4, -1)
+      expect { container.unseen_tracks_for(empty_playlist) }.to raise_error(Hallon::OperationFailedError)
+    end
+  end
+
+  describe "#clear_unseen_tracks_for" do
+    it "raises an error if the operation failed" do
+      expect { container.clear_unseen_tracks_for(empty_playlist) }.to raise_error(Hallon::OperationFailedError)
     end
   end
 end

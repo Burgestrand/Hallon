@@ -289,6 +289,44 @@ module Hallon
       symbol == :ok
     end
 
+    # Retrieve the number of unseen tracks for the given playlist.
+    #
+    # @param [Playlist] playlist
+    # @return [Integer] number of unseen tracks
+    def unseen_tracks_count_for(playlist)
+      Spotify.playlistcontainer_get_unseen_tracks(pointer, playlist.pointer, nil, 0).tap do |count|
+        raise OperationFailedError if count < 0
+      end
+    end
+
+    # Retrieve the unseen tracks for the given playlist.
+    #
+    # @note The playlist must be in this container, or this method will fail.
+    # @see clear_unseen_tracks_for
+    # @param [Playlist] playlist
+    # @return [Array<Track>] array of unseen tracks.
+    def unseen_tracks_for(playlist, count = unseen_tracks_count_for(playlist))
+      tracks_ary = FFI::MemoryPointer.new(:pointer, count)
+      real_count = Spotify.playlistcontainer_get_unseen_tracks(pointer, playlist.pointer, tracks_ary, count)
+      raise OperationFailedError if real_count < 0
+      tracks_ary.read_array_of_pointer([real_count, count].min).map do |track|
+        track_pointer = Spotify::Pointer.new(track, :track, true)
+        Hallon::Track.new(track_pointer)
+      end
+    end
+
+    # Clears the unseen tracks for the given playlist.
+    #
+    # @note in libspotify v11.1.60, this method appears to do nothing
+    # @param [Playlist] playlist
+    # @return [PlaylistContainer] self
+    def clear_unseen_tracks_for(playlist)
+      tap do
+        result = Spotify.playlistcontainer_clear_unseen_tracks(pointer, playlist.pointer)
+        raise OperationFailedError if result < 0
+      end
+    end
+
     protected
       # Wrapper for original API; adjusts indices accordingly.
       #

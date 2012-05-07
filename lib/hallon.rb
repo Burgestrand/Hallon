@@ -76,6 +76,10 @@ module Hallon
   # Raised by Session#login! and Session#relogin!
   LoginError = Class.new(StandardError)
 
+  # Raised by PlaylistContainer#num_unseen_tracks_for and PlaylistContainer#unseen_tracks_for.
+  # @note most likely raised because of the playlist not being in the playlist container.
+  OperationFailedError = Class.new(StandardError)
+
   class << self
     # @return [Numeric] default load timeout in seconds, used in {Loadable#load}.
     attr_reader :load_timeout
