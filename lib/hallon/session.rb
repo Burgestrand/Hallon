@@ -155,8 +155,16 @@ module Hallon
 
     # Log into Spotify using the given credentials.
     #
+    # @example logging in with password
+    #   session.login 'Kim', 'password'
+    #
+    # @example logging in with credentials blob
+    #   session.login 'Kim', Hallon::Blob('blob string')
+    #
+    # @note it also supports logging in via a credentials blob, if you pass
+    #       a Hallon::Blob(blob_string) as the password instead of the real password
     # @param [String] username
-    # @param [String] password
+    # @param [String] password_or_blob
     # @param [Boolean] remember_me have libspotify remember credentials for {#relogin}
     # @return [Session]
     # @see login!
@@ -165,7 +173,8 @@ module Hallon
         raise ArgumentError, "username and password may not be blank"
       end
 
-      tap { Spotify.session_login(pointer, username, password, remember_me, nil) }
+      password, blob = blob, password if password.is_a?(Blob)
+      tap { Spotify.session_login(pointer, username, password, remember_me, blob) }
     end
 
     # Login the remembered user (see {#login}).

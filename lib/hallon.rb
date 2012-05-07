@@ -12,6 +12,7 @@ require 'hallon/error'
 require 'hallon/base'
 require 'hallon/enumerator'
 require 'hallon/audio_queue'
+require 'hallon/blob'
 
 require 'hallon/observable/album_browse'
 require 'hallon/observable/artist_browse'

@@ -86,6 +86,10 @@ session = Hallon::Session.initialize(hallon_appkey) do
     puts "[LOG] #{message}"
   end
 
+  on(:credentials_blob_updated) do |blob|
+    puts "[BLOB] #{blob}"
+  end
+
   on(:connection_error) do |error|
     Hallon::Error.maybe_raise(error)
   end

@@ -106,6 +106,16 @@ describe Hallon::Session do
       expect { session.login '', 'pass' }.to raise_error(ArgumentError)
       expect { session.login 'Kim', '' }.to raise_error(ArgumentError)
     end
+
+    it "should login with a blob when given a blob" do
+      Spotify.should_receive(:session_login).with(anything, 'Kim', nil, false, 'blob')
+      session.login 'Kim', Hallon::Blob('blob')
+    end
+
+    it "should not login with a blob when not given a blob" do
+      Spotify.should_receive(:session_login).with(anything, 'Kim', 'pass', false, nil)
+      session.login 'Kim', 'pass'
+    end
   end
 
   describe "#logout" do
