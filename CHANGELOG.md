@@ -3,8 +3,21 @@ Hallon’s Changelog
 
 [HEAD][]
 ------------------
+
+[v0.16.0][]
+------------------
 This release brings a lot of changes to the Hallon test suite, mainly to make
 it more readable and less of a mess.
+
+__Added__
+
+- ArtistBrowse#top_hits [5ef57a7]
+- Session#flush_caches [693567]
+- Track#playable_track [2d9cdfb]
+- Support for playlists in search results [05f49e4]
+- Support for suggestion search [1ae4b29]
+- Support for unseen tracks for playlists in playlist containers [4bf8496]
+- Support for login with credentials blob instead of password [61ffdf3]
 
 __Changed__
 
@@ -18,6 +31,9 @@ __Changed__
 - Track#popularity now returns a value between 0 and 100 [cd85ae7f]
 - Move Session#wait_for onto Observable, now they all support it! [e14da3e]
 - Make Playlist#update rely solely on callbacks [e703c132]
+- Player.new no longer takes a session parameter [7508d18]
+- Session.instance now raises NoSessionError on missing session [3b47b7]
+- Observable#wait_for now calls original handler on events [be236bfd]
 
 __Fixed__
 
@@ -26,6 +42,7 @@ __Fixed__
 - Playlist::Track#message always return a string [72a644a]
 - Session#login! now raises when given the wrong password [f650a36]
 - Do not wrap the Session pointer in a Spotify pointer [9ae047d]
+- Link.valid? segfaulting if having no session [84c9f69c]
 
 [v0.15.0][]
 ------------------
