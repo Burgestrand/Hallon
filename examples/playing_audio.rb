@@ -11,7 +11,7 @@ rescue LoadError => e
   abort "[ERROR] Could not load gem 'hallon-openal', please install with 'gem install hallon-openal'"
 end
 
-player = Hallon::Player.new(session, Hallon::OpenAL)
+player = Hallon::Player.new(Hallon::OpenAL)
 
 # Program flow.
 
