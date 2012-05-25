@@ -30,6 +30,7 @@ desc "Process the Hallon codebase, finding out which Spotify methods are being u
 task 'spotify:coverage' do
   require 'bundler/setup'
 
+  require 'pry'
   require 'set'
   require 'spotify'
 
@@ -104,21 +105,19 @@ task 'spotify:coverage' do
   # DSL Methods
   no_receiver = handlers[nil] = Hash.new(silencer)
   no_receiver[:from_link] = no_receiver[:to_link] = proc do |recv, meth, (_, name)|
-    next unless name.respond_to?(:value)
     prefix = meth == :to_link ? "link_create" : "link"
-    method = "%s_%s" % [prefix, name.value]
+    method = "%s_%s" % [prefix, name]
     [method, "#{method}!"]
   end
 
   # Hallon::Enumerator
   no_receiver[:size] = proc do |recv, meth, (_, name)|
-    name.value if name.respond_to?(:value)
+    name
   end
 
   # Hallon::Enumerator
   no_receiver[:item] = proc do |recv, meth, (_, name)|
-    next unless name.respond_to?(:value)
-    method = name.value.to_s
+    method = name.to_s
     [method.delete("!"), method]
   end
 
