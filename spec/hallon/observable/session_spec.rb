@@ -144,4 +144,24 @@ describe Hallon::Observable::Session do
     let(:input)  { [a_pointer, :ok] }
     let(:output) { [:ok] }
   end
+
+  specification_for_callback "credentials_blob_updated" do
+    let(:input) { [a_pointer, "credentials"] }
+    let(:output) { ["credentials"] }
+  end
+
+  specification_for_callback "connectionstate_updated" do
+    let(:input) { [a_pointer] }
+    let(:output) { [] }
+  end
+
+  specification_for_callback "scrobble_error" do
+    let(:input) { [a_pointer, :ok] }
+    let(:output) { [:ok] }
+  end
+
+  specification_for_callback "private_session_mode_changed" do
+    let(:input) { [a_pointer, true] }
+    let(:output) { [true] }
+  end
 end

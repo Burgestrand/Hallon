@@ -249,5 +249,39 @@ module Hallon::Observable
     def credentials_blob_updated_callback(pointer, credentials)
       trigger(pointer, :credentials_blob_updated, credentials)
     end
+
+    # @example listening to this event
+    #   session.on(:connectionstate_updated) do
+    #     puts "Yay! Connection state changed… hooray… wee… no?"
+    #   end
+    #
+    # @yield
+    def connectionstate_updated_callback(pointer)
+      trigger(pointer, :connectionstate_updated)
+    end
+
+    # @example listening to this event
+    #   session.on(:scrobble_error) do |error|
+    #     Hallon::Error.maybe_raise(error)
+    #   end
+    #
+    # @yield
+    def scrobble_error_callback(pointer, error)
+      trigger(pointer, :scrobble_error, error)
+    end
+
+    # @example listening to this event
+    #   session.on(:private_session_mode_changed) do |enabled|
+    #     if enabled
+    #       puts "Private session enabled!"
+    #     else
+    #       puts "Private session disabled!"
+    #     end
+    #   end
+    #
+    # @yield
+    def private_session_mode_changed_callback(pointer, enabled)
+      trigger(pointer, :private_session_mode_changed, enabled)
+    end
   end
 end

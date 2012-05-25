@@ -5,7 +5,7 @@ describe Hallon do
   end
 
   describe "API_VERSION" do
-    specify { Hallon::API_VERSION.should == 11 }
+    specify { Hallon::API_VERSION.should == 12 }
   end
 
   describe "API_BUILD" do
