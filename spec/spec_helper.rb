@@ -3,10 +3,9 @@
 require 'bundler'
 Bundler.setup
 
-begin
-  require 'cover_me'
-rescue LoadError
-  # ignore, only for development, it’s in the Gemfile
+require 'simplecov'
+SimpleCov.start do
+  add_filter 'spec/'
 end
 
 require 'mockspotify'

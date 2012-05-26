@@ -16,16 +16,6 @@ RSpec::Core::RakeTask.new('spec') do |task|
   task.ruby_opts = '-W2'
 end
 
-desc "Run the full test suite and generate a coverage report"
-task 'spec:cov' => ['clean', 'spec'] do
-  require 'bundler/setup'
-  require 'cover_me'
-  require './spec/support/cover_me'
-
-  CoverMe.config.at_exit = proc { `open coverage/index.html` }
-  CoverMe.complete!
-end
-
 desc "Process the Hallon codebase, finding out which Spotify methods are being used"
 task 'spotify:coverage' do
   require 'bundler/setup'
