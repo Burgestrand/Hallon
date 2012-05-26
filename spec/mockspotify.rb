@@ -1,12 +1,5 @@
 # coding: utf-8
-begin
-  ffi = require 'ffi'
-  puts "FFI: #{ffi.inspect}"
-rescue LoadError => e
-  p e
-  abort "FFI failed to load!"
-end
-
+require 'ffi'
 require 'rbconfig'
 
 module Spotify
