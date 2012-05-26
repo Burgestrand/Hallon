@@ -1,31 +1,10 @@
 # coding: utf-8
-if !defined?(RUBY_ENGINE) || RUBY_ENGINE == "ruby"
-  puts "RUBY_ENGINE not defined, or it’s “ruby”"
-
-  ffi_c = begin
-    if RUBY_VERSION =~ /1.8/
-      puts "Ruby 1.8"
-      require '1.8/ffi_c'
-    elsif RUBY_VERSION =~ /1.9/
-      puts "Ruby 1.9"
-      require '1.9/ffi_c'
-    else
-      puts "Ruby 2.0"
-      require 'ffi_c'
-    end
-  rescue Exception => e
-    puts "FAIL: #{e.inspect}"
-    require 'ffi_c'
-  end
-
-  puts "FFI C: #{ffi_c.inspect}"
-
-  ffi = require 'ffi/ffi'
+begin
+  ffi = require 'ffi'
   puts "FFI: #{ffi.inspect}"
-else
-  puts "RUBY_ENGINE defined and NOT RUBY!"
-  p RUBY_ENGINE == "ruby"
-  p RUBY_ENGINE
+rescue LoadError => e
+  p e
+  abort "FFI failed to load!"
 end
 
 require 'rbconfig'

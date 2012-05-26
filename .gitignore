@@ -20,6 +20,7 @@ doc/
 
 ## bundler
 .bundle
+vendor/bundle
 
 ## jeweler
 pkg
