@@ -219,7 +219,13 @@ module Hallon
       tap { wait_for(:logged_out) { logged_out? } }
     end
 
-    # @return [String] username of the user stored in libspotify-remembered credentials.
+    # @return [String, nil] username of the currently logged in user.
+    def username
+      username = Spotify.session_user_name(pointer)
+      username unless username.nil? or username.empty?
+    end
+
+    # @return [String, nil] username of the user stored in libspotify-remembered credentials.
     def remembered_user
       bufflen = Spotify.session_remembered_user(pointer, nil, 0)
       FFI::Buffer.alloc_out(bufflen + 1) do |b|

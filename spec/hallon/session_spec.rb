@@ -81,6 +81,17 @@ describe Hallon::Session do
     end
   end
 
+  describe "#username" do
+    it "should be nil if no username is stored in libspotify" do
+      session.username.should eq nil
+    end
+
+    it "should retrieve the current user’s name if logged in" do
+      session.login 'Kim', 'pass'
+      session.username.should eq 'Kim'
+    end
+  end
+
   describe "#remembered_user" do
     it "should be nil if no username is stored in libspotify" do
       session.remembered_user.should eq nil
