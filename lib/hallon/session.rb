@@ -273,6 +273,22 @@ module Hallon
       Spotify.session_connectionstate(pointer)
     end
 
+    # @return [Boolean] true if the session is currently set to private.
+    def private?
+      Spotify.session_is_private_session(pointer)
+    end
+    alias_method :britney_spears_mode?, :private?
+
+    # Set private session.
+    #
+    # @note mode is reverted to normal after some time without user activity,
+    #       see official libspotify documentation for details.
+    # @param [Boolean] is_private
+    def private=(is_private)
+      Spotify.session_set_private_session(pointer, !! is_private)
+    end
+    alias_method :britney_spears_mode=, :private=
+
     # Set session cache size in megabytes.
     #
     # @param [Integer]

@@ -185,6 +185,15 @@ describe Hallon::Session do
     end
   end
 
+  describe "#private= and #private?" do
+    it "sets session privacy mode" do
+      session.private = false
+      session.should_not be_private
+      session.private = true
+      session.should be_private
+    end
+  end
+
   describe "#cache_size" do
     it "should default to 0" do
       session.cache_size.should eq 0
