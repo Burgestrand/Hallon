@@ -38,6 +38,20 @@ describe Hallon::Session do
     it "should fail on a huge user agent (> 255 characters)" do
       expect { create_session(true, :user_agent => 'a' * 256) }.to raise_error(ArgumentError)
     end
+
+    it "should extract the proxy username and password" do
+      session = create_session(true, :proxy => "socks5://kim:pass@batm.an")
+      session.options[:proxy].should eq "socks5://batm.an"
+      session.options[:proxy_username].should eq "kim"
+      session.options[:proxy_password].should eq "pass"
+    end
+
+    it "should not override the given username or password" do
+      session = create_session(true, :proxy => "socks5://kim:pass@batm.an", :proxy_username => "batman", :proxy_password => "hidden identity")
+      session.options[:proxy].should eq "socks5://batm.an"
+      session.options[:proxy_username].should eq "batman"
+      session.options[:proxy_password].should eq "hidden identity"
+    end
   end
 
   describe "options" do

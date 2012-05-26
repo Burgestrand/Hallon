@@ -2,6 +2,7 @@
 require 'singleton'
 require 'timeout'
 require 'thread'
+require 'uri'
 
 module Hallon
   # The Session is fundamental for all communication with Spotify.
@@ -82,6 +83,7 @@ module Hallon
     # @option options [String] :cache_path ("") where to save cache files (`""` to disable)
     # @option options [String] :tracefile (nil) path to libspotify API tracefile (`nil` to disable)
     # @option options [String] :device_id (nil) device ID for offline synchronization (`nil` to disable)
+    # @option options [String] :proxy (nil) proxy URI (supports http, https, socks4, socks5)
     # @option options [Bool]   :load_playlists (true) load playlists into RAM on startup
     # @option options [Bool]   :compress_playlists (true) compress local copies of playlists
     # @option options [Bool]   :cache_playlist_metadata (true) cache metadata for playlists locally
@@ -90,6 +92,14 @@ module Hallon
     # @raise [Hallon::Error] if `sp_session_create` fails
     # @see http://developer.spotify.com/en/libspotify/docs/structsp__session__config.html
     def initialize(appkey, options = {}, &block)
+      if options[:proxy]
+        proxy_uri = URI(options[:proxy])
+        options[:proxy_username] ||= proxy_uri.user
+        options[:proxy_password] ||= proxy_uri.password
+        proxy_uri.user = proxy_uri.password = nil
+        options[:proxy] = proxy_uri.to_s
+      end
+
       @options = {
         :user_agent => "Hallon",
         :settings_path => "tmp/hallon/",
@@ -98,6 +108,9 @@ module Hallon
         :compress_playlists => true,
         :cache_playlist_metadata => true,
         :device_id => nil,
+        :proxy     => nil,
+        :proxy_username => nil,
+        :proxy_password => nil,
         :tracefile => nil,
       }.merge(options)
 
