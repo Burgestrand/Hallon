@@ -18,6 +18,12 @@ describe Hallon::Image do
 
   specify { image.should be_a Hallon::Loadable }
 
+  describe ".sizes" do
+    it "should list all sizes" do
+      Hallon::Image.sizes.should eq [:normal, :small, :large]
+    end
+  end
+
   describe "#loaded?" do
     it "returns true when the image is loaded" do
       image.should be_loaded

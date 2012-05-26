@@ -15,6 +15,14 @@ module Hallon
     extend Observable::Image
     include Loadable
 
+    # A list of available image sizes.
+    #
+    # @see Album#cover
+    # @see Artist#portrait
+    def self.sizes
+      Spotify.enum_type(:image_size).symbols
+    end
+
     # Create a new instance of an Image.
     #
     # @example from a link

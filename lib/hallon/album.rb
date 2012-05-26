@@ -79,16 +79,18 @@ module Hallon
     end
 
     # @see cover_link
+    # @param [Symbol] size (see {Image.sizes})
     # @return [Image, nil] album cover as an Image.
-    def cover
-      cover = Spotify.album_cover(pointer)
+    def cover(size = :normal)
+      cover = Spotify.album_cover(pointer, size)
       Image.from(cover)
     end
 
     # @see cover
+    # @param [Symbol] size (see {Image.sizes})
     # @return [Link, nil] album cover as a spotify URI.
-    def cover_link
-      cover = Spotify.link_create_from_album_cover!(pointer)
+    def cover_link(size = :normal)
+      cover = Spotify.link_create_from_album_cover!(pointer, size)
       Link.from(cover)
     end
 

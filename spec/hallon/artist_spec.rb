@@ -54,6 +54,14 @@ describe Hallon::Artist do
     it "should be nil if an image is not available" do
       empty_artist.portrait.should be_nil
     end
+
+    it "should support specifying size" do
+      artist.portrait(:large).should eq Hallon::Image.new(mock_image_id)
+    end
+
+    it "should raise an error when given an invalid size" do
+      expect { artist.portrait(:lawl) }.to raise_error(ArgumentError)
+    end
   end
 
   describe "#portrait_link" do
@@ -63,6 +71,14 @@ describe Hallon::Artist do
 
     it "should be nil if an image is not available" do
       empty_artist.portrait_link.should be_nil
+    end
+
+    it "should support specifying size" do
+      artist.portrait_link(:large).should eq Hallon::Link.new(mock_image_uri)
+    end
+
+    it "should raise an error when given an invalid size" do
+      expect { artist.portrait_link(:lawl) }.to raise_error(ArgumentError)
     end
   end
 end

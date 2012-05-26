@@ -80,6 +80,14 @@ describe Hallon::Album do
     it "should be nil if there is no image" do
       empty_album.cover.should be_nil
     end
+
+    it "should support specifying size" do
+      album.cover(:large).should eq Hallon::Image.new(mock_image_id)
+    end
+
+    it "should raise an error when given an invalid size" do
+      expect { album.cover(:lawl) }.to raise_error(ArgumentError)
+    end
   end
 
   describe "#cover_link" do
@@ -89,6 +97,14 @@ describe Hallon::Album do
 
     it "should be nil if there is no image" do
       empty_album.cover_link.should be_nil
+    end
+
+    it "should support specifying size" do
+      album.cover_link(:large).should eq Hallon::Link.new("spotify:image:3ad93423add99766e02d563605c6e76ed2b0e400")
+    end
+
+    it "should raise an error when given an invalid size" do
+      expect { album.cover_link(:lawl) }.to raise_error(ArgumentError)
     end
   end
 end

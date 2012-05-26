@@ -44,16 +44,18 @@ module Hallon
     end
 
     # @see portrait_link
+    # @param [Symbol] size (see {Image.sizes})
     # @return [Image, nil] artist portrait as an Image.
-    def portrait
-      portrait = Spotify.artist_portrait(pointer)
+    def portrait(size = :normal)
+      portrait = Spotify.artist_portrait(pointer, size)
       Image.from(portrait)
     end
 
     # @see portrait
+    # @param [Symbol] size (see {Image.sizes})
     # @return [Link, nil] artist portrait as a Link.
-    def portrait_link
-      portrait = Spotify.link_create_from_artist_portrait!(pointer)
+    def portrait_link(size = :normal)
+      portrait = Spotify.link_create_from_artist_portrait!(pointer, size)
       Link.from(portrait)
     end
 
