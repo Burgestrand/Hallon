@@ -129,7 +129,7 @@ Hallon makes use of Ruby’s own garbage collection to automatically release lib
 
 Audio support
 -------------
-Hallon supports streaming audio from Spotify via [Hallon::Player][]. When you create the player you give it your current session and an audio driver, which the player will then use for audio playback.
+Hallon supports streaming audio from Spotify via [Hallon::Player][]. When you create the player you give it your audio driver of choice, which the player will then use for audio playback.
 
 ```ruby
 require 'hallon'
@@ -141,7 +141,7 @@ session.login!('username', 'password')
 track = Hallon::Track.new("spotify:track:1ZPsdTkzhDeHjA5c2Rnt2I")
 track.load
 
-player = Hallon::Player.new(session, Hallon::OpenAL)
+player = Hallon::Player.new(Hallon::OpenAL)
 player.play!(track)
 ```
 
