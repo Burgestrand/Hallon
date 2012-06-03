@@ -8,7 +8,7 @@ describe Hallon::Base do
   end
 
   let(:base_pointer) do
-    Spotify.stub!(:base_add_ref, :base_release)
+    Spotify.stub(:base_add_ref => nil, :base_release => nil)
     Spotify::Pointer.new(a_pointer, :base, true)
   end
 

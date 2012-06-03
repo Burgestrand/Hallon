@@ -4,15 +4,6 @@
 #
 # @see https://github.com/Burgestrand/libspotify-ruby
 module Spotify
-  # Fetches the associated value of an enum from a given symbol.
-  #
-  # @param [Symbol] symbol
-  # @param [#to_s] type
-  # @raise ArgumentError on failure
-  def self.enum_value!(symbol, type)
-    enum_value(symbol) or raise ArgumentError, "invalid #{type}: #{symbol}"
-  end
-
   # Wraps the function `function` so that it always returns
   # a Spotify::Pointer with correct refcount. Functions that
   # contain the word `create` are assumed to start out with
@@ -104,50 +95,6 @@ module Spotify
   wrap_function :toplistbrowse_track, :track
 
   wrap_function :inbox_post_tracks, :inbox
-
-  # The Pointer is a kind of AutoPointer specially tailored for Spotify
-  # objects, that releases the raw pointer on GC.
-  class Pointer < FFI::AutoPointer
-    attr_reader :type
-
-    # @param [FFI::Pointer] pointer
-    # @param [#to_s] type session, link, etc
-    # @param [Boolean] add_ref
-    # @return [FFI::AutoPointer]
-    def initialize(pointer, type, add_ref)
-      super pointer, self.class.releaser_for(@type = type.to_s)
-
-      unless pointer.null?
-        Spotify.send(:"#{type}_add_ref", pointer)
-      end if add_ref
-    end
-
-    # @return [String] representation of the spotify pointer
-    def to_s
-      "<#{self.class} address=0x#{address.to_s(16)} type=#{type}>"
-    end
-
-    # Create a proc that will accept a pointer of a given type and
-    # release it with the correct function if it’s not null.
-    #
-    # @param [Symbol]
-    # @return [Proc]
-    def self.releaser_for(type)
-      lambda do |pointer|
-        unless pointer.null?
-          $stdout.puts "Spotify::#{type}_release(#{pointer})" if $DEBUG
-          Spotify.send(:"#{type}_release", pointer)
-        end
-      end
-    end
-
-    # @param [Object] pointer
-    # @param [Symbol] type (optional, no type checking is done if not given)
-    # @return [Boolean] true if object is a spotify pointer and of correct type
-    def self.typechecks?(object, type)
-      !! (object.type == type.to_s) if object.is_a?(Spotify::Pointer)
-    end
-  end
 
   # Extensions to SessionConfig, allowing more sensible configuration names.
   SessionConfig.class_eval do
