@@ -1,7 +1,7 @@
 describe Hallon::Error do
   subject { described_class }
 
-  it { should <= RuntimeError }
+  it { should <= StandardError }
 
   describe ".disambiguate" do
     it "should not fail on invalid numbers" do
@@ -15,11 +15,11 @@ describe Hallon::Error do
 
   describe ".explain" do
     it "should work properly given an integer" do
-      subject.explain(0).should eq 'sp_error: 0'
+      subject.explain(0).should match 'sp_error: 0'
     end
 
     it "should work properly given a symbol" do
-      subject.explain(:bad_api_version).should eq 'sp_error: 1'
+      subject.explain(:bad_api_version).should match 'sp_error: 1'
     end
   end
 
