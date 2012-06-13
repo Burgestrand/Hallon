@@ -8,6 +8,9 @@ module Hallon
   #
   # @private
   module Linkable
+    # ClassMethods adds `#from_link` and `#to_link` DSL methods, which
+    # essentially are convenience methods for defining the way to convert
+    # a link to a pointer of a given Spotify object type.
     module ClassMethods
       # Defines `#from_link`, used in converting a link to a pointer. You
       # can either pass it a `method_name`, or a `type` and a block.
@@ -100,6 +103,9 @@ module Hallon
       end
     end
 
+    # Will extend `other` with ClassMethods on inclusion.
+    #
+    # @param [#extend] other
     def self.included(other)
       other.extend ClassMethods
     end

@@ -40,6 +40,8 @@ module Hallon
 
     private
 
+      # See {Linkable::ClassMethods#to_link}.
+      #
       # @macro [attach] to_link
       #   @method to_link
       #   @scope  instance
@@ -49,6 +51,8 @@ module Hallon
         # {Linkable} for the actual source
       end
 
+      # See {Linkable::ClassMethods#from_link}.
+      #
       # @macro [attach] from_link
       #   @method from_link
       #   @scope  instance

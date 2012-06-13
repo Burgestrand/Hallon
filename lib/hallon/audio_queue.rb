@@ -35,7 +35,7 @@ module Hallon
       @condvar  = @samples.new_cond
     end
 
-    # @param [#take] data
+    # @param [#take] samples
     # @return [Integer] how much of the data that was added to the queue
     def push(samples)
       synchronize do

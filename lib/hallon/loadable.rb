@@ -2,7 +2,13 @@
 require 'timeout'
 
 module Hallon
+  # Extends Hallon objects with a method that allows synchronous loading of objects.
   module Loadable
+    # Wait until the object has loaded.
+    #
+    # @example waiting for a track to load
+    #   track = Hallon::Track.new(track_uri).load
+    #
     # @param [Numeric] timeout after this time, if the object is not loaded, an error is raised.
     # @return [self]
     # @raise [Hallon::TimeoutError] after `timeout` seconds if the object does not load.

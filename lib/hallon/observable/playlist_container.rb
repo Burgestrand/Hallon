@@ -72,8 +72,8 @@ module Hallon::Observable
 
       # @param [Spotify::Pointer] playlist
       # @return [Hallon::Playlist] a playlist for the given pointer.
-      def playlist_from(pointer)
-        pointer = Spotify::Pointer.new(pointer, :playlist, true)
+      def playlist_from(playlist)
+        pointer = Spotify::Pointer.new(playlist, :playlist, true)
         Hallon::Playlist.new(pointer)
       end
   end

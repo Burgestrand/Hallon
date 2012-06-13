@@ -96,7 +96,7 @@ module Hallon
         container.move(insert_at + 1, @end)
       end
 
-      # @param [PlaylistContainer] container
+      # @param [PlaylistContainer] container_pointer
       # @param [Range] indices
       def initialize(container_pointer, indices)
         @container_ptr = container_pointer
@@ -193,19 +193,19 @@ module Hallon
     # @param [String, Playlist, Link] playlist
     # @param [Boolean] force_create force creation of a new playlist
     # @return [Playlist, nil] the added playlist, or nil if the operation failed
-    def add(name, force_create = false)
-      playlist = if force_create or not Link.valid?(name) and name.is_a?(String)
-        unless error = Playlist.invalid_name?(name)
-          Spotify.playlistcontainer_add_new_playlist!(pointer, name)
+    def add(playlist, force_create = false)
+      resource = if force_create or not Link.valid?(playlist) and playlist.is_a?(String)
+        unless error = Playlist.invalid_name?(playlist)
+          Spotify.playlistcontainer_add_new_playlist!(pointer, playlist)
         else
           raise ArgumentError, error
         end
       else
-        link = Link.new(name)
+        link = Link.new(playlist)
         Spotify.playlistcontainer_add_playlist!(pointer, link.pointer)
       end
 
-      Playlist.from(playlist)
+      Playlist.from(resource)
     end
 
     # Create a new folder with the given name at the end of the container.
@@ -331,7 +331,8 @@ module Hallon
       # Wrapper for original API; adjusts indices accordingly.
       #
       # @param [Integer] from
-      # @param [Integer] from
+      # @param [Integer] infront_of
+      # @param [Boolean] dry_run
       # @return [Integer] error
       def move_playlist(from, infront_of, dry_run)
         infront_of += 1 if from < infront_of

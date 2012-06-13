@@ -115,7 +115,7 @@ module Hallon
     #
     # @note Given block will be called once instantly without parameters.
     # @note If no events happen for 0.25 seconds, the block will be called without parameters.
-    # @param [Symbol, ...] *events list of events to wait for
+    # @param [Symbol, ...] events list of events to wait for
     # @yield [Symbol, *args] name of the event that fired, and its’ arguments
     # @return whatever the block returns
     def wait_for(*events)

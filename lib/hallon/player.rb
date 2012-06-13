@@ -122,7 +122,7 @@ module Hallon
     # well as allow audio data to stream through the feeder
     # thread.
     #
-    # @param [Symbol] status one of :playing, :paused, :stopped
+    # @param [Symbol] new_status one of :playing, :paused, :stopped
     # @raise [ArgumentError] if given an invalid status
     def status=(new_status)
       @queue.synchronize do

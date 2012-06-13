@@ -68,7 +68,7 @@ module Hallon
     ))
   /x
 
-  # Thrown by {Loadable#load} and {Playlist#update} on failure.
+  # Thrown by {Loadable#load} and {Playlist#upload} on failure.
   TimeoutError = Class.new(Hallon::Error)
 
   # Raised by Session.instance
@@ -85,7 +85,7 @@ module Hallon
     # @return [Numeric] default load timeout in seconds, used in {Loadable#load}.
     attr_reader :load_timeout
 
-    # @param [Numeric] sets the default load_timeout in seconds for {Loadable#load}.
+    # @param [Numeric] new_timeout default load_timeout in seconds for {Loadable#load}.
     def load_timeout=(new_timeout)
       if new_timeout < 0
         raise ArgumentError, "timeout cannot be negative"

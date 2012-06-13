@@ -72,7 +72,6 @@ module Hallon
       # @raise [IndexError] if the underlying track has moved
       # @raise [Error] if the operation could not be completed
       #
-      # @param [Integer] index
       # @param [Boolean] seen true if the track is now seen
       # @return [Playlist::Track] track at the given index
       def seen=(seen)
@@ -152,6 +151,11 @@ module Hallon
 
     # Waits for the playlist to begin updating and blocks until it is done.
     #
+    # @note this is done by waiting for the libspotify callback, where libspotify
+    #       tells Hallon the playlist update is done.
+    #
+    # @param [Integer] timeout time until the operation times out
+    # @raise [Hallon::TimeoutError] if the upload failed within the load timeout
     # @return [Playlist]
     def upload(timeout = Hallon.load_timeout)
       Timeout.timeout(timeout, Hallon::TimeoutError) do

@@ -27,11 +27,11 @@ module Hallon
       # @param [Hash] options
       # @option options [Array] :ignore ([]) other values to ignore of error
       # @return [nil]
-      def maybe_raise(x, options = {})
+      def maybe_raise(error, options = {})
         ignore = [nil, :timeout] + Array(options[:ignore])
-        return nil if ignore.include?(x)
+        return nil if ignore.include?(error)
 
-        error, symbol = disambiguate(x)
+        error, symbol = disambiguate(error)
         return symbol if symbol == :ok
 
         raise self, explain(error)

@@ -177,7 +177,7 @@ module Hallon
     # @note it also supports logging in via a credentials blob, if you pass
     #       a Hallon::Blob(blob_string) as the password instead of the real password
     # @param [String] username
-    # @param [String] password_or_blob
+    # @param [String] password your password, or user credentials blob
     # @param [Boolean] remember_me have libspotify remember credentials for {#relogin}
     # @return [Session]
     # @see login!
@@ -289,15 +289,14 @@ module Hallon
     end
     alias_method :britney_spears_mode=, :private=
 
-    # Set session cache size in megabytes.
+    # Set session cache size.
     #
-    # @param [Integer]
-    # @return [Integer]
+    # @param [Integer] size new session cache size, in megabytes.
     def cache_size=(size)
       Spotify.session_set_cache_size(pointer, @cache_size = size)
     end
 
-    # @return [String] currently logged in users’ country.
+    # @return [String] currently logged in user’s country.
     def country
       coded = Spotify.session_user_country(pointer)
       country = ((coded >> 8) & 0xFF).chr
@@ -313,7 +312,7 @@ module Hallon
     # @note (see #unstar)
     # @raise (see #unstar)
     #
-    # @param [Track…]
+    # @param [Track…] tracks
     # @return [Session]
     def star(*tracks)
       tap { tracks_starred(tracks, true) }
@@ -331,7 +330,7 @@ module Hallon
     #       never returns an error, but we can’t know for sure.
     #
     # @raise [Spotify:Error] if libspotify reports an error (when this happens is unknown and undocumented)
-    # @param [Track…]
+    # @param [Track…] tracks
     # @return [Session]
     def unstar(*tracks)
       tap { tracks_starred(tracks, false) }

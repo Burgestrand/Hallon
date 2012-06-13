@@ -114,7 +114,7 @@ module Hallon
       # Convert a given two-character region to a Spotify
       # compliant region (encoded in a 16bit integer).
       #
-      # @param [#to_s]
+      # @param [#to_s] region
       # @return [Integer]
       def to_country(region)
         code = region.to_s.upcase

@@ -52,6 +52,7 @@ module Hallon
       end
     end
 
+    # Enumerates through all playlists of a search object.
     class PlaylistEnumerator < Enumerator
       size :search_num_playlists
 
