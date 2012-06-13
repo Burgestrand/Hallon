@@ -84,7 +84,7 @@ describe Hallon::Session do
 
   describe "#relogin" do
     it "should raise if no credentials have been saved" do
-      expect { session.relogin }.to raise_error(Hallon::Error)
+      expect { session.relogin }.to raise_error(Spotify::Error)
     end
 
     it "should not raise if credentials have been saved" do
@@ -281,13 +281,13 @@ describe Hallon::Session do
 
   describe "#offline_bitrate=" do
     it "should not resync unless explicitly told so" do
-      Spotify.should_receive(:session_preferred_offline_bitrate).with(session.pointer, :'96k', false)
+      Spotify.should_receive(:session_preferred_offline_bitrate).with(session.pointer, :'96k', false).and_return(:ok)
       session.offline_bitrate = :'96k'
     end
 
     it "should resync if asked to" do
-      Spotify.should_receive(:session_preferred_offline_bitrate).with(session.pointer, :'96k', true)
-      session.offline_bitrate = :'96k', true
+      Spotify.should_receive(:session_preferred_offline_bitrate).with(session.pointer, :'96k', true).and_return(:ok)
+      session.offline_bitrate = :'96k', :resync
     end
 
     it "should fail given an invalid value" do

@@ -210,9 +210,9 @@ module Hallon
 
     # Set {#starred?} status of current track.
     #
-    # @note It’ll set the starred status for the current Session.instance.
+    # @note (see Session#star)
+    # @raise (see Session#star)
     # @param [Boolean] starred
-    # @return [Boolean]
     def starred=(starred)
       starred ? session.star(self) : session.unstar(self)
     end

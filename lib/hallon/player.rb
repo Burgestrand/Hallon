@@ -201,10 +201,14 @@ module Hallon
 
     # Set preferred playback bitrate.
     #
+    # @note the double possible errors is a result of the same thing as for
+    #       {Session#offline_bitrate=}, see its documentation for further information.
+    #
+    # @raise [ArgumentError] if given invalid bitrate
+    # @raise [Spotify::Error] if libspotify does not accept the given bitrate
     # @param [Symbol] bitrate one of :96k, :160k, :320k
-    # @return [Symbol]
     def bitrate=(bitrate)
-      Spotify.session_preferred_bitrate(pointer, bitrate)
+      Spotify.session_preferred_bitrate!(pointer, bitrate)
     end
 
     # Loads a Track for playing.

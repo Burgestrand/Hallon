@@ -192,10 +192,10 @@ module Hallon
 
     # Login the remembered user (see {#login}).
     #
-    # @raise [Hallon::Error] if no credentials are stored in libspotify
+    # @raise [Spotify::Error] if no credentials are stored in libspotify
     # @see #relogin!
     def relogin
-      Error.maybe_raise Spotify.session_relogin(pointer)
+      Spotify.session_relogin!(pointer)
     end
 
     # Log in to Spotify using the given credentials.
@@ -310,6 +310,9 @@ module Hallon
     #   track = Hallon::Track.new("spotify:track:2LFQV2u6wXZmmySCWBkYGu")
     #   session.star(track)
     #
+    # @note (see #unstar)
+    # @raise (see #unstar)
+    #
     # @param [Track…]
     # @return [Session]
     def star(*tracks)
@@ -322,6 +325,12 @@ module Hallon
     #   track = Hallon::Track.new("spotify:track:2LFQV2u6wXZmmySCWBkYGu")
     #   session.unstar(track)
     #
+    # @note this method might raise a Spotify::Error, however when this might
+    #       occur is not documented in libspotify (and I have yet to find any
+    #       way to trigger it myself). it’s entirely possible that this method
+    #       never returns an error, but we can’t know for sure.
+    #
+    # @raise [Spotify:Error] if libspotify reports an error (when this happens is unknown and undocumented)
     # @param [Track…]
     # @return [Session]
     def unstar(*tracks)
@@ -330,6 +339,7 @@ module Hallon
 
     # Set the connection rules for this session.
     #
+    # @raise [ArgumentError] if given invalid connection rules
     # @param [Symbol, …] connection_rules
     # @see Session.connection_rules
     def connection_rules=(connection_rules)
@@ -342,6 +352,7 @@ module Hallon
 
     # Set the connection type for this session.
     #
+    # @raise [ArgumentError] if given invalid connection type
     # @param [Symbol] connection_type
     # @see Session.connection_types
     def connection_type=(connection_type)
@@ -380,15 +391,25 @@ module Hallon
 
     # Set preferred offline bitrate.
     #
-    # @example
+    # @example setting offline bitrate without resync
+    #   session.offline_bitrate = :'96k'
+    #
+    # @example setting offline bitrate and resync already-synced tracks
     #   session.offline_bitrate = :'96k', true
     #
+    # @note under normal circumstances, ArgumentError is the error that will
+    #       be raised on an invalid bitrate. However, if Hallon fails the type
+    #       checking (for whatever reason), libspotify will itself return an
+    #       error as well.
+    #
+    # @raise [ArgumentError] if given invalid bitrate
+    # @raise [Spotify::Error] if libspotify does not accept the given bitrate (see note)
     # @param [Symbol] bitrate
     # @param [Boolean] resync (default: false)
     # @see Player.bitrates
     def offline_bitrate=(bitrate)
       bitrate, resync = Array(bitrate)
-      Spotify.session_preferred_offline_bitrate(pointer, bitrate, !! resync)
+      Spotify.session_preferred_offline_bitrate!(pointer, bitrate, !! resync)
     end
 
     # @note Returns nil when no user is logged in.
@@ -432,12 +453,13 @@ module Hallon
     private
       # Set starred status of given tracks.
       #
+      # @raise [Spotify::Error] … maybe, it’s undocumented in libspotify, who knows?
       # @param [Array<Track>] tracks
       # @param [Boolean] starred
       def tracks_starred(tracks, starred)
         FFI::MemoryPointer.new(:pointer, tracks.size) do |ptr|
           ptr.write_array_of_pointer tracks.map(&:pointer)
-          Spotify.track_set_starred(pointer, ptr, tracks.size, starred)
+          Spotify.track_set_starred!(pointer, ptr, tracks.size, starred)
         end
       end
 
