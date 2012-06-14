@@ -16,6 +16,11 @@ RSpec::Core::RakeTask.new('spec') do |task|
   task.ruby_opts = '-W2'
 end
 
+desc "Start a console with Hallon loaded (no other setup is done)"
+task :console do
+  exec 'pry -Ilib -rhallon'
+end
+
 desc "Process the Hallon codebase, finding out which Spotify methods are being used"
 task 'spotify:coverage' do
   require 'bundler/setup'
