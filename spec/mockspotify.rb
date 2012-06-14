@@ -18,7 +18,7 @@ module Spotify
     def attach_function(name, *)
       super
     rescue FFI::NotFoundError => e
-      define_singleton_method(name) do
+      define_singleton_method(name) do |*args|
         raise FFI::NotFoundError, "#{name} has not been defined"
       end
       warn "#{e.message}" if $VERBOSE
