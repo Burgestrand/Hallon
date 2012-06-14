@@ -22,6 +22,36 @@ task 'spotify:coverage' do
 
   require 'pry'
   require 'set'
+
+  module Spotify
+    # Wrapped functions return pointers that are auto-GC’d by Ruby,
+    # so we ignore add_ref and release for these methods; but since
+    # we don’t know their type by mere name, we must resort to this
+    # hack to do it automatically (because we can).
+    class << self
+      def lookup_return_value(name)
+        @function_to_return_type[name.to_s]
+      end
+
+      def define_singleton_method(name, &block)
+        return_type = block.binding.eval <<-CODE
+          begin
+            return_type if __method__ == :wrap_function
+          rescue NameError
+            nil
+          end
+        CODE
+
+        if return_type
+          @function_to_return_type ||= {}
+          @function_to_return_type[name.to_s] = return_type
+        end
+
+        super
+      end
+    end
+  end
+
   require 'spotify'
 
   begin
@@ -31,33 +61,16 @@ task 'spotify:coverage' do
     abort
   end
 
-  # Wrapped functions return pointers that are auto-GC’d by Ruby,
-  # so we ignore add_ref and release for these methods; but since
-  # we don’t know their type by mere name, we must resort to this
-  # hack to do it automatically (because we can).
-  class << Spotify
-    def lookup_return_value(name)
-      @function_to_return_type[name.to_s]
-    end
-
-    def define_singleton_method(name, &block)
-      return_type = block.binding.eval("return_type")
-      @function_to_return_type ||= {}
-      @function_to_return_type[name.to_s] = return_type
-
-      super
-    end
-  end
-  require 'hallon/ext/spotify'
-
   methods = Spotify.methods(false).map(&:to_s)
-  auto_gc = Set.new(methods.grep(/!\z/))
+  auto_gc = Set.new(methods.grep(/!\z/).select { |m| Spotify.lookup_return_value(m) })
+  auto_err = Set.new(methods.grep(/!\z/)).difference(auto_gc)
   covered = Set.new(methods)
   warning = []
   ignored = [
     'attach_function',  # spotify overloads this
     'session_release',  # segfaults on libspotify <= 9
     'session_userdata', # wont support this
+    'error_message',    # supported by Hallon::Error.explain
     'link_as_track',    # using link_as_track_and_offset instead
     'link_as_track!',   # using link_as_track_and_offset! instead
     'wrap_function',    # not a spotify function
@@ -80,13 +93,25 @@ task 'spotify:coverage' do
 
     result = [meth]
 
-    # if it’s auto-GC’d, we can also account for _release and _add_ref
-    if meth =~ /(.+)!\z/
-      return_type = Spotify.lookup_return_value(meth)
+    auto_err_lookup = meth.to_s.delete('!') + '!' # just one !
 
-      result << $1
-      result << "#{return_type}_release"
-      result << "#{return_type}_add_ref"
+    # if it has auto-error, we account for both versions, just assume
+    # we are doing the right thing here
+    if auto_err.member?(auto_err_lookup)
+      result << auto_err_lookup
+      result << auto_err_lookup.delete('!')
+      result.uniq!
+    end
+
+    if meth =~ /(.+)!\z/
+      # if it’s auto-GC’d, we can also account for _release and _add_ref
+      if (return_type = Spotify.lookup_return_value(meth))
+        result << $1
+        result << "#{return_type}_release"
+        result << "#{return_type}_add_ref"
+        result << "#{return_type}_release!"
+        result << "#{return_type}_add_ref!"
+      end
     end
 
     result
@@ -122,13 +147,14 @@ task 'spotify:coverage' do
         covered.subtract Array(name).map(&:to_s)
       end
     rescue => e
-      fails[file] = e.message.strip + " (#{e.class.name})"
+      fails[file] = e.message.strip + " (#{e.class.name} #{e.backtrace[0..3]})"
     end
   end
 
   covered.group_by { |m| m[/[^_]+/] }.each_pair do |group, methods|
     puts "#{group.capitalize}:"
-    methods.each do |m|
+    no_bangs = methods.map(&:to_s).map { |m| m.delete('!') }.uniq
+    no_bangs.each do |m|
       puts "  #{m}"
     end
     puts
