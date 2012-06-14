@@ -3,11 +3,10 @@
 require 'bundler'
 Bundler.setup
 
-require 'simplecov'
 SimpleCov.start do
   add_filter 'spec/'
   add_filter 'vendor/'
-end
+end if defined?(SimpleCov)
 
 require 'mockspotify'
 require 'hallon'

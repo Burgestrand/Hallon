@@ -14,6 +14,12 @@ YARD::Rake::YardocTask.new
 require 'rspec/core/rake_task'
 RSpec::Core::RakeTask.new('spec') do |task|
   task.ruby_opts = '-W2'
+  task.rspec_opts = '-rsimplecov'
+
+  # rspec does not do this for us if we specify rspec_opts
+  opts_file   = File.expand_path('.rspec', File.dirname(__FILE__))
+  opts_string = File.readlines(opts_file).map(&:rstrip).join(' ')
+  task.rspec_opts += ' ' + opts_string
 end
 
 desc "Start a console with Hallon loaded (no other setup is done)"
