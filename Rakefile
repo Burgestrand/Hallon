@@ -68,7 +68,8 @@ task 'spotify:coverage' do
   warning = []
   ignored = [
     'attach_function',  # spotify overloads this
-    'session_release',  # segfaults on libspotify <= 9
+    'session_release',  # segfaults on libspotify <= 9, and sometimes deadlocks on libspotify <= v12
+    'session_release!', # …
     'session_userdata', # wont support this
     'error_message',    # supported by Hallon::Error.explain
     'link_as_track',    # using link_as_track_and_offset instead
