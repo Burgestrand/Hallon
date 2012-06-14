@@ -19,6 +19,13 @@ describe Hallon::Scrobbler do
     end
   end
 
+  describe "#credentials=" do
+    it "sets the credentials for the scrobbler provider" do
+      Spotify.should_receive(:session_set_social_credentials).with(anything, :facebook, "Kim", "password").and_return(:ok)
+      scrobbling.credentials = "Kim", "password"
+    end
+  end
+
   describe "#possible?" do
     it "returns true if scrobbling is possible" do
       Spotify.mocksp_session_set_is_scrobbling_possible(session.pointer, scrobbling.provider, true)

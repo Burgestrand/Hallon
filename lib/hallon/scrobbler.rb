@@ -50,6 +50,17 @@ module Hallon
       end
     end
 
+    # Sets the scrobbling credentials.
+    #
+    # @example setting username and password
+    #   scrobbling.credentials = 'kim', 'password'
+    #
+    # @param [Array<Username, Password>] credentials
+    def credentials=(credentials)
+      username, password = Array(credentials)
+      Spotify.session_set_social_credentials!(session.pointer, provider, username, password)
+    end
+
     protected
 
     # @return [Hallon::Session]
