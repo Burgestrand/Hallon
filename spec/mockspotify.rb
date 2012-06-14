@@ -83,6 +83,7 @@ module Spotify
 
   # mocked accessors
   attach_function :mocksp_playlist_get_autolink_tracks, [:playlist], :bool
+  attach_function :mocksp_session_set_is_scrobbling_possible, [:session, :social_provider, :bool], :void
 
   $VERBOSE = old_verbose
 end
