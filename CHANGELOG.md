@@ -4,6 +4,25 @@ Hallon’s Changelog
 [HEAD][]
 ------------------
 
+[v0.17.0][]
+------------------
+Updated to libspotify v12.1.45, with all the good parts included!
+
+__Added__
+
+- New session callbacks [2f6e27f9]
+- Support for image sizes [5f8156c]
+- Add Session#username [4cce4c55]
+- Support for specifying session proxy in Session#initialize [c61e5c5]
+- Add Session#private? and Session#private= [bcf2805] (1000th commit!)
+- Support for audio scrobbling [955a1b6, 627e0b, cf7957]
+
+__Changed__
+
+- Extracted Spotify::Pointer into Spotify gem [5cc88e9d]
+- Move GC-wrapped functions to the Spotify gem [d8eda4]
+- Moved error handling to Spotify gem [d31af5a]
+
 [v0.16.0][]
 ------------------
 This release brings a lot of changes to the Hallon test suite, mainly to make
@@ -362,4 +381,5 @@ easier to handle.
 [v0.14.0]: https://github.com/Burgestrand/Hallon/compare/v0.13.0...v0.14.0
 [v0.15.0]: https://github.com/Burgestrand/Hallon/compare/v0.14.0...v0.15.0
 [v0.16.0]: https://github.com/Burgestrand/Hallon/compare/v0.15.0...v0.16.0
-[HEAD]: https://github.com/Burgestrand/Hallon/compare/v0.16.0...HEAD
+[v0.17.0]: https://github.com/Burgestrand/Hallon/compare/v0.16.0...v0.17.0
+[HEAD]: https://github.com/Burgestrand/Hallon/compare/v0.17.0...HEAD
