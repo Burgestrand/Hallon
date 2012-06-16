@@ -19,6 +19,6 @@ player = Hallon::Player.new(Hallon::OpenAL)
 puts "Loading track."
 track  = Hallon::Track.new("spotify:track:7Az9kfq4JLD8auD1xoErrP").load
 player.load(track)
-player.seek(24.8)
+player.seek(9.8)
 
 binding.pry
