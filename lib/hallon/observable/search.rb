@@ -20,8 +20,7 @@ module Hallon::Observable
     #     puts "search for #{search.query} is complete!"
     #   end
     #
-    # @yield [self]
-    # @yieldparam [Search] self
+    # @yield []
     def load_callback(pointer, userdata)
       trigger(pointer, :load)
     end

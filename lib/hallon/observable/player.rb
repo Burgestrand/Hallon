@@ -10,20 +10,20 @@ module Hallon::Observable
 
     protected
 
-    # @return nil
+    # @return [Array<Method>] array of callback methods
     def initialize_callbacks
       %w(end_of_track streaming_error play_token_lost).map { |m| callback_for(m) }
     end
 
-    # Dummy callback. See Session#end_of_track_callback.
+    # Dummy callback. See {Session#end_of_track_callback}.
     def end_of_track_callback(session)
     end
 
-    # Dummy callback. See Session#streaming_error_callback.
+    # Dummy callback. See {Session#streaming_error_callback}.
     def streaming_error_callback(session, error)
     end
 
-    # Dummy callback. See Session#play_token_lost_callback.
+    # Dummy callback. See {Session#play_token_lost_callback}.
     def play_token_lost_callback(session)
     end
   end

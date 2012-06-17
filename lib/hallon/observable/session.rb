@@ -23,9 +23,8 @@ module Hallon::Observable
     #     puts "Logged in: " + Hallon::Error.explain(error)
     #   end
     #
-    # @yield [error, self] logged_in
+    # @yield [error] logged_in
     # @yieldparam [Symbol] error
-    # @yieldparam [Session] self
     # @see Error
     def logged_in_callback(pointer, error)
       trigger(pointer, :logged_in, error)
@@ -36,8 +35,7 @@ module Hallon::Observable
     #     puts "AHHH!"
     #   end
     #
-    # @yield [self]
-    # @yieldparam [Session] self
+    # @yield []
     def logged_out_callback(pointer)
       trigger(pointer, :logged_out)
     end
@@ -47,8 +45,7 @@ module Hallon::Observable
     #     puts "wut wut"
     #   end
     #
-    # @yield [self]
-    # @yieldparam [Session] self
+    # @yield []
     def metadata_updated_callback(pointer)
       trigger(pointer, :metadata_updated)
     end
@@ -58,9 +55,8 @@ module Hallon::Observable
     #     puts "Oh noes: " + Hallon::Error.explain(error)
     #   end
     #
-    # @yield [error, self]
+    # @yield [error]
     # @yieldparam [Symbol] error
-    # @yieldparam [Session] self
     # @see Error
     def connection_error_callback(pointer, error)
       trigger(pointer, :connection_error, error)
@@ -71,9 +67,8 @@ module Hallon::Observable
     #     puts "OH HAI: #{message}"
     #   end
     #
-    # @yield [message, self]
+    # @yield [message]
     # @yieldparam [String] message
-    # @yieldparam [Session] self
     def message_to_user_callback(pointer, message)
       trigger(pointer, :message_to_user, message)
     end
@@ -83,8 +78,7 @@ module Hallon::Observable
     #     puts "main thread turn on"
     #   end
     #
-    # @yield [self]
-    # @yieldparam [Session] self
+    # @yield []
     def notify_main_thread_callback(pointer)
       trigger(pointer, :notify_main_thread)
     end
@@ -94,10 +88,9 @@ module Hallon::Observable
     #     puts ""
     #   end
     #
-    # @yield [format, frames, self]
+    # @yield [format, frames]
     # @yieldparam [Hash] format (contains :type, :rate, :channels)
     # @yieldparam [Enumerator<[Integer...]>] frames (each frame is an array containing format[:channels] integers of format[:type])
-    # @yieldparam [Session] self
     def music_delivery_callback(pointer, format, frames, num_frames)
       struct = Spotify::AudioFormat.new(format)
 
@@ -125,8 +118,7 @@ module Hallon::Observable
     #     puts "another user set us up the bomb!"
     #   end
     #
-    # @yield [self]
-    # @yieldparam [Session] self
+    # @yield []
     def play_token_lost_callback(pointer)
       trigger(pointer, :play_token_lost)
     end
@@ -136,8 +128,7 @@ module Hallon::Observable
     #     puts "all your base are belong to us"
     #   end
     #
-    # @yield [self]
-    # @yieldparam [Session] self
+    # @yield []
     def end_of_track_callback(pointer)
       trigger(pointer, :end_of_track)
     end
@@ -147,8 +138,7 @@ module Hallon::Observable
     #     puts "dum dum tiss"
     #   end
     #
-    # @yield [self]
-    # @yieldparam [Session] self
+    # @yield []
     def start_playback_callback(pointer)
       trigger(pointer, :start_playback)
     end
@@ -158,8 +148,7 @@ module Hallon::Observable
     #     puts "dum dum tiss"
     #   end
     #
-    # @yield [self]
-    # @yieldparam [Session] self
+    # @yield []
     def stop_playback_callback(pointer)
       trigger(pointer, :stop_playback)
     end
@@ -169,8 +158,7 @@ module Hallon::Observable
     #     puts "que?"
     #   end
     #
-    # @yield [self]
-    # @yieldparam [Session] self
+    # @yield []
     # @yieldreturn an integer pair, [samples, dropouts]
     def get_audio_buffer_stats_callback(pointer, stats)
       stats = Spotify::AudioBufferStats.new(stats)
@@ -184,9 +172,8 @@ module Hallon::Observable
     #     puts "boo: " + Hallon::Error.explain(error)
     #   end
     #
-    # @yield [error, self]
+    # @yield [error]
     # @yieldparam [Symbol] error
-    # @yieldparam [Session] self
     def streaming_error_callback(pointer, error)
       trigger(pointer, :streaming_error, error)
     end
@@ -196,8 +183,7 @@ module Hallon::Observable
     #     puts "who am I?!"
     #   end
     #
-    # @yield [self]
-    # @yieldparam [Session] self
+    # @yield []
     def userinfo_updated_callback(pointer)
       trigger(pointer, :userinfo_updated)
     end
@@ -207,9 +193,8 @@ module Hallon::Observable
     #     puts "for great justice: #{message}"
     #   end
     #
-    # @yield [message, self]
+    # @yield [message]
     # @yieldparam [String] message
-    # @yieldparam [Session] self
     def log_message_callback(pointer, message)
       trigger(pointer, :log_message, message)
     end
@@ -219,8 +204,7 @@ module Hallon::Observable
     #     puts "All systems: #{session.status}"
     #   end
     #
-    # @yield [self]
-    # @yieldparam [Session] self
+    # @yield []
     def offline_status_updated_callback(pointer)
       trigger(pointer, :offline_status_updated)
     end
@@ -230,9 +214,8 @@ module Hallon::Observable
     #     puts "FAIL: " + Hallon::Error.explain(error)
     #   end
     #
-    # @yield [error, self]
+    # @yield [error]
     # @yieldparam [Symbol] error
-    # @yieldparam [Session] self
     def offline_error_callback(pointer, error)
       trigger(pointer, :offline_error, error)
     end
@@ -243,9 +226,8 @@ module Hallon::Observable
     #     File.open('.spotify-credentials', 'w') { |io| io.write(credentials) }
     #   end
     #
-    # @yield [credentials, self]
+    # @yield [credentials]
     # @yieldparam [String] credentials
-    # @yieldparam [Session] self
     def credentials_blob_updated_callback(pointer, credentials)
       trigger(pointer, :credentials_blob_updated, credentials)
     end

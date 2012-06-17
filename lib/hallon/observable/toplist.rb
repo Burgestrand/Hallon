@@ -20,8 +20,7 @@ module Hallon::Observable
     #     puts "the toplist has loaded!"
     #   end
     #
-    # @yield [self]
-    # @yieldparam [Toplist] self
+    # @yield []
     def load_callback(pointer, userdata)
       trigger(pointer, :load)
     end

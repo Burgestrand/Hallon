@@ -21,8 +21,7 @@ module Hallon::Observable
     #     puts "Album browser has loaded!"
     #   end
     #
-    # @yield [self]
-    # @yieldparam [AlbumBrowse] self
+    # @yield []
     def load_callback(pointer, userdata)
       trigger(pointer, :load)
     end

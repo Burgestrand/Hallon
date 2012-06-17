@@ -21,8 +21,7 @@ module Hallon::Observable
     #     puts "Image has loaded"
     #   end
     #
-    # @yield [self]
-    # @yieldparam [Image] self
+    # @yield []
     def load_callback(pointer, userdata)
       trigger(pointer, :load)
     end

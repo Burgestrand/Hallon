@@ -21,8 +21,7 @@ module Hallon::Observable
     #     puts "ze user be havin’ sum posts"
     #   end
     #
-    # @yield [self]
-    # @yieldparam [User::Post] self
+    # @yield []
     def complete_callback(pointer, userdata)
       trigger(pointer, :complete)
     end
