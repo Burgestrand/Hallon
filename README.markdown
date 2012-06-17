@@ -15,7 +15,7 @@ Before you start using Hallon you’ll need to complete the following steps.
 2. [Download your application key from developer.spotify.com](https://developer.spotify.com/en/libspotify/application-key/),
    and place it in a known location. You’ll have the option of downloading it either in **binary** or c-code. You want the
    **binary** one. If you do not have an application key already, you will be asked to create one.
-3. Install libspotify. Hallon always aims to support to most recent version, which is currently **v10.1.16**. Older
+3. Install libspotify. Hallon always aims to support to most recent version, which is currently **v12.1.45**. Older
    versions are not supported. For help installing libspotify, please see the wiki on [How to install libspotify][].
 4. Once the above are done, you are ready to try out Hallon.
 
