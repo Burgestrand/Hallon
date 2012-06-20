@@ -73,14 +73,14 @@ module Hallon
   TimeoutError = Class.new(Hallon::Error)
 
   # Raised by Session.instance
-  NoSessionError = Class.new(StandardError)
+  NoSessionError = Class.new(Hallon::Error)
 
   # Raised by Session#login! and Session#relogin!
-  LoginError = Class.new(StandardError)
+  LoginError = Class.new(Hallon::Error)
 
   # Raised by PlaylistContainer#num_unseen_tracks_for and PlaylistContainer#unseen_tracks_for.
   # @note most likely raised because of the playlist not being in the playlist container.
-  OperationFailedError = Class.new(StandardError)
+  OperationFailedError = Class.new(Hallon::Error)
 
   class << self
     # @return [Numeric] default load timeout in seconds, used in {Loadable#load}.
