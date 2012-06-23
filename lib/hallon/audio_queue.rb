@@ -12,56 +12,81 @@ module Hallon
   #
   # Hallon::AudioQueue is useful for handling {Hallon::Observable::Session#music_delivery_callback}.
   #
-  # @example
+  # @example filling the buffer
   #   queue = Hallon::AudioQueue.new(4)
-  #   queue.push([1, 2]) # => 2
-  #   queue.push([3]) # => 1
-  #   queue.push([4, 5, 6]) # => 1
-  #   queue.push([5, 6]) # => 0
-  #   queue.pop(1) # => [1]
-  #   queue.push([5, 6]) # => 1
-  #   queue.pop # => [2, 3, 4, 5]
+  #   format = { :rate => 44100, :channels => 2 }
+  #   queue.push(format, [1, 2]) # => 2
+  #   queue.push(format, [3]) # => 1
+  #   queue.push(format, [4, 5, 6]) # => 1
+  #   queue.push(format, [5, 6]) # => 0
+  #   queue.pop(format, 1) # => [1]
+  #   queue.push(format, [5, 6]) # => 1
+  #   queue.pop(format) # => [2, 3, 4, 5]
+  #
+  # @example changing the format
+  #   queue  = Hallon::AudioQueue.new(4)
+  #   queue.format # => nil
+  #   queue.push(:initial_format, [1, 2, 3, 4]) # => 4
+  #   queue.size # => 4
+  #   queue.format # => :initial_format
+  #   queue.push(:new_format, [1, 2]) # => 2
+  #   queue.size # => 2
+  #   queue.format # => :new_format
   #
   # @private
   class AudioQueue
     attr_reader :max_size
 
-    # @param [Integer] max_size
+    # @param [Integer] max_size how many frames
     def initialize(max_size)
       @max_size = max_size
-      @samples  = []
+      @frames  = []
 
-      @samples.extend(MonitorMixin)
-      @condvar  = @samples.new_cond
+      @frames.extend(MonitorMixin)
+      @condvar  = @frames.new_cond
     end
 
-    # @param [#take] samples
+    # @note If the format is not the same as the current format, the queue is
+    #       emptied before appending the new data. In this case, {#format} will
+    #       be assigned to the new format as well.
+    #
+    # @param [Hash] format format of the audio frames given
+    # @param [#take] frames
     # @return [Integer] how much of the data that was added to the queue
-    def push(samples)
+    def push(format, frames)
       synchronize do
-        can_accept  = max_size - size
-        new_samples = samples.take(can_accept)
+        unless format == @format
+          @format = format
+          clear
+        end
 
-        @samples.concat(new_samples)
+        can_accept  = max_size - size
+        new_frames = frames.take(can_accept)
+
+        @frames.concat(new_frames)
         @condvar.signal
 
-        new_samples.size
+        new_frames.size
       end
     end
 
     # @note If the queue is empty, this operation will block until data is available.
-    # @param [Integer] num_samples max number of samples to pop off the queue
-    # @return [Array] data, where data.size might be less than num_samples but never more
-    def pop(num_samples = max_size)
+    # @note When data is available, if it’s not in the same format as the format requested
+    #       the return value will be nil. This is to avoid the format changing during wait.
+    #
+    # @param [Hash] format requested format
+    # @param [Integer] num_frames max number of frames to pop off the queue
+    # @return [Array, nil] array of data, but no longer than `num_frames`
+    def pop(format, num_frames = max_size)
       synchronize do
         @condvar.wait_while { empty? }
-        @samples.shift(num_samples)
+        @frames.shift(num_frames) if format == @format
       end
     end
 
-    # @return [Integer] number of samples in buffer.
+    # @return [Integer] number of frames in buffer.
     def size
-      synchronize { @samples.size }
+      synchronize { @frames.size }
     end
 
     # @return [Boolean] true if the queue has a {#size} of 0.
@@ -71,18 +96,7 @@ module Hallon
 
     # Clear all data from the AudioQueue.
     def clear
-      synchronize { @samples.clear }
-    end
-
-    # Attach format metadata to the queue.
-    #
-    # @note this will clear the queue of all audio data!
-    # @param format new audio format
-    def format=(format)
-      synchronize do
-        @format = format
-        clear
-      end
+      synchronize { @frames.clear }
     end
 
     # Returns the format previously set by #format=.
@@ -95,7 +109,7 @@ module Hallon
     # @yield exclusive section around the queue contents
     # @return whatever the given block returns
     def synchronize
-      @samples.synchronize { return yield }
+      @frames.synchronize { return yield }
     end
 
     # Create a condition variable bound to this AudioQueue.
@@ -104,7 +118,7 @@ module Hallon
     # @return [MonitorMixin::ConditionVariable]
     # @see monitor.rb (ruby stdlib)
     def new_cond
-      @samples.new_cond
+      @frames.new_cond
     end
   end
 end

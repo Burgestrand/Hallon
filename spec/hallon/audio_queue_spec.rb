@@ -3,24 +3,37 @@ require 'timeout'
 
 describe Hallon::AudioQueue do
   let(:queue) { Hallon::AudioQueue.new(4) }
+  let(:format) { { :rate => 44100, :channels => 2, :type => :int16 } }
   subject { queue }
 
-  it "should conform to the example specification of its’ documentation" do
-    queue.push([1, 2]).should eq 2
-    queue.push([3]).should eq 1
-    queue.push([4, 5, 6]).should eq 1
-    queue.push([5, 6]).should eq 0
-    queue.pop(1).should eq [1]
-    queue.push([5, 6]).should eq 1
-    queue.pop.should eq [2, 3, 4, 5]
+  it "should conform to “filling the buffer” example" do
+    format = {:rate => 44100, :channels => 2, :type => :int16}
+    queue.push(format, [1, 2]).should eq 2
+    queue.push(format, [3]).should eq 1
+    queue.push(format, [4, 5, 6]).should eq 1
+    queue.push(format, [5, 6]).should eq 0
+    queue.pop(format, 1).should eq [1]
+    queue.push(format, [5, 6]).should eq 1
+    queue.pop(format).should eq [2, 3, 4, 5]
+  end
+
+  it "should conform to the “changing the format” example" do
+    queue  = Hallon::AudioQueue.new(4)
+    queue.format.should eq nil
+    queue.push(:initial_format, [1, 2, 3, 4, 5]).should eq 4
+    queue.size.should eq 4
+    queue.format.should eq :initial_format
+    queue.push(:new_format, [1, 2]).should eq 2
+    queue.size.should eq 2
+    queue.format.should eq :new_format
   end
 
   describe "#pop" do
     it "should not block if the queue is not empty" do
-      queue.push([1, 2])
+      queue.push(format, [1, 2])
 
       start = Time.now
-      queue.pop.should eq [1, 2]
+      queue.pop(format).should eq [1, 2]
       (Time.now - start).should be_within(0.001).of(0)
     end
 
@@ -29,15 +42,21 @@ describe Hallon::AudioQueue do
 
       # I could mock out ConditionVariable and Mutex, but where’s the fun in that?
       start = Time.now
-      Thread.start { sleep 0.2; queue.push([1]) }
-      queue.pop.should eq [1]
+      Thread.start { sleep 0.2; queue.push(format, [1]) }
+      queue.pop(format).should eq [1]
       (Time.now - start).should be_within(0.08).of(0.2)
+    end
+
+    it "returns does nothing if the format does not match" do
+      queue.push(:one_format, [1, 2, 3, 4])
+      queue.pop(:another_format).should eq nil
+      queue.pop(:one_format).should eq [1, 2, 3, 4]
     end
   end
 
   describe "#clear" do
     it "should clear the queue" do
-      queue.push([1, 2])
+      queue.push(format, [1, 2])
       queue.should_not be_empty
       queue.clear
       queue.should be_empty
@@ -45,17 +64,11 @@ describe Hallon::AudioQueue do
   end
 
   describe "#format" do
-    it "should clear the queue when setting the format" do
-      queue.push([1, 2])
-      queue.should_not be_empty
-      queue.format = :new_format
-      queue.should be_empty
-    end
-
-    it "should allow setting and retrieving the format" do
-      queue.format.should_not be :new_format
-      queue.format = :new_format
-      queue.format.should be :new_format
+    it "is determined by the format of the audio samples" do
+      queue.push(:one_format, [1, 2, 3])
+      queue.format.should eq :one_format
+      queue.push(:another_format, [4, 5, 6])
+      queue.format.should eq :another_format
     end
   end
 

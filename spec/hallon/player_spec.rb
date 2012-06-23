@@ -131,20 +131,16 @@ describe Hallon::Player do
       player.stop
     end
 
-    it "should not set the format on music delivery if it’s the same" do
-      queue.should_not_receive(:format=)
-      session.trigger(:music_delivery, queue.format, [1, 2, 3])
-    end
-
     it "should set the format on music delivery if format changes" do
-      queue.should_receive(:format=).with(:new_format)
+      queue.format.should_not eq :new_format
       session.trigger(:music_delivery, :new_format, [1, 2, 3])
+      queue.format.should eq :new_format
     end
 
     # why? it says so in the docs!
     it "should clear the audio queue when receiving 0 audio frames" do
       queue.should_receive(:clear)
-      session.trigger(:music_delivery, driver.format, [])
+      session.trigger(:music_delivery, queue.format, [])
     end
 
     context "the output streaming" do
@@ -152,7 +148,7 @@ describe Hallon::Player do
         Thread.stub(:start).and_return{ |*args, &block| block[*args] }
 
         player # create the Player
-        session.trigger(:music_delivery, queue.format, [1, 2, 3])
+        session.trigger(:music_delivery, driver.format, [1, 2, 3])
 
         # it should block while player is stopped
         begin
@@ -183,11 +179,10 @@ describe Hallon::Player do
         driver.stream.call.should eq [1, 2, 3]
       end
 
-      it "should set the format on initialization" do
+      it "should set the driver format on initialization" do
         Thread.stub(:start).and_return{ |*args, &block| block[*args] }
 
         AudioDriverMock.any_instance.should_receive(:format=)
-        Hallon::AudioQueue.any_instance.should_receive(:format=)
         player
       end
     end

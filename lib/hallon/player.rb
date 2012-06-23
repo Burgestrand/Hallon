@@ -41,7 +41,7 @@ module Hallon
       # we keep an audio queue that can store 3s of audio
       @queue  = AudioQueue.new(44100)
       @driver = driver.new
-      @queue.format = @driver.format = { rate: 44100, channels: 2, type: :int16 }
+      @driver.format = { rate: 44100, channels: 2, type: :int16 }
 
       # used for feeder thread to know if it should stream
       # data to the driver or not (see #status=)
@@ -54,14 +54,15 @@ module Hallon
       @thread = Thread.start(@driver, @queue, @status_c) do |output, queue, cond|
         output.stream do |num_frames|
           queue.synchronize do
-            cond.wait_until { status == :playing }
+            frames = queue.pop(output.format, *num_frames)
 
-            if output.format != queue.format
+            if frames.nil?
+              # if we received no frames, it means the audio format changed
               output.format = queue.format
-              next # format changed, so we return nil
             end
 
-            queue.pop(*num_frames)
+            # frames is either nil, or an array of audio frames
+            frames
           end
         end
       end
@@ -99,13 +100,8 @@ module Hallon
     # a hash of (sample) rate, channels and (sample) type.
     def music_delivery(format, frames)
       @queue.synchronize do
-        if frames.none?
-          @queue.clear
-        elsif @queue.format != format
-          @queue.format = format
-        end
-
-        @queue.push(frames)
+        @queue.clear if frames.none?
+        @queue.push(format, frames)
       end
     end
 
@@ -134,6 +130,10 @@ module Hallon
         when :paused
           @driver.pause
         when :stopped
+          # TODO: even if we clear and stop here, the music_delivery
+          # callback might be waiting for ruby to allow it to callback,
+          # which will result in us getting old audio frames when we
+          # play the next song. I don’t have a good solution yet.
           @queue.clear
           @driver.stop
         else
