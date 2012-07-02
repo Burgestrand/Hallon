@@ -4,6 +4,19 @@ Hallon’s Changelog
 [HEAD][]
 ------------------
 
+[v0.18.0][]
+------------------
+This issue is to plug a bug of libspotify on Linux (see issue #125). The reason that
+the minor version is increased is because of the update to libspotify v12.1.51.
+
+__Changed__
+- Upgrade to libspotify v12.1.51 [7c72ead7]
+- All custom Hallon errors now inherit from Hallon::Error [950cf01]
+
+__Fixed__
+- Update documentation for observable hooks to not say they yield themselves [8c85c5e]
+- Fixed race condition in audio format change [a5decb1]
+
 [v0.17.0][]
 ------------------
 Updated to libspotify v12.1.45, with all the good parts included!
@@ -382,4 +395,5 @@ easier to handle.
 [v0.15.0]: https://github.com/Burgestrand/Hallon/compare/v0.14.0...v0.15.0
 [v0.16.0]: https://github.com/Burgestrand/Hallon/compare/v0.15.0...v0.16.0
 [v0.17.0]: https://github.com/Burgestrand/Hallon/compare/v0.16.0...v0.17.0
+[v0.18.0]: https://github.com/Burgestrand/Hallon/compare/v0.17.0...v0.18.0
 [HEAD]: https://github.com/Burgestrand/Hallon/compare/v0.17.0...HEAD

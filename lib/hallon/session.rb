@@ -76,6 +76,9 @@ module Hallon
 
     # Create a new Spotify session.
     #
+    # @example using a https-proxy
+    #   session = Hallon::Session.initialize(appkey, proxy: 'https://user@password:hostname')
+    #
     # @param [#to_s] appkey
     # @param [Hash] options
     # @option options [String] :user_agent ("Hallon") User-Agent to use (length < `256`)
