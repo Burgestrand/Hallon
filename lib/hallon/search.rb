@@ -125,6 +125,21 @@ module Hallon
 
     # Construct a new search with given query.
     #
+    # Given enough results for a given query, all searches are paginated by libspotify.
+    # If the current number of results (say `search.tracks.size`) is less than the total
+    # number of results (`search.tracks.total`), there are more results available. To
+    # retrieve the additional tracks, you’ll need to do the same search query again, but
+    # with a higher `tracks_offset`.
+    #
+    # @example searching tracks by offset
+    #   search = Hallon::Search.new("genre:rock", tracks: 10, tracks_offset: 0).load
+    #   search.tracks.size # => 10
+    #   search.tracks.total # => 17
+    #
+    #   again  = Hallon::Search.new("genre:rock", tracks: 10, tracks_offset: 10).load
+    #   again.tracks.size # => 7
+    #   again.tracks.total # => 17
+    #
     # @param [String, Link] search search query or spotify URI
     # @param [Hash] options additional search options
     # @option options [Symbol] :type (:standard) search type, either standard or suggest
