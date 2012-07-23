@@ -9,6 +9,8 @@
 # If at any point you feel lost, do not hesitate to consult with my superiors. You may
 # find them at https://github.com/Burgestrand/Hallon. Thank you!
 
+$stdout.sync = true
+
 # First, I need the power to ask you questions. You need not care much about this particular
 # piece of me; only keep in mind that it should help keep the rest of me less cluttered.
 def prompt(string, options = {})
