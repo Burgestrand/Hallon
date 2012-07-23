@@ -27,7 +27,7 @@ module Hallon::Observable
     # @yieldparam [Integer] position
     def tracks_added_callback(pointer, tracks, num_tracks, position, userdata)
       tracks_ary = tracks.read_array_of_pointer(num_tracks).map do |track|
-        ptr = Spotify::Pointer.new(track, :track, true)
+        ptr = Spotify::Track.retaining_class.new(track)
         Hallon::Track.new(ptr)
       end
 
@@ -109,8 +109,7 @@ module Hallon::Observable
     # @yieldparam [User] user
     # @yieldparam [Time] created_at
     def track_created_changed_callback(pointer, position, user, created_at, userdata)
-      user = Spotify::Pointer.new(user, :user, true)
-      trigger(pointer, :track_created_changed, position, Hallon::User.new(user), Time.at(created_at))
+      trigger(pointer, :track_created_changed, position, Hallon::User.from(user), Time.at(created_at))
     end
 
     # @example listening to this event

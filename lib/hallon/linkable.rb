@@ -26,11 +26,11 @@ module Hallon
       #       from_link :as_album # => Spotify.link_as_album(pointer, *args)
       #       # ^ is roughly equivalent to:
       #       def from_link(link, *args)
-      #         unless Spotify::Pointer.typechecks?(link, :link)
+      #         unless link.is_a?(Spotify::Link)
       #           link = Link.new(link).pointer(:album)
       #         end
       #
-      #         Spotify.link_as_album!(link)
+      #         Spotify.link_as_album(link)
       #       end
       #     end
       #
@@ -46,30 +46,30 @@ module Hallon
       #       include Linkable
       #
       #       from_link :profile do |pointer|
-      #         Spotify.link_as_user!(pointer)
+      #         Spotify.link_as_user(pointer)
       #       end
       #       # ^ is roughly equivalent to:
       #       def from_link(link, *args)
-      #         unless Spotify::Pointer.typechecks?(link, :link)
+      #         unless link.is_a?(Spotify::Link)
       #           link = Link.new(link).pointer(:profile)
       #         end
       #
-      #         Spotify.link_as_user!(link)
+      #         Spotify.link_as_user(link)
       #       end
       #     end
       #
       #   @param [#to_s] type link type
       #   @yield [link, *args] called when conversion is needed from Link pointer
-      #   @yieldparam [Spotify::Pointer] link
+      #   @yieldparam [Spotify::Link] link
       #   @yieldparam *args any extra arguments given to `#from_link`
       #
       # @note Private API. You probably do not need to care about this method.
       def from_link(as_object, &block)
-        block ||= Spotify.method(:"link_#{as_object}!")
+        block ||= Spotify.method(:"link_#{as_object}")
         type    = as_object.to_s[/^(as_)?([^_]+)/, 2].to_sym
 
         define_method(:from_link) do |link, *args|
-          unless Spotify::Pointer.typechecks?(link, :link)
+          unless link.is_a?(Spotify::Link)
             link = Link.new(link).pointer(type)
           end
 
@@ -88,7 +88,7 @@ module Hallon
       #     to_link :from_artist
       #     # ^ is the same as:
       #     def to_link(*args)
-      #       link = Spotify.link_create_from_artist!(pointer, *args)
+      #       link = Spotify.link_create_from_artist(pointer, *args)
       #       Link.new(link)
       #     end
       #   end
@@ -97,7 +97,7 @@ module Hallon
       # @return [Link, nil]
       def to_link(cmethod)
         define_method(:to_link) do |*args|
-          link = Spotify.__send__(:"link_create_#{cmethod}!", pointer, *args)
+          link = Spotify.__send__(:"link_create_#{cmethod}", pointer, *args)
           Link.from(link)
         end
       end

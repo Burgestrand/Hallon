@@ -20,7 +20,7 @@ module Hallon
       size :albumbrowse_num_tracks
 
       # @return [Track, nil]
-      item :albumbrowse_track! do |track|
+      item :albumbrowse_track do |track|
         Track.from(track)
       end
     end
@@ -31,18 +31,18 @@ module Hallon
     # Creates an AlbumBrowse instance from an Album or an Album pointer.
     #
     # @note Also {Album#browse} to browse an Album.
-    # @param [Album, Spotify::Pointer] album
+    # @param [Album, Spotify::Album] album
     def initialize(album)
       pointer = album
       pointer = pointer.pointer if pointer.respond_to?(:pointer)
 
-      unless Spotify::Pointer.typechecks?(pointer, :album)
+      unless pointer.is_a?(Spotify::Album)
         given = pointer.respond_to?(:type) ? pointer.type : pointer.inspect
         raise TypeError, "expected album pointer, was given #{given}"
       end
 
       subscribe_for_callbacks do |callback|
-        @pointer = Spotify.albumbrowse_create!(session.pointer, pointer, callback, nil)
+        @pointer = Spotify.albumbrowse_create(session.pointer, pointer, callback, nil)
       end
 
       raise FFI::NullPointerError, "album browsing failed" if @pointer.null?
@@ -66,13 +66,13 @@ module Hallon
 
     # @return [Artist, nil] artist performing this album.
     def artist
-      artist = Spotify.albumbrowse_artist!(pointer)
+      artist = Spotify.albumbrowse_artist(pointer)
       Artist.from(artist)
     end
 
     # @return [Album, nil] album this object is browsing.
     def album
-      album = Spotify.albumbrowse_album!(pointer)
+      album = Spotify.albumbrowse_album(pointer)
       Album.from(album)
     end
 

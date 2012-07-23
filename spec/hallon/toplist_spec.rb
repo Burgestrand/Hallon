@@ -2,12 +2,12 @@
 
 describe Hallon::Toplist do
   let(:toplist) do
-    Spotify.registry_add 'spotify:toplist:artists:everywhere', mock_toplistbrowse
+    Spotify.mock_registry_add 'spotify:toplist:artists:everywhere', mock_toplistbrowse
     Hallon::Toplist.new(:artists)
   end
 
   let(:empty_toplist) do
-    Spotify.registry_add 'spotify:toplist:tracks:everywhere', mock_empty_toplistbrowse
+    Spotify.mock_registry_add 'spotify:toplist:tracks:everywhere', mock_empty_toplistbrowse
     Hallon::Toplist.new(:tracks)
   end
 
@@ -20,12 +20,12 @@ describe Hallon::Toplist do
     end
 
     it "should pass the username given a string to libspotify" do
-      Spotify.registry_add 'spotify:toplist:user:Kim:tracks', mock_toplistbrowse
+      Spotify.mock_registry_add 'spotify:toplist:user:Kim:tracks', mock_toplistbrowse
       Hallon::Toplist.new(:tracks, "Kim").should be_loaded
     end
 
     it "should pass the correct region to libspotify" do
-      Spotify.registry_add 'spotify:toplist:tracks:SE', mock_toplistbrowse
+      Spotify.mock_registry_add 'spotify:toplist:tracks:SE', mock_toplistbrowse
       Hallon::Toplist.new(:tracks, :se).should be_loaded
     end
   end

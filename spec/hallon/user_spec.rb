@@ -77,7 +77,7 @@ describe Hallon::User do
     let(:published) { Hallon::PlaylistContainer.new(mock_container) }
 
     it "should return the playlist container of the user" do
-      Spotify.registry_add("spotify:container:%s" % user.name, mock_container)
+      Spotify.mock_registry_add("spotify:container:%s" % user.name, mock_container)
 
       session.login('burgestrand', 'pass')
       user.published.should eq published

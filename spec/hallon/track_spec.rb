@@ -171,9 +171,9 @@ describe Hallon::Track do
 
   describe "#unwrap" do
     let(:track) { Hallon::Track.new(mock_track_two) }
-    let(:playlist) { Spotify.link_create_from_string!('spotify:user:burgestrand:playlist:07AX9IY9Hqmj1RqltcG0fi') }
-    let(:artist)   { Spotify.link_create_from_string!('spotify:artist:3bftcFwl4vqRNNORRsqm1G') }
-    let(:album)    { Spotify.link_create_from_string!('spotify:album:1xvnWMz2PNFf7mXOSRuLws') }
+    let(:playlist) { Spotify.link_create_from_string('spotify:user:burgestrand:playlist:07AX9IY9Hqmj1RqltcG0fi') }
+    let(:artist)   { Spotify.link_create_from_string('spotify:artist:3bftcFwl4vqRNNORRsqm1G') }
+    let(:album)    { Spotify.link_create_from_string('spotify:album:1xvnWMz2PNFf7mXOSRuLws') }
 
     it "does nothing if the track is not a placeholder" do
       track.stub(:placeholder? => false)
@@ -181,17 +181,17 @@ describe Hallon::Track do
     end
 
     it "should unwrap a playlist placeholder into a playlist" do
-      Spotify.should_receive(:link_create_from_track!).and_return(playlist)
+      Spotify.should_receive(:link_create_from_track).and_return(playlist)
       track.unwrap.should eq Hallon::Playlist.new(playlist)
     end
 
     it "should unwrap an album placeholder into an album" do
-      Spotify.should_receive(:link_create_from_track!).and_return(album)
+      Spotify.should_receive(:link_create_from_track).and_return(album)
       track.unwrap.should eq Hallon::Album.new(album)
     end
 
     it "should unwrap an artist placeholder into an artist" do
-      Spotify.should_receive(:link_create_from_track!).and_return(artist)
+      Spotify.should_receive(:link_create_from_track).and_return(artist)
       track.unwrap.should eq Hallon::Artist.new(artist)
     end
   end

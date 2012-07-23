@@ -49,12 +49,7 @@ Thread.abort_on_exception = true
 # be looking for the documentation on {Hallon::Session}.
 module Hallon
   # @see Spotify::API_VERSION
-  API_VERSION = Spotify::API_VERSION
-
-  # Spotify API build.
-  #
-  # @see Spotify#api_build
-  API_BUILD = Spotify.build_id
+  API_VERSION = Spotify::API_VERSION.to_i
 
   # A regex that matches all Spotify URIs
   #

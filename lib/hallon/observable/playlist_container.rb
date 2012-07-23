@@ -26,7 +26,7 @@ module Hallon::Observable
     # @yieldparam [Playlist] playlist
     # @yieldparam [Integer] position
     def playlist_added_callback(pointer, playlist, position, userdata)
-      trigger(pointer, :playlist_added, playlist_from(playlist), position)
+      trigger(pointer, :playlist_added, Hallon::Playlist.from(playlist), position)
     end
 
     # @example listening to this event
@@ -38,7 +38,7 @@ module Hallon::Observable
     # @yieldparam [Playlist] playlist
     # @yieldparam [Integer] position
     def playlist_removed_callback(pointer, playlist, position, userdata)
-      trigger(pointer, :playlist_removed, playlist_from(playlist), position)
+      trigger(pointer, :playlist_removed, Hallon::Playlist.from(playlist), position)
     end
 
     # @example listening to this event
@@ -51,7 +51,7 @@ module Hallon::Observable
     # @yieldparam [Integer] position
     # @yieldparam [Integer] new_position
     def playlist_moved_callback(pointer, playlist, position, new_position, userdata)
-      trigger(pointer, :playlist_moved, playlist_from(playlist), position, new_position)
+      trigger(pointer, :playlist_moved, Hallon::Playlist.from(playlist), position, new_position)
     end
 
     # @example listening to this event
@@ -63,14 +63,5 @@ module Hallon::Observable
     def container_loaded_callback(pointer, userdata)
       trigger(pointer, :container_loaded)
     end
-
-    protected
-
-      # @param [Spotify::Pointer] playlist
-      # @return [Hallon::Playlist] a playlist for the given pointer.
-      def playlist_from(playlist)
-        pointer = Spotify::Pointer.new(playlist, :playlist, true)
-        Hallon::Playlist.new(pointer)
-      end
   end
 end

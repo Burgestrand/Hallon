@@ -12,7 +12,7 @@ module Hallon
       size :search_num_tracks
 
       # @return [Track, nil]
-      item :search_track! do |track|
+      item :search_track do |track|
         Track.from(track)
       end
 
@@ -27,7 +27,7 @@ module Hallon
       size :search_num_albums
 
       # @return [Album, nil]
-      item :search_album! do |album|
+      item :search_album do |album|
         Album.from(album)
       end
 
@@ -42,7 +42,7 @@ module Hallon
       size :search_num_artists
 
       # @return [Artist, nil]
-      item :search_artist! do |artist|
+      item :search_artist do |artist|
         Artist.from(artist)
       end
 
@@ -159,10 +159,10 @@ module Hallon
       search = from_link(search) if Link.valid?(search)
 
       subscribe_for_callbacks do |callback|
-        @pointer = if Spotify::Pointer.typechecks?(search, :search)
+        @pointer = if search.is_a?(Spotify::Search)
           search
         else
-          Spotify.search_create!(session.pointer, search, *opts, type, callback, nil)
+          Spotify.search_create(session.pointer, search, *opts, type, callback, nil)
         end
 
         raise ArgumentError, "search with #{search} failed" if @pointer.null?

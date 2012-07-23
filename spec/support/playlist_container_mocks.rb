@@ -27,10 +27,10 @@ RSpec::Core::ExampleGroup.instance_eval do
     items[3][:type]        = :end_folder
     items[3][:folder_id]   = 1337
 
-    Spotify.mock_playlistcontainer!(mock_user, true, num_items, items_ptr, nil, nil)
+    Spotify.mock_playlistcontainer_create(mock_user, true, num_items, items_ptr, nil, nil)
   end
 
   let(:mock_empty_container) do
-    Spotify.mock_playlistcontainer!(nil, false, 0, nil, nil, nil)
+    Spotify.mock_playlistcontainer_create(nil, false, 0, nil, nil, nil)
   end
 end

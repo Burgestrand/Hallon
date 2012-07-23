@@ -40,7 +40,8 @@ module Hallon
     # @param [Integer] max_size how many frames
     def initialize(max_size)
       @max_size = max_size
-      @frames  = []
+      @frames   = []
+      @format   = nil
 
       @frames.extend(MonitorMixin)
       @condvar  = @frames.new_cond

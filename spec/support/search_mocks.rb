@@ -14,10 +14,10 @@ RSpec::Core::ExampleGroup.instance_eval do
     tracks    = pointer_array_with(mock_track, mock_track_two)
     playlists = pointer_array_with(mock_playlist_two)
 
-    Spotify.mock_search(:ok, "my å utf8  query", "another thing", 1337, tracks.length, tracks, 42, albums.length, albums, 81104, artists.length, artists, 0716, playlists.length, playlists, nil, nil)
+    Spotify.mock_search_create(:ok, "my å utf8  query", "another thing", 1337, tracks.length, tracks, 42, albums.length, albums, 81104, artists.length, artists, 0716, playlists.length, playlists, nil, nil)
   end
 
   let(:mock_empty_search) do
-    Spotify.mock_search(:ok, "", nil, 0, 0, nil, 0, 0, nil, 0, 0, nil, 0, 0, nil, nil, nil)
+    Spotify.mock_search_create(:ok, "", nil, 0, 0, nil, 0, 0, nil, 0, 0, nil, 0, 0, nil, nil, nil)
   end
 end

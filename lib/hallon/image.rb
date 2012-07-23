@@ -7,7 +7,7 @@ module Hallon
     include Linkable
 
     from_link :as_image do |link|
-      Spotify.image_create_from_link!(session.pointer, link)
+      Spotify.image_create_from_link(session.pointer, link)
     end
 
     to_link :from_image
@@ -31,14 +31,14 @@ module Hallon
     # @example from an image id
     #   image = Hallon::Image.new("3ad93423add99766e02d563605c6e76ed2b0e450")
     #
-    # @param [String, Link, Spotify::Pointer] link link or image id
+    # @param [String, Link, Spotify::Image] link link or image id
     def initialize(link)
       if link.respond_to?(:=~) and link =~ %r~(?:image[:/]|\A)([a-fA-F0-9]{40})\z~
         link = to_id($1)
       end
 
-      @pointer = to_pointer(link, :image) do
-        Spotify.image_create!(session.pointer, link)
+      @pointer = to_pointer(link, Spotify::Image) do
+        Spotify.image_create(session.pointer, link)
       end
 
       subscribe_for_callbacks do |callbacks|

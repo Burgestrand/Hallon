@@ -28,12 +28,12 @@ describe Hallon::Scrobbler do
 
   describe "#possible?" do
     it "returns true if scrobbling is possible" do
-      Spotify.mocksp_session_set_is_scrobbling_possible(session.pointer, scrobbling.provider, true)
+      Spotify.mock_session_set_is_scrobbling_possible(session.pointer, scrobbling.provider, true)
       scrobbling.should be_possible
     end
 
     it "returns false if scrobbling is not possible" do
-      Spotify.mocksp_session_set_is_scrobbling_possible(session.pointer, scrobbling.provider, false)
+      Spotify.mock_session_set_is_scrobbling_possible(session.pointer, scrobbling.provider, false)
       scrobbling.should_not be_possible
     end
 

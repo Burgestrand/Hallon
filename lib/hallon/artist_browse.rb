@@ -21,7 +21,7 @@ module Hallon
       size :artistbrowse_num_portraits
 
       # @return [Link, nil]
-      item :link_create_from_artistbrowse_portrait! do |portrait|
+      item :link_create_from_artistbrowse_portrait do |portrait|
         Link.from(portrait)
       end
     end
@@ -31,7 +31,7 @@ module Hallon
       size :artistbrowse_num_tracks
 
       # @return [Track, nil]
-      item :artistbrowse_track! do |track|
+      item :artistbrowse_track do |track|
         Track.from(track)
       end
     end
@@ -41,7 +41,7 @@ module Hallon
       size :artistbrowse_num_albums
 
       # @return [Album, nil]
-      item :artistbrowse_album! do |album|
+      item :artistbrowse_album do |album|
         Album.from(album)
       end
     end
@@ -51,7 +51,7 @@ module Hallon
       size :artistbrowse_num_similar_artists
 
       # @return [Artist, nil]
-      item :artistbrowse_similar_artist! do |artist|
+      item :artistbrowse_similar_artist do |artist|
         Artist.from(artist)
       end
     end
@@ -61,7 +61,7 @@ module Hallon
       size :artistbrowse_num_tophit_tracks
 
       # @return [Track, nil]
-      item :artistbrowse_tophit_track! do |track|
+      item :artistbrowse_tophit_track do |track|
         Track.from(track)
       end
     end
@@ -77,19 +77,19 @@ module Hallon
     # Creates an ArtistBrowse instance from an Artist or an Artist pointer.
     #
     # @note Also use {Artist#browse} to browse an Artist.
-    # @param [Artist, Spotify::Pointer] artist
+    # @param [Artist, Spotify::Artist] artist
     # @param [Symbol] type (see {.types})
     def initialize(artist, type = :full)
       pointer = artist
       pointer = pointer.pointer if pointer.respond_to?(:pointer)
 
-      unless Spotify::Pointer.typechecks?(pointer, :artist)
+      unless pointer.is_a?(Spotify::Artist)
         given = pointer.respond_to?(:type) ? pointer.type : pointer.inspect
         raise TypeError, "expected artist pointer, was given #{given}"
       end
 
       subscribe_for_callbacks do |callback|
-        @pointer = Spotify.artistbrowse_create!(session.pointer, pointer, type, callback, nil)
+        @pointer = Spotify.artistbrowse_create(session.pointer, pointer, type, callback, nil)
       end
 
       raise FFI::NullPointerError, "artist browsing failed" if @pointer.null?
@@ -108,7 +108,7 @@ module Hallon
 
     # @return [Artist, nil] artist this browser is browsing.
     def artist
-      artist = Spotify.artistbrowse_artist!(pointer)
+      artist = Spotify.artistbrowse_artist(pointer)
       Artist.from(artist)
     end
 

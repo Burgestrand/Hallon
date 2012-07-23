@@ -16,7 +16,7 @@ module Hallon
       item :playlistcontainer_playlist_type do |type, index, pointer|
         case type
         when :playlist
-          playlist = Spotify.playlistcontainer_playlist!(pointer, index)
+          playlist = Spotify.playlistcontainer_playlist(pointer, index)
           Playlist.from(playlist)
         when :start_folder, :end_folder
           Folder.new(pointer, folder_range(index, type))
@@ -72,7 +72,7 @@ module Hallon
       # @return [String]
       attr_reader :name
 
-      # @return [Spotify::Pointer<Container>]
+      # @return [Spotify::Container]
       attr_reader :container_ptr
       private :container_ptr
 
@@ -138,9 +138,9 @@ module Hallon
 
     # Wrap an existing PlaylistContainer pointer in an object.
     #
-    # @param [Spotify::Pointer] pointer
+    # @param [Spotify::PlaylistContainer] pointer
     def initialize(pointer)
-      @pointer = to_pointer(pointer, :playlistcontainer)
+      @pointer = to_pointer(pointer, Spotify::PlaylistContainer)
 
       subscribe_for_callbacks do |callbacks|
         Spotify.playlistcontainer_remove_callbacks(pointer, callbacks, nil)
@@ -155,7 +155,7 @@ module Hallon
 
     # @return [User, nil] owner of the container (nil if unknown or no owner).
     def owner
-      owner = Spotify.playlistcontainer_owner!(pointer)
+      owner = Spotify.playlistcontainer_owner(pointer)
       User.from(owner)
     end
 
@@ -196,13 +196,13 @@ module Hallon
     def add(playlist, force_create = false)
       resource = if force_create or not Link.valid?(playlist) and playlist.is_a?(String)
         unless error = Playlist.invalid_name?(playlist)
-          Spotify.playlistcontainer_add_new_playlist!(pointer, playlist)
+          Spotify.playlistcontainer_add_new_playlist(pointer, playlist)
         else
           raise ArgumentError, error
         end
       else
         link = Link.new(playlist)
-        Spotify.playlistcontainer_add_playlist!(pointer, link.pointer)
+        Spotify.playlistcontainer_add_playlist(pointer, link.pointer)
       end
 
       Playlist.from(resource)
@@ -310,7 +310,7 @@ module Hallon
       real_count = Spotify.playlistcontainer_get_unseen_tracks(pointer, playlist.pointer, tracks_ary, count)
       raise OperationFailedError if real_count < 0
       tracks_ary.read_array_of_pointer([real_count, count].min).map do |track|
-        track_pointer = Spotify::Pointer.new(track, :track, true)
+        track_pointer = Spotify::Track.retaining_class.new(track)
         Hallon::Track.new(track_pointer)
       end
     end

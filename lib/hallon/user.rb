@@ -47,7 +47,7 @@ module Hallon
           @tracks  = tracks
           @message = message
           @recipient_name = recipient_name
-          @pointer = Spotify.inbox_post_tracks!(session.pointer, @recipient_name, ary, tracks.length, @message, callback, nil)
+          @pointer = Spotify.inbox_post_tracks(session.pointer, @recipient_name, ary, tracks.length, @message, callback, nil)
         end
       end
 
@@ -72,7 +72,7 @@ module Hallon
     include Loadable
 
     from_link :profile do |link|
-      Spotify.link_as_user!(link)
+      Spotify.link_as_user(link)
     end
 
     to_link :from_user
@@ -86,11 +86,11 @@ module Hallon
     #   Hallon::User.new("spotify:user:burgestrand")
     #
     # @note You can also instantiate User with a canonical username
-    # @param [String, Link, Spotify::Pointer] link
+    # @param [String, Link, Spotify::User] link
     def initialize(link)
-      @pointer = to_pointer(link, :user) do
+      @pointer = to_pointer(link, Spotify::User) do
         if link.is_a?(String) and link !~ /\Aspotify:user:/
-          to_pointer("spotify:user:#{link}", :user)
+          to_pointer("spotify:user:#{link}", Spotify::User)
         end
       end
     end
@@ -114,14 +114,14 @@ module Hallon
     # @note Returns nil unless {User#loaded?}
     # @return [Playlist, nil] starred playlist of the User.
     def starred
-      playlist = Spotify.session_starred_for_user_create!(session.pointer, name)
+      playlist = Spotify.session_starred_for_user_create(session.pointer, name)
       Playlist.from(playlist)
     end
 
     # @note Returns nil unless {#loaded?}
     # @return [PlaylistContainer, nil] published playlists of the User.
     def published
-      container = Spotify.session_publishedcontainer_for_user_create!(session.pointer, name)
+      container = Spotify.session_publishedcontainer_for_user_create(session.pointer, name)
       PlaylistContainer.from(container)
     end
 

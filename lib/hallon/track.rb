@@ -10,7 +10,7 @@ module Hallon
       size :track_num_artists
 
       # @return [Artist, nil]
-      item :track_artist! do |artist|
+      item :track_artist do |artist|
         Artist.from(artist)
       end
     end
@@ -43,7 +43,7 @@ module Hallon
     # @param [String, Link, FFI::Pointer] link
     def initialize(link)
       FFI::MemoryPointer.new(:int) do |ptr|
-        @pointer = to_pointer(link, :track, ptr)
+        @pointer = to_pointer(link, Spotify::Track, ptr)
         @offset  = Rational(ptr.read_int, 1000)
       end
     end
@@ -74,7 +74,7 @@ module Hallon
     # @param [Integer] length
     # @return [Track]
     def self.local(title, artist, album = nil, length = nil)
-      track = Spotify.localtrack_create!(artist, title, album || "", length || -1)
+      track = Spotify.localtrack_create(artist, title, album || "", length || -1)
       new(track)
     end
 
@@ -157,7 +157,7 @@ module Hallon
 
     # @return [Hallon::Album] album this track belongs to.
     def album
-      album = Spotify.track_album!(pointer)
+      album = Spotify.track_album(pointer)
       Album.from(album)
     end
 
@@ -188,7 +188,7 @@ module Hallon
     # @see autolinked?
     # @return [Track] the track this track is autolinked to for audio playback.
     def playable_track
-      track = Spotify.track_get_playable!(session.pointer, pointer)
+      track = Spotify.track_get_playable(session.pointer, pointer)
       Track.from(track)
     end
 

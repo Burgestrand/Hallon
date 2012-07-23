@@ -9,15 +9,15 @@ RSpec::Core::ExampleGroup.instance_eval do
   end
 
   let(:mock_artist) do
-    Spotify.mock_artist!("Jem", mock_image_id, true)
+    Spotify.mock_artist_create("Jem", mock_image_id, true)
   end
 
   let(:mock_artist_two) do
-    Spotify.mock_artist!("Maroon 5", mock_image_id, true)
+    Spotify.mock_artist_create("Maroon 5", mock_image_id, true)
   end
 
   let(:mock_empty_artist) do
-    Spotify.mock_artist!(nil, nil, false)
+    Spotify.mock_artist_create(nil, nil, false)
   end
 
   let(:mock_artistbrowse) do
@@ -27,10 +27,10 @@ RSpec::Core::ExampleGroup.instance_eval do
     albums    = pointer_array_with(mock_album)
     tophits   = pointer_array_with(mock_track)
 
-    Spotify.mock_artistbrowse(:ok, 2751, mock_artist, portraits.length, portraits, tracks.length, tracks, albums.length, albums, similar_artists.length, similar_artists, tophits.length, tophits, "grew up in DA BLOCK", :full, nil, nil)
+    Spotify.mock_artistbrowse_create(:ok, 2751, mock_artist, portraits.length, portraits, tracks.length, tracks, albums.length, albums, similar_artists.length, similar_artists, tophits.length, tophits, "grew up in DA BLOCK", :full, nil, nil)
   end
 
   let(:mock_empty_artistbrowse) do
-    Spotify.mock_artistbrowse(:ok, 0, nil, 0, nil, 0, nil, 0, nil, 0, nil, 0, nil, nil, :full, nil, nil)
+    Spotify.mock_artistbrowse_create(:ok, 0, nil, 0, nil, 0, nil, 0, nil, 0, nil, 0, nil, nil, :full, nil, nil)
   end
 end

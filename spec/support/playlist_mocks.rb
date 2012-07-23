@@ -53,15 +53,15 @@ RSpec::Core::ExampleGroup.instance_eval do
     tracks[3][:message] = nil
     tracks[3][:seen] = true
 
-    Spotify.mock_playlist!("Megaplaylist", true, mock_user, true, "Playlist description...?", mock_image_id, false, 1000, mock_subscribers, true, :no, 67, num_tracks, tracks_ptr)
+    Spotify.mock_playlist_create("Megaplaylist", true, mock_user, true, "Playlist description...?", mock_image_id, false, 1000, mock_subscribers, true, :no, 67, num_tracks, tracks_ptr)
   end
 
   let(:mock_playlist_two) do
-    Spotify.mock_playlist!("Dunderlist", true, mock_user, true, nil, mock_image_id, false, 1000, nil, true, :no, 0, 0, nil)
+    Spotify.mock_playlist_create("Dunderlist", true, mock_user, true, nil, mock_image_id, false, 1000, nil, true, :no, 0, 0, nil)
   end
 
   let(:mock_empty_playlist) do
-    Spotify.mock_playlist!(nil, false, nil, false, nil, nil, false, 0, nil, false, :no, 0, 0, nil)
+    Spotify.mock_playlist_create(nil, false, nil, false, nil, nil, false, 0, nil, false, :no, 0, 0, nil)
   end
 
   let(:mock_playlist_raw) do

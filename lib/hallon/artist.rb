@@ -28,9 +28,9 @@ module Hallon
     #   link = Hallon::Link.new("spotify:artist:6uSKeCyQEhvPC2NODgiqFE")
     #   artist = Hallon::Artist.new(link)
     #
-    # @param [String, Link, FFI::Pointer] link
+    # @param [String, Link, Spotify::Artist] link
     def initialize(link)
-      @pointer = to_pointer(link, :artist)
+      @pointer = to_pointer(link, Spotify::Artist)
     end
 
     # @return [String] name of the artist.
@@ -55,7 +55,7 @@ module Hallon
     # @param [Symbol] size (see {Image.sizes})
     # @return [Link, nil] artist portrait as a Link.
     def portrait_link(size = :normal)
-      portrait = Spotify.link_create_from_artist_portrait!(pointer, size)
+      portrait = Spotify.link_create_from_artist_portrait(pointer, size)
       Link.from(portrait)
     end
 

@@ -57,8 +57,8 @@ module Hallon
       #   @method from_link
       #   @scope  instance
       #   @visibility private
-      #   @param  [String, Hallon::Link, Spotify::Pointer] link
-      #   @return [Spotify::Pointer] pointer representation of given link.
+      #   @param  [String, Hallon::Link, Spotify::Link] link
+      #   @return [Spotify::Link] pointer representation of given link.
       def self.from_link(as_object, &block)
         # this is here to work around a YARD limitation, see
         # {Linkable} for the actual source
@@ -73,18 +73,18 @@ module Hallon
 
       # Convert a given object to a pointer by best of ability.
       #
-      # @param [Spotify::Pointer, String, Link] resource
-      # @return [Spotify::Pointer]
+      # @param [Spotify::ManagedPointer, String, Link] resource
+      # @return [Spotify::ManagedPointer]
       # @raise [TypeError] when the pointer is of the wrong type
       # @raise [ArgumentError] when pointer could not be created, or null
       def to_pointer(resource, type, *args)
-        if resource.is_a?(FFI::Pointer) and not resource.is_a?(Spotify::Pointer)
-          raise TypeError, "Hallon does not support raw FFI::Pointers, wrap it in a Spotify::Pointer"
+        if resource.is_a?(FFI::Pointer) and not resource.is_a?(Spotify::ManagedPointer)
+          raise TypeError, "Hallon does not support raw FFI::Pointers, wrap it in a Spotify::ManagedPointer"
         end
 
-        pointer = if Spotify::Pointer.typechecks?(resource, type)
+        pointer = if resource.is_a?(type)
           resource
-        elsif is_linkable? and Spotify::Pointer.typechecks?(resource, :link)
+        elsif is_linkable? and resource.is_a?(Spotify::Link)
           from_link(resource, *args)
         elsif is_linkable? and Link.valid?(resource)
           from_link(resource, *args)
@@ -94,8 +94,8 @@ module Hallon
 
         if pointer.nil? or pointer.null?
           raise ArgumentError, "#{resource.inspect} could not be converted to a spotify #{type} pointer"
-        elsif not Spotify::Pointer.typechecks?(pointer, type)
-          raise TypeError, "“#{resource}” is of type #{resource.type}, #{type} expected"
+        elsif not pointer.is_a?(type)
+          raise TypeError, "“#{resource}” is a #{resource.class}, #{type} expected"
         else
           pointer
         end

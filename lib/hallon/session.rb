@@ -136,7 +136,7 @@ module Hallon
         # You pass a pointer to the session pointer to libspotify >:)
         FFI::MemoryPointer.new(:pointer) do |p|
           Error::maybe_raise Spotify.session_create(config, p)
-          @pointer = p.read_pointer
+          @pointer = Spotify::Session.new(p.read_pointer)
         end
       end
     end
@@ -155,7 +155,7 @@ module Hallon
     # @note returns nil if the session is not logged in.
     # @return [PlaylistContainer, nil]
     def container
-      container = Spotify.session_playlistcontainer!(pointer)
+      container = Spotify.session_playlistcontainer(pointer)
       PlaylistContainer.from(container)
     end
 
@@ -267,7 +267,7 @@ module Hallon
 
     # @return [User] the User currently logged in.
     def user
-      user = Spotify.session_user!(pointer)
+      user = Spotify.session_user(pointer)
       User.from(user)
     end
 
@@ -417,14 +417,14 @@ module Hallon
     # @note Returns nil when no user is logged in.
     # @return [Playlist, nil] currently logged in user’s starred playlist.
     def starred
-      playlist = Spotify.session_starred_create!(pointer)
+      playlist = Spotify.session_starred_create(pointer)
       Playlist.from(playlist)
     end
 
     # @note Returns nil when no user is logged in.
     # @return [Playlist, nil] currently logged in user’s inbox playlist.
     def inbox
-      playlist = Spotify.session_inbox_create!(pointer)
+      playlist = Spotify.session_inbox_create(pointer)
       Playlist.from(playlist)
     end
 

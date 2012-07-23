@@ -13,7 +13,7 @@ describe Hallon::Link do
     end
 
     it "should raise an error given a null pointer" do
-      expect { Hallon::Link.new(Spotify::Pointer.new(null_pointer, :link, false)) }.to raise_error(ArgumentError)
+      expect { Hallon::Link.new(Spotify::Link.new(null_pointer)) }.to raise_error(ArgumentError)
     end
 
     it "should raise an error when no session instance is about" do

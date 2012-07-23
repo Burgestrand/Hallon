@@ -29,7 +29,7 @@ RSpec.configure do |config|
   end
 
   config.after do
-    Spotify.registry_clean
+    Spotify.mock_registry_clean
   end
 
   def fixture_image_path
@@ -74,29 +74,29 @@ Dir["#{File.dirname(__FILE__)}/fixtures/**/*.rb"].each {|f| require f}
 
 RSpec.configure do |config|
   config.before do
-    Spotify.registry_add 'spotify:image:3ad93423add99766e02d563605c6e76ed2b0e400', mock_image
-    Spotify.registry_add 'spotify:user:burgestrand:playlist:megaplaylist', mock_playlist_two
-    Spotify.registry_add 'spotify:search:my+%C3%A5+utf8+%EF%A3%BF+query', mock_search
-    Spotify.registry_add 'spotify:search:', mock_empty_search
+    Spotify.mock_registry_add 'spotify:image:3ad93423add99766e02d563605c6e76ed2b0e400', mock_image
+    Spotify.mock_registry_add 'spotify:user:burgestrand:playlist:megaplaylist', mock_playlist_two
+    Spotify.mock_registry_add 'spotify:search:my+%C3%A5+utf8+%EF%A3%BF+query', mock_search
+    Spotify.mock_registry_add 'spotify:search:', mock_empty_search
 
-    Spotify.registry_add 'spotify:albumbrowse:1xvnWMz2PNFf7mXOSRuLws', mock_albumbrowse
-    Spotify.registry_add 'spotify:album:1xvnWMz2PNFf7mXOSRuLws', mock_album
+    Spotify.mock_registry_add 'spotify:albumbrowse:1xvnWMz2PNFf7mXOSRuLws', mock_albumbrowse
+    Spotify.mock_registry_add 'spotify:album:1xvnWMz2PNFf7mXOSRuLws', mock_album
 
-    Spotify.registry_add 'spotify:albumbrowse:thisisanemptyalbumyoow', mock_empty_albumbrowse
-    Spotify.registry_add 'spotify:album:thisisanemptyalbumyoow', mock_empty_album
+    Spotify.mock_registry_add 'spotify:albumbrowse:thisisanemptyalbumyoow', mock_empty_albumbrowse
+    Spotify.mock_registry_add 'spotify:album:thisisanemptyalbumyoow', mock_empty_album
 
-    Spotify.registry_add 'spotify:artist:3bftcFwl4vqRNNORRsqm1G', mock_artist
-    Spotify.registry_add 'spotify:artistbrowse:3bftcFwl4vqRNNORRsqm1G', mock_artistbrowse
+    Spotify.mock_registry_add 'spotify:artist:3bftcFwl4vqRNNORRsqm1G', mock_artist
+    Spotify.mock_registry_add 'spotify:artistbrowse:3bftcFwl4vqRNNORRsqm1G', mock_artistbrowse
 
-    Spotify.registry_add 'spotify:artist:thisisanemptyartistyow', mock_empty_artist
-    Spotify.registry_add 'spotify:artistbrowse:thisisanemptyartistyow', mock_empty_artistbrowse
+    Spotify.mock_registry_add 'spotify:artist:thisisanemptyartistyow', mock_empty_artist
+    Spotify.mock_registry_add 'spotify:artistbrowse:thisisanemptyartistyow', mock_empty_artistbrowse
 
-    Spotify.registry_add 'spotify:container:burgestrand', mock_container
+    Spotify.mock_registry_add 'spotify:container:burgestrand', mock_container
 
-    Spotify.registry_add 'spotify:track:7N2Vc8u56VGA4KUrGbikC2', mock_track
+    Spotify.mock_registry_add 'spotify:track:7N2Vc8u56VGA4KUrGbikC2', mock_track
 
-    Spotify.registry_add 'spotify:user:burgestrand', mock_user
-    Spotify.registry_add 'spotify:user:burgestrand:playlist:07AX9IY9Hqmj1RqltcG0fi', mock_playlist
-    Spotify.registry_add 'spotify:user:burgestrand:starred', mock_playlist
+    Spotify.mock_registry_add 'spotify:user:burgestrand', mock_user
+    Spotify.mock_registry_add 'spotify:user:burgestrand:playlist:07AX9IY9Hqmj1RqltcG0fi', mock_playlist
+    Spotify.mock_registry_add 'spotify:user:burgestrand:starred', mock_playlist
   end
 end

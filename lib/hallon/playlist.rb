@@ -11,7 +11,7 @@ module Hallon
       size :playlist_num_tracks
 
       # @return [Track, nil]
-      item :playlist_track! do |track, index, pointer|
+      item :playlist_track do |track, index, pointer|
         Playlist::Track.from(track, pointer, index)
       end
     end
@@ -33,12 +33,12 @@ module Hallon
         @seen         = Spotify.playlist_track_seen(playlist_ptr, index)
         @added_at     = Time.at(Spotify.playlist_track_create_time(playlist_ptr, index)).utc
         @adder        = begin
-          creator = Spotify.playlist_track_creator!(playlist_ptr, index)
+          creator = Spotify.playlist_track_creator(playlist_ptr, index)
           User.from(creator)
         end
       end
 
-      # @return [Spotify::Pointer<Playlist>] playlist pointer this track was created from.
+      # @return [Spotify::Playlist] playlist pointer this track was created from.
       attr_reader :playlist_ptr
       private :playlist_ptr
 
@@ -99,7 +99,7 @@ module Hallon
     extend Observable::Playlist
 
     from_link :playlist do |pointer|
-      Spotify.playlist_create!(session.pointer, pointer)
+      Spotify.playlist_create(session.pointer, pointer)
     end
 
     to_link :from_playlist
@@ -126,7 +126,7 @@ module Hallon
     #
     # @param [String, Link, FFI::Pointer] link
     def initialize(link)
-      @pointer = to_pointer(link, :playlist)
+      @pointer = to_pointer(link, Spotify::Playlist)
 
       subscribe_for_callbacks do |callbacks|
         Spotify.playlist_remove_callbacks(pointer, callbacks, nil)
@@ -227,7 +227,7 @@ module Hallon
 
     # @return [User, nil]
     def owner
-      user = Spotify.playlist_owner!(pointer)
+      user = Spotify.playlist_owner(pointer)
       User.from(user)
     end
 

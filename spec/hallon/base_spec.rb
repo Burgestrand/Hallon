@@ -1,15 +1,18 @@
+class Spotify::BasePointer < Spotify::ManagedPointer
+end
+
 describe Hallon::Base do
   let(:klass) do
     Class.new(Hallon::Base) do
       def initialize(pointer)
-        @pointer = to_pointer(pointer, :base) { |x| x }
+        @pointer = to_pointer(pointer, Spotify::BasePointer) { |x| x }
       end
     end
   end
 
   let(:base_pointer) do
-    Spotify.stub(:base_add_ref! => nil, :base_release! => nil)
-    Spotify::Pointer.new(a_pointer, :base, true)
+    Spotify.stub(:base_pointer_release => nil)
+    Spotify::BasePointer.new(a_pointer)
   end
 
   describe "#to_pointer" do

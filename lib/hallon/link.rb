@@ -19,7 +19,7 @@ module Hallon
         return false
       end
 
-      link = Spotify.link_create_from_string!(spotify_uri.to_s)
+      link = Spotify.link_create_from_string(spotify_uri.to_s)
       not link.null?
     end
 
@@ -38,8 +38,8 @@ module Hallon
         uri = uri.to_link.pointer
       end
 
-      @pointer = to_pointer(uri, :link) do
-        Spotify.link_create_from_string!(uri.to_str)
+      @pointer = to_pointer(uri, Spotify::Link) do
+        Spotify.link_create_from_string(uri.to_str)
       end
     end
 
@@ -87,7 +87,7 @@ module Hallon
     end
 
     # @param [Symbol] expected_type if given, makes sure the link is of this type
-    # @return [Spotify::Pointer] the underlying Spotify::Pointer.
+    # @return [Spotify::ManagedPointer] the underlying Spotify::ManagedPointer.
     # @raise ArgumentError if `type` is given and does not match link {#type}
     def pointer(expected_type = nil)
       unless type == expected_type or (expected_type == :playlist and type == :starred)

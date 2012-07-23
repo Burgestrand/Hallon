@@ -10,10 +10,10 @@ RSpec::Core::ExampleGroup.instance_eval do
     artists = pointer_array_with(mock_artist, mock_artist_two)
     albums  = pointer_array_with(mock_album)
     tracks  = pointer_array_with(mock_track, mock_track_two)
-    Spotify.mock_toplistbrowse(:ok, 2751, artists.length, artists, albums.length, albums, tracks.length, tracks)
+    Spotify.mock_toplistbrowse_create(:ok, 2751, artists.length, artists, albums.length, albums, tracks.length, tracks)
   end
 
   let(:mock_empty_toplistbrowse) do
-    Spotify.mock_toplistbrowse(:ok, -1, 0, nil, 0, nil, 0, nil)
+    Spotify.mock_toplistbrowse_create(:ok, -1, 0, nil, 0, nil, 0, nil)
   end
 end

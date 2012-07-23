@@ -7,11 +7,11 @@ RSpec::Core::ExampleGroup.instance_eval do
   end
 
   let(:mock_user) do
-    Spotify.mock_user!("burgestrand", "Burgestrand", true)
+    Spotify.mock_user_create("burgestrand", "Burgestrand", true)
   end
 
   let(:mock_empty_user) do
-    Spotify.mock_user!(nil, nil, false)
+    Spotify.mock_user_create(nil, nil, false)
   end
 
   let(:mock_user_raw) do

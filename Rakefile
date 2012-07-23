@@ -33,36 +33,6 @@ task 'spotify:coverage' do
 
   require 'pry'
   require 'set'
-
-  module Spotify
-    # Wrapped functions return pointers that are auto-GC’d by Ruby,
-    # so we ignore add_ref and release for these methods; but since
-    # we don’t know their type by mere name, we must resort to this
-    # hack to do it automatically (because we can).
-    class << self
-      def lookup_return_value(name)
-        @function_to_return_type[name.to_s]
-      end
-
-      def define_singleton_method(name, &block)
-        return_type = block.binding.eval <<-CODE
-          begin
-            return_type if __method__ == :wrap_function
-          rescue NameError
-            nil
-          end
-        CODE
-
-        if return_type
-          @function_to_return_type ||= {}
-          @function_to_return_type[name.to_s] = return_type
-        end
-
-        super
-      end
-    end
-  end
-
   require 'spotify'
 
   begin
@@ -72,19 +42,20 @@ task 'spotify:coverage' do
     abort
   end
 
-  methods = Spotify.methods(false).map(&:to_s)
-  auto_gc = Set.new(methods.grep(/!\z/).select { |m| Spotify.lookup_return_value(m) })
-  auto_err = Set.new(methods.grep(/!\z/)).difference(auto_gc)
+  methods = Spotify.methods(false).map(&:to_s).reject { |x| x =~ /_add_ref|_release/ }
   covered = Set.new(methods)
-  warning = []
+  auto_error = Set.new(methods.select { |x| x =~ /!/ })
+  inexisting = []
   ignored = [
     'attach_function',  # spotify overloads this
     'session_release',  # segfaults on libspotify <= 9, and sometimes deadlocks on libspotify <= v12
-    'session_release!', # …
     'session_userdata', # wont support this
+    'build_id',         # no use for it
+    'platform',         # not necessary yet
+    'mac?',             # has no use for it
+    'search_playlist',  # does not GC convention, dangerous to use!
     'error_message',    # supported by Hallon::Error.explain
     'link_as_track',    # using link_as_track_and_offset instead
-    'link_as_track!',   # using link_as_track_and_offset! instead
     'wrap_function',    # not a spotify function
     'lookup_return_value', # custom method
     'define_singleton_method', # overloaded by us
@@ -95,58 +66,36 @@ task 'spotify:coverage' do
   # Handlers for different AST nodes
   printer  = proc { |*args| p args }
   silencer = proc { }
+  dsl_method = proc { |recv, meth, (_, name)| name }
   handlers = Hash.new(Hash.new(silencer))
 
   # Direct calls
   handlers[Sexp.new(:const, :Spotify)] = Hash.new(proc do |_, meth, _|
-    if auto_gc.include?("#{meth}!")
-      warning << [$file, meth]
-    end
+    meth &&= meth.to_s
 
-    result = [meth]
-
-    auto_err_lookup = meth.to_s.delete('!') + '!' # just one !
-
-    # if it has auto-error, we account for both versions, just assume
-    # we are doing the right thing here
-    if auto_err.member?(auto_err_lookup)
-      result << auto_err_lookup
-      result << auto_err_lookup.delete('!')
-      result.uniq!
-    end
-
-    if meth =~ /(.+)!\z/
-      # if it’s auto-GC’d, we can also account for _release and _add_ref
-      if (return_type = Spotify.lookup_return_value(meth))
-        result << $1
-        result << "#{return_type}_release"
-        result << "#{return_type}_add_ref"
-        result << "#{return_type}_release!"
-        result << "#{return_type}_add_ref!"
+    [meth].tap do |result|
+      if meth =~ /!/ && auto_error.include?(meth)
+        result << meth.delete("!")
+      else
+        result << "#{meth}!"
       end
-    end
 
-    result
+      inexisting << meth unless Spotify.respond_to?(meth)
+    end
   end)
 
   # DSL Methods
   no_receiver = handlers[nil] = Hash.new(silencer)
   no_receiver[:from_link] = no_receiver[:to_link] = proc do |recv, meth, (_, name)|
     prefix = meth == :to_link ? "link_create" : "link"
-    method = "%s_%s" % [prefix, name]
-    [method, "#{method}!"]
+    "%s_%s" % [prefix, name]
   end
 
   # Hallon::Enumerator
-  no_receiver[:size] = proc do |recv, meth, (_, name)|
-    name
-  end
+  no_receiver[:size] = dsl_method
 
   # Hallon::Enumerator
-  no_receiver[:item] = proc do |recv, meth, (_, name)|
-    method = name.to_s
-    [method.delete("!"), method]
-  end
+  no_receiver[:item] = dsl_method
 
   fails = {}
   FileList['lib/**/*.rb'].each do |file|
@@ -186,10 +135,10 @@ task 'spotify:coverage' do
     puts
   end
 
-  unless warning.empty?
-    puts "Warnings (use auto-gc methods instead!):"
-    warning.each do |file, method|
-      puts "  #{file}: #{method}"
+  unless inexisting.empty?
+    puts "Non-existing methods (but used; remove!):"
+    inexisting.each do |fail|
+      puts "  #{fail}"
     end
     puts
   end

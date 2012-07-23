@@ -137,7 +137,7 @@ describe Hallon::Playlist do
 
   describe "#tracks" do
     it "returns an enumerator of the playlist’s tracks" do
-      playlist.tracks.to_a.should eq instantiate(Hallon::Playlist::Track, *(0...4).map { |index| [Spotify.playlist_track!(playlist.pointer, index), playlist.pointer, index] })
+      playlist.tracks.to_a.should eq instantiate(Hallon::Playlist::Track, *(0...4).map { |index| [Spotify.playlist_track(playlist.pointer, index), playlist.pointer, index] })
     end
 
     it "returns an empty enumerator if the playlist has no tracks" do
@@ -321,9 +321,9 @@ describe Hallon::Playlist do
 
   describe "#autolink_tracks=" do
     it "should set autolink status" do
-      Spotify.mocksp_playlist_get_autolink_tracks(playlist.pointer).should be_false
+      Spotify.mock_playlist_get_autolink_tracks(playlist.pointer).should be_false
       playlist.autolink_tracks = true
-      Spotify.mocksp_playlist_get_autolink_tracks(playlist.pointer).should be_true
+      Spotify.mock_playlist_get_autolink_tracks(playlist.pointer).should be_true
     end
   end
 

@@ -10,7 +10,7 @@ module Hallon
     # meep?
     extend Observable::Player
 
-    # @return [Spotify::Pointer<Session>] session pointer
+    # @return [Spotify::Session] session pointer
     attr_reader :pointer
 
     # @return [Symbol] one of :playing, :paused, :stopped

@@ -6,8 +6,9 @@ shared_examples_for "a Linkable object" do
     let(:spotify_pointer) do
       ptr_type    = Hallon::Link.new(spotify_uri).type
       ptr_type    = :user if ptr_type == :profile
-      ffi_pointer = Spotify.registry_find(spotify_uri[/[^#]+/]) # up to pound sign for track#offset
-      Spotify::Pointer.new(ffi_pointer, ptr_type, false)
+      ptr_class   = Spotify.const_get(ptr_type.to_s.sub(/\A\w/) { |x| x.upcase })
+      ffi_pointer = Spotify.mock_registry_find(spotify_uri[/[^#]+/]) # up to pound sign for track#offset
+      ptr_class.new(ffi_pointer)
     end
 
     it "should work with a string URI" do

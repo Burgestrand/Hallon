@@ -8,7 +8,7 @@ module Hallon
   class Enumerator
     include Enumerable
 
-    # @return [Spotify::Pointer]
+    # @return [Spotify::ManagedPointer]
     attr_reader :pointer
 
     # @macro [attach] size
@@ -26,7 +26,7 @@ module Hallon
     end
 
     # @example modifying result with a block
-    #   item :playlist_track! do |track|
+    #   item :playlist_track do |track|
     #     Track.from(track)
     #   end
     #
@@ -35,7 +35,7 @@ module Hallon
     # @yield [item, index, pointer] item from calling Spotify#item_method
     # @yieldparam item
     # @yieldparam [Integer] index
-    # @yieldparam [Spotify::Pointer] pointer
+    # @yieldparam [Spotify::ManagedPointer] pointer
     #
     # @macro [attach] item
     #   @method at(index)

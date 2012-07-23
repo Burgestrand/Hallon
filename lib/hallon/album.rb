@@ -41,9 +41,9 @@ module Hallon
     #   link = Hallon::Link.new("spotify:album:6TECAywzyJGh0kwxfeBgGc")
     #   album = Hallon::Album.new(link)
     #
-    # @param [String, Link, Spotify::Pointer] link
+    # @param [String, Link, Spotify::Album] link
     def initialize(link)
-      @pointer = to_pointer(link, :album)
+      @pointer = to_pointer(link, Spotify::Album)
     end
 
     # @return [String] name of the album.
@@ -74,7 +74,7 @@ module Hallon
 
     # @return [Artist, nil] album artist.
     def artist
-      artist = Spotify.album_artist!(pointer)
+      artist = Spotify.album_artist(pointer)
       Artist.from(artist)
     end
 
@@ -90,7 +90,7 @@ module Hallon
     # @param [Symbol] size (see {Image.sizes})
     # @return [Link, nil] album cover as a spotify URI.
     def cover_link(size = :normal)
-      cover = Spotify.link_create_from_album_cover!(pointer, size)
+      cover = Spotify.link_create_from_album_cover(pointer, size)
       Link.from(cover)
     end
 

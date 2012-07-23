@@ -11,7 +11,7 @@ module Hallon
       size :toplistbrowse_num_tracks
 
       # @return [Track, nil]
-      item :toplistbrowse_track! do |track|
+      item :toplistbrowse_track do |track|
         Track.from(track)
       end
     end
@@ -21,7 +21,7 @@ module Hallon
       size :toplistbrowse_num_albums
 
       # @return [Album, nil]
-      item :toplistbrowse_album! do |album|
+      item :toplistbrowse_album do |album|
         Album.from(album)
       end
     end
@@ -31,7 +31,7 @@ module Hallon
       size :toplistbrowse_num_artists
 
       # @return [Artist, nil]
-      item :toplistbrowse_artist! do |artist|
+      item :toplistbrowse_artist do |artist|
         Artist.from(artist)
       end
     end
@@ -72,7 +72,7 @@ module Hallon
 
       subscribe_for_callbacks do |callback|
         @type    = type
-        @pointer = Spotify.toplistbrowse_create!(session.pointer, type, region, user, callback, nil)
+        @pointer = Spotify.toplistbrowse_create(session.pointer, type, region, user, callback, nil)
       end
     end
 
