@@ -52,7 +52,7 @@ describe Hallon::Observable::Playlist do
   end
 
   specification_for_callback "track_created_changed" do
-    let(:input)  { [a_pointer, 7, mock_user_raw, 15, :userdata] }
+    let(:input)  { [a_pointer, 7, mock_user, 15, :userdata] }
     let(:output) { [7, Hallon::User.new(mock_user), Time.at(15)] }
   end
 
