@@ -180,7 +180,7 @@ License
 Hallon is licensed under a 2-clause (Simplified) BSD license. More information can be found in the `LICENSE.txt` file.
 
 [Raspberry]:        http://images.google.com/search?q=raspberry&tbm=isch
-[Spotify for Ruby]: https://github.com/Burgestrand/libspotify-ruby
+[Spotify for Ruby]: https://github.com/Burgestrand/spotify
 [spotify gem]:      https://rubygems.org/gems/spotify
 [libspotify]:       http://developer.spotify.com/en/libspotify/overview/
 [Greenstripes]:     http://github.com/sarnesjo/greenstripes

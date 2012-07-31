@@ -2,7 +2,7 @@
 
 # Extensions to the Spotify gem.
 #
-# @see https://github.com/Burgestrand/libspotify-ruby
+# @see https://github.com/Burgestrand/spotify
 module Spotify
   # Extensions to SessionConfig, allowing more sensible configuration names.
   SessionConfig.class_eval do
