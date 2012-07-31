@@ -38,14 +38,14 @@ module Spotify
       layout :track, Track,
              :create_time, :int,
              :creator, User,
-             :message, :string_pointer,
+             :message, Spotify::NULString,
              :seen, :bool
     end
 
     class PlaylistContainerItem < FFI::Struct
       layout :playlist, Playlist,
              :type, :playlist_type,
-             :folder_name, :string_pointer,
+             :folder_name, Spotify::NULString,
              :folder_id, :uint64,
              :num_seen_tracks, :int,
              :seen_tracks, :array

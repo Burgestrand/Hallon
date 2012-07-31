@@ -16,7 +16,7 @@ RSpec::Core::ExampleGroup.instance_eval do
     items[0][:playlist] = mock_playlist
     items[0][:type]     = :playlist
 
-    items[1][:folder_name] = FFI::MemoryPointer.from_string("Boogie")
+    items[1][:folder_name] = "Boogie"
     items[1][:type]        = :start_folder
     items[1][:folder_id]   = 1337
 

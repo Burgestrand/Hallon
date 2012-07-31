@@ -32,7 +32,7 @@ RSpec::Core::ExampleGroup.instance_eval do
     tracks[0][:track] = mock_track
     tracks[0][:create_time] = Time.parse("2009-11-04").to_i
     tracks[0][:creator] = mock_user
-    tracks[0][:message] = FFI::MemoryPointer.from_string("message this, YO!")
+    tracks[0][:message] = "message this, YO!"
     tracks[0][:seen] = true
 
     tracks[1][:track] = mock_track_two
