@@ -23,7 +23,7 @@ RSpec::Core::ExampleGroup.instance_eval do
     items[2][:playlist] = mock_playlist_two
     items[2][:type]     = :playlist
 
-    items[3][:folder_name] = FFI::Pointer::NULL
+    items[3][:folder_name] = nil
     items[3][:type]        = :end_folder
     items[3][:folder_id]   = 1337
 

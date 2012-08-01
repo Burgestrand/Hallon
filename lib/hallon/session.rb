@@ -82,8 +82,8 @@ module Hallon
     # @param [#to_s] appkey
     # @param [Hash] options
     # @option options [String] :user_agent ("Hallon") User-Agent to use (length < `256`)
-    # @option options [String] :settings_path ("tmp") where to save settings and user-specific cache
-    # @option options [String] :cache_path ("") where to save cache files (`""` to disable)
+    # @option options [String] :settings_location ("tmp") where to save settings and user-specific cache
+    # @option options [String] :cache_location ("") where to save cache files (`""` to disable)
     # @option options [String] :tracefile (nil) path to libspotify API tracefile (`nil` to disable)
     # @option options [String] :device_id (nil) device ID for offline synchronization (`nil` to disable)
     # @option options [String] :proxy (nil) proxy URI (supports http, https, socks4, socks5)
@@ -105,8 +105,8 @@ module Hallon
 
       @options = {
         :user_agent => "Hallon",
-        :settings_path => "tmp/hallon/",
-        :cache_path => "tmp/hallon/",
+        :settings_location => "tmp/hallon/",
+        :cache_location => "tmp/hallon/",
         :load_playlists => true,
         :compress_playlists => true,
         :cache_playlist_metadata => true,
@@ -125,11 +125,12 @@ module Hallon
       @cache_size = 0
 
       subscribe_for_callbacks do |callbacks|
-        config = Spotify::SessionConfig.new
-        config[:api_version]   = Hallon::API_VERSION
-        config.application_key = appkey
-        @options.each { |(key, value)| config.send(:"#{key}=", value) }
-        config[:callbacks]     = callbacks
+        # not overridable
+        @options[:api_version] = Hallon::API_VERSION
+        @options[:initially_unload_playlists] = ! @options.delete(:load_playlists)
+        @options[:dont_save_metadata_for_playlists] = ! @options.delete(:cache_playlist_metadata)
+
+        config = Spotify::SessionConfig.new(@options.merge(application_key: appkey, callbacks: callbacks))
 
         instance_eval(&block) if block_given?
 

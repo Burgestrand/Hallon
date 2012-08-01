@@ -57,12 +57,12 @@ describe Hallon::Session do
   describe "options" do
     subject { session.options }
     its([:user_agent]) { should == options[:user_agent] }
-    its([:settings_path]) { should == options[:settings_path] }
-    its([:cache_path]) { should == options[:cache_path] }
+    its([:settings_location]) { should == options[:settings_location] }
+    its([:cache_location]) { should == options[:cache_location] }
 
-    its([:load_playlists]) { should == true }
+    its([:initially_unload_playlists]) { should == false }
     its([:compress_playlists]) { should == true }
-    its([:cache_playlist_metadata]) { should == true }
+    its([:dont_save_metadata_for_playlists]) { should == false }
   end
 
   describe "#container" do

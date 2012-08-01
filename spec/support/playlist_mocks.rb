@@ -38,13 +38,13 @@ RSpec::Core::ExampleGroup.instance_eval do
     tracks[1][:track] = mock_track_two
     tracks[1][:create_time] = Time.parse("2009-11-05").to_i
     tracks[1][:creator] = mock_user
-    tracks[1][:message] = FFI::MemoryPointer.from_string("message this, YO!")
+    tracks[1][:message] = "message this, YO!"
     tracks[1][:seen] = true
 
     tracks[2][:track] = mock_track
     tracks[2][:create_time] = Time.parse("2009-11-06").to_i
     tracks[2][:creator] = mock_user
-    tracks[2][:message] = FFI::MemoryPointer.from_string("message this, YO!")
+    tracks[2][:message] = "message this, YO!"
     tracks[2][:seen] = true
 
     tracks[3][:track] = mock_track_two

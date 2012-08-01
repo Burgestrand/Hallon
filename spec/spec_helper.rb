@@ -60,8 +60,8 @@ RSpec::Core::ExampleGroup.instance_eval do
   let(:options) do
     {
       :user_agent => "Hallon (rspec)",
-      :settings_path => "tmp",
-      :cache_path => ""
+      :settings_location => "tmp",
+      :cache_location => ""
     }
   end
 
