@@ -52,7 +52,7 @@ RSpec.configure do
       # sure the methods have the correct arity
       # (also, we can’t find the struct callback arity in any nice way)
       it "should have the correct arity" do
-        fn = Spotify.find_type(type)
+        fn = Spotify::API.find_type(type)
         subject_callback.arity.should eq fn.param_types.size
       end if method_defined?(:type)
     end

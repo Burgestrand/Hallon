@@ -44,7 +44,7 @@ module Hallon
         true
       else
         FFI::Buffer.alloc_out(:bool) do |buffer|
-          Spotify.session_is_scrobbling_possible!(session.pointer, provider, buffer)
+          Spotify.try(:session_is_scrobbling_possible, session.pointer, provider, buffer)
           return ! buffer.read_uchar.zero?
         end
       end
@@ -58,7 +58,7 @@ module Hallon
     # @param [Array<Username, Password>] credentials
     def credentials=(credentials)
       username, password = Array(credentials)
-      Spotify.session_set_social_credentials!(session.pointer, provider, username, password)
+      Spotify.try(:session_set_social_credentials, session.pointer, provider, username, password)
     end
 
     # Enables or disables the local scrobbling setting.
@@ -66,7 +66,7 @@ module Hallon
     # @param [Boolean] scrobble true if you want scrobbling to be enabled
     def enabled=(scrobble)
       state = scrobble ? :local_enabled : :local_disabled
-      Spotify.session_set_scrobbling!(session.pointer, provider, state)
+      Spotify.try(:session_set_scrobbling, session.pointer, provider, state)
     end
 
     # @return [Boolean] true if scrobbling (global or local) is enabled.
@@ -82,7 +82,7 @@ module Hallon
     #
     # @return [Scrobbler]
     def reset
-      tap { Spotify.session_set_scrobbling!(session.pointer, provider, :use_global_setting) }
+      tap { Spotify.try(:session_set_scrobbling, session.pointer, provider, :use_global_setting) }
     end
 
     protected

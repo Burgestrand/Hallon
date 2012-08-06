@@ -21,7 +21,7 @@ describe Hallon::Scrobbler do
 
   describe "#credentials=" do
     it "sets the credentials for the scrobbler provider" do
-      Spotify.should_receive(:session_set_social_credentials).with(anything, :facebook, "Kim", "password").and_return(:ok)
+      spotify_api.should_receive(:session_set_social_credentials).with(anything, :facebook, "Kim", "password").and_return(:ok)
       scrobbling.credentials = "Kim", "password"
     end
   end
@@ -38,7 +38,7 @@ describe Hallon::Scrobbler do
     end
 
     it "raises an error if libspotify does not like us" do
-      Spotify.should_receive(:session_is_scrobbling_possible).and_return(:invalid_indata)
+      spotify_api.should_receive(:session_is_scrobbling_possible).and_return(:invalid_indata)
       expect { scrobbling.possible? }.to raise_error(Spotify::Error)
     end
   end
@@ -53,14 +53,14 @@ describe Hallon::Scrobbler do
     end
 
     it "raises an error if setting scrobbling state fails" do
-      Spotify.should_receive(:session_set_scrobbling).and_return(:invalid_indata)
+      spotify_api.should_receive(:session_set_scrobbling).and_return(:invalid_indata)
       expect { scrobbling.enabled = true }.to raise_error(Spotify::Error, /INVALID_INDATA/)
     end
   end
 
   describe "#enabled?" do
     before do
-      Spotify.should_receive(:session_is_scrobbling).and_return do |session, provider, buffer|
+      spotify_api.should_receive(:session_is_scrobbling).and_return do |session, provider, buffer|
         buffer.write_int(Spotify.enum_value(state_symbol))
       end
     end
@@ -103,13 +103,14 @@ describe Hallon::Scrobbler do
       session = scrobbling.send(:session)
       state   = nil
       FFI::Buffer.alloc_out(:int) do |buffer|
-        Spotify.session_is_scrobbling!(session.pointer, scrobbling.provider, buffer)
+        Spotify.try(:session_is_scrobbling, session.pointer, scrobbling.provider, buffer)
         state = buffer.read_int
       end
       Spotify.enum_type(:scrobbling_state)[state]
     end
 
     it "sets the local scrobbling state to use the global state" do
+      state(scrobbling).should eq :use_global_setting
       scrobbling.enabled = true
       state(scrobbling).should eq :local_enabled
       scrobbling.reset

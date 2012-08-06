@@ -199,7 +199,7 @@ module Hallon
     # @raise [Spotify::Error] if no credentials are stored in libspotify
     # @see #relogin!
     def relogin
-      Spotify.session_relogin!(pointer)
+      Spotify.try(:session_relogin, pointer)
     end
 
     # Log in to Spotify using the given credentials.
@@ -412,7 +412,7 @@ module Hallon
     # @see Player.bitrates
     def offline_bitrate=(bitrate)
       bitrate, resync = Array(bitrate)
-      Spotify.session_preferred_offline_bitrate!(pointer, bitrate, !! resync)
+      Spotify.try(:session_preferred_offline_bitrate, pointer, bitrate, !! resync)
     end
 
     # @note Returns nil when no user is logged in.
@@ -462,7 +462,7 @@ module Hallon
       def tracks_starred(tracks, starred)
         FFI::MemoryPointer.new(:pointer, tracks.size) do |ptr|
           ptr.write_array_of_pointer tracks.map(&:pointer)
-          Spotify.track_set_starred!(pointer, ptr, tracks.size, starred)
+          Spotify.try(:track_set_starred, pointer, ptr, tracks.size, starred)
         end
       end
 

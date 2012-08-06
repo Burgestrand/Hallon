@@ -231,7 +231,7 @@ describe Hallon::Playlist do
     end
 
     it "should return an empty array when there are no subscribers" do
-      Spotify.should_receive(:playlist_subscribers).and_return(mock_empty_subscribers)
+      spotify_api.should_receive(:playlist_subscribers).and_return(mock_empty_subscribers)
       playlist.subscribers.should eq []
     end
 
@@ -359,22 +359,22 @@ describe Hallon::Playlist do
     end
 
     specify "#available_offline?" do
-      Spotify.should_receive(:playlist_get_offline_status).and_return symbol_for(1)
+      spotify_api.should_receive(:playlist_get_offline_status).and_return symbol_for(1)
       playlist.should be_available_offline
     end
 
     specify "#syncing?" do
-      Spotify.should_receive(:playlist_get_offline_status).and_return symbol_for(2)
+      spotify_api.should_receive(:playlist_get_offline_status).and_return symbol_for(2)
       playlist.should be_syncing
     end
 
     specify "#waiting?" do
-      Spotify.should_receive(:playlist_get_offline_status).and_return symbol_for(3)
+      spotify_api.should_receive(:playlist_get_offline_status).and_return symbol_for(3)
       playlist.should be_waiting
     end
 
     specify "#offline_mode?" do
-      Spotify.should_receive(:playlist_get_offline_status).and_return symbol_for(0)
+      spotify_api.should_receive(:playlist_get_offline_status).and_return symbol_for(0)
       playlist.should_not be_offline_mode
     end
   end

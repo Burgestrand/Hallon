@@ -208,7 +208,7 @@ module Hallon
     # @raise [Spotify::Error] if libspotify does not accept the given bitrate
     # @param [Symbol] bitrate one of :96k, :160k, :320k
     def bitrate=(bitrate)
-      Spotify.session_preferred_bitrate!(pointer, bitrate)
+      Spotify.try(:session_preferred_bitrate, pointer, bitrate)
     end
 
     # Loads a Track for playing.

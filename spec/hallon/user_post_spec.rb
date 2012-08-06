@@ -22,7 +22,7 @@ describe Hallon::User::Post do
 
   describe ".create" do
     it "should return nil if the inboxpost failed" do
-      Spotify.should_receive(:inbox_post_tracks).and_return(null_pointer)
+      spotify_api.should_receive(:inbox_post_tracks).and_return(null_pointer)
       post.should be_nil
     end
 

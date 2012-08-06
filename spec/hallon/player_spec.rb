@@ -31,43 +31,43 @@ describe Hallon::Player do
 
   describe "#load" do
     it "should load the given track" do
-      Spotify.should_receive(:session_player_load).with(session.pointer, track.pointer)
+      spotify_api.should_receive(:session_player_load).with(session.pointer, track.pointer)
       player.load(track)
     end
 
     it "should try to instantiate the track if it’s not a track" do
-      Spotify.should_receive(:session_player_load).with(session.pointer, track.pointer)
+      spotify_api.should_receive(:session_player_load).with(session.pointer, track.pointer)
       player.load(track.to_str)
     end
 
     it "should raise an error if load was unsuccessful" do
-      Spotify.should_receive(:session_player_load).and_return(:is_loading)
+      spotify_api.should_receive(:session_player_load).and_return(:is_loading)
       expect { player.load(track) }.to raise_error(Hallon::Error, /IS_LOADING/)
     end
   end
 
   describe "#stop" do
     it "should unload the currently loaded track" do
-      Spotify.should_receive(:session_player_unload).with(session.pointer)
+      spotify_api.should_receive(:session_player_unload).with(session.pointer)
       player.stop
     end
   end
 
   describe "#prefetch" do
     it "should set up given track for prefetching" do
-      Spotify.should_receive(:session_player_prefetch).with(session.pointer, track.pointer)
+      spotify_api.should_receive(:session_player_prefetch).with(session.pointer, track.pointer)
       player.prefetch(track)
     end
   end
 
   describe "#play" do
     it "should start playback of given track" do
-      Spotify.should_receive(:session_player_play).with(session.pointer, true)
+      spotify_api.should_receive(:session_player_play).with(session.pointer, true)
       player.play
     end
 
     it "should load and play given track if one was given" do
-      Spotify.should_receive(:session_player_play).with(session.pointer, true)
+      spotify_api.should_receive(:session_player_play).with(session.pointer, true)
       player.should_receive(:load).with(track)
       player.play(track)
     end
@@ -75,14 +75,14 @@ describe Hallon::Player do
 
   describe "#pause" do
     it "should stop playback of given track" do
-      Spotify.should_receive(:session_player_play).with(session.pointer, false)
+      spotify_api.should_receive(:session_player_play).with(session.pointer, false)
       player.pause
     end
   end
 
   describe "#seek" do
     it "should set up the currently loaded track at given position" do
-      Spotify.should_receive(:session_player_seek).with(session.pointer, 1000)
+      spotify_api.should_receive(:session_player_seek).with(session.pointer, 1000)
       player.seek(1)
     end
   end

@@ -1,8 +1,8 @@
 # coding: utf-8
 describe Hallon::Enumerator do
   def enumerator(items)
-    Spotify.stub(:enumerator_size => items)
-    Spotify.stub(:enumerator_item).and_return { |_, i| alphabet[i] }
+    spotify_api.stub(:enumerator_size => items)
+    spotify_api.stub(:enumerator_item).and_return { |_, i| alphabet[i] }
 
     klass = Class.new(Hallon::Enumerator) do
       size :enumerator_size

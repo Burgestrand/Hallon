@@ -1,6 +1,6 @@
 describe Spotify::Mock do
   it "should have injected itself into Spotify's ancestor chain" do
-    ancestors = (class << Spotify; self; end).ancestors
+    ancestors = Spotify::API.singleton_class.ancestors
     mock_index = ancestors.index(Spotify::Mock)
     ffi_index  = ancestors.index(FFI::Library)
 
@@ -9,14 +9,14 @@ describe Spotify::Mock do
 
   describe "hextoa" do
     it "should convert a hexidecimal string properly" do
-      Spotify.attach_function :hextoa, :hextoa, [:string, :int], :string
+      Spotify::API.attach_function :hextoa, :hextoa, [:string, :int], :string
       Spotify.hextoa("3A3A", 4).should eq "::"
     end
   end
 
   describe "atohex" do
     it "should convert a byte string to a hexadecimal string" do
-      Spotify.attach_function :atohex, :atohex, [:buffer_out, :buffer_in, :int], :void
+      Spotify::API.attach_function :atohex, :atohex, [:buffer_out, :buffer_in, :int], :void
 
       FFI::Buffer.alloc_out(8) do |b|
         Spotify.atohex(b, "\x3A\x3A\x0F\xF1", b.size)
@@ -27,7 +27,7 @@ describe Spotify::Mock do
 
   describe "unregion" do
     it "should convert an integer to the correct region" do
-      Spotify.attach_function :unregion, :unregion, [ :int ], :string
+      Spotify::API.attach_function :unregion, :unregion, [ :int ], :string
 
       sweden = 21317
       Spotify.unregion(sweden).should eq "SE"

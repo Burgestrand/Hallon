@@ -102,7 +102,7 @@ describe Hallon::PlaylistContainer do
     end
 
     it "should return nil when failing to add the item" do
-      Spotify.should_receive(:playlistcontainer_add_playlist).and_return(null_pointer)
+      spotify_api.should_receive(:playlistcontainer_add_playlist).and_return(null_pointer)
       playlist = container.add Hallon::Link.new("spotify:user:burgestrand")
       playlist.should be_nil
     end
@@ -295,7 +295,7 @@ describe Hallon::PlaylistContainer do
     end
 
     it "raises an error if the result was an error (but count was not)" do
-      Spotify.should_receive(:playlistcontainer_get_unseen_tracks).and_return(4, -1)
+      spotify_api.should_receive(:playlistcontainer_get_unseen_tracks).and_return(4, -1)
       expect { container.unseen_tracks_for(empty_playlist) }.to raise_error(Hallon::OperationFailedError)
     end
   end

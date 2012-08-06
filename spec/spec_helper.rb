@@ -28,8 +28,8 @@ RSpec.configure do |config|
     Hallon::Session.stub(:instance).and_return(session)
   end
 
-  config.after do
-    Spotify.mock_registry_clean
+  def spotify_api
+    Spotify::API
   end
 
   def fixture_image_path
@@ -73,6 +73,10 @@ Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| require f}
 Dir["#{File.dirname(__FILE__)}/fixtures/**/*.rb"].each {|f| require f}
 
 RSpec.configure do |config|
+  config.after do
+    Spotify.mock_registry_clean
+  end
+
   config.before do
     Spotify.mock_registry_add 'spotify:image:3ad93423add99766e02d563605c6e76ed2b0e400', mock_image
     Spotify.mock_registry_add 'spotify:user:burgestrand:playlist:megaplaylist', mock_playlist_two

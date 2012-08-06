@@ -11,7 +11,7 @@ describe Hallon::Base do
   end
 
   let(:base_pointer) do
-    Spotify.stub(:base_pointer_release => nil)
+    spotify_api.stub(:base_pointer_release => nil)
     Spotify::BasePointer.new(a_pointer)
   end
 

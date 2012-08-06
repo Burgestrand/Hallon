@@ -15,7 +15,7 @@ describe Hallon::ArtistBrowse do
 
   describe ".new" do
     it "should raise an error if the browse request failed" do
-      Spotify.should_receive(:artistbrowse_create).and_return(null_pointer)
+      spotify_api.should_receive(:artistbrowse_create).and_return(null_pointer)
       expect { Hallon::ArtistBrowse.new(mock_artist) }.to raise_error(FFI::NullPointerError)
     end
 

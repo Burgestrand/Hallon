@@ -181,17 +181,17 @@ describe Hallon::Track do
     end
 
     it "should unwrap a playlist placeholder into a playlist" do
-      Spotify.should_receive(:link_create_from_track).and_return(playlist)
+      spotify_api.should_receive(:link_create_from_track).and_return(playlist)
       track.unwrap.should eq Hallon::Playlist.new(playlist)
     end
 
     it "should unwrap an album placeholder into an album" do
-      Spotify.should_receive(:link_create_from_track).and_return(album)
+      spotify_api.should_receive(:link_create_from_track).and_return(album)
       track.unwrap.should eq Hallon::Album.new(album)
     end
 
     it "should unwrap an artist placeholder into an artist" do
-      Spotify.should_receive(:link_create_from_track).and_return(artist)
+      spotify_api.should_receive(:link_create_from_track).and_return(artist)
       track.unwrap.should eq Hallon::Artist.new(artist)
     end
   end

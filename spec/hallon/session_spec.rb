@@ -133,12 +133,12 @@ describe Hallon::Session do
     end
 
     it "should login with a blob when given a blob" do
-      Spotify.should_receive(:session_login).with(anything, 'Kim', nil, false, 'blob')
+      spotify_api.should_receive(:session_login).with(anything, 'Kim', nil, false, 'blob')
       session.login 'Kim', Hallon::Blob('blob')
     end
 
     it "should not login with a blob when not given a blob" do
-      Spotify.should_receive(:session_login).with(anything, 'Kim', 'pass', false, nil)
+      spotify_api.should_receive(:session_login).with(anything, 'Kim', 'pass', false, nil)
       session.login 'Kim', 'pass'
     end
   end
@@ -241,7 +241,7 @@ describe Hallon::Session do
     end
 
     it "should combine given rules and feed to libspotify" do
-      Spotify.should_receive(:session_set_connection_rules).with(session.pointer, 5)
+      spotify_api.should_receive(:session_set_connection_rules).with(session.pointer, 5)
       session.connection_rules = :network, :allow_sync_over_mobile
     end
   end
@@ -261,7 +261,7 @@ describe Hallon::Session do
       end
 
       it "returns an empty hash when offline sync status details are unavailable" do
-        Spotify.should_receive(:offline_sync_get_status).and_return(false)
+        spotify_api.should_receive(:offline_sync_get_status).and_return(false)
         session.offline_sync_status.should eq Hash.new
       end
     end
@@ -281,12 +281,12 @@ describe Hallon::Session do
 
   describe "#offline_bitrate=" do
     it "should not resync unless explicitly told so" do
-      Spotify.should_receive(:session_preferred_offline_bitrate).with(session.pointer, :'96k', false).and_return(:ok)
+      spotify_api.should_receive(:session_preferred_offline_bitrate).with(session.pointer, :'96k', false).and_return(:ok)
       session.offline_bitrate = :'96k'
     end
 
     it "should resync if asked to" do
-      Spotify.should_receive(:session_preferred_offline_bitrate).with(session.pointer, :'96k', true).and_return(:ok)
+      spotify_api.should_receive(:session_preferred_offline_bitrate).with(session.pointer, :'96k', true).and_return(:ok)
       session.offline_bitrate = :'96k', :resync
     end
 

@@ -21,12 +21,12 @@ describe Hallon::Search do
 
   describe ".new" do
     it "should have some sane defaults" do
-      Spotify.should_receive(:search_create).with(session.pointer, "my å utf8  query", 0, 25, 0, 25, 0, 25, 0, 25, :standard, anything, anything).and_return(mock_search)
+      spotify_api.should_receive(:search_create).with(session.pointer, "my å utf8  query", 0, 25, 0, 25, 0, 25, 0, 25, :standard, anything, anything).and_return(mock_search)
       Hallon::Search.new("my å utf8  query")
     end
 
     it "should allow you to customize the defaults" do
-      Spotify.should_receive(:search_create).with(session.pointer, "my å utf8  query", 1, 2, 3, 4, 5, 6, 7, 8, :suggest, anything, anything).and_return(mock_search)
+      spotify_api.should_receive(:search_create).with(session.pointer, "my å utf8  query", 1, 2, 3, 4, 5, 6, 7, 8, :suggest, anything, anything).and_return(mock_search)
       my_params = {
         :tracks_offset  => 1,
         :tracks         => 2,
@@ -47,7 +47,7 @@ describe Hallon::Search do
     end
 
     it "should raise an error if the search failed" do
-      Spotify.should_receive(:search_create).and_return(null_pointer)
+      spotify_api.should_receive(:search_create).and_return(null_pointer)
       expect { Hallon::Search.new("omgwtfbbq") }.to raise_error(/search (.*?) failed/)
     end
   end

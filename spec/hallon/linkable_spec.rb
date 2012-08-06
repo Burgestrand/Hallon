@@ -10,7 +10,7 @@ describe Hallon::Linkable do
   let(:object) { klass.new }
   let(:pointer) { FFI::Pointer.new(1) }
 
-  before(:each) { Spotify.stub(:link_as_search) }
+  before(:each) { spotify_api.stub(:link_as_search) }
 
   it "should define the #from_link method" do
     object.respond_to?(:from_link, true).should be_false
@@ -24,7 +24,7 @@ describe Hallon::Linkable do
 
   describe "#to_link" do
     it "should return nil if link creation failed" do
-      Spotify.should_receive(:link_create_from_user).and_return(null_pointer)
+      spotify_api.should_receive(:link_create_from_user).and_return(null_pointer)
 
       klass.instance_eval do
         to_link(:from_user)
@@ -48,7 +48,7 @@ describe Hallon::Linkable do
 
   describe "#from_link" do
     it "should call the appropriate Spotify function" do
-      Spotify.should_receive(:link_as_search).and_return(pointer)
+      spotify_api.should_receive(:link_as_search).and_return(pointer)
 
       klass.instance_eval do
         from_link(:as_search)
@@ -58,7 +58,7 @@ describe Hallon::Linkable do
     end
 
     it "should call the given block if necessary" do
-      Spotify.should_not_receive(:link_as_search)
+      spotify_api.should_not_receive(:link_as_search)
 
       called  = false
       pointer = double(:null? => false)
