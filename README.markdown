@@ -5,6 +5,14 @@ Hallon (Swedish for “[Raspberry][]”) is _the_ ruby gem for interacting with 
 
 Code samples can be found under the `examples/` directory. An explanation on how to run them can be found on the [Hallon wiki on GitHub](https://github.com/Burgestrand/Hallon/wiki).
 
+### Contact details
+
+- __Got questions?__ Ask on the mailing list: <mailto:ruby-hallon@googlegroups.com> (<https://groups.google.com/d/forum/ruby-hallon>)
+- __Found a bug?__ Report an issue: <https://github.com/Burgestrand/Hallon/issues/new>
+- __Have feedback?__ I ❤ feedback! Please send it to the mailing list.
+
+If you for some reason cannot use the mailing list or GitHub issue tracker you may contact me directly. My email is found on [my GitHub profile](https://github.com/Burgestrand), and I’m also available as [@burgestrand on twitter](https://twitter.com/Burgestrand).
+
 Prerequisites
 -------------
 
@@ -59,14 +67,6 @@ gem install hallon-openal
 ```
 
 For more information about audio support in Hallon, see the section "Audio support" below.
-
-### Contact details
-
-- __Got questions?__ Ask on the mailing list: <mailto:ruby-hallon@googlegroups.com> (<https://groups.google.com/d/forum/ruby-hallon>)
-- __Found a bug?__ Report an issue: <https://github.com/Burgestrand/Hallon/issues/new>
-- __Have feedback?__ I ❤ feedback! Please send it to the mailing list.
-
-If you for some reason cannot use the mailing list or GitHub issue tracker you may contact me directly. My email is found on [my GitHub profile](https://github.com/Burgestrand), and I’m also available as [@burgestrand on twitter](https://twitter.com/Burgestrand).
 
 Hallon and Spotify objects
 --------------------------
