@@ -4,6 +4,16 @@ Hallon’s Changelog
 [HEAD][]
 ------------------
 
+[v0.18.1][]
+------------------
+Hallon now supports spotify ~> 12.3.0. As a result, you no longer need to manually install
+libspotify except in cases where the gem does not exist for your platform. I’ve tried to be
+as liberal as possible in the gem platform choice, so manual installation should be a rare
+occurrence.
+
+This release mostly brings an internal change, and should not affect the public API, and as
+such only the patch version has been increased.
+
 [v0.18.0][]
 ------------------
 This issue is to plug a bug of libspotify on Linux (see issue #125). The reason that
@@ -396,4 +406,5 @@ easier to handle.
 [v0.16.0]: https://github.com/Burgestrand/Hallon/compare/v0.15.0...v0.16.0
 [v0.17.0]: https://github.com/Burgestrand/Hallon/compare/v0.16.0...v0.17.0
 [v0.18.0]: https://github.com/Burgestrand/Hallon/compare/v0.17.0...v0.18.0
-[HEAD]: https://github.com/Burgestrand/Hallon/compare/v0.17.0...HEAD
+[v0.18.1]: https://github.com/Burgestrand/Hallon/compare/v0.18.0...v0.18.1
+[HEAD]: https://github.com/Burgestrand/Hallon/compare/v0.18.1...HEAD

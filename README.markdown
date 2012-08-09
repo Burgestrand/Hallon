@@ -15,9 +15,7 @@ Before you start using Hallon you’ll need to complete the following steps.
 2. [Download your application key from developer.spotify.com](https://developer.spotify.com/en/libspotify/application-key/),
    and place it in a known location. You’ll have the option of downloading it either in **binary** or c-code. You want the
    **binary** one. If you do not have an application key already, you will be asked to create one.
-3. Install libspotify. Hallon always aims to support to most recent version, which is currently **v12.1.51**. Older
-   versions are not supported. For help installing libspotify, please see the wiki on [How to install libspotify][].
-4. Once the above are done, you are ready to try out Hallon.
+3. Once the above are done, you are ready to try out Hallon.
 
 ### Using Hallon
 
@@ -160,7 +158,11 @@ Finally, here are some important notes
 [Fork](http://help.github.com/forking/) Hallon, write tests for everything you do (so I don’t break your stuff during my own development) and send a pull request. If you modify existing files, please adhere to the coding standard surrounding your code.
 
 ### Hallon uses [semantic versioning](http://semver.org) as of v0.0.0
-As long as Hallon stays at major version 0, no guarantees of backwards-compatibility are made. `CHANGELOG.md` will be kept up to date with the different versions.
+As long as Hallon stays at major version 0 its API should be considered experimental. I expect it to change a lot to version v1.0.0.
+
+Hallon is not without version policy, however. As of version **v0.18.0** I aim to only increase the minor version when backwards-incompatible
+changes are made. Therefore, it should be safe to upgrade between minor versions, i.e. specify version constraints with the patch version as
+the variable version: `hallon ~> v0.18.0`.
 
 ### Hallon only supports one session per process
 You can only keep one session with Spotify alive at a time within the same process, due to a limitation of libspotify.
@@ -170,6 +172,9 @@ If you fork, you need to instantiate the session within the process you plan to 
 
 ### Hallon and platforms
 Hallon aims to support the available platforms of the Spotify gem, which in turn depends somewhat on the platforms that libspotify support. As of current, Hallon officially supports Mac OS and Linux distributions that libspotify supports. Windows support is possible, but is yet to have been needed.
+
+### Having trouble with libspotify missing?
+If so, it may be the case that your platform is not supported by the [libspotify gem](http://rubygems.org/gems/libspotify). Hallon’s wiki has an article on [How to install libspotify](https://github.com/Burgestrand/Hallon/wiki/How-to-install-libspotify) for you. However, please also [report an issue on the libspotify gem](https://github.com/Burgestrand/libspotify/issues), I’d appreciate it, thank you!
 
 Credits
 -------
