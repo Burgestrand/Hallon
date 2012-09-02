@@ -21,6 +21,7 @@ Gem::Specification.new do |gem|
   gem.platform    = Gem::Platform::RUBY
   gem.required_ruby_version = '>= 1.9'
 
+  gem.add_dependency 'weak_observable', '~> 1.0'
   gem.add_dependency 'ref', '~> 1.0'
   gem.add_dependency 'spotify', '~> 12.3.0'
   gem.add_development_dependency 'rake', '~> 0.8'

@@ -22,31 +22,7 @@ module Hallon
       # @param [Object] object
       # @param [FFI::Pointer] pointer
       def subscribe(object, pointer)
-        key = pointer.address
-        ref = Ref::WeakReference.new(object)
-
-        @lock.synchronize do
-          if @subscribers_rev[ref.referenced_object_id]
-            raise ArgumentError, "already subscribed to callbacks"
-          end
-
-          @subscribers[key] ||= {} # use a hash for fast reverse lookups
-          @subscribers[key][ref.referenced_object_id] = ref
-          @subscribers_rev[ref.referenced_object_id] = key
-        end
-
-        ObjectSpace.define_finalizer(object, @unsubscriber)
-      end
-
-      # Retrieve all subscribers for a given pointer.
-      #
-      # @param [FFI::Pointer] pointer
-      def subscribers_for(pointer)
-        key = pointer.address
-
-        @lock.synchronize do
-          @subscribers.fetch(key, {}).values.map(&:object).compact
-        end
+        @observers.add(pointer.address, object, :trigger)
       end
 
       protected
@@ -57,18 +33,7 @@ module Hallon
       # track of all subscribers properly.
       def initialize_observable
         @callbacks = initialize_callbacks
-
-        @lock = Ref::SafeMonitor.new
-        @subscribers = {}
-        @subscribers_rev = {}
-        @unsubscriber = proc do |object_id|
-          @lock.synchronize do
-            if key = @subscribers_rev.delete(object_id)
-              @subscribers[key].delete(object_id)
-              @subscribers.delete(key) if @subscribers[key].empty?
-            end
-          end
-        end
+        @observers = WeakObservable::Hub.new
       end
 
       # @param [#to_s] name
@@ -86,9 +51,8 @@ module Hallon
       # @param […] arguments
       # @return whatever the (last) handler returned
       def trigger(pointer, event, *arguments)
-        subscribers_for(pointer).inject(nil) do |_, subscriber|
-          # trigger is protected, inconvenient but symbolic
-          subscriber.send(:trigger, event, *arguments)
+        if results = @observers.notify(pointer.address, event, *arguments)
+          results[-1]
         end
       end
     end
@@ -104,11 +68,10 @@ module Hallon
     # @return [Proc] the previous handler
     # @yield (*args) event handler block
     def on(event, &block)
+      event &&= event.to_s
       raise ArgumentError, "no block given" unless block
       raise NameError, "no such callback: #{event}" unless has_callback?(event)
-      handlers[event.to_s].tap do
-        handlers[event.to_s] = block
-      end
+      handlers[event].tap { handlers[event] = block }
     end
 
     # Wait for the given callbacks to fire until the block returns true

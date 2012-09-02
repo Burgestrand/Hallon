@@ -54,27 +54,6 @@ describe Hallon::Observable do
 
   describe "ClassMethods" do
     subject { klass }
-
-    describe ".subscribers_for" do
-      around { |test| Ref::Mock.use(&test) }
-
-      it "should contain a list of weak references to subscribers" do
-        ptr = FFI::Pointer.new(0xDEADBEEF)
-
-        objA = klass.new
-        subject.subscribers_for(ptr).should eq [objA]
-
-        objB = klass.new
-        subject.subscribers_for(ptr).should eq [objA, objB]
-
-        Ref::Mock.gc(objA)
-        subject.subscribers_for(ptr).should eq [objB]
-      end
-
-      it "should return an empty array if there are no subscribers" do
-        subject.subscribers_for(null_pointer).should be_empty
-      end
-    end
   end
 
   subject { klass.new }
@@ -142,11 +121,6 @@ describe Hallon::Observable do
   describe "#subscribe_for_callbacks" do
     it "should yield indiscriminetly" do
       expect { subject.send(:subscribe_for_callbacks) }.to raise_error(LocalJumpError)
-    end
-
-    it "should raise an error if the same object tries to subscribe twice" do
-      # we already subscribed for callbacks in initialize
-      expect { subject.send(:subscribe_for_callbacks) {} }.to raise_error(ArgumentError)
     end
 
     it "should do nothing if the result is a null pointer" do

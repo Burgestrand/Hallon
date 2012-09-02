@@ -3,6 +3,7 @@ require 'spotify'
 require 'hallon/ext/spotify'
 require 'hallon/ext/ffi'
 
+require 'weak_observable'
 require 'hallon/observable'
 require 'hallon/linkable'
 require 'hallon/loadable'
