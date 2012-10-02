@@ -103,8 +103,8 @@ describe Hallon::Observable do
     it "should return the previous callback" do
       previous = proc { puts "hey!" }
       new_one  = proc { puts "ho!" }
-      initial  = subject.on(:testing, &previous)
 
+      subject.on(:testing, &previous)
       subject.on(:testing, &new_one).should eq previous
       subject.on(:testing, &previous).should eq new_one
     end
