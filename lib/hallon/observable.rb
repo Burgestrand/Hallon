@@ -141,6 +141,15 @@ module Hallon
       handlers.replace(old_handlers)
     end
 
+    # @param [#to_s] name
+    # @param [...] arguments
+    # @return whatever the handler returns
+    def trigger(name, *arguments, &block)
+      if handler = handlers[name.to_s]
+        handler.call(*arguments, &block)
+      end
+    end
+
     protected
 
     # Register this object as interested in callbacks.
@@ -151,15 +160,6 @@ module Hallon
     def subscribe_for_callbacks
       yield(self.class.callbacks).tap do
         self.class.subscribe(self, pointer) unless pointer.null?
-      end
-    end
-
-    # @param [#to_s] name
-    # @param [...] arguments
-    # @return whatever the handler returns
-    def trigger(name, *arguments, &block)
-      if handler = handlers[name.to_s]
-        handler.call(*arguments, &block)
       end
     end
 
