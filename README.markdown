@@ -11,7 +11,7 @@ Code samples can be found under the `examples/` directory. An explanation on how
 - __Found a bug?__ Report an issue: <https://github.com/Burgestrand/Hallon/issues/new>
 - __Have feedback?__ I ❤ feedback! Please send it to the mailing list.
 
-If you for some reason cannot use the mailing list or GitHub issue tracker you may contact me directly. My email is found on [my GitHub profile](https://github.com/Burgestrand), and I’m also available as [@burgestrand on twitter](https://twitter.com/Burgestrand).
+If you for some reason cannot use the mailing list or GitHub issue tracker you may contact me directly. My email is found on [my GitHub profile](https://github.com/Burgestrand).
 
 Prerequisites
 -------------
