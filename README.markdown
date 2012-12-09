@@ -170,6 +170,9 @@ You can only keep one session with Spotify alive at a time within the same proce
 ### When forking, you need to be extra careful
 If you fork, you need to instantiate the session within the process you plan to use Hallon in. You want to use Hallon in the parent? Create the session in the parent. You want to use it in the child? Create the session in the child! This is a limitation of libspotify itself.
 
+### You must not share cache directory between processes
+Hallon uses `tmp/hallon` as both cache and settings directory by default. If you launch Hallon in multiple processes, you must make sure that `cache_location` is not shared between them, by changing it in the call to [Session.initialize][], or libspotify will lock up.
+
 ### Hallon and platforms
 Hallon aims to support the available platforms of the Spotify gem, which in turn depends somewhat on the platforms that libspotify support. As of current, Hallon officially supports Mac OS and Linux distributions that libspotify supports. Windows support is possible, but is yet to have been needed.
 
