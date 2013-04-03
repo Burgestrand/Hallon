@@ -42,7 +42,8 @@ end
 
 # Making sure you receive the latest of the latest. Hallon does not wish to
 # be replaced by older versions when showing you the shiny.
-$LOAD_PATH.unshift(File.expand_path('../lib', File.dirname(__FILE__)))
+require 'bundler'
+Bundler.setup
 require 'hallon'
 
 # This is a quick sanity check, to make sure we have all the necessities in order.
