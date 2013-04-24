@@ -4,6 +4,12 @@ Hallon’s Changelog
 [HEAD][]
 ------------------
 
+No changes to public API. Mostly some cleanup, and support for the new
+Spotify gem.
+
+- [470bc9786] Use weak_observable gem for weak reference callbacks.
+- [b2feb8095] Require newest FFI and Spotify versions.
+
 [v0.18.1][]
 ------------------
 Hallon now supports spotify ~> 12.3.0. As a result, you no longer need to manually install
