@@ -49,15 +49,15 @@ describe Hallon::Observable::Session do
       frames
     end
 
-    let(:format) do
+    let(:format_struct) do
       struct = Spotify::AudioFormat.new
       struct[:sample_type] = :int16
       struct[:sample_rate] = 44100 # 44.1khz
       struct[:channels]    = 2
-      struct.pointer
+      struct
     end
 
-    let(:input)  { [a_pointer, format, frames, num_frames] }
+    let(:input)  { [a_pointer, format_struct, frames, num_frames] }
     let(:output) { [{rate: 44100, type: :int16, channels: 2}, data.each_slice(2)] }
 
     it "should return the resulting value" do
@@ -70,7 +70,7 @@ describe Hallon::Observable::Session do
     end
 
     it "should not go ballistic when there is no audio data" do
-      subject_callback.call(a_pointer, format, FFI::Pointer::NULL, 0)
+      subject_callback.call(a_pointer, format_struct, FFI::Pointer::NULL, 0)
     end
   end
 
@@ -95,7 +95,8 @@ describe Hallon::Observable::Session do
   end
 
   specification_for_callback "get_audio_buffer_stats" do
-    let(:input)  { [a_pointer, Spotify::AudioBufferStats.new.pointer] }
+    let(:struct) { Spotify::AudioBufferStats.new }
+    let(:input)  { [a_pointer, struct] }
     let(:output) { [] }
 
     it "should return the resulting audio buffer stats" do
@@ -104,7 +105,7 @@ describe Hallon::Observable::Session do
 
       stats[:samples].should eq 0
       stats[:stutter].should eq 0
-      subject_callback.call(a_pointer, stats.pointer)
+      subject_callback.call(a_pointer, stats)
       stats[:samples].should eq 5
       stats[:stutter].should eq 7
     end
@@ -114,7 +115,7 @@ describe Hallon::Observable::Session do
 
       stats[:samples].should eq 0
       stats[:stutter].should eq 0
-      subject_callback.call(a_pointer, stats.pointer)
+      subject_callback.call(a_pointer, stats)
       stats[:samples].should eq 0
       stats[:stutter].should eq 0
     end

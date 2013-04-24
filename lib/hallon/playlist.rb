@@ -250,20 +250,8 @@ module Hallon
     #       libspotify does not store more than 500 subscriber names
     # @return [Array<String>] list of canonical usernames
     def subscribers
-      ptr = Spotify.playlist_subscribers(pointer)
-
-      if ptr.null?
-        []
-      else
-        struct = Spotify::Subscribers.new(ptr)
-        if struct[:count].zero?
-          []
-        else
-          struct[:subscribers].map(&:read_string)
-        end
-      end
-    ensure
-      Spotify.playlist_subscribers_free(ptr) unless ptr.null?
+      subscribers = Spotify.playlist_subscribers(pointer)
+      subscribers.to_a
     end
 
     # @return [Integer] total number of subscribers.

@@ -37,14 +37,14 @@ module Spotify
       layout :track, :pointer,
              :create_time, :int,
              :creator, :pointer,
-             :message, Spotify::NULString,
+             :message, Spotify::UTF8StringPointer,
              :seen, :bool
     end
 
     class PlaylistContainerItem < Spotify::Struct
       layout :playlist, :pointer,
              :type, :playlist_type,
-             :folder_name, Spotify::NULString,
+             :folder_name, Spotify::UTF8StringPointer,
              :folder_id, :uint64,
              :num_seen_tracks, :int,
              :seen_tracks, :array
@@ -82,7 +82,7 @@ module Spotify
     attach_function :mock_playlist_create, [:string, :bool, :user, :bool, :string, ImageID, :bool, :uint, Subscribers, :bool, :playlist_offline_status, :int, :int, :array], Playlist
     attach_function :mock_playlistcontainer_create, [:user, :bool, :int, :array, PlaylistContainerCallbacks, :userdata], PlaylistContainer
     attach_function :mock_search_create, [:error, :string, :string, :int, :int, :array, :int, :int, :array, :int, :int, :array, :int, :int, :array, :search_complete_cb, :userdata], Search
-    attach_function :mock_subscribers, [:int, :array], Subscribers
+    attach_function :mock_subscribers, [:int, :array], Subscribers.by_ref
 
     # mocked accessors
     attach_function :mock_playlist_get_autolink_tracks, [Playlist], :bool

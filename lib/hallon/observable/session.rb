@@ -91,13 +91,12 @@ module Hallon::Observable
     # @yield [format, frames]
     # @yieldparam [Hash] format (contains :type, :rate, :channels)
     # @yieldparam [Enumerator<[Integer...]>] frames (each frame is an array containing format[:channels] integers of format[:type])
-    def music_delivery_callback(pointer, format, frames, num_frames)
-      struct = Spotify::AudioFormat.new(format)
-
-      format = {}
-      format[:rate] = struct[:sample_rate]
-      format[:channels] = struct[:channels]
-      format[:type] = struct[:sample_type]
+    def music_delivery_callback(pointer, format_struct, frames, num_frames)
+      format = {
+        rate: format_struct[:sample_rate],
+        channels: format_struct[:channels],
+        type: format_struct[:sample_type]
+      }
 
       # read the frames of the given type
       frames = unless num_frames.zero?
@@ -161,7 +160,6 @@ module Hallon::Observable
     # @yield []
     # @yieldreturn an integer pair, [samples, dropouts]
     def get_audio_buffer_stats_callback(pointer, stats)
-      stats = Spotify::AudioBufferStats.new(stats)
       samples, dropouts = trigger(pointer, :get_audio_buffer_stats)
       stats[:samples]  = samples.to_i
       stats[:stutter] = dropouts.to_i
