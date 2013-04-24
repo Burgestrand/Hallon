@@ -28,3 +28,4 @@ pkg
 
 ## Mac OS
 .DS_Store
+examples/common.rb
