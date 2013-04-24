@@ -4,6 +4,8 @@ Hallon’s Changelog
 [HEAD][]
 ------------------
 
+[v0.18.2][]
+------------------
 No changes to public API. Mostly some cleanup, and support for the new
 Spotify gem.
 
