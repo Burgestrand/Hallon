@@ -46,14 +46,16 @@ require 'bundler'
 Bundler.setup
 require 'hallon'
 
+begin
+  require_relative 'common'
+rescue LoadError
+end
+
 # This is a quick sanity check, to make sure we have all the necessities in order.
 appkey_path = File.expand_path('./spotify_appkey.key')
 unless File.exists?(appkey_path)
   abort <<-ERROR
     Your Spotify application key could not be found at the path:
-      #{appkey_path}
-
-    Please adjust the path in examples/common.rb or put your application key in:
       #{appkey_path}
 
     You may download your application key from:
@@ -69,8 +71,8 @@ they require actual login credentials before they may run."
 
 # Spotify requires a rite of passage. It’s own variant of “open sesame”, so we will
 # ask you to provide them with your information.
-hallon_username = prompt("Please enter your spotify username")
-hallon_password = prompt("Please enter your spotify password", hide: true)
+hallon_username = ENV.fetch("SPOTIFY_USERNAME") { prompt("Please enter your spotify username") }
+hallon_password = ENV.fetch("SPOTIFY_PASSWORD") { prompt("Please enter your spotify password", hide: true) }
 hallon_appkey   = IO.read(appkey_path)
 
 # Make sure the credentials are there. We don’t want to go without them.
