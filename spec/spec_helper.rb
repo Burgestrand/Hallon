@@ -79,6 +79,8 @@ RSpec.configure do |config|
 
   config.before do
     Spotify.mock_registry_add 'spotify:image:3ad93423add99766e02d563605c6e76ed2b0e400', mock_image
+    Spotify.mock_registry_add 'spotify:image:548957670a3e9950e87ce61dc0c188debd22b0cb', mock_empty_image
+
     Spotify.mock_registry_add 'spotify:user:burgestrand:playlist:megaplaylist', mock_playlist_two
     Spotify.mock_registry_add 'spotify:search:my+%C3%A5+utf8+%EF%A3%BF+query', mock_search
     Spotify.mock_registry_add 'spotify:search:', mock_empty_search

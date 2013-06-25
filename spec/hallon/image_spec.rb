@@ -18,6 +18,12 @@ describe Hallon::Image do
 
   specify { image.should be_a Hallon::Loadable }
 
+  describe "#initialize" do
+    it "can load images with invalid UTF8 image ids" do
+      Hallon::Image.new("spotify:image:548957670a3e9950e87ce61dc0c188debd22b0cb").should eq empty_image
+    end
+  end
+
   describe ".sizes" do
     it "should list all sizes" do
       Hallon::Image.sizes.should eq [:normal, :small, :large]

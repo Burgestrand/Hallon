@@ -22,7 +22,7 @@ Gem::Specification.new do |gem|
   gem.required_ruby_version = '>= 1.9'
 
   gem.add_dependency 'weak_observable', '~> 1.0'
-  gem.add_dependency 'spotify', '~> 12.5.1'
+  gem.add_dependency 'spotify', '~> 12.5.2'
   gem.add_dependency 'ffi', '~> 1.8'
   gem.add_development_dependency 'rake'
   gem.add_development_dependency 'rspec', '~> 2'

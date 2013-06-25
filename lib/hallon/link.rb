@@ -14,13 +14,11 @@ module Hallon
       end
 
       if spotify_uri.is_a?(Link)
-        return true
-      elsif spotify_uri.to_s["\x00"] # image ids
-        return false
+        true
+      else
+        link = Spotify.link_create_from_string(spotify_uri.to_s)
+        not link.null?
       end
-
-      link = Spotify.link_create_from_string(spotify_uri.to_s)
-      not link.null?
     end
 
     # Parse the given Spotify URI into a Link.
