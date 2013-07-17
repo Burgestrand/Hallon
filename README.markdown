@@ -5,6 +5,27 @@ Hallon (Swedish for “[Raspberry][]”) is _the_ ruby gem for interacting with 
 
 Code samples can be found under the `examples/` directory. An explanation on how to run them can be found on the [Hallon wiki on GitHub](https://github.com/Burgestrand/Hallon/wiki).
 
+### Important to consider before using Hallon
+
+Hallon’s model was from the start something along the lines of a synchronous Ruby binding to libspotify, and I no longer believe the way Hallon achieve this to be a good way of doing things. Because of this, development of Hallon has been stagnant for a long time. An additional reason is that I am no longer personally using Hallon for anything myself.
+
+Most of my effort towards libspotify and Ruby have been focused on the spotify gem that powers Hallon: https://github.com/Burgestrand/spotify. For new projects, and possibly even existing projects, I would strongly suggest using the spotify gem instead of using Hallon, because:
+
+- Less of an abstraction around libspotify.
+- Less bugs, because of 1.
+- Less risk of e.g. deadlocks in the library because of 1.
+- Less confusing, because of 1.
+- Better than C (it’s in ruby, has automatic garbage collection, thread safe).
+- It’s still seeing new features and improvements, Hallon currently isn’t.
+
+However, the spotify gem also has a few cons in comparison to Hallon:
+
+- Less of an abstraction around libspotify.
+- Requires (even if rudimentary) knowledge of FFI.
+- Some things are still annoying to do (e.g. calling certain functions, and callbacks) because of 2 and 1.
+
+Please consider the above points before using Hallon.
+
 ### Contact details
 
 - __Got questions?__ Ask on the mailing list: <mailto:ruby-hallon@googlegroups.com> (<https://groups.google.com/d/forum/ruby-hallon>)
