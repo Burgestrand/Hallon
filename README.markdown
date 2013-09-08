@@ -7,6 +7,8 @@ Code samples can be found under the `examples/` directory. An explanation on how
 
 ### Important to consider before using Hallon
 
+First off, Hallon is **no longer being maintained**.
+
 Hallon’s model was from the start something along the lines of a synchronous Ruby binding to libspotify, and I no longer believe the way Hallon achieve this to be a good way of doing things. Because of this, development of Hallon has been stagnant for a long time. An additional reason is that I am no longer personally using Hallon for anything myself.
 
 Most of my effort towards libspotify and Ruby have been focused on the spotify gem that powers Hallon: https://github.com/Burgestrand/spotify. For new projects, and possibly even existing projects, I would strongly suggest using the spotify gem instead of using Hallon, because:
