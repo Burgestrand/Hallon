@@ -30,7 +30,7 @@ Please consider the above points before using Hallon.
 
 ### Contact details
 
-- __Got questions?__ Ask on the mailing list: <mailto:ruby-hallon@googlegroups.com> (<https://groups.google.com/d/forum/ruby-hallon>)
+- __Got questions?__ Ask on the mailing list: <mailto:ruby-spotify@googlegroups.com> (<https://groups.google.com/d/forum/ruby-spotify>)
 - __Found a bug?__ Report an issue: <https://github.com/Burgestrand/Hallon/issues/new>
 - __Have feedback?__ I ❤ feedback! Please send it to the mailing list.
 
